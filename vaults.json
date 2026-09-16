@@ -1,7 +1,17 @@
 {
   "comment": "Obsidian vaults this plugin is deployed to. Edit this file to add or remove a vault, then run: npm run install:vaults",
   "vaults": [
-    { "name": "Gritcode", "path": "/Users/grant/hq/Gritcode" },
-    { "name": "Fernware", "path": "/Users/grant/hq/Fernware" }
+    {
+      "name": "Gritcode",
+      "path": "/Users/grant/hq/Gritcode"
+    },
+    {
+      "name": "Fernware",
+      "path": "/Users/grant/hq/Fernware"
+    },
+    {
+      "name": "PostLever",
+      "path": "/Users/grant/hq/PostLever"
+    }
   ]
 }
