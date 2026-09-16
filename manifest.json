@@ -1,0 +1,10 @@
+{
+  "id": "tandemonium",
+  "name": "Tandemonium",
+  "version": "2.2.7",
+  "minAppVersion": "1.13.0",
+  "description": "Coding agents and Google Docs-style review comments in one vault. Chat with Claude Code, Codex and other agents in a sidebar, and leave quote-anchored comment threads on your notes.",
+  "author": "Grant",
+  "authorUrl": "https://github.com/grantwork/tandemonium",
+  "isDesktopOnly": true
+}

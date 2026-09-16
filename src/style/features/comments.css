@@ -1,0 +1,388 @@
+/* Tandem Comments */
+
+.tc-highlight {
+  background-color: color-mix(
+    in srgb,
+    var(--tc-highlight-color, #ffd54a) var(--tc-highlight-opacity, 30%),
+    transparent
+  );
+  border-bottom: 2px solid var(--tc-highlight-color, #ffd54a);
+  cursor: pointer;
+}
+
+.tc-sidebar {
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.tc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tc-title {
+  font-weight: 600;
+}
+
+.tc-card {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 10px;
+  background: var(--background-primary);
+}
+
+.tc-card.tc-focused {
+  border-color: var(--interactive-accent);
+}
+
+.tc-card.tc-orphan {
+  border-style: dashed;
+}
+
+.tc-card.tc-ambiguous {
+  border-style: dashed;
+}
+
+.tc-quote {
+  font-style: italic;
+  color: var(--text-muted);
+  border-left: 3px solid var(--tc-highlight-color, #ffd54a);
+  padding-left: 6px;
+  margin-bottom: 6px;
+}
+
+.tc-quote-link {
+  cursor: pointer;
+}
+
+.tc-quote-link:hover {
+  color: var(--text-normal);
+}
+
+.tc-entry {
+  margin: 6px 0;
+}
+
+.tc-meta {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+
+.tc-author {
+  font-weight: 400;
+  color: var(--text-normal);
+}
+
+.tc-author-colored {
+  color: var(--tc-author-color-light);
+}
+
+.theme-dark .tc-author-colored {
+  color: var(--tc-author-color-dark);
+}
+
+.tc-entry-controls {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tc-entry-menu-trigger,
+.tc-entry-action {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.tc-entry-menu-trigger svg,
+.tc-entry-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tc-text {
+  overflow-wrap: anywhere;
+}
+
+.tc-text p {
+  margin: 0.7em 0;
+}
+
+.tc-text > :first-child {
+  margin-top: 0;
+}
+
+.tc-text > :last-child {
+  margin-bottom: 0;
+}
+
+.tc-text-editable {
+  cursor: text;
+  border-radius: 4px;
+}
+
+.tc-text-editable:hover {
+  background: var(--background-modifier-hover);
+}
+
+.tc-text-editable:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+
+.tc-field-label {
+  margin-top: 8px;
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tc-suggestion-card {
+  border-left: 3px solid var(--interactive-accent);
+}
+
+.tc-suggestion-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.tc-suggestion-title {
+  font-weight: 600;
+}
+
+.tc-suggestion-result {
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+}
+
+.tc-suggestion-accepted {
+  color: var(--text-success);
+  background: color-mix(in srgb, var(--text-success) 12%, transparent);
+}
+
+.tc-suggestion-declined {
+  color: var(--text-muted);
+  background: var(--background-secondary);
+}
+
+.tc-suggestion-change {
+  display: grid;
+  gap: 3px;
+  margin: 7px 0;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-small);
+}
+
+.tc-suggestion-original,
+.tc-suggestion-replacement {
+  padding: 5px 7px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.tc-suggestion-original {
+  color: var(--text-muted);
+  background: var(--background-secondary);
+  text-decoration: line-through;
+}
+
+.tc-suggestion-replacement {
+  color: var(--text-normal);
+  background: color-mix(in srgb, var(--interactive-accent) 10%, var(--background-primary));
+}
+
+.tc-suggestion-arrow {
+  padding-left: 7px;
+  color: var(--text-muted);
+}
+
+.tc-suggestion-warning {
+  margin: 5px 0;
+  color: var(--text-warning);
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.tc-input {
+  width: 100%;
+  margin-top: 6px;
+  resize: vertical;
+}
+
+.tc-edit-input {
+  min-height: 64px;
+}
+
+.tc-edit-actions {
+  justify-content: flex-end;
+}
+
+.tc-section {
+  margin: 14px 0 6px;
+  font-weight: 600;
+  font-size: var(--font-ui-smaller);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.tc-empty,
+.tc-error {
+  color: var(--text-muted);
+  padding: 12px 4px;
+}
+
+.tc-error {
+  color: var(--text-error);
+}
+
+.tc-setting-error {
+  color: var(--text-error);
+  margin-top: 4px;
+}
+
+.tc-author-colors-collapse {
+  margin: 14px 0;
+  border-top: 1px solid var(--background-modifier-border);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tc-author-colors-summary {
+  padding: 12px 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  font-weight: 400;
+}
+
+.tc-author-colors-summary:hover {
+  color: var(--text-accent);
+}
+
+.tc-author-colors-summary:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+
+.tc-author-colors-content {
+  padding: 0 0 8px 20px;
+}
+
+.tc-author-colors-description {
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-author-colors-list-title {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: 600;
+}
+
+.tc-setting-preview {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-setting-warning,
+.tc-setting-success {
+  margin-top: 4px;
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-setting-warning {
+  color: var(--text-warning);
+}
+
+.tc-setting-success {
+  color: var(--text-success);
+}
+
+.tc-color-readability {
+  margin-top: 6px;
+}
+
+.tc-color-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tc-color-preview {
+  min-width: 74px;
+  padding: 4px 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.tc-color-preview-light {
+  background: #ffffff;
+}
+
+.tc-color-preview-dark {
+  background: #202020;
+}
+
+.tc-author-color-row .setting-item-info {
+  min-width: 0;
+}
+
+.tc-author-color-name {
+  width: min(220px, 100%);
+  font-weight: 500;
+}
+
+@media (max-width: 500px) {
+  .tc-author-colors-content {
+    padding-left: 0;
+  }
+}
+
+.tc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: var(--font-ui-smaller);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  cursor: pointer;
+}
+
+.tc-pill-error {
+  color: var(--text-error);
+}
+
+.tc-hide-reading-indicator .tc-pill:not(.tc-pill-error) {
+  display: none;
+}
+
+/* Live Preview: tandem-comments-Block-Widget vollständig ausblenden. */
+.tc-lp-hidden {
+  display: none;
+}
