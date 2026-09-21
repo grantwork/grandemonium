@@ -6,7 +6,7 @@ import type {
   CollabTrustedHost,
 } from '@/app/collab/lan/CollabHttpClient';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DISCOVERED_ENDPOINT_TIMEOUT_MS = 2_000;
 const REDISCOVERY_CODES = new Set([

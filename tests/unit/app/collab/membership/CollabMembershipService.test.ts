@@ -11,7 +11,7 @@ import type {
   CollabAuthorityMembershipOperation,
 } from '@/app/collab/remote-authority/CollabAuthorityMembershipControlPort';
 import { type CollabCoordinationSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 
@@ -71,7 +71,7 @@ function client(): TestMembershipControl {
     acknowledgeManagerResponsibility: jest.fn(),
     cancelManagerResponsibilityOffer: jest.fn(),
     createInvitation: jest.fn().mockResolvedValue({
-      encodedInvitation: 'claudian-collab:v2:invite-alpha',
+      encodedInvitation: 'grandemonium-collab:v2:invite-alpha',
       expiresAt: '2026-08-08T00:15:00.000Z',
     }),
     createManagerResponsibilityOffer: jest.fn(),
@@ -134,7 +134,7 @@ describe('CollabMembershipService', () => {
     }, safetyContext());
 
     await expect(service.createInvitation('project-alpha')).resolves.toMatchObject({
-      encodedInvitation: 'claudian-collab:v2:invite-alpha',
+      encodedInvitation: 'grandemonium-collab:v2:invite-alpha',
     });
 
     expect(control.operations.createInvitation).toHaveBeenCalledWith({

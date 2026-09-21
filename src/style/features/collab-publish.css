@@ -1,4 +1,4 @@
-.claudian-collab-publish {
+.grandemonium-collab-publish {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -8,22 +8,22 @@
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.claudian-collab-publish-header {
+.grandemonium-collab-publish-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
 }
 
-.claudian-collab-publish-header h4,
-.claudian-collab-panel button.claudian-collab-publish-title {
+.grandemonium-collab-publish-header h4,
+.grandemonium-collab-panel button.grandemonium-collab-publish-title {
   margin: 0;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
   font-weight: var(--font-semibold);
 }
 
-.claudian-collab-panel button.claudian-collab-publish-title {
+.grandemonium-collab-panel button.grandemonium-collab-publish-title {
   width: fit-content;
   padding: 0;
   background: transparent;
@@ -32,41 +32,41 @@
   text-align: start;
 }
 
-.claudian-collab-panel button.claudian-collab-publish-title:is(:hover, :focus-visible) {
+.grandemonium-collab-panel button.grandemonium-collab-publish-title:is(:hover, :focus-visible) {
   color: var(--text-normal);
   background: transparent;
   box-shadow: none;
 }
 
-.claudian-collab-publish-actions {
+.grandemonium-collab-publish-actions {
   display: flex;
   gap: 4px;
   align-items: center;
 }
 
-.claudian-collab-publish-status {
+.grandemonium-collab-publish-status {
   color: var(--text-muted);
   font-size: var(--font-ui-small);
 }
 
-.claudian-collab-publish-status--conflict,
-.claudian-collab-publish-status--error {
+.grandemonium-collab-publish-status--conflict,
+.grandemonium-collab-publish-status--error {
   color: var(--text-error);
 }
 
-.claudian-collab-publish-status--offline,
-.claudian-collab-publish-status--awaiting-request,
-.claudian-collab-publish-status--cancelled {
+.grandemonium-collab-publish-status--offline,
+.grandemonium-collab-publish-status--awaiting-request,
+.grandemonium-collab-publish-status--cancelled {
   color: var(--text-warning);
 }
 
-.claudian-collab-file-list {
+.grandemonium-collab-file-list {
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
-.claudian-collab-file-list--list {
+.grandemonium-collab-file-list--list {
   gap: 2px;
   margin: 4px 0 0;
   padding: 0;
@@ -74,15 +74,15 @@
   list-style: none;
 }
 
-.claudian-collab-file-list--flat {
+.grandemonium-collab-file-list--flat {
   padding: 2px 0;
 }
 
-.claudian-collab-file-list--list > li {
+.grandemonium-collab-file-list--list > li {
   min-width: 0;
 }
 
-.claudian-collab-panel button.claudian-collab-file-button {
+.grandemonium-collab-panel button.grandemonium-collab-file-button {
   display: grid;
   width: 100%;
   color: var(--text-muted);
@@ -92,14 +92,14 @@
   box-shadow: none;
 }
 
-.claudian-collab-file-list--list > li > button.claudian-collab-file-button {
+.grandemonium-collab-file-list--list > li > button.grandemonium-collab-file-button {
   grid-template-columns: auto minmax(0, 1fr);
   gap: 8px;
   padding: 6px 8px;
   text-align: left;
 }
 
-.claudian-collab-file-list--flat > button.claudian-collab-file-button {
+.grandemonium-collab-file-list--flat > button.grandemonium-collab-file-button {
   grid-template-columns: 18px minmax(0, 1fr);
   gap: 6px;
   align-items: center;
@@ -108,22 +108,22 @@
   text-align: start;
 }
 
-.claudian-collab-panel button.claudian-collab-file-button:is(:active, [aria-pressed="true"]) {
+.grandemonium-collab-panel button.grandemonium-collab-file-button:is(:active, [aria-pressed="true"]) {
   color: var(--text-normal);
   border: 0;
   background: transparent;
   box-shadow: none;
 }
 
-.claudian-collab-panel button.claudian-collab-file-button:is(:hover, :focus-visible) {
+.grandemonium-collab-panel button.grandemonium-collab-file-button:is(:hover, :focus-visible) {
   color: var(--text-normal);
   border: 0;
   background: var(--background-modifier-hover);
   box-shadow: none;
 }
 
-.claudian-collab-panel button.claudian-collab-file-button:disabled,
-.claudian-collab-panel button.claudian-collab-file-button:disabled:is(:hover, :focus-visible, :active) {
+.grandemonium-collab-panel button.grandemonium-collab-file-button:disabled,
+.grandemonium-collab-panel button.grandemonium-collab-file-button:disabled:is(:hover, :focus-visible, :active) {
   color: var(--text-faint);
   border: 0;
   background: transparent;
@@ -131,32 +131,32 @@
   cursor: default;
 }
 
-.claudian-collab-file-kind {
+.grandemonium-collab-file-kind {
   color: var(--text-accent);
   font-family: var(--font-monospace);
   font-size: var(--font-ui-smaller);
 }
 
-.claudian-collab-file-list--list .claudian-collab-file-kind {
+.grandemonium-collab-file-list--list .grandemonium-collab-file-kind {
   width: 14px;
 }
 
-.claudian-collab-file-kind[data-kind="added"],
-.claudian-collab-file-kind[data-kind="copied"] {
+.grandemonium-collab-file-kind[data-kind="added"],
+.grandemonium-collab-file-kind[data-kind="copied"] {
   color: var(--text-success);
 }
 
-.claudian-collab-file-kind[data-kind="deleted"] {
+.grandemonium-collab-file-kind[data-kind="deleted"] {
   color: var(--text-error);
 }
 
-.claudian-collab-file-kind[data-kind="modified"],
-.claudian-collab-file-kind[data-kind="renamed"],
-.claudian-collab-file-kind[data-kind="type-changed"] {
+.grandemonium-collab-file-kind[data-kind="modified"],
+.grandemonium-collab-file-kind[data-kind="renamed"],
+.grandemonium-collab-file-kind[data-kind="type-changed"] {
   color: var(--text-warning);
 }
 
-.claudian-collab-file-path {
+.grandemonium-collab-file-path {
   overflow: hidden;
   font-family: var(--font-monospace);
   font-size: var(--font-ui-smaller);
@@ -164,7 +164,7 @@
   white-space: nowrap;
 }
 
-.claudian-collab-panel button.claudian-collab-publish-navigation {
+.grandemonium-collab-panel button.grandemonium-collab-publish-navigation {
   width: auto;
   padding: 3px 10px;
   color: var(--text-muted);
@@ -174,14 +174,14 @@
   font-size: var(--font-ui-smaller);
 }
 
-.claudian-collab-panel button.claudian-collab-publish-navigation:is(:hover, :focus-visible) {
+.grandemonium-collab-panel button.grandemonium-collab-publish-navigation:is(:hover, :focus-visible) {
   color: var(--text-normal);
   background: transparent;
   border-color: transparent;
   box-shadow: none;
 }
 
-.claudian-collab-panel button.claudian-collab-publish-navigation:disabled {
+.grandemonium-collab-panel button.grandemonium-collab-publish-navigation:disabled {
   color: var(--text-muted);
   background: transparent;
   border-color: transparent;

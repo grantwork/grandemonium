@@ -1,7 +1,7 @@
 import { COLLAB_LIMITS as SHARED_COLLAB_LIMITS } from '@claudian-collab/protocol';
 
-/** Shared wire limits plus Claudian-owned checkout, diff, and LAN Host policy. */
-export const CLAUDIAN_COLLAB_LIMITS = Object.freeze({
+/** Shared wire limits plus Grandemonium-owned checkout, diff, and LAN Host policy. */
+export const GRANDEMONIUM_COLLAB_LIMITS = Object.freeze({
   ...SHARED_COLLAB_LIMITS,
   hostRepositorySoftLimitBytes: 1024 * 1024 * 1024,
   maxCheckoutBytes: 500 * 1024 * 1024,

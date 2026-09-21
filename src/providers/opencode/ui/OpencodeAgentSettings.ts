@@ -67,7 +67,7 @@ class OpencodeAgentModal extends Modal {
 
   onOpen() {
     this.setTitle(this.existing ? 'Edit OpenCode Subagent' : 'Add OpenCode Subagent');
-    this.modalEl.addClass('claudian-sp-modal');
+    this.modalEl.addClass('grandemonium-sp-modal');
 
     const { contentEl } = this;
 
@@ -103,10 +103,10 @@ class OpencodeAgentModal extends Modal {
           .setPlaceholder('Reviews code for correctness and maintainability');
       });
 
-    const details = contentEl.createEl('details', { cls: 'claudian-sp-advanced-section' });
+    const details = contentEl.createEl('details', { cls: 'grandemonium-sp-advanced-section' });
     details.createEl('summary', {
       text: 'Advanced options',
-      cls: 'claudian-sp-advanced-summary',
+      cls: 'grandemonium-sp-advanced-summary',
     });
     if (
       this.existing?.model ||
@@ -228,7 +228,7 @@ class OpencodeAgentModal extends Modal {
       .setDesc('Markdown body used as the agent prompt');
 
     const promptArea = contentEl.createEl('textarea', {
-      cls: 'claudian-sp-content-area',
+      cls: 'grandemonium-sp-content-area',
       attr: {
         rows: '10',
         placeholder: 'Review code changes carefully and call out correctness, regressions, and missing coverage.',
@@ -236,17 +236,17 @@ class OpencodeAgentModal extends Modal {
     });
     promptArea.value = this.existing?.prompt ?? '';
 
-    const buttonContainer = contentEl.createDiv({ cls: 'claudian-sp-modal-buttons' });
+    const buttonContainer = contentEl.createDiv({ cls: 'grandemonium-sp-modal-buttons' });
 
     const cancelBtn = buttonContainer.createEl('button', {
       text: 'Cancel',
-      cls: 'claudian-cancel-btn',
+      cls: 'grandemonium-cancel-btn',
     });
     cancelBtn.addEventListener('click', () => this.close());
 
     const saveBtn = buttonContainer.createEl('button', {
       text: 'Save',
-      cls: 'claudian-save-btn',
+      cls: 'grandemonium-save-btn',
     });
     saveBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
@@ -383,70 +383,70 @@ export class OpencodeAgentSettings {
 
     const visibleAgents = this.agents.filter((agent) => agent.mode === 'subagent');
 
-    const headerEl = this.containerEl.createDiv({ cls: 'claudian-sp-header' });
-    headerEl.createSpan({ text: 'OpenCode Subagents', cls: 'claudian-sp-label' });
+    const headerEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-header' });
+    headerEl.createSpan({ text: 'OpenCode Subagents', cls: 'grandemonium-sp-label' });
 
-    const actionsEl = headerEl.createDiv({ cls: 'claudian-sp-header-actions' });
+    const actionsEl = headerEl.createDiv({ cls: 'grandemonium-sp-header-actions' });
 
     const refreshBtn = actionsEl.createEl('button', {
-      cls: 'claudian-settings-action-btn',
+      cls: 'grandemonium-settings-action-btn',
       attr: { 'aria-label': 'Refresh' },
     });
     setIcon(refreshBtn, 'refresh-cw');
     refreshBtn.addEventListener('click', () => { void this.render(); });
 
     const addBtn = actionsEl.createEl('button', {
-      cls: 'claudian-settings-action-btn',
+      cls: 'grandemonium-settings-action-btn',
       attr: { 'aria-label': 'Add' },
     });
     setIcon(addBtn, 'plus');
     addBtn.addEventListener('click', () => this.openModal(null));
 
     if (visibleAgents.length === 0) {
-      const emptyEl = this.containerEl.createDiv({ cls: 'claudian-sp-empty-state' });
+      const emptyEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-empty-state' });
       emptyEl.setText('No OpenCode subagents in vault. Click + to create one.');
       return;
     }
 
-    const listEl = this.containerEl.createDiv({ cls: 'claudian-sp-list' });
+    const listEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-list' });
     for (const agent of visibleAgents) {
       this.renderItem(listEl, agent);
     }
   }
 
   private renderItem(listEl: HTMLElement, agent: OpencodeAgentDefinition): void {
-    const itemEl = listEl.createDiv({ cls: 'claudian-sp-item' });
-    const infoEl = itemEl.createDiv({ cls: 'claudian-sp-info' });
+    const itemEl = listEl.createDiv({ cls: 'grandemonium-sp-item' });
+    const infoEl = itemEl.createDiv({ cls: 'grandemonium-sp-info' });
 
-    const headerRow = infoEl.createDiv({ cls: 'claudian-sp-item-header' });
-    const nameEl = headerRow.createSpan({ cls: 'claudian-sp-item-name' });
+    const headerRow = infoEl.createDiv({ cls: 'grandemonium-sp-item-header' });
+    const nameEl = headerRow.createSpan({ cls: 'grandemonium-sp-item-name' });
     nameEl.setText(agent.name);
 
     headerRow.createSpan({
       text: 'subagent',
-      cls: 'claudian-slash-item-badge',
+      cls: 'grandemonium-slash-item-badge',
     });
 
     if (agent.model) {
-      headerRow.createSpan({ text: agent.model, cls: 'claudian-slash-item-badge' });
+      headerRow.createSpan({ text: agent.model, cls: 'grandemonium-slash-item-badge' });
     }
 
     if (agent.description) {
-      const descEl = infoEl.createDiv({ cls: 'claudian-sp-item-desc' });
+      const descEl = infoEl.createDiv({ cls: 'grandemonium-sp-item-desc' });
       descEl.setText(agent.description);
     }
 
-    const actionsEl = itemEl.createDiv({ cls: 'claudian-sp-item-actions' });
+    const actionsEl = itemEl.createDiv({ cls: 'grandemonium-sp-item-actions' });
 
     const editBtn = actionsEl.createEl('button', {
-      cls: 'claudian-settings-action-btn',
+      cls: 'grandemonium-settings-action-btn',
       attr: { 'aria-label': 'Edit' },
     });
     setIcon(editBtn, 'pencil');
     editBtn.addEventListener('click', () => this.openModal(agent));
 
     const deleteBtn = actionsEl.createEl('button', {
-      cls: 'claudian-settings-action-btn claudian-settings-delete-btn',
+      cls: 'grandemonium-settings-action-btn grandemonium-settings-delete-btn',
       attr: { 'aria-label': 'Delete' },
     });
     setIcon(deleteBtn, 'trash-2');

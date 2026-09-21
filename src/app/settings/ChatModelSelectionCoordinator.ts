@@ -1,4 +1,4 @@
-import type { ClaudianSettings, StoredChatModelSelection } from '../../core/types';
+import type { GrandemoniumSettings, StoredChatModelSelection } from '../../core/types';
 import type { SettingsCoordinator } from './SettingsCoordinator';
 
 export class ChatModelSelectionCoordinator {
@@ -7,7 +7,7 @@ export class ChatModelSelectionCoordinator {
   private commitTail: Promise<void> = Promise.resolve();
 
   constructor(
-    private readonly settingsCoordinator: SettingsCoordinator<ClaudianSettings>,
+    private readonly settingsCoordinator: SettingsCoordinator<GrandemoniumSettings>,
   ) {}
 
   beginIntent(): number {

@@ -30,7 +30,7 @@ import { GitRuntimeResolver } from '@/app/collab/git/GitRuntimeResolver';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 const ACCEPTED_AT = '2026-08-08T00:01:00.000Z';
-const IDENTITY = Object.freeze({ email: 'fixture@claudian.local', name: 'Fixture' });
+const IDENTITY = Object.freeze({ email: 'fixture@grandemonium.local', name: 'Fixture' });
 const MEMBER_ID = 'member-a';
 const MEMBER_REF = collabMemberRef(MEMBER_ID);
 
@@ -53,7 +53,7 @@ describe('AcceptCoordinator Native Git integration', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-accept-integration-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-accept-integration-'));
     authorityDirectory = path.join(root, 'authority');
     repositoryPath = path.join(authorityDirectory, 'repository.git');
     await mkdir(authorityDirectory);
@@ -121,7 +121,7 @@ describe('AcceptCoordinator Native Git integration', () => {
     expect(await git.resolveRef(repositoryPath, MEMBER_REF)).toBe(headOid);
     expect(await show(response.mainOid, '%P')).toBe(`${mainOid} ${headOid}`);
     expect(await show(response.mainOid, '%an%x00%ae%x00%cn%x00%ce')).toBe(
-      'Claudian Collab\0collab@claudian.local\0Claudian Collab\0collab@claudian.local',
+      'Grandemonium Collab\0collab@grandemonium.local\0Grandemonium Collab\0collab@grandemonium.local',
     );
     await expect(git.assertHealthy(repositoryPath)).resolves.toBeUndefined();
   });
@@ -198,7 +198,7 @@ describe('AcceptCoordinator Native Git integration', () => {
         const merge = await repository.mergeTree(mainOid, headOid);
         if (merge.kind !== 'clean') throw new Error('Expected clean fixture merge');
         legacyResultOid = await repository.commitTree({
-          identity: { email: 'collab@claudian.local', name: 'Claudian Collab' },
+          identity: { email: 'collab@grandemonium.local', name: 'Grandemonium Collab' },
           message: 'Accept request request-one',
           parents: [mainOid, headOid],
           treeOid: merge.treeOid,

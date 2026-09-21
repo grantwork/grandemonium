@@ -36,9 +36,9 @@ import type { NavigationSidebar } from '../ui/NavigationSidebar';
 import type { TabSession } from './TabSession';
 
 /**
- * Minimal interface for the ClaudianView methods used by TabManager and Tab.
+ * Minimal interface for the GrandemoniumView methods used by TabManager and Tab.
  * Extends Component for Obsidian integration (event handling, cleanup).
- * Avoids circular dependency by not importing ClaudianView directly.
+ * Avoids circular dependency by not importing GrandemoniumView directly.
  */
 export interface TabManagerViewHost extends Component {
   /** Reference to the workspace leaf for revealing the view. */
@@ -305,6 +305,8 @@ export interface TabBarItem {
   id: TabId;
   /** 1-based index for display. */
   index: number;
+  /** The tab provider's configured agent name, shown as the collapsed badge label. */
+  agentName: string;
   title: string;
   isActive: boolean;
   /** True while any foreground, continuation, provider-background, or async-subagent work remains. */

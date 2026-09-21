@@ -6,7 +6,7 @@ import { EditorView } from '@codemirror/view';
 import { MarkdownRenderer, setIcon, type WorkspaceLeaf } from 'obsidian';
 
 import { type CollabAcceptOutcome, type CollabConflictDescriptor, type CollabCoordinationSnapshot, type CollabPublicationReview, type CollabRequestReview, type CollabReviewFileContent, type CollabWorkingTreeReview } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type {
   CollabDetailViewPort,
   CollabPublicationDetailViewState,
@@ -175,15 +175,15 @@ describe('CollabDetailView', () => {
     )!;
     expect(description.querySelector('.cm-placeholder')).toBeNull();
     const descriptionHeader = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-description-header',
+      '.grandemonium-collab-request-description-header',
     )!;
     expect(descriptionHeader.querySelector(
-      '.claudian-collab-request-description-header > span',
+      '.grandemonium-collab-request-description-header > span',
     )?.textContent).toBe('Description');
     expect(reviewHeader.classList.contains('has-primary-action')).toBe(true);
-    expect(descriptionHeader.querySelector('.claudian-collab-review-summary')?.textContent)
+    expect(descriptionHeader.querySelector('.grandemonium-collab-review-summary')?.textContent)
       .toBe('1 changed files');
-    expect(descriptionHeader.querySelector('.claudian-collab-review-metadata-line')?.parentElement)
+    expect(descriptionHeader.querySelector('.grandemonium-collab-review-metadata-line')?.parentElement)
       .toBe(descriptionHeader);
     const editDescription = view.contentEl.querySelector<HTMLButtonElement>(
       '[data-action="edit-publish-description"]',
@@ -193,7 +193,7 @@ describe('CollabDetailView', () => {
     );
     expect(editDescription?.parentElement).toBe(previewDescription?.parentElement);
     expect(editDescription?.parentElement?.classList)
-      .toContain('claudian-collab-request-description-modes');
+      .toContain('grandemonium-collab-request-description-modes');
     setMarkdownValue(description, 'Published change');
     expect(description.querySelector('textarea')).toBeNull();
     expect(publish.disabled).toBe(false);
@@ -250,11 +250,11 @@ describe('CollabDetailView', () => {
       selection: EditorSelection.cursor(descriptionView.state.doc.length),
     });
     view.contentEl.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     )?.click();
 
     expect(markdownValue(description)).toBe('Investigate Resolves #17 ');
-    expect(view.contentEl.querySelector('.claudian-collab-description-relations')).toBeNull();
+    expect(view.contentEl.querySelector('.grandemonium-collab-description-relations')).toBeNull();
   });
 
   it('prefers the owning member local draft over stale authority metadata', async () => {
@@ -326,10 +326,10 @@ describe('CollabDetailView', () => {
       '[data-collab-description="true"]',
     )!;
     const descriptionHeader = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-description-header',
+      '.grandemonium-collab-request-description-header',
     )!;
     const overviewControls = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-review-overview-controls',
+      '.grandemonium-collab-review-overview-controls',
     )!;
     const openEditor = overviewControls.querySelector<HTMLButtonElement>(
       '[data-action="open-request-description-editor"]',
@@ -338,7 +338,7 @@ describe('CollabDetailView', () => {
     expect(descriptionHeader.contains(openEditor)).toBe(false);
     expect(openEditor.parentElement).toBe(overviewControls);
     const descriptionModes = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-description-modes',
+      '.grandemonium-collab-request-description-modes',
     )!;
     const edit = descriptionModes.querySelector<HTMLButtonElement>(
       '[data-action="edit-publish-description"]',
@@ -356,7 +356,7 @@ describe('CollabDetailView', () => {
     expect(descriptionModes.hidden).toBe(true);
     expect(description.dataset.markdownMode).toBe('preview');
     expect(description.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-editor',
+      '.grandemonium-collab-markdown-draft-editor',
     )?.hidden).toBe(true);
 
     openEditor.click();
@@ -571,10 +571,10 @@ describe('CollabDetailView', () => {
       '[role="tab"][aria-selected="true"]',
     );
     const overviewControls = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-review-overview-controls',
+      '.grandemonium-collab-review-overview-controls',
     )!;
     const changesControls = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-review-changes-controls',
+      '.grandemonium-collab-review-changes-controls',
     )!;
     expect(overview?.textContent).toBe('Overview');
     expect(overviewControls.hidden).toBe(false);
@@ -638,16 +638,16 @@ describe('CollabDetailView', () => {
 
     await view.setState(viewState(), { history: false });
     const commentsTitle = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-comments > h3',
+      '.grandemonium-collab-request-comments > h3',
     )!;
     const commentsList = view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-comment-list',
+      '.grandemonium-collab-request-comment-list',
     )!;
     const commentsSection = commentsTitle.parentElement!;
     expect(commentsSection.classList.contains('has-entries')).toBe(false);
     expect(commentsTitle.hidden).toBe(true);
     expect(commentsList.hidden).toBe(true);
-    expect(view.contentEl.querySelector('.claudian-collab-request-comments-empty'))
+    expect(view.contentEl.querySelector('.grandemonium-collab-request-comments-empty'))
       .toBeNull();
     const composer = view.contentEl.querySelector<HTMLElement>(
       '[data-field="request-comment"]',
@@ -823,7 +823,7 @@ describe('CollabDetailView', () => {
     )?.click();
     await nextTurn();
     const reference = description.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-ticket-reference',
+      '.grandemonium-collab-markdown-ticket-reference',
     );
     expect(reference).not.toBeNull();
     reference?.click();
@@ -1093,23 +1093,23 @@ describe('CollabDetailView', () => {
     const accept = view.contentEl.querySelector<HTMLButtonElement>(
       '[data-collab-action="accept"]',
     );
-    expect(accept?.parentElement?.classList.contains('claudian-collab-review-header'))
+    expect(accept?.parentElement?.classList.contains('grandemonium-collab-review-header'))
       .toBe(true);
     expect(accept?.parentElement?.classList.contains('is-request')).toBe(true);
     const metadata = accept?.parentElement?.querySelector(
-      '.claudian-collab-review-metadata-line',
+      '.grandemonium-collab-review-metadata-line',
     );
-    const tabs = accept?.parentElement?.querySelector('.claudian-collab-review-tabs');
+    const tabs = accept?.parentElement?.querySelector('.grandemonium-collab-review-tabs');
     expect(metadata).toBeNull();
-    expect(accept?.parentElement?.querySelector('.claudian-collab-review-summary')).toBeNull();
-    expect(tabs?.querySelector('.claudian-collab-review-condition')?.textContent)
+    expect(accept?.parentElement?.querySelector('.grandemonium-collab-review-summary')).toBeNull();
+    expect(tabs?.querySelector('.grandemonium-collab-review-condition')?.textContent)
       .toBe('Ready to accept');
-    expect(accept?.classList.contains('claudian-collab-review-accept')).toBe(true);
+    expect(accept?.classList.contains('grandemonium-collab-review-accept')).toBe(true);
     expect(accept?.classList.contains('mod-cta')).toBe(false);
-    expect(view.contentEl.querySelector('.claudian-collab-review-footer')).toBeNull();
-    expect(view.contentEl.querySelector('.claudian-collab-comments')).toBeNull();
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-footer')).toBeNull();
+    expect(view.contentEl.querySelector('.grandemonium-collab-comments')).toBeNull();
     expect(view.contentEl.querySelector('[data-collab-file]')).toBeNull();
-    expect(view.contentEl.querySelector('.claudian-collab-review-layout')).toBeNull();
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-layout')).toBeNull();
 
     await nextTurn();
     view.contentEl.querySelector<HTMLButtonElement>('[data-collab-review-scope]')?.click();
@@ -1178,7 +1178,7 @@ describe('CollabDetailView', () => {
     await nextTurn();
 
     expect(view.contentEl.querySelector(
-      '.claudian-collab-review-metadata-line [data-collab-review-open-file]',
+      '.grandemonium-collab-review-metadata-line [data-collab-review-open-file]',
     )).toBeNull();
     const noteInput = renderer.render.mock.calls.find(
       ([input]) => input.path === 'note.md',
@@ -1263,7 +1263,7 @@ describe('CollabDetailView', () => {
 
     await view.setState(viewState(), { history: false });
     await openChanges(view);
-    const tabs = view.contentEl.querySelector('.claudian-collab-review-tabs');
+    const tabs = view.contentEl.querySelector('.grandemonium-collab-review-tabs');
     const scope = tabs?.querySelector<HTMLButtonElement>('[data-collab-review-scope]');
     const layout = tabs?.querySelector<HTMLButtonElement>('[data-collab-review-layout]');
 
@@ -1388,7 +1388,7 @@ describe('CollabDetailView', () => {
 
     await view.setState(exactState, { history: false });
     await nextTurn();
-    const header = view.contentEl.querySelector('.claudian-collab-review-header');
+    const header = view.contentEl.querySelector('.grandemonium-collab-review-header');
     const secondSection = view.contentEl.querySelector<HTMLElement>(
       '[data-collab-review-file="second.md"]',
     )!;
@@ -1400,7 +1400,7 @@ describe('CollabDetailView', () => {
     await nextTurn();
 
     expect(port.prepareWorkingTreeReview).not.toHaveBeenCalled();
-    expect(view.contentEl.querySelector('.claudian-collab-review-header')).toBe(header);
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-header')).toBe(header);
     expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start' });
   });
 
@@ -1539,9 +1539,9 @@ describe('CollabDetailView', () => {
       projectId: 'project-a',
       requestId: 'request-a',
     }, expect.objectContaining({ signal: expect.any(AbortSignal) }));
-    expect(view.contentEl.querySelector('.claudian-collab-review-condition')?.textContent)
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-condition')?.textContent)
       .toBe('Changes accepted');
-    expect(view.contentEl.querySelector('.claudian-collab-review-condition')
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-condition')
       ?.classList.contains('is-merged')).toBe(true);
     expect(view.contentEl.querySelector('[data-collab-action="accept"]')).toBeNull();
     expect(detach).toHaveBeenCalledTimes(1);
@@ -1956,10 +1956,10 @@ describe('CollabDetailView', () => {
 
     expect(save.disabled).toBe(false);
     expect(view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-description',
+      '.grandemonium-collab-request-description',
     )?.classList.contains('is-editing')).toBe(false);
     expect(view.contentEl.querySelector<HTMLElement>(
-      '.claudian-collab-request-description-status',
+      '.grandemonium-collab-request-description-status',
     )?.textContent).toBe('');
   });
 
@@ -2145,7 +2145,7 @@ describe('CollabDetailView', () => {
       ticketId: 'ticket-a',
     }, { history: false });
     view.contentEl.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-ticket-reference',
+      '.grandemonium-collab-markdown-ticket-reference',
     )?.click();
     await nextTurn();
     expect(lookupSignal?.aborted).toBe(false);
@@ -2214,7 +2214,7 @@ describe('CollabDetailView', () => {
         ticketId: 'ticket-a',
       }, { history: false });
       view.contentEl.querySelector<HTMLButtonElement>(
-        '.claudian-collab-markdown-ticket-reference',
+        '.grandemonium-collab-markdown-ticket-reference',
       )?.click();
       await nextTurn();
       expect(lookupSignal?.aborted).toBe(false);
@@ -2417,7 +2417,7 @@ describe('CollabDetailView', () => {
 
     await view.setState(viewState(), { history: false });
 
-    expect(view.contentEl.querySelector('.claudian-collab-review-condition')?.textContent)
+    expect(view.contentEl.querySelector('.grandemonium-collab-review-condition')?.textContent)
       .toBe('Changes accepted');
     expect(view.contentEl.querySelector('[data-collab-action="accept"]')).toBeNull();
   });

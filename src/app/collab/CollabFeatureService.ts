@@ -12,7 +12,6 @@ import type {
 import type {
   CloudBootstrapTransitionRecord,
 } from '@/app/collab/bootstrap/CloudBootstrapTransitionRecord';
-import type { CollabGitFoundation } from '@/app/collab/ClaudianCollabService';
 import type {
   CollabAuthorityInstallationStatus,
   CollabLocalMembershipRecord,
@@ -21,6 +20,7 @@ import type {
 } from '@/app/collab/CollabLocalProjectRepository';
 import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
 import type { CollabWorkspaceService } from '@/app/collab/CollabWorkspaceService';
+import type { CollabGitFoundation } from '@/app/collab/GrandemoniumCollabService';
 import type { HostInstallationBindingService } from '@/app/collab/host-installation/HostInstallationBindingService';
 import {
   type CollabPendingProjectOperation,
@@ -34,7 +34,7 @@ import {
 } from '@/app/collab/ProjectOperationAdmission';
 import type { CollabManagerResponsibilityOfferSummary } from '@/core/collab';
 import { type CollabAcceptOutcome, type CollabAcceptRequest, type CollabAddCommentRequest, type CollabAddTicketCommentRequest, type CollabBoundedQueryPort, type CollabCancelManagerResponsibilityOfferRequest, type CollabChangeTicketStatusRequest, type CollabConfirmPublishRequest, type CollabConflictFileContent, type CollabConflictFileRequest, type CollabConflictSession, type CollabCoordinationSnapshot, type CollabCreateHostTransferRequest, type CollabCreateManagerResponsibilityOfferRequest, type CollabCreateProjectRequest, type CollabCreateTicketRequest, type CollabDemoteManagerRequest, type CollabFeaturePort, type CollabFeatureState, type CollabFeatureStateListener, type CollabFeatureSubscription, type CollabFinalizeRetiredProjectRequest, type CollabGitStatus, type CollabHostSession, type CollabHostStatus, type CollabHostTransferIntentRequest, type CollabInvitationView, type CollabJoinProjectRequest, type CollabLeaveProjectRequest, type CollabListTicketsRequest, type CollabLocalProjectSummary, type CollabOperationOptions, type CollabPersonalChangesInspection, type CollabProjectInspection, type CollabProjectSelectionProjection, type CollabPromoteManagerRequest, type CollabPublicationReview, type CollabPublicationReviewFileRequest, type CollabPublishOutcome, type CollabPublishRequest, type CollabReconciliationOutcome, type CollabReconnectProjectRequest, type CollabRemoveMemberRequest, type CollabRequestReview, type CollabResult, type CollabResumeSetupRequest, type CollabRetireProjectRequest, type CollabReviewFileContent, type CollabReviewFileRequest, type CollabTicketDetailProjection, type CollabTicketPageProjection, type CollabUpdateRequestMetadataRequest, type CollabUpdateTicketContentRequest, type CollabWorkingTreeReview, type CollabWorkingTreeReviewFileRequest, resolveEffectiveCollabProjectId } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabFeatureFoundationPort {
   readonly local: {

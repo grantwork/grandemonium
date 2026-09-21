@@ -36,7 +36,7 @@ export class EnvSnippetModal extends Modal {
     const { contentEl } = this;
     this.setTitle(this.snippet ? t('settings.envSnippets.modal.titleEdit') : t('settings.envSnippets.modal.titleSave'));
 
-    this.modalEl.addClass('claudian-env-snippet-modal');
+    this.modalEl.addClass('grandemonium-env-snippet-modal');
 
     let nameEl: HTMLInputElement;
     let descEl: HTMLInputElement;
@@ -109,11 +109,11 @@ export class EnvSnippetModal extends Modal {
       const uniqueModelIds = ProviderRegistry.getCustomModelIds(envVars);
 
       if (uniqueModelIds.size === 0) {
-        contextLimitsContainer.addClass('claudian-hidden');
+        contextLimitsContainer.addClass('grandemonium-hidden');
         return;
       }
 
-      contextLimitsContainer.removeClass('claudian-hidden');
+      contextLimitsContainer.removeClass('grandemonium-hidden');
 
       const existingLimits = this.snippet?.contextLimits ?? this.plugin.settings.customContextLimits ?? {};
       const existingAliases = this.snippet?.modelAliases ?? this.plugin.settings.customModelAliases ?? {};
@@ -128,14 +128,14 @@ export class EnvSnippetModal extends Modal {
       });
 
       for (const modelId of uniqueModelIds) {
-        const row = contextLimitsContainer.createDiv({ cls: 'claudian-snippet-limit-row' });
-        row.createSpan({ text: modelId, cls: 'claudian-snippet-limit-model' });
-        row.createSpan({ cls: 'claudian-snippet-limit-spacer' });
+        const row = contextLimitsContainer.createDiv({ cls: 'grandemonium-snippet-limit-row' });
+        row.createSpan({ text: modelId, cls: 'grandemonium-snippet-limit-model' });
+        row.createSpan({ cls: 'grandemonium-snippet-limit-spacer' });
 
         const aliasInput = row.createEl('input', {
           type: 'text',
           placeholder: t('settings.customModelAliases.placeholder'),
-          cls: 'claudian-snippet-alias-input',
+          cls: 'grandemonium-snippet-alias-input',
         });
         aliasInput.value = existingAliases[modelId] ?? '';
         aliasInput.setAttribute('aria-label', `Alias for ${modelId}`);
@@ -145,7 +145,7 @@ export class EnvSnippetModal extends Modal {
         const input = row.createEl('input', {
           type: 'text',
           placeholder: '200k',
-          cls: 'claudian-snippet-limit-input',
+          cls: 'grandemonium-snippet-limit-input',
         });
         input.value = existingLimits[modelId] ? formatContextLimit(existingLimits[modelId]) : '';
         input.setAttribute('aria-label', `Context window for ${modelId}`);
@@ -181,23 +181,23 @@ export class EnvSnippetModal extends Modal {
         text.inputEl.rows = 8;
         text.inputEl.addEventListener('blur', () => renderContextLimitFields());
       });
-    envVarsSetting.settingEl.addClass('claudian-env-snippet-setting');
-    envVarsSetting.controlEl.addClass('claudian-env-snippet-control');
+    envVarsSetting.settingEl.addClass('grandemonium-env-snippet-setting');
+    envVarsSetting.controlEl.addClass('grandemonium-env-snippet-control');
 
-    contextLimitsContainer = contentEl.createDiv({ cls: 'claudian-snippet-context-limits' });
+    contextLimitsContainer = contentEl.createDiv({ cls: 'grandemonium-snippet-context-limits' });
     renderContextLimitFields();
 
-    const buttonContainer = contentEl.createDiv({ cls: 'claudian-snippet-buttons' });
+    const buttonContainer = contentEl.createDiv({ cls: 'grandemonium-snippet-buttons' });
 
     const cancelBtn = buttonContainer.createEl('button', {
       text: t('settings.envSnippets.modal.cancel'),
-      cls: 'claudian-cancel-btn'
+      cls: 'grandemonium-cancel-btn'
     });
     cancelBtn.addEventListener('click', () => this.close());
 
     const saveBtn = buttonContainer.createEl('button', {
       text: this.snippet ? t('settings.envSnippets.modal.update') : t('settings.envSnippets.modal.save'),
-      cls: 'claudian-save-btn'
+      cls: 'grandemonium-save-btn'
     });
     saveBtn.addEventListener('click', () => saveSnippet());
 
@@ -233,11 +233,11 @@ export class EnvSnippetManager {
   private render() {
     this.containerEl.empty();
 
-    const headerEl = this.containerEl.createDiv({ cls: 'claudian-snippet-header' });
-    headerEl.createSpan({ text: t('settings.envSnippets.name'), cls: 'claudian-snippet-label' });
+    const headerEl = this.containerEl.createDiv({ cls: 'grandemonium-snippet-header' });
+    headerEl.createSpan({ text: t('settings.envSnippets.name'), cls: 'grandemonium-snippet-label' });
 
     const saveBtn = headerEl.createEl('button', {
-      cls: 'claudian-settings-action-btn',
+      cls: 'grandemonium-settings-action-btn',
       attr: { 'aria-label': t('settings.envSnippets.addBtn') },
     });
     setIcon(saveBtn, 'plus');
@@ -248,30 +248,30 @@ export class EnvSnippetManager {
     const snippets = this.plugin.settings.envSnippets.filter((snippet) => this.shouldDisplaySnippet(snippet));
 
     if (snippets.length === 0) {
-      const emptyEl = this.containerEl.createDiv({ cls: 'claudian-snippet-empty' });
+      const emptyEl = this.containerEl.createDiv({ cls: 'grandemonium-snippet-empty' });
       emptyEl.setText(t('settings.envSnippets.noSnippets'));
       return;
     }
 
-    const listEl = this.containerEl.createDiv({ cls: 'claudian-snippet-list' });
+    const listEl = this.containerEl.createDiv({ cls: 'grandemonium-snippet-list' });
 
     for (const snippet of snippets) {
-      const itemEl = listEl.createDiv({ cls: 'claudian-snippet-item' });
+      const itemEl = listEl.createDiv({ cls: 'grandemonium-snippet-item' });
 
-      const infoEl = itemEl.createDiv({ cls: 'claudian-snippet-info' });
+      const infoEl = itemEl.createDiv({ cls: 'grandemonium-snippet-info' });
 
-      const nameEl = infoEl.createDiv({ cls: 'claudian-snippet-name' });
+      const nameEl = infoEl.createDiv({ cls: 'grandemonium-snippet-name' });
       nameEl.setText(snippet.name);
 
       if (snippet.description) {
-        const descEl = infoEl.createDiv({ cls: 'claudian-snippet-description' });
+        const descEl = infoEl.createDiv({ cls: 'grandemonium-snippet-description' });
         descEl.setText(snippet.description);
       }
 
-      const actionsEl = itemEl.createDiv({ cls: 'claudian-snippet-actions' });
+      const actionsEl = itemEl.createDiv({ cls: 'grandemonium-snippet-actions' });
 
       const restoreBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn',
+        cls: 'grandemonium-settings-action-btn',
         attr: { 'aria-label': 'Insert' },
       });
       setIcon(restoreBtn, 'clipboard-paste');
@@ -286,7 +286,7 @@ export class EnvSnippetManager {
       });
 
       const editBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn',
+        cls: 'grandemonium-settings-action-btn',
         attr: { 'aria-label': 'Edit' },
       });
       setIcon(editBtn, 'pencil');
@@ -295,7 +295,7 @@ export class EnvSnippetManager {
       });
 
       const deleteBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn claudian-settings-delete-btn',
+        cls: 'grandemonium-settings-action-btn grandemonium-settings-delete-btn',
         attr: { 'aria-label': 'Delete' },
       });
       setIcon(deleteBtn, 'trash-2');
@@ -377,7 +377,7 @@ export class EnvSnippetManager {
     });
 
     this.onContextLimitsChange?.();
-    const view = this.plugin.app.workspace.getLeavesOfType('claudian-view')[0]?.view as {
+    const view = this.plugin.app.workspace.getLeavesOfType('grandemonium-view')[0]?.view as {
       refreshModelSelector?(): void;
     } | undefined;
     view?.refreshModelSelector?.();
@@ -429,7 +429,7 @@ export class EnvSnippetManager {
   }
 
   private syncTextareaValue(scope: EnvironmentScope, value: string): void {
-    const selector = `.claudian-settings-env-textarea[data-env-scope="${scope}"]`;
+    const selector = `.grandemonium-settings-env-textarea[data-env-scope="${scope}"]`;
     const envTextarea = (this.containerEl.ownerDocument ?? window.document).querySelector<HTMLTextAreaElement>(selector);
     if (envTextarea) {
       envTextarea.value = value;

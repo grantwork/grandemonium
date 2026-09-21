@@ -1,24 +1,24 @@
 /* Model selector */
-.claudian-model-selector {
+.grandemonium-model-selector {
   position: relative;
 }
 
-.claudian-model-btn {
+.grandemonium-model-btn {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
-  color: var(--claudian-brand);
+  color: var(--grandemonium-brand);
   font-size: 12px;
 }
 
-.claudian-model-label {
+.grandemonium-model-label {
   font-weight: 500;
 }
 
-.claudian-model-dropdown {
+.grandemonium-model-dropdown {
   position: absolute;
   bottom: 100%;
   left: 0;
@@ -38,12 +38,12 @@
   transition: opacity 0.15s ease, visibility 0.15s ease;
 }
 
-.claudian-model-selector:hover .claudian-model-dropdown {
+.grandemonium-model-selector:hover .grandemonium-model-dropdown {
   opacity: 1;
   visibility: visible;
 }
 
-.claudian-model-group {
+.grandemonium-model-group {
   padding: 3px 8px;
   font-size: 8px;
   font-weight: 600;
@@ -53,21 +53,21 @@
   pointer-events: none;
 }
 
-.claudian-model-group:not(:first-child) {
+.grandemonium-model-group:not(:first-child) {
   margin-top: 4px;
   border-top: 1px solid var(--background-modifier-border);
   padding-top: 6px;
 }
 
-.claudian-model-provider-icon {
+.grandemonium-model-provider-icon {
   flex-shrink: 0;
 }
 
-.claudian-model-option .claudian-model-provider-icon {
+.grandemonium-model-option .grandemonium-model-provider-icon {
   opacity: 0.7;
 }
 
-.claudian-model-option {
+.grandemonium-model-option {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -80,13 +80,13 @@
   white-space: nowrap;
 }
 
-.claudian-model-option:hover {
+.grandemonium-model-option:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.claudian-model-option.selected {
-  background: rgba(var(--claudian-brand-rgb), 0.15);
-  color: var(--claudian-brand);
+.grandemonium-model-option.selected {
+  background: rgba(var(--grandemonium-brand-rgb), 0.15);
+  color: var(--grandemonium-brand);
   font-weight: 500;
 }

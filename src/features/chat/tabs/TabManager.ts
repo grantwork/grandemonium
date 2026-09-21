@@ -5,6 +5,7 @@ import type { ProviderCommandDiscoveryResult } from '../../../core/providers/com
 import { normalizeProviderCommandDiscoveryItems } from '../../../core/providers/commands/ProviderCommandDiscoveryResult';
 import { ProviderCommandDiscoveryStore } from '../../../core/providers/commands/ProviderCommandDiscoveryStore';
 import type { ProviderCommandEntry } from '../../../core/providers/commands/ProviderCommandEntry';
+import { resolveProviderDefaultModel } from '../../../core/providers/conversationModel';
 import { getRuntimeEnvironmentVariables } from '../../../core/providers/providerEnvironment';
 import { ProviderRegistry } from '../../../core/providers/ProviderRegistry';
 import { ProviderWorkspaceRegistry } from '../../../core/providers/ProviderWorkspaceRegistry';
@@ -20,6 +21,7 @@ import { scheduleAnimationFrame } from '../../../utils/animationFrame';
 import { revealWorkspaceLeaf } from '../../../utils/obsidianCompat';
 import { getVaultPath } from '../../../utils/path';
 import type { FeatureHost } from '../../FeatureHost';
+import { selectNextTabProvider } from './nextTabProvider';
 import { getTabProviderId } from './providerResolution';
 import type { ForkContext } from './TabForking';
 import {
@@ -52,9 +54,13 @@ function isTabManagerViewHost(value: unknown): value is TabManagerViewHost {
     && 'getTabManager' in (value as Record<string, unknown>);
 }
 
+/** How long a background tab may spend initializing its provider for a broadcast. */
+const PROMPT_BROADCAST_PREPARE_TIMEOUT_MS = 10_000;
+
 type CreateTabOptions = {
   activate?: boolean;
   draftModel?: string;
+  providerId?: ProviderId;
   lifecycleState?: Extract<AssembledTabRuntime['lifecycleState'], 'provisional' | 'cold'>;
 };
 
@@ -253,6 +259,7 @@ export class TabManager implements TabManagerInterface {
     const {
       activate = true,
       draftModel,
+      providerId,
       lifecycleState = 'cold',
     } = options;
 
@@ -269,6 +276,7 @@ export class TabManager implements TabManagerInterface {
         conversation: conversation ?? undefined,
         tabId: runtimeTabId,
         ...(typeof draftModel === 'string' ? { draftModel } : {}),
+        ...(providerId ? { providerId } : {}),
         lifecycleState,
         getProviderCatalogConfig: runtime => this.getProviderCatalogConfig(runtime),
         isRuntimeLive: runtime => this.isTabAlive(runtime),
@@ -1075,21 +1083,21 @@ export class TabManager implements TabManagerInterface {
     const messagesEl = tab.dom.messagesEl;
     messagesEl.empty();
 
-    const statusEl = messagesEl.createDiv({ cls: 'claudian-tab-hydration' });
+    const statusEl = messagesEl.createDiv({ cls: 'grandemonium-tab-hydration' });
     if (!error) {
       statusEl.createDiv({
-        cls: 'claudian-tab-hydration-loading',
+        cls: 'grandemonium-tab-hydration-loading',
         text: 'Loading conversation…',
       });
       return;
     }
 
     statusEl.createDiv({
-      cls: 'claudian-tab-hydration-error',
+      cls: 'grandemonium-tab-hydration-error',
       text: error instanceof Error ? error.message : 'Failed to load conversation',
     });
     const retryButton = statusEl.createEl('button', {
-      cls: 'mod-cta claudian-tab-hydration-retry',
+      cls: 'mod-cta grandemonium-tab-hydration-retry',
       text: 'Retry',
     });
     retryButton.addEventListener('click', () => {
@@ -1120,6 +1128,73 @@ export class TabManager implements TabManagerInterface {
   /** Gets all tabs. */
   getAllTabs(): AssembledTabRuntime[] {
     return Array.from(this.tabs.values());
+  }
+
+  /** Providers that already own a tab, in tab order. */
+  getOpenProviderIds(): ProviderId[] {
+    return this.getAllTabs().map(tab => getTabProviderId(tab, this.plugin));
+  }
+
+  /**
+   * The provider a New tab action would open, or null when every enabled
+   * provider already owns a tab. Tabs are one per enabled provider.
+   */
+  getNextTabProviderId(): ProviderId | null {
+    return selectNextTabProvider(
+      ProviderRegistry.getEnabledProviderIds(this.plugin.settings),
+      this.getOpenProviderIds(),
+    );
+  }
+
+  /**
+   * Opens a tab bound to one provider, seeded with that provider's default
+   * model. The binding is explicit rather than inferred from the seed, because
+   * a provider whose models are still undiscovered has no seed to infer from
+   * and would otherwise open as the default provider.
+   */
+  async createProviderTab(
+    providerId: ProviderId,
+    options: CreateTabOptions = {},
+  ): Promise<AssembledTabRuntime | null> {
+    const draftModel = this.resolveSeedModel(providerId);
+    return this.createTab(undefined, undefined, {
+      ...options,
+      providerId,
+      ...(draftModel ? { draftModel } : {}),
+    });
+  }
+
+  private resolveSeedModel(providerId: ProviderId): string | null {
+    try {
+      return resolveProviderDefaultModel(providerId, this.plugin.settings);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Gives every enabled provider a tab, so enabling an AI in settings puts it
+   * on the tab bar without a New tab click. Bounded by the enabled-provider
+   * count, and stops early if a tab fails to open, so it always terminates.
+   */
+  async ensureProviderTabs(): Promise<void> {
+    if (this.destroyed) return;
+    const enabledCount = ProviderRegistry.getEnabledProviderIds(this.plugin.settings).length;
+    for (let attempt = 0; attempt < enabledCount; attempt += 1) {
+      const providerId = this.getNextTabProviderId();
+      if (!providerId) return;
+
+      const openedBefore = this.tabs.size;
+      try {
+        await this.createProviderTab(providerId, {
+          activate: false,
+          lifecycleState: 'cold',
+        });
+      } catch {
+        return;
+      }
+      if (this.tabs.size === openedBefore) return;
+    }
   }
 
   /** True while the tab has any user-visible foreground or background work in progress. */
@@ -1195,6 +1270,8 @@ export class TabManager implements TabManagerInterface {
       }
     }
 
+    await this.ensureProviderTabs();
+
     const targetTabId = state.activeTabId && this.tabs.has(state.activeTabId)
       ? state.activeTabId
       : this.tabs.keys().next().value ?? null;
@@ -1263,6 +1340,10 @@ export class TabManager implements TabManagerInterface {
       items.push({
         id: tab.id,
         index: index++,
+        agentName: ProviderRegistry.getAgentName(
+          getTabProviderId(tab, this.plugin),
+          this.plugin.settings,
+        ),
         title: getTabTitle(tab, this.plugin),
         isActive: tab.id === this.activeTabId,
         isWorking: this.isTabWorking(tab.id),
@@ -1974,6 +2055,28 @@ export class TabManager implements TabManagerInterface {
   private maybePrimeProviderExecution(tab: AssembledTabRuntime): void {
     if (tab.state.isSwitchingConversation) return;
     void this.prewarmProviderTab(tab).catch(() => {});
+  }
+
+  /**
+   * Readies an inactive tab's provider workspace so it can accept a message
+   * without being switched to. Tab activation does this implicitly; a broadcast
+   * reaches background tabs that have never been activated.
+   */
+  async prepareTabForExecution(tab: AssembledTabRuntime): Promise<boolean> {
+    if (this.destroyed || !this.isTabAlive(tab)) return false;
+    const providerId = getTabProviderId(tab, this.plugin);
+    if (ProviderWorkspaceRegistry.getIfInitialized(providerId)) {
+      return this.ensureTabWorkspaceServices(tab, providerId, 'prompt-broadcast');
+    }
+    // First-time provider initialization has no deadline of its own, and this
+    // runs for a background tab nobody is watching. Bounding it keeps a provider
+    // that never resolves from wedging the tab it would later be activated in.
+    return Promise.race([
+      this.ensureTabWorkspaceServices(tab, providerId, 'prompt-broadcast'),
+      new Promise<boolean>(resolve => {
+        window.setTimeout(() => resolve(false), PROMPT_BROADCAST_PREPARE_TIMEOUT_MS);
+      }),
+    ]);
   }
 
   private async ensureTabWorkspaceServices(

@@ -1,6 +1,6 @@
 import { CollabPathPolicy } from '@/app/collab/CollabPathPolicy';
 import type { GitRecursiveTreeEntry } from '@/app/collab/git/GitRepositoryService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function treeError(reason: string): CollabError {
   return new CollabError({

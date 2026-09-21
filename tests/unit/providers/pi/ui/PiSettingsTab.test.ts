@@ -696,7 +696,7 @@ describe('PiSettingsTab', () => {
     };
     const context = render(settings);
 
-    await findElement('button', 'claudian-provider-model-picker-action').dispatchMockEvent('click');
+    await findElement('button', 'grandemonium-provider-model-picker-action').dispatchMockEvent('click');
     await flushPromises();
 
     expect(mockDiscoverModels).toHaveBeenCalledTimes(1);
@@ -709,7 +709,7 @@ describe('PiSettingsTab', () => {
       kind: 'completed',
       models: [],
     });
-    await findElement('button', 'claudian-provider-model-picker-action').dispatchMockEvent('click');
+    await findElement('button', 'grandemonium-provider-model-picker-action').dispatchMockEvent('click');
     await flushPromises();
     expect(mockNotices[0]).toContain('not logged in');
   });
@@ -739,7 +739,7 @@ describe('PiSettingsTab', () => {
       reason: 'provider-disabled',
     });
 
-    await findElement('button', 'claudian-provider-model-picker-action').dispatchMockEvent('click');
+    await findElement('button', 'grandemonium-provider-model-picker-action').dispatchMockEvent('click');
     await flushPromises();
 
     expect(getPiProviderSettings(settings).discoveredModels).toEqual([cachedModel]);
@@ -770,7 +770,7 @@ describe('PiSettingsTab', () => {
       models: [cachedModel],
     });
 
-    await findElement('button', 'claudian-provider-model-picker-action').dispatchMockEvent('click');
+    await findElement('button', 'grandemonium-provider-model-picker-action').dispatchMockEvent('click');
     await flushPromises();
 
     expect(context.plugin.saveSettings).not.toHaveBeenCalled();
@@ -802,7 +802,7 @@ describe('PiSettingsTab', () => {
     await flushPromises();
     expect(getPiProviderSettings(settings).visibleModels).toEqual(['pi:anthropic/claude-sonnet-4']);
 
-    const aliasInput = findElement('input', 'claudian-provider-model-picker-selected-alias');
+    const aliasInput = findElement('input', 'grandemonium-provider-model-picker-selected-alias');
     aliasInput.value = 'Sonnet';
     await aliasInput.dispatchMockEvent('blur');
     await flushPromises();

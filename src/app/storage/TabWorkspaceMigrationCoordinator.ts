@@ -1,6 +1,6 @@
 import { TAB_WORKSPACE_VIEW_STATE_KEY } from '../../core/bootstrap/tabManagerState';
 import type { AppTabManagerState } from '../../core/providers/types';
-import { VIEW_TYPE_CLAUDIAN } from '../../core/types';
+import { VIEW_TYPE_GRANDEMONIUM } from '../../core/types';
 
 export interface TabWorkspaceStateDeliveryRegistration {
   readonly declarationsReady: boolean;
@@ -29,7 +29,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 /**
  * Coordinates the one-time global-to-view tab-state migration across every
- * Claudian leaf participating in Obsidian's startup layout restoration.
+ * Grandemonium leaf participating in Obsidian's startup layout restoration.
  */
 export class TabWorkspaceMigrationCoordinator {
   private readonly deliveredRuntimeViews = new WeakSet<object>();
@@ -89,7 +89,7 @@ export class TabWorkspaceMigrationCoordinator {
     if (this.declarationsReady || !this.workspace.layoutReady) return;
 
     const allRuntimeViewsDelivered = this.workspace
-      .getLeavesOfType(VIEW_TYPE_CLAUDIAN)
+      .getLeavesOfType(VIEW_TYPE_GRANDEMONIUM)
       .every((leaf) => {
         if (this.isRuntimeView(leaf.view)) {
           return isRecord(leaf.view) && this.deliveredRuntimeViews.has(leaf.view);

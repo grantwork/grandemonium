@@ -31,7 +31,7 @@ describe('SqlJsProjectDatabase', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-authority-database-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-database-'));
     authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
   });

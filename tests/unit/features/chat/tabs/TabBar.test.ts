@@ -17,6 +17,7 @@ function createTabBarItem(overrides: Partial<TabBarItem> = {}): TabBarItem {
   return {
     id: 'tab-1',
     index: 1,
+    agentName: 'claude',
     title: 'Test Tab',
     isActive: false,
     isWorking: false,
@@ -34,7 +35,7 @@ describe('TabBar', () => {
 
       new TabBar(containerEl, callbacks);
 
-      expect(containerEl._classList.has('claudian-tab-badges')).toBe(true);
+      expect(containerEl._classList.has('grandemonium-tab-badges')).toBe(true);
     });
   });
 
@@ -79,14 +80,24 @@ describe('TabBar', () => {
   });
 
   describe('badge rendering', () => {
-    it('should display index number as text', () => {
+    it('should shorten an agent name too long for a collapsed badge', () => {
       const containerEl = createMockEl();
       const callbacks = createMockCallbacks();
       const tabBar = new TabBar(containerEl, callbacks);
 
-      tabBar.update([createTabBarItem({ index: 5 })]);
+      tabBar.update([createTabBarItem({ agentName: 'a-very-long-agent-name' })]);
 
-      expect(containerEl._children[0].textContent).toBe('5');
+      expect(containerEl._children[0].textContent).toBe('a-very-lo...');
+    });
+
+    it('should display the provider agent name as text', () => {
+      const containerEl = createMockEl();
+      const callbacks = createMockCallbacks();
+      const tabBar = new TabBar(containerEl, callbacks);
+
+      tabBar.update([createTabBarItem({ index: 5, agentName: 'gpt' })]);
+
+      expect(containerEl._children[0].textContent).toBe('gpt');
     });
 
     it('should use aria-label as the single tab title tooltip source', () => {
@@ -110,12 +121,12 @@ describe('TabBar', () => {
       expect(containerEl._children[0].getAttribute('data-provider')).toBeNull();
     });
 
-    it('should toggle between index and title labels on double click', () => {
+    it('should toggle between agent name and title labels on double click', () => {
       const containerEl = createMockEl();
       const callbacks = createMockCallbacks();
       const tabBar = new TabBar(containerEl, callbacks);
 
-      tabBar.update([createTabBarItem({ index: 2, title: 'My Conversation' })]);
+      tabBar.update([createTabBarItem({ index: 2, agentName: 'gpt', title: 'My Conversation' })]);
 
       const badge = containerEl._children[0];
       const event = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
@@ -123,15 +134,15 @@ describe('TabBar', () => {
       badge.dispatchEvent('dblclick', event);
 
       expect(badge.textContent).toBe('My Conversation');
-      expect(badge.hasClass('claudian-tab-badge-expanded')).toBe(true);
+      expect(badge.hasClass('grandemonium-tab-badge-expanded')).toBe(true);
       expect(badge.getAttribute('data-title-expanded')).toBe('true');
       expect(event.preventDefault).toHaveBeenCalled();
       expect(event.stopPropagation).toHaveBeenCalled();
 
       badge.dispatchEvent('dblclick', { preventDefault: jest.fn(), stopPropagation: jest.fn() });
 
-      expect(badge.textContent).toBe('2');
-      expect(badge.hasClass('claudian-tab-badge-expanded')).toBe(false);
+      expect(badge.textContent).toBe('gpt');
+      expect(badge.hasClass('grandemonium-tab-badge-expanded')).toBe(false);
       expect(badge.getAttribute('data-title-expanded')).toBe('false');
     });
 
@@ -196,7 +207,7 @@ describe('TabBar', () => {
       tabBar.update([createTabBarItem({ id: 'tab-1', index: 1, title: 'Renamed Title' })]);
 
       expect(containerEl._children[0].textContent).toBe('Renamed Title');
-      expect(containerEl._children[0].hasClass('claudian-tab-badge-expanded')).toBe(true);
+      expect(containerEl._children[0].hasClass('grandemonium-tab-badge-expanded')).toBe(true);
     });
 
     it('should preserve horizontal scroll position across tab bar updates', () => {
@@ -250,7 +261,7 @@ describe('TabBar', () => {
 
       tabBar.update([createTabBarItem({ isActive: false, isWorking: false, attention: null })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-idle')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-idle')).toBe(true);
     });
 
     it('should apply active class for active tab', () => {
@@ -260,7 +271,7 @@ describe('TabBar', () => {
 
       tabBar.update([createTabBarItem({ isActive: true })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-active')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-active')).toBe(true);
     });
 
     it('should apply streaming class for streaming tab', () => {
@@ -270,7 +281,7 @@ describe('TabBar', () => {
 
       tabBar.update([createTabBarItem({ isWorking: true })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-streaming')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-streaming')).toBe(true);
     });
 
     it('should apply review class for a completed turn awaiting review', () => {
@@ -282,8 +293,8 @@ describe('TabBar', () => {
         attention: { kind: 'review', outcome: 'completed', since: 1 },
       })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-review')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-action-required')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-action-required')).toBe(false);
     });
 
     it('should apply error-review class for a failed turn awaiting review', () => {
@@ -295,8 +306,8 @@ describe('TabBar', () => {
         attention: { kind: 'review', outcome: 'error', since: 1 },
       })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-review-error')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-review')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review-error')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review')).toBe(false);
     });
 
     it('should apply action-required class for a pending interaction', () => {
@@ -308,8 +319,8 @@ describe('TabBar', () => {
         attention: { kind: 'action-required', since: 1 },
       })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-action-required')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-review')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-action-required')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review')).toBe(false);
     });
 
     it('should prioritize active over attention states', () => {
@@ -322,8 +333,8 @@ describe('TabBar', () => {
         attention: { kind: 'action-required', since: 1 },
       })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-active')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-action-required')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-active')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-action-required')).toBe(false);
     });
 
     it('should prioritize action-required attention over ongoing work', () => {
@@ -336,8 +347,8 @@ describe('TabBar', () => {
         attention: { kind: 'action-required', since: 1 },
       })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-action-required')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-streaming')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-action-required')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-streaming')).toBe(false);
     });
 
     it.each(['completed', 'error'] as const)(
@@ -352,9 +363,9 @@ describe('TabBar', () => {
           attention: { kind: 'review', outcome, since: 1 },
         })]);
 
-        expect(containerEl._children[0]._classList.has('claudian-tab-badge-streaming')).toBe(true);
-        expect(containerEl._children[0]._classList.has('claudian-tab-badge-review')).toBe(false);
-        expect(containerEl._children[0]._classList.has('claudian-tab-badge-review-error')).toBe(false);
+        expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-streaming')).toBe(true);
+        expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review')).toBe(false);
+        expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-review-error')).toBe(false);
       },
     );
 
@@ -365,8 +376,8 @@ describe('TabBar', () => {
 
       tabBar.update([createTabBarItem({ isActive: true, isWorking: true })]);
 
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-active')).toBe(true);
-      expect(containerEl._children[0]._classList.has('claudian-tab-badge-streaming')).toBe(false);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-active')).toBe(true);
+      expect(containerEl._children[0]._classList.has('grandemonium-tab-badge-streaming')).toBe(false);
     });
 
     it.each([
@@ -446,11 +457,11 @@ describe('TabBar', () => {
       const callbacks = createMockCallbacks();
       const tabBar = new TabBar(containerEl, callbacks);
 
-      expect(containerEl._classList.has('claudian-tab-badges')).toBe(true);
+      expect(containerEl._classList.has('grandemonium-tab-badges')).toBe(true);
 
       tabBar.destroy();
 
-      expect(containerEl._classList.has('claudian-tab-badges')).toBe(false);
+      expect(containerEl._classList.has('grandemonium-tab-badges')).toBe(false);
     });
   });
 });

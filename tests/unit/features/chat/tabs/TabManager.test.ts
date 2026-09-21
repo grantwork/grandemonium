@@ -47,7 +47,13 @@ function createMockTab(options: Record<string, any>): any {
   const tab = {
     id: options.tabId ?? `tab-${mockTabs.length + 1}`,
     conversationId: options.conversation?.id ?? null,
-    draftModel: options.conversation ? null : 'claude-default',
+    // Mirrors the shell: an explicit provider request skips the settings-derived
+    // default model, so a provider with no models yet opens unbound.
+    draftModel: options.conversation
+      ? null
+      : (typeof options.draftModel === 'string'
+        ? options.draftModel
+        : (options.providerId ? null : 'claude-default')),
     executionCoordinator: {
       copyInputsForFork: jest.fn().mockResolvedValue(undefined),
       hasBackgroundWork: false,
@@ -57,7 +63,7 @@ function createMockTab(options: Record<string, any>): any {
     },
     hydrationState: options.conversation ? 'idle' : 'ready',
     lifecycleState: options.lifecycleState ?? 'cold',
-    providerId: options.conversation?.providerId ?? 'claude',
+    providerId: options.providerId ?? options.conversation?.providerId ?? 'claude',
     session,
     captureReviewableSettlement: options.captureReviewableSettlement ?? null,
     state: {
@@ -155,6 +161,8 @@ jest.mock('@/core/providers/ProviderWorkspaceRegistry', () => ({
 
 jest.mock('@/core/providers/ProviderRegistry', () => ({
   ProviderRegistry: {
+    getAgentName: jest.fn().mockReturnValue('claude'),
+    getEnabledProviderIds: jest.fn().mockReturnValue(['claude']),
     getCapabilities: jest.fn().mockReturnValue({
       providerId: 'claude',
       supportsProviderCommands: true,
@@ -246,6 +254,45 @@ describe('TabManager provider execution orchestration', () => {
       status: 'ready',
       items: [{ description: 'Review changes', name: 'review' }],
     });
+  });
+
+  it('gives every enabled provider a tab', async () => {
+    (ProviderRegistry.getEnabledProviderIds as jest.Mock).mockReturnValue(['claude', 'codex']);
+    const { manager } = createManager();
+
+    await manager.ensureProviderTabs();
+
+    expect(manager.getAllTabs()).toHaveLength(2);
+  });
+
+  it('leaves an already covered provider alone', async () => {
+    (ProviderRegistry.getEnabledProviderIds as jest.Mock).mockReturnValue(['claude']);
+    const { manager } = createManager();
+    await manager.createTab();
+
+    await manager.ensureProviderTabs();
+
+    expect(manager.getAllTabs()).toHaveLength(1);
+  });
+
+  it('opens the missing provider\'s tab instead of a second default tab', async () => {
+    (ProviderRegistry.getEnabledProviderIds as jest.Mock).mockReturnValue(['claude', 'codex']);
+    const { manager } = createManager();
+    await manager.createTab();
+
+    await manager.ensureProviderTabs();
+
+    expect(manager.getAllTabs()).toHaveLength(2);
+    expect(mockTabs[1]?.providerId).toBe('codex');
+  });
+
+  it('creates nothing when no provider is enabled', async () => {
+    (ProviderRegistry.getEnabledProviderIds as jest.Mock).mockReturnValue([]);
+    const { manager } = createManager();
+
+    await manager.ensureProviderTabs();
+
+    expect(manager.getAllTabs()).toHaveLength(0);
   });
 
   it('creates tabs without installing runtime callbacks', async () => {

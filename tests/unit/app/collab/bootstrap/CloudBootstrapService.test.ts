@@ -10,7 +10,7 @@ import {
 import { CloudBootstrapReadinessCollector } from '@/app/collab/bootstrap/CloudBootstrapReadiness';
 import { CloudBootstrapService } from '@/app/collab/bootstrap/CloudBootstrapService';
 import type { CloudBootstrapTransitionRecord } from '@/app/collab/bootstrap/CloudBootstrapTransitionRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 import {
   bootstrapManifest,

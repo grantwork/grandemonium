@@ -21,7 +21,7 @@ import {
   collabLanAuthorityTransferOperationPath,
 } from '@/app/collab/lan/authority-transfer/LanAuthorityTransferBinding';
 import { fingerprintCertificatePem } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const MEMBER_CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -316,7 +316,7 @@ export class LanAuthorityTransferClient {
   ): Promise<OperationResponse<Operation>> {
     validateCredential(transferCredential);
     return this.request(operation, request, {
-      authorization: `Claudian-Authority-Transfer ${transferCredential}`,
+      authorization: `Grandemonium-Authority-Transfer ${transferCredential}`,
     }, options);
   }
 
@@ -325,7 +325,7 @@ export class LanAuthorityTransferClient {
     options: LanAuthorityTransferOperationOptions = {},
   ): Promise<OperationResponse<'claimTransferredMembership'>> {
     return this.request('claimTransferredMembership', request, {
-      authorization: `Claudian-Transfer-Claim ${request.claim}`,
+      authorization: `Grandemonium-Transfer-Claim ${request.claim}`,
     }, options);
   }
 

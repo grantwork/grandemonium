@@ -140,11 +140,11 @@ export class CollabConflictResolutionPanel {
     this.destroyFileResources();
     this.fileSections.clear();
     this.rootEl.replaceChildren();
-    this.rootEl.classList.add('claudian-collab-conflict');
+    this.rootEl.classList.add('grandemonium-collab-conflict');
     this.rootEl.dataset.conflictLocation = this.location;
 
     const header = createEl('header');
-    header.className = 'claudian-collab-conflict-header';
+    header.className = 'grandemonium-collab-conflict-header';
     appendText(
       header,
       'h2',
@@ -154,21 +154,21 @@ export class CollabConflictResolutionPanel {
     );
     appendText(header, 'div', t('collab.conflict.fileCount', {
       count: session.descriptor.conflicts.length,
-    }), 'claudian-collab-conflict-progress');
+    }), 'grandemonium-collab-conflict-progress');
     this.rootEl.append(header);
     appendText(
       this.rootEl,
       'p',
       t('collab.conflict.editAndPublish'),
-      'claudian-collab-conflict-guidance',
+      'grandemonium-collab-conflict-guidance',
     );
 
     const content = createEl('main');
-    content.className = 'claudian-collab-conflict-content';
+    content.className = 'grandemonium-collab-conflict-content';
     content.dataset.conflictContent = 'true';
     for (const conflict of session.descriptor.conflicts) {
       const section = createEl('section');
-      section.className = 'claudian-collab-conflict-section';
+      section.className = 'grandemonium-collab-conflict-section';
       section.dataset.conflictPath = conflict.path;
       appendText(section, 'div', t('collab.conflict.loadingFile'));
       content.append(section);
@@ -215,14 +215,14 @@ export class CollabConflictResolutionPanel {
     this.destroyPathResources(path);
     host.replaceChildren();
     appendText(host, 'h3', content.path);
-    appendText(host, 'div', kindLabel(content.kind), 'claudian-collab-conflict-kind');
+    appendText(host, 'div', kindLabel(content.kind), 'grandemonium-collab-conflict-kind');
 
     if (content.kind === 'directory-file' || content.kind === 'portability') {
       const blocking = appendText(
         host,
         'div',
         t('collab.conflict.blocking'),
-        'claudian-collab-conflict-blocking mod-warning',
+        'grandemonium-collab-conflict-blocking mod-warning',
       );
       blocking.setAttribute('role', 'alert');
       return;
@@ -245,12 +245,12 @@ export class CollabConflictResolutionPanel {
     content: Extract<CollabConflictFileContent, { kind: 'text' }>,
   ): void {
     const labels = createDiv();
-    labels.className = 'claudian-collab-conflict-diff-labels';
+    labels.className = 'grandemonium-collab-conflict-diff-labels';
     appendText(labels, 'span', t('collab.conflict.accepted'));
     appendText(labels, 'span', t('collab.conflict.mine'));
     host.append(labels);
     const diffHost = createDiv();
-    diffHost.className = 'claudian-collab-conflict-diff';
+    diffHost.className = 'grandemonium-collab-conflict-diff';
     const renderer = this.comparisonDiffFactory();
     const rendererKey = this.rendererKey(content.path);
     this.comparisonDiffs.set(rendererKey, renderer);
@@ -276,7 +276,7 @@ export class CollabConflictResolutionPanel {
     >,
   ): void {
     const versions = createDiv();
-    versions.className = 'claudian-collab-conflict-versions';
+    versions.className = 'grandemonium-collab-conflict-versions';
     this.renderOpaqueVersion(versions, t('collab.conflict.accepted'), content.accepted);
     this.renderOpaqueVersion(versions, t('collab.conflict.mine'), content.personal);
     host.append(versions);
@@ -288,7 +288,7 @@ export class CollabConflictResolutionPanel {
     version: { bytes: number; exists: boolean; path: string },
   ): void {
     const section = createEl('section');
-    section.className = 'claudian-collab-conflict-version';
+    section.className = 'grandemonium-collab-conflict-version';
     appendText(section, 'h4', label);
     appendText(section, 'div', version.exists
       ? t('collab.conflict.sideSummary', {
@@ -317,7 +317,7 @@ export class CollabConflictResolutionPanel {
       this.rootEl,
       'div',
       message,
-      warning ? 'claudian-collab-conflict-message mod-warning' : 'claudian-collab-conflict-message',
+      warning ? 'grandemonium-collab-conflict-message mod-warning' : 'grandemonium-collab-conflict-message',
     );
     status.setAttribute('role', warning ? 'alert' : 'status');
     if (retry && this.operationId) {

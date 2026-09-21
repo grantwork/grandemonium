@@ -12,20 +12,20 @@ import {
   type CloudBootstrapReadinessObservation,
   type CloudBootstrapReadinessOperation,
 } from '@/app/collab/bootstrap/CloudBootstrapReadiness';
-import type { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
 import { ConflictScratchStore } from '@/app/collab/conflicts/ConflictScratchStore';
 import type {
   ManagerResponsibilityReceiptRecord,
 } from '@/app/collab/exit/ManagerResponsibilityReceiptRecord';
+import type { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { CollabLifecycleJournalStore } from '@/app/collab/lifecycle/CollabLifecycleJournalStore';
 import { CollabPublicationStateStore } from '@/app/collab/publish/CollabPublicationStateStore';
 import { CollabRequestDraftStore } from '@/app/collab/publish/CollabRequestDraftStore';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface LocalCloudBootstrapReadinessInspectorOptions {
   readonly foundation: Pick<
-    ClaudianCollabService,
+    GrandemoniumCollabService,
     'hostInstallations' | 'inspectAuthority' | 'local' | 'requireGitFoundation'
   >;
   readonly isProjectQuiesced: (projectId: CollabProjectId) => boolean;

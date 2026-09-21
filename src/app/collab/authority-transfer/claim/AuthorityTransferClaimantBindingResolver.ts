@@ -20,7 +20,7 @@ import { LanAuthorityTransferClient } from '@/app/collab/lan/authority-transfer/
 import type {
   CloudAuthorityLifecycleSession,
 } from '@/app/collab/remote-authority/CloudAuthorityAdapter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferClaimantBindingResolverOptions {
   readonly createCloudLifecycle: (input: Readonly<{

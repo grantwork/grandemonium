@@ -9,6 +9,7 @@ import type {
   ProviderSessionConfig,
 } from '../../../core/execution';
 import { buildSystemPrompt } from '../../../core/prompt/mainAgent';
+import { resolveAgentName } from '../../../core/providers/agentName';
 import type { ProviderHost } from '../../../core/providers/ProviderHost';
 import { ProviderSettingsCoordinator } from '../../../core/providers/ProviderSettingsCoordinator';
 import type { AppPluginManager } from '../../../core/providers/types';
@@ -18,7 +19,7 @@ import {
 } from '../../../core/tools/toolNames';
 import type { ImageAttachment } from '../../../core/types';
 import type {
-  ClaudianSettings,
+  GrandemoniumSettings,
   PermissionMode,
 } from '../../../core/types/settings';
 import { appendBrowserContext } from '../../../utils/browser';
@@ -48,6 +49,7 @@ import {
   getClaudeProviderSettings,
   resolveClaudeSettingSources,
 } from '../settings';
+import { DEFAULT_CLAUDE_PROVIDER_SETTINGS } from '../settings';
 import {
   type EffortLevel,
   resolveEffortLevel,
@@ -140,6 +142,10 @@ export class ClaudeExecutionRequestEncoder {
         customPrompt: settings.systemPrompt,
         vaultPath: sessionConfig.vaultWorkingDirectory,
         userName: settings.userName,
+        agentName: resolveAgentName(
+          claudeSettings.agentName,
+          DEFAULT_CLAUDE_PROVIDER_SETTINGS.agentName,
+        ),
       }, {
         dynamicSections: request.configuration.systemInstructions.dynamicSections
           ? [...request.configuration.systemInstructions.dynamicSections]
@@ -229,7 +235,7 @@ export class ClaudeExecutionRequestEncoder {
     };
   }
 
-  private resolveSettings(request: ProviderExecutionRequest): ClaudianSettings {
+  private resolveSettings(request: ProviderExecutionRequest): GrandemoniumSettings {
     const settings = ProviderSettingsCoordinator.getProviderSettingsSnapshot(
       this.deps.host.settings,
       'claude',

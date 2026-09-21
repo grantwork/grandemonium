@@ -8,7 +8,7 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type SqlJsSnapshotKind = 'backup' | 'primary' | 'temporary';
 

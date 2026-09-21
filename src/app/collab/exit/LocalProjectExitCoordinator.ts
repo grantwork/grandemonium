@@ -31,7 +31,7 @@ import type {
   ManagerResponsibilityOperationPort,
 } from '@/app/collab/membership/ManagerResponsibilityOperationCoordinator';
 import { type CollabLeaveProjectRequest, type CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface LocalExitAuthorityPort {
   prepareLeave(

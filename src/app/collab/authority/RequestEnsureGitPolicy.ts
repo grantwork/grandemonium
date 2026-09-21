@@ -9,7 +9,7 @@ import type {
   GitRecursiveTreeEntry,
   GitRepositoryService,
 } from '@/app/collab/git/GitRepositoryService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RequestEnsureGitPort {
   isAncestor(

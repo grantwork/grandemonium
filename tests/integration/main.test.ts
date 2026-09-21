@@ -11,7 +11,7 @@ import { ProviderSettingsCoordinator } from '@/core/providers/ProviderSettingsCo
 import { ProviderWorkspaceRegistry } from '@/core/providers/ProviderWorkspaceRegistry';
 import { isVersionedRuntimeInputFingerprint } from '@/core/providers/settings/RuntimeInputFingerprint';
 import { TOOL_SUBAGENT } from '@/core/tools/toolNames';
-import { type Conversation, type SessionMetadata, VIEW_TYPE_CLAUDIAN } from '@/core/types';
+import { type Conversation, type SessionMetadata, VIEW_TYPE_GRANDEMONIUM } from '@/core/types';
 import { COLLAB_DETAIL_VIEW_TYPE } from '@/features/collab/detail/CollabDetailView';
 import * as sdkSession from '@/providers/claude/history/ClaudeHistoryStore';
 import { DEFAULT_SETTINGS } from '@/providers/claude/types/settings';
@@ -31,20 +31,20 @@ import {
 } from '@/providers/grok/settings';
 import { getHostnameKey } from '@/utils/env';
 
-// Mock fs for ClaudianService
+// Mock fs for GrandemoniumService
 jest.mock('fs');
 
 // Now import the plugin after mocking
-import ClaudianPlugin from '@/main';
+import GrandemoniumPlugin from '@/main';
 
-describe('ClaudianPlugin', () => {
-  let plugin: ClaudianPlugin;
-  let pluginInstances: ClaudianPlugin[];
+describe('GrandemoniumPlugin', () => {
+  let plugin: GrandemoniumPlugin;
+  let pluginInstances: GrandemoniumPlugin[];
   let mockApp: any;
   let mockManifest: any;
 
-  function createPlugin(): ClaudianPlugin {
-    const instance = new ClaudianPlugin(mockApp, mockManifest);
+  function createPlugin(): GrandemoniumPlugin {
+    const instance = new GrandemoniumPlugin(mockApp, mockManifest);
     pluginInstances.push(instance);
     return instance;
   }
@@ -63,10 +63,10 @@ describe('ClaudianPlugin', () => {
 
   function enableCollab(): void {
     mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
-      path === '.claudian/claudian-settings.json'
+      path === '.grandemonium/grandemonium-settings.json'
     ));
     mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-      if (path === '.claudian/claudian-settings.json') {
+      if (path === '.grandemonium/grandemonium-settings.json') {
         return JSON.stringify({ collabEnabled: true });
       }
       throw new Error(`Missing test file: ${path}`);
@@ -74,7 +74,7 @@ describe('ClaudianPlugin', () => {
   }
 
   function getConversationPersistence(
-    target: ClaudianPlugin,
+    target: GrandemoniumPlugin,
   ): ConversationPersistenceStore {
     return (
       target.storage as typeof target.storage & {
@@ -115,7 +115,7 @@ describe('ClaudianPlugin', () => {
 
   function installVaultFiles(initialFiles: Record<string, string>): Map<string, string> {
     const files = new Map(Object.entries(initialFiles));
-    const folders = new Set<string>(['.claudian']);
+    const folders = new Set<string>(['.grandemonium']);
     mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
       files.has(path) || folders.has(path)
     ));
@@ -205,8 +205,8 @@ describe('ClaudianPlugin', () => {
     };
 
     mockManifest = {
-      id: 'claudian',
-      name: 'Claudian',
+      id: 'grandemonium',
+      name: 'Grandemonium',
       version: '0.1.0',
     };
 
@@ -338,7 +338,7 @@ describe('ClaudianPlugin', () => {
       await plugin.onload();
 
       expect((plugin.registerView as jest.Mock)).toHaveBeenCalledWith(
-        VIEW_TYPE_CLAUDIAN,
+        VIEW_TYPE_GRANDEMONIUM,
         expect.any(Function)
       );
     });
@@ -746,7 +746,7 @@ describe('ClaudianPlugin', () => {
 
       expect((plugin.addRibbonIcon as jest.Mock)).toHaveBeenCalledWith(
         'bot',
-        'Open Claudian',
+        'Open Grandemonium',
         expect.any(Function)
       );
     });
@@ -832,7 +832,7 @@ describe('ClaudianPlugin', () => {
       expect(mockApp.workspace.getLeaf).toHaveBeenCalledWith('tab');
       expect(fallbackLeaf.setViewState).toHaveBeenCalledWith({
         active: true,
-        type: VIEW_TYPE_CLAUDIAN,
+        type: VIEW_TYPE_GRANDEMONIUM,
       });
       expect(refreshDualPaneLayout).toHaveBeenCalledTimes(1);
       expect(fallbackSelect).toHaveBeenCalledTimes(1);
@@ -1199,10 +1199,10 @@ describe('ClaudianPlugin', () => {
         resumeAtMessageId: 'deferred-message-id',
       };
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
-        path === '.claudian/claudian-settings.json'
+        path === '.grandemonium/grandemonium-settings.json'
       ));
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
             providerConfigs: {
               claude: {
@@ -1483,7 +1483,7 @@ describe('ClaudianPlugin', () => {
     });
 
     it('keeps a pending provider invalidation after an incomplete metadata scan', async () => {
-      const settingsPath = '.claudian/claudian-settings.json';
+      const settingsPath = '.grandemonium/grandemonium-settings.json';
       const pendingGeneration = 11;
       const deferredMetadata = {
         id: 'incomplete-scan-session',
@@ -1645,7 +1645,7 @@ describe('ClaudianPlugin', () => {
     });
 
     it('retries a pending provider invalidation after unload and restart', async () => {
-      const settingsPath = '.claudian/claudian-settings.json';
+      const settingsPath = '.grandemonium/grandemonium-settings.json';
       const deferredMetadata = {
         id: 'restart-deferred-session',
         providerId: 'claude' as const,
@@ -1720,7 +1720,7 @@ describe('ClaudianPlugin', () => {
     });
 
     it('keeps a pending provider invalidation when a metadata write fails', async () => {
-      const settingsPath = '.claudian/claudian-settings.json';
+      const settingsPath = '.grandemonium/grandemonium-settings.json';
       const pendingGeneration = 7;
       const deferredMetadata = {
         id: 'failed-write-session',
@@ -1938,7 +1938,7 @@ describe('ClaudianPlugin', () => {
 
       expect(mockApp.workspace.getRightLeaf).toHaveBeenCalledWith(false);
       expect(mockRightLeaf.setViewState).toHaveBeenCalledWith({
-        type: VIEW_TYPE_CLAUDIAN,
+        type: VIEW_TYPE_GRANDEMONIUM,
         active: true,
       });
     });
@@ -2020,7 +2020,7 @@ describe('ClaudianPlugin', () => {
       expect(mockApp.workspace.getRightLeaf).not.toHaveBeenCalled();
       expect(mockApp.workspace.getLeaf).not.toHaveBeenCalled();
       expect(mockLeftLeaf.setViewState).toHaveBeenCalledWith({
-        type: VIEW_TYPE_CLAUDIAN,
+        type: VIEW_TYPE_GRANDEMONIUM,
         active: true,
       });
     });
@@ -2050,7 +2050,7 @@ describe('ClaudianPlugin', () => {
       expect(mockApp.workspace.getRightLeaf).not.toHaveBeenCalled();
       expect(mockApp.workspace.getLeftLeaf).not.toHaveBeenCalled();
       expect(mockMainLeaf.setViewState).toHaveBeenCalledWith({
-        type: VIEW_TYPE_CLAUDIAN,
+        type: VIEW_TYPE_GRANDEMONIUM,
         active: true,
       });
     });
@@ -2095,12 +2095,12 @@ describe('ClaudianPlugin', () => {
     });
 
     it('should merge saved data with defaults', async () => {
-      // Mock claudian-settings.json exists with custom values (Claudian-specific settings)
+      // Mock grandemonium-settings.json exists with custom values (Grandemonium-specific settings)
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json';
+        return path === '.grandemonium/grandemonium-settings.json';
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
             userName: 'TestUser',
           });
@@ -2116,10 +2116,10 @@ describe('ClaudianPlugin', () => {
 
     it('normalizes the concurrent running session limit to 5-10', async () => {
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
-        path === '.claudian/claudian-settings.json'
+        path === '.grandemonium/grandemonium-settings.json'
       ));
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({ maxWarmAgentProcesses: 3 });
         }
         return '';
@@ -2129,7 +2129,7 @@ describe('ClaudianPlugin', () => {
 
       expect(plugin.settings.maxWarmAgentProcesses).toBe(5);
       const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.filter(
-        ([path]) => path === '.claudian/claudian-settings.json',
+        ([path]) => path === '.grandemonium/grandemonium-settings.json',
       ).at(-1);
       expect(writeCall).toBeDefined();
       expect(JSON.parse(writeCall[1]).maxWarmAgentProcesses).toBe(5);
@@ -2137,10 +2137,10 @@ describe('ClaudianPlugin', () => {
 
     it('should strip legacy blocklist fields when loading old settings', async () => {
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json';
+        return path === '.grandemonium/grandemonium-settings.json';
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
             enableBlocklist: false,
             blockedCommands: { unix: ['rm -rf', '  '] },
@@ -2154,11 +2154,11 @@ describe('ClaudianPlugin', () => {
       expect('enableBlocklist' in plugin.settings).toBe(false);
       expect('blockedCommands' in plugin.settings).toBe(false);
       expect(mockApp.vault.adapter.write).toHaveBeenCalledWith(
-        '.claudian/claudian-settings.json',
+        '.grandemonium/grandemonium-settings.json',
         expect.any(String),
       );
       const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.claudian/claudian-settings.json',
+        ([path]) => path === '.grandemonium/grandemonium-settings.json',
       );
       expect(writeCall).toBeDefined();
       const content = JSON.parse(writeCall[1]);
@@ -2188,10 +2188,10 @@ describe('ClaudianPlugin', () => {
 
     it('should migrate legacy openInMainTab true to main-tab placement', async () => {
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json';
+        return path === '.grandemonium/grandemonium-settings.json';
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({ openInMainTab: true });
         }
         return '';
@@ -2201,7 +2201,7 @@ describe('ClaudianPlugin', () => {
 
       expect(plugin.settings.chatViewPlacement).toBe('main-tab');
       const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.claudian/claudian-settings.json',
+        ([path]) => path === '.grandemonium/grandemonium-settings.json',
       );
       expect(writeCall).toBeDefined();
       const content = JSON.parse(writeCall[1]);
@@ -2210,12 +2210,12 @@ describe('ClaudianPlugin', () => {
     });
 
     it('should reconcile model from environment and persist when changed', async () => {
-      // Mock claudian-settings.json with environment variables
+      // Mock grandemonium-settings.json with environment variables
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json';
+        return path === '.grandemonium/grandemonium-settings.json';
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
             environmentVariables: 'ANTHROPIC_MODEL=custom-model',
             lastEnvHash: '',
@@ -2238,15 +2238,15 @@ describe('ClaudianPlugin', () => {
 
       await plugin.saveSettings();
 
-      // Claudian-specific settings should be written to .claudian/claudian-settings.json
+      // Grandemonium-specific settings should be written to .grandemonium/grandemonium-settings.json
       expect(mockApp.vault.adapter.write).toHaveBeenCalledWith(
-        '.claudian/claudian-settings.json',
+        '.grandemonium/grandemonium-settings.json',
         expect.any(String)
       );
 
       // The written content should include state fields
       const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.claudian/claudian-settings.json'
+        ([path]) => path === '.grandemonium/grandemonium-settings.json'
       );
       expect(writeCall).toBeDefined();
       const content = JSON.parse(writeCall[1]);
@@ -2256,7 +2256,7 @@ describe('ClaudianPlugin', () => {
       expect(content).toHaveProperty('lastCustomModel');
       expect(content).not.toHaveProperty('enableBlocklist');
       expect(content).not.toHaveProperty('blockedCommands');
-      // Permissions are now in .claude/settings.json (CC format), not claudian-settings.json
+      // Permissions are now in .claude/settings.json (CC format), not grandemonium-settings.json
       expect(content).not.toHaveProperty('permissions');
     });
   });
@@ -2272,6 +2272,7 @@ describe('ClaudianPlugin', () => {
       });
       jest.spyOn(plugin, 'getAllViews').mockReturnValue([{
         refreshModelSelector: jest.fn(() => events.push('refresh')),
+        refreshProviderTabs: jest.fn(),
       } as any]);
 
       plugin.notifyProviderChatOptionsChanged('claude');
@@ -2286,8 +2287,10 @@ describe('ClaudianPlugin', () => {
       jest.spyOn(repository, 'reconcileSelectedModels')
         .mockRejectedValue(new Error('disk full'));
       const refreshModelSelector = jest.fn();
+      const refreshProviderTabs = jest.fn();
       jest.spyOn(plugin, 'getAllViews').mockReturnValue([{
         refreshModelSelector,
+        refreshProviderTabs,
       } as any]);
 
       plugin.notifyProviderChatOptionsChanged('claude');
@@ -2331,6 +2334,7 @@ describe('ClaudianPlugin', () => {
       jest.spyOn(plugin, 'getAllViews').mockReturnValue([{
         invalidateProviderCommandCaches: jest.fn(() => events.push('invalidate')),
         refreshModelSelector: jest.fn(() => events.push('refresh')),
+        refreshProviderTabs: jest.fn(),
       } as any]);
 
       await plugin.applyEnvironmentVariables(
@@ -2476,9 +2480,11 @@ describe('ClaudianPlugin', () => {
       });
       const invalidateProviderCommandCaches = jest.fn();
       const refreshModelSelector = jest.fn();
+      const refreshProviderTabs = jest.fn();
       jest.spyOn(plugin, 'getAllViews').mockReturnValue([{
         invalidateProviderCommandCaches,
         refreshModelSelector,
+        refreshProviderTabs,
       } as any]);
       const initialGeneration = plugin.executionLifecycleRegistry
         .getProviderGeneration('grok');
@@ -2547,7 +2553,7 @@ describe('ClaudianPlugin', () => {
         const persistedFailureSettings = JSON.parse(
           [...mockApp.vault.adapter.write.mock.calls]
             .reverse()
-            .find(([path]: [string]) => path === '.claudian/claudian-settings.json')?.[1]
+            .find(([path]: [string]) => path === '.grandemonium/grandemonium-settings.json')?.[1]
             ?? '{}',
         );
         expect(persistedFailureSettings.pendingProviderSessionInvalidations?.claude)
@@ -2605,7 +2611,7 @@ describe('ClaudianPlugin', () => {
         const persistedFailureSettings = JSON.parse(
           [...mockApp.vault.adapter.write.mock.calls]
             .reverse()
-            .find(([path]: [string]) => path === '.claudian/claudian-settings.json')?.[1]
+            .find(([path]: [string]) => path === '.grandemonium/grandemonium-settings.json')?.[1]
             ?? '{}',
         );
         expect(persistedFailureSettings.pendingProviderSessionInvalidations?.claude)
@@ -2731,7 +2737,7 @@ describe('ClaudianPlugin', () => {
       const failedWrite = new Promise<void>((_resolve, reject) => { rejectWrite = reject; });
       let shouldFailSettingsWrite = true;
       mockApp.vault.adapter.write.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json' && shouldFailSettingsWrite) {
+        if (path === '.grandemonium/grandemonium-settings.json' && shouldFailSettingsWrite) {
           shouldFailSettingsWrite = false;
           markWriteStarted();
           await failedWrite;
@@ -2797,7 +2803,7 @@ describe('ClaudianPlugin', () => {
         sessionId: null,
       }));
       expect(mockApp.vault.adapter.write.mock.calls.filter(
-        ([path]: [string]) => path === '.claudian/claudian-settings.json',
+        ([path]: [string]) => path === '.grandemonium/grandemonium-settings.json',
       )).toHaveLength(1);
 
       const invalidateSpy = jest.spyOn(
@@ -3131,7 +3137,7 @@ describe('ClaudianPlugin', () => {
 
   describe('applyProviderRuntimeSettings', () => {
     it('persists a CLI fingerprint and restart-safe session invalidation atomically', async () => {
-      const settingsPath = '.claudian/claudian-settings.json';
+      const settingsPath = '.grandemonium/grandemonium-settings.json';
       const deferredMetadata = {
         id: 'runtime-settings-restart-session',
         providerId: 'codex' as const,
@@ -3445,7 +3451,7 @@ describe('ClaudianPlugin', () => {
       expect(command.checkCallback(true)).toBe(true);
     });
 
-    it('keeps tab commands unavailable while a Claudian leaf view is not initialized', async () => {
+    it('keeps tab commands unavailable while a Grandemonium leaf view is not initialized', async () => {
       await plugin.onload();
 
       mockApp.workspace.getLeavesOfType.mockReturnValue([{ view: {} }]);
@@ -3608,7 +3614,7 @@ describe('ClaudianPlugin', () => {
       expect(result?.id).toBe(conversation.id);
       expect(plugin.getConversationList()).toHaveLength(1);
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.claudian/sessions/session-removed-after-startup.meta.json',
+        '.grandemonium/sessions/session-removed-after-startup.meta.json',
       );
       availabilitySpy.mockRestore();
     });
@@ -3635,7 +3641,7 @@ describe('ClaudianPlugin', () => {
         previousProviderSessionIds: ['session-from-previous-vault-path'],
       }));
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.claudian/sessions/session-from-previous-vault-path.meta.json',
+        '.grandemonium/sessions/session-from-previous-vault-path.meta.json',
       );
       availabilitySpy.mockRestore();
       loadSpy.mockRestore();
@@ -4177,7 +4183,7 @@ describe('ClaudianPlugin', () => {
   describe('loadSettings with conversations', () => {
     it('migrates a legacy Codex fingerprint before reconciling persisted sessions', async () => {
       const timestamp = Date.now();
-      const metadataPath = '.claudian/sessions/conv-codex-legacy.meta.json';
+      const metadataPath = '.grandemonium/sessions/conv-codex-legacy.meta.json';
       const sessionMetadata = {
         id: 'conv-codex-legacy',
         providerId: 'codex',
@@ -4193,17 +4199,17 @@ describe('ClaudianPlugin', () => {
       };
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
-        path === '.claudian/claudian-settings.json'
-        || path === '.claudian/sessions'
+        path === '.grandemonium/grandemonium-settings.json'
+        || path === '.grandemonium/sessions'
         || path === metadataPath
       ));
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => (
-        path === '.claudian/sessions'
+        path === '.grandemonium/sessions'
           ? { files: [metadataPath], folders: [] }
           : { files: [], folders: [] }
       ));
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
             providerConfigs: {
               codex: {
@@ -4248,21 +4254,21 @@ describe('ClaudianPlugin', () => {
       });
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json'
-          || path === '.claudian/sessions'
-          || path === '.claudian/sessions/conv-stale-1.meta.json';
+        return path === '.grandemonium/grandemonium-settings.json'
+          || path === '.grandemonium/sessions'
+          || path === '.grandemonium/sessions/conv-stale-1.meta.json';
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions') {
-          return { files: ['.claudian/sessions/conv-stale-1.meta.json'], folders: [] };
+        if (path === '.grandemonium/sessions') {
+          return { files: ['.grandemonium/sessions/conv-stale-1.meta.json'], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions/conv-stale-1.meta.json') {
+        if (path === '.grandemonium/sessions/conv-stale-1.meta.json') {
           return sessionMeta;
         }
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({});
         }
         return '';
@@ -4272,7 +4278,7 @@ describe('ClaudianPlugin', () => {
 
       expect(plugin.getConversationList()).toHaveLength(1);
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.claudian/sessions/conv-stale-1.meta.json',
+        '.grandemonium/sessions/conv-stale-1.meta.json',
       );
     });
 
@@ -4290,26 +4296,26 @@ describe('ClaudianPlugin', () => {
       // Mock files exist
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
         // Session files
-        if (path === '.claudian/sessions' || path === '.claudian/sessions/conv-saved-1.meta.json') {
+        if (path === '.grandemonium/sessions' || path === '.grandemonium/sessions/conv-saved-1.meta.json') {
           return true;
         }
-        // claudian-settings.json exists
-        if (path === '.claudian/claudian-settings.json') {
+        // grandemonium-settings.json exists
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return true;
         }
         return false;
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions') {
-          return { files: ['.claudian/sessions/conv-saved-1.meta.json'], folders: [] };
+        if (path === '.grandemonium/sessions') {
+          return { files: ['.grandemonium/sessions/conv-saved-1.meta.json'], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions/conv-saved-1.meta.json') {
+        if (path === '.grandemonium/sessions/conv-saved-1.meta.json') {
           return sessionMeta;
         }
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({});
         }
         return '';
@@ -4337,25 +4343,25 @@ describe('ClaudianPlugin', () => {
       });
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json' ||
-          path === '.claudian/sessions' ||
-          path === '.claudian/sessions/conv-saved-1.meta.json';
+        return path === '.grandemonium/grandemonium-settings.json' ||
+          path === '.grandemonium/sessions' ||
+          path === '.grandemonium/sessions/conv-saved-1.meta.json';
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions') {
-          return { files: ['.claudian/sessions/conv-saved-1.meta.json'], folders: [] };
+        if (path === '.grandemonium/sessions') {
+          return { files: ['.grandemonium/sessions/conv-saved-1.meta.json'], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/claudian-settings.json') {
-          // All these fields are now in claudian-settings.json
+        if (path === '.grandemonium/grandemonium-settings.json') {
+          // All these fields are now in grandemonium-settings.json
           return JSON.stringify({
             lastEnvHash: 'old-hash',
             environmentVariables: 'ANTHROPIC_BASE_URL=https://api.example.com',
           });
         }
-        if (path === '.claudian/sessions/conv-saved-1.meta.json') {
+        if (path === '.grandemonium/sessions/conv-saved-1.meta.json') {
           return sessionMeta;
         }
         return '';
@@ -4370,7 +4376,7 @@ describe('ClaudianPlugin', () => {
       expect(loaded?.sessionId).toBeNull();
 
       const sessionWrite = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.claudian/sessions/conv-saved-1.meta.json'
+        ([path]) => path === '.grandemonium/sessions/conv-saved-1.meta.json'
       );
       expect(sessionWrite).toBeDefined();
       const meta = JSON.parse(sessionWrite?.[1] as string);
@@ -4412,21 +4418,21 @@ describe('ClaudianPlugin', () => {
       });
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.claudian/claudian-settings.json' ||
-          path === '.claudian/sessions' ||
-          path === '.claudian/sessions/conv-multi-session.meta.json';
+        return path === '.grandemonium/grandemonium-settings.json' ||
+          path === '.grandemonium/sessions' ||
+          path === '.grandemonium/sessions/conv-multi-session.meta.json';
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions') {
-          return { files: ['.claudian/sessions/conv-multi-session.meta.json'], folders: [] };
+        if (path === '.grandemonium/sessions') {
+          return { files: ['.grandemonium/sessions/conv-multi-session.meta.json'], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.claudian/sessions/conv-multi-session.meta.json') {
+        if (path === '.grandemonium/sessions/conv-multi-session.meta.json') {
           return sessionMeta;
         }
-        if (path === '.claudian/claudian-settings.json') {
+        if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({});
         }
         return '';

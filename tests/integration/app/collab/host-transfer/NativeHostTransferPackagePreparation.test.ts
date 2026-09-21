@@ -41,7 +41,7 @@ describe('NativeHostTransferPackagePreparation', () => {
   let SQL: SqlJsStatic;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-host-transfer-package-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-host-transfer-package-'));
     authorityDirectory = path.join(root, 'authority');
     repositoryPath = path.join(authorityDirectory, 'repository.git');
     const emptyConfigPath = path.join(root, 'empty-gitconfig');

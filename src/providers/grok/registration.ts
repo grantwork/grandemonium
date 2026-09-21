@@ -38,6 +38,9 @@ export const grokProviderRegistration: ProviderModule = {
   historyService: new GrokConversationHistoryService(),
   isEnabled: settings => getGrokProviderSettings(settings).enabled,
   setEnabled: (settings, enabled) => updateGrokProviderSettings(settings, { enabled }),
+  defaultAgentName: 'grok',
+  getAgentName: settings => getGrokProviderSettings(settings).agentName,
+  setAgentName: (settings, agentName) => updateGrokProviderSettings(settings, { agentName }),
   settingsReconciler: grokSettingsReconciler,
   settingsStorage: {
     hostScopedFields: ['cliPathsByHost', 'catalogsByHost'],

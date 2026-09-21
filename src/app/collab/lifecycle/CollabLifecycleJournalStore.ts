@@ -17,10 +17,10 @@ import {
   decodePendingLeaveRecord,
   type PendingLeaveRecord,
 } from '@/app/collab/exit/PendingLeaveRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const PENDING_LEAVE_DIRECTORY = '.claudian/collab/pending-leaves';
-const RETIRED_CLEANUP_DIRECTORY = '.claudian/collab/retired-cleanups';
+const PENDING_LEAVE_DIRECTORY = '.grandemonium/collab/pending-leaves';
+const RETIRED_CLEANUP_DIRECTORY = '.grandemonium/collab/retired-cleanups';
 
 export interface PendingLeaveJournalPort {
   list(): Promise<readonly PendingLeaveRecord[]>;

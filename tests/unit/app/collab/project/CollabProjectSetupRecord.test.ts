@@ -8,7 +8,7 @@ import {
 } from '@/app/collab/project/CollabProjectSetupRecord';
 
 const baseRecord: CollabProjectSetupRecord = {
-  cloneDirectoryName: '.claudian-clone-project-alpha',
+  cloneDirectoryName: '.grandemonium-clone-project-alpha',
   createdAt: '2026-08-08T00:00:00.000Z',
   initialCommitOid: null,
   memberCredential: 'A'.repeat(43),
@@ -21,7 +21,7 @@ const baseRecord: CollabProjectSetupRecord = {
   projectId: 'project-alpha',
   projectsFolder: 'Shared/Collab Projects',
   schemaVersion: COLLAB_PROJECT_SETUP_SCHEMA_VERSION,
-  seedDirectoryName: '.claudian-seed-project-alpha',
+  seedDirectoryName: '.grandemonium-seed-project-alpha',
   slug: 'alpha',
   updatedAt: '2026-08-08T00:00:00.000Z',
 };
@@ -106,11 +106,11 @@ describe('CollabProjectSetupRecord', () => {
   it('binds generated staging names to the decoded Project identity', () => {
     expect(() => decodeCollabProjectSetupRecord({
       ...baseRecord,
-      seedDirectoryName: '.claudian-seed-project-other',
+      seedDirectoryName: '.grandemonium-seed-project-other',
     })).toThrow('Invalid Project setup operation identity');
     expect(() => decodeCollabProjectSetupRecord({
       ...baseRecord,
-      cloneDirectoryName: '.claudian-clone-project-other',
+      cloneDirectoryName: '.grandemonium-clone-project-other',
     })).toThrow('Invalid Project setup operation identity');
   });
 });

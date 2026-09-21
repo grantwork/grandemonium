@@ -425,7 +425,7 @@ describe('AuthorityTransferModule', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-authority-transfer-module',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...proposal(),
         direction: 'cloud-to-lan',
@@ -487,7 +487,7 @@ describe('AuthorityTransferModule', () => {
       localRole: 'source',
       operationIntentId: 'intent-authority-transfer-module',
       sourceLanEndpoint: 'https://127.0.0.1:54545',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: proposal(),
     });
 

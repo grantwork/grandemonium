@@ -166,7 +166,7 @@ function buildInputToolbar(
   const { dom } = shell;
   const { plugin } = options;
 
-  const inputToolbar = dom.inputWrapper.createDiv({ cls: 'claudian-input-toolbar' });
+  const inputToolbar = dom.inputWrapper.createDiv({ cls: 'grandemonium-input-toolbar' });
 
   const blankTabUIConfigProxy = (): ProviderChatUIConfig => {
     const draftProvider = shell.providerId;

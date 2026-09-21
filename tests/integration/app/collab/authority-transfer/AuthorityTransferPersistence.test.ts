@@ -177,7 +177,7 @@ describe('AuthorityTransferPersistence', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-authority-transfer-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-transfer-'));
     jest.useFakeTimers();
     jest.setSystemTime(Date.parse('2026-08-26T00:01:00.000Z'));
   });
@@ -194,7 +194,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     });
     await persistence.create(record);
@@ -203,7 +203,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     });
     await persistence.advance(record, 'collecting-readiness');
@@ -240,7 +240,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
         localRole: 'source',
         operationIntentId: OPERATION_INTENT_ID,
-        stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+        stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
         status: transferStatus(phase),
       });
       await persistence.advance(record, LAN_TO_CLOUD_PHASES[
@@ -280,7 +280,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     });
     let recordCreated = false;
@@ -298,7 +298,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('source-quiesced'),
     }), 'collecting-readiness');
 
@@ -317,7 +317,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'target',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: cloudToLanStatus('cloud-quiesced'),
     });
     const { ownerInstallationKey: _ownerInstallationKey, ...withoutOwner } = current;
@@ -417,7 +417,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     }));
     const retained = await persistence.retainClaimBatch({
@@ -496,7 +496,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...relinquishedStatus,
         batchRevision: rotated.batchRevision,
@@ -544,7 +544,7 @@ describe('AuthorityTransferPersistence', () => {
 
     const claimPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -554,7 +554,7 @@ describe('AuthorityTransferPersistence', () => {
     expect(await readFile(claimPath, 'utf8')).not.toContain(rotated.claims[1].claim);
     const summary = await readFile(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -573,7 +573,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     }));
     await persistence.retainClaimBatch({
@@ -622,7 +622,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('source-relinquished'),
     }));
     await persistence.retainClaimBatch({
@@ -645,7 +645,7 @@ describe('AuthorityTransferPersistence', () => {
     });
     const claimPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -674,7 +674,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'target',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: cloudToLanStatus('collecting-readiness'),
     });
     await persistence.create(record);
@@ -683,7 +683,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: cloudToLanStatus('collecting-readiness'),
     });
     await persistence.advance(record, 'collecting-readiness');
@@ -714,7 +714,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
         localRole: 'target',
         operationIntentId: OPERATION_INTENT_ID,
-        stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+        stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
         status: cloudToLanStatus(phase),
       });
       await persistence.advance(record, CLOUD_TO_LAN_PHASES[
@@ -744,7 +744,7 @@ describe('AuthorityTransferPersistence', () => {
     ).completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     });
     await expect(completeTerminalCleanup()).resolves.toBeUndefined();
@@ -766,7 +766,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     });
     await persistence.create(record);
@@ -774,7 +774,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('source-quiesced'),
     });
     await persistence.advance(record, 'collecting-readiness');
@@ -793,7 +793,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
         localRole: 'source',
         operationIntentId: OPERATION_INTENT_ID,
-        stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+        stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
         status: {
           ...transferStatus('source-quiesced', index + 2),
           phase,
@@ -824,7 +824,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('source-quiesced', 8),
         phase: 'cancelled',
@@ -835,14 +835,14 @@ describe('AuthorityTransferPersistence', () => {
     await persistence.completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     });
     const replacement = createAuthorityTransferRecord({
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: 'replacement-intent',
-      stagingDirectoryName: '.claudian-authority-transfer-replacement-transfer',
+      stagingDirectoryName: '.grandemonium-authority-transfer-replacement-transfer',
       status: {
         ...transferStatus('collecting-readiness', 9),
         transferId: 'replacement-transfer',
@@ -861,7 +861,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('source-quiesced', 8),
         phase: 'cancelled',
@@ -883,7 +883,7 @@ describe('AuthorityTransferPersistence', () => {
     await expect(persistence.completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     })).rejects.toMatchObject({
       code: 'authority-transfer-stale',
@@ -908,7 +908,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('completed'),
     });
     const divergentCustody = createAuthorityTransferClaimCustodyRecord({
@@ -949,7 +949,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('completed'),
     });
     await repository.authorityTransferRecords.save(completed);
@@ -979,7 +979,7 @@ describe('AuthorityTransferPersistence', () => {
     const completeTerminalCleanup = () => persistence.completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     });
     await expect(completeTerminalCleanup()).rejects.toMatchObject({
@@ -1041,7 +1041,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status,
     });
     await repository.authorityTransferRecords.save(completed);
@@ -1075,7 +1075,7 @@ describe('AuthorityTransferPersistence', () => {
     await persistence.completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     });
 
@@ -1094,7 +1094,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('completed'),
     });
     await repository.authorityTransferRecords.save(
@@ -1110,7 +1110,7 @@ describe('AuthorityTransferPersistence', () => {
     await expect(persistence.completeTerminalCleanup({
       operationIntentId: OPERATION_INTENT_ID,
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       transferId: TRANSFER_ID,
     })).resolves.toBeUndefined();
     await expect(persistence.inspectLifecycleOwner(PROJECT_ID)).resolves.toBe('terminal');
@@ -1123,7 +1123,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('collecting-readiness'),
     }));
     const first = await persistence.retainClaimBatch({
@@ -1176,7 +1176,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('claims-retained', 8),
         phase: 'cancelled',
@@ -1211,7 +1211,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('source-relinquished'),
     });
     await repository.authorityTransferRecords.save(relinquished);
@@ -1220,7 +1220,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('repository-published', 7),
         phase: 'cancel-intent',
@@ -1232,7 +1232,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('repository-published', 8),
     }), 'source-relinquished')).rejects.toMatchObject({
       code: 'authority-transfer-stale',
@@ -1247,7 +1247,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('source-quiesced', 6),
         phase: 'source-reopened',
@@ -1258,7 +1258,7 @@ describe('AuthorityTransferPersistence', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('source-quiesced', 7),
         phase: 'cancelled',
@@ -1283,7 +1283,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('cloud-activated'),
     }));
     const batch = claimBatch();
@@ -1310,7 +1310,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
         localRole: 'source',
         operationIntentId: OPERATION_INTENT_ID,
-        stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+        stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
         status: transferStatus('completed'),
       }),
     );
@@ -1330,14 +1330,14 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('checkpoint-received'),
     });
     const replacedCheckpoint = createAuthorityTransferRecord({
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...transferStatus('checkpoint-validated'),
         checkpointSha256: 'b'.repeat(64),
@@ -1350,7 +1350,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: transferStatus('source-relinquished'),
     });
     const activatedStatus = transferStatus('cloud-activated');
@@ -1358,7 +1358,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...activatedStatus,
         relinquishmentProof: {
@@ -1377,7 +1377,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...status,
         relinquishmentProof: {
@@ -1390,7 +1390,7 @@ describe('AuthorityTransferPersistence', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: OPERATION_INTENT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: {
         ...status,
         relinquishmentProof: {

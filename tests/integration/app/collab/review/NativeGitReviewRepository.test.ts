@@ -21,7 +21,7 @@ describe('NativeGitReviewRepository integration', () => {
   let runner: GitCommandRunner;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-review-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-review-'));
     const emptyConfigPath = path.join(root, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');
     const resolution = await new GitRuntimeResolver().resolve();

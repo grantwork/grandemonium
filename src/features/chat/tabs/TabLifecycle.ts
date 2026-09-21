@@ -41,7 +41,7 @@ export function commitProvisionalTab(tab: AssembledTabRuntime): void {
 }
 
 export function activateTab(tab: AssembledTabRuntime): void {
-  tab.dom.contentEl.removeClass('claudian-hidden');
+  tab.dom.contentEl.removeClass('grandemonium-hidden');
   tab.controllers.streamController.setTabActive(true);
   tab.controllers.selectionController.start();
   tab.controllers.browserSelectionController.start();
@@ -51,7 +51,7 @@ export function activateTab(tab: AssembledTabRuntime): void {
 
 export function deactivateTab(tab: AssembledTabRuntime): void {
   tab.controllers.streamController.setTabActive(false);
-  tab.dom.contentEl.addClass('claudian-hidden');
+  tab.dom.contentEl.addClass('grandemonium-hidden');
   tab.controllers.selectionController.stop();
   tab.controllers.browserSelectionController.stop();
   tab.controllers.canvasSelectionController.stop();

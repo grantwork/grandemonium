@@ -3,6 +3,8 @@ export interface SystemPromptSettings {
   customPrompt?: string;
   vaultPath?: string;
   userName?: string;
+  /** This provider's configured workspace identity, used as its comment author. */
+  agentName?: string;
 }
 
 export interface SystemPromptBuildOptions {
@@ -12,14 +14,22 @@ export interface SystemPromptBuildOptions {
 function getRuntimeContext(
   vaultPath: string | undefined,
   userName: string | undefined,
+  agentName: string | undefined,
 ): string {
   const trimmedUserName = userName?.trim();
   const vaultOwner = trimmedUserName ? `**${trimmedUserName}**'s` : "the user's";
   const lines = [
-    `You are Claudian, operating inside ${vaultOwner} Obsidian Vault. The current working directory is the Vault root.`,
+    `You are Grandemonium, operating inside ${vaultOwner} Obsidian Vault. The current working directory is the Vault root.`,
   ];
   if (vaultPath) {
     lines.push(`Vault absolute path: ${vaultPath}`);
+  }
+  const trimmedAgentName = agentName?.trim();
+  if (trimmedAgentName) {
+    lines.push(
+      `Your name in this Vault is \`${trimmedAgentName}\`. Sign review comments and edit`
+      + ` suggestions you write with \`"author": "${trimmedAgentName}"\`, and answer to that name.`,
+    );
   }
   lines.push('Use `bash: date` to get the current date and time. Never guess or assume.');
 
@@ -31,13 +41,11 @@ ${lines.join('\n')}`;
 function getUserMessageContext(): string {
   return `## User Message Context
 
-The user's query comes first, followed by optional Claudian XML context tags. Treat content inside \`<![CDATA[...]]>\` as the user's literal text.
+The user's query comes first, followed by optional Grandemonium XML context tags. Treat content inside \`<![CDATA[...]]>\` as the user's literal text.
 
-- \`<linked_content path="path/to/content" />\`: The Conversation's primary file, Note, or directory.
-- Inspect only the files needed for the user's request. A linked directory is not an instruction to recursively read or summarize the entire directory.
-- Linked content does not change the vault-root working directory, does not grant access outside the existing sandbox, and does not prevent work elsewhere in the Vault.
-- Missing Linked content may have been deleted or renamed. Report that state instead of guessing a replacement.
-- \`<editor_selection path="path/to/note.md" lines="10-15">\`: Selected editor text.
+- Inspect only the files needed for the user's request.
+- \`<review_target path="path/to/note.md" />\`: The note whose review comments the request is about. Review that file's comments, whichever file this conversation is otherwise associated with.
+- \`<comment_target path="path/to/note.md" id="a1f3">\`: One review comment to act on. Act on only that comment and leave every other comment in the file alone.
 - \`<editor_cursor path="path/to/note.md" line="8">\`: Text around the editor cursor.
 - \`<browser_selection source="browser:https://example.com" title="Example" url="https://example.com">\`: Selected browser-view text.
 - \`<canvas_selection path="boards/project.canvas">\`: Selected Canvas node IDs.
@@ -112,7 +120,7 @@ export function buildSystemPrompt(
   options: SystemPromptBuildOptions = {},
 ): string {
   return [
-    getRuntimeContext(settings.vaultPath, settings.userName),
+    getRuntimeContext(settings.vaultPath, settings.userName, settings.agentName),
     getUserMessageContext(),
     getPathConventions(),
     getFileOperations(),
@@ -137,6 +145,7 @@ export function computeSystemPromptKey(
     settings.customPrompt || '',
     settings.vaultPath || '',
     (settings.userName || '').trim(),
+    (settings.agentName || '').trim(),
   ];
 
   if (dynamicSectionsKey) {

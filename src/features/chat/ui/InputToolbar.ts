@@ -53,7 +53,7 @@ export class ModelSelector {
   private callbacks: ToolbarCallbacks;
   constructor(parentEl: HTMLElement, callbacks: ToolbarCallbacks) {
     this.callbacks = callbacks;
-    this.container = parentEl.createDiv({ cls: 'claudian-model-selector' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-model-selector' });
     this.render();
     this.container.addEventListener('mouseenter', () => {
       this.updateDisplay();
@@ -73,10 +73,10 @@ export class ModelSelector {
   private render() {
     this.container.empty();
 
-    this.buttonEl = this.container.createDiv({ cls: 'claudian-model-btn' });
+    this.buttonEl = this.container.createDiv({ cls: 'grandemonium-model-btn' });
     this.updateDisplay();
 
-    this.dropdownEl = this.container.createDiv({ cls: 'claudian-model-dropdown' });
+    this.dropdownEl = this.container.createDiv({ cls: 'grandemonium-model-dropdown' });
     this.renderOptions();
   }
 
@@ -94,13 +94,13 @@ export class ModelSelector {
 
     if (icon) {
       createProviderIconSvg(icon, {
-        className: 'claudian-model-provider-icon',
+        className: 'grandemonium-model-provider-icon',
         height: 12,
         parent: this.buttonEl,
         width: 12,
       });
     }
-    const labelEl = this.buttonEl.createSpan({ cls: 'claudian-model-label' });
+    const labelEl = this.buttonEl.createSpan({ cls: 'grandemonium-model-label' });
     labelEl.setText(displayModel?.label || 'Unknown');
   }
 
@@ -115,12 +115,12 @@ export class ModelSelector {
     let lastGroup: string | undefined;
     for (const model of reversed) {
       if (model.group && model.group !== lastGroup) {
-        const separator = this.dropdownEl.createDiv({ cls: 'claudian-model-group' });
+        const separator = this.dropdownEl.createDiv({ cls: 'grandemonium-model-group' });
         separator.setText(model.group);
         lastGroup = model.group;
       }
 
-      const option = this.dropdownEl.createDiv({ cls: 'claudian-model-option' });
+      const option = this.dropdownEl.createDiv({ cls: 'grandemonium-model-option' });
       if (model.value === currentModel) {
         option.addClass('selected');
       }
@@ -128,7 +128,7 @@ export class ModelSelector {
       const icon = model.providerIcon ?? this.callbacks.getUIConfig().getProviderIcon?.();
       if (icon) {
         createProviderIconSvg(icon, {
-          className: 'claudian-model-provider-icon',
+          className: 'grandemonium-model-provider-icon',
           height: 12,
           parent: option,
           width: 12,
@@ -159,7 +159,7 @@ export class ModeSelector {
 
   constructor(parentEl: HTMLElement, callbacks: ToolbarCallbacks) {
     this.callbacks = callbacks;
-    this.container = parentEl.createDiv({ cls: 'claudian-mode-selector' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-mode-selector' });
     this.render();
   }
 
@@ -170,8 +170,8 @@ export class ModeSelector {
   private render() {
     this.container.empty();
 
-    this.labelEl = this.container.createSpan({ cls: 'claudian-mode-label' });
-    this.toggleEl = this.container.createDiv({ cls: 'claudian-toggle-switch' });
+    this.labelEl = this.container.createSpan({ cls: 'grandemonium-mode-label' });
+    this.toggleEl = this.container.createDiv({ cls: 'grandemonium-toggle-switch' });
 
     this.toggleEl.addEventListener('click', () => {
       runToolbarAction(() => this.toggle(), 'Failed to change mode');
@@ -199,11 +199,11 @@ export class ModeSelector {
 
     const selectorConfig = this.getSelectorConfig();
     if (!selectorConfig || selectorConfig.options.length !== 2) {
-      this.container.addClass('claudian-hidden');
+      this.container.addClass('grandemonium-hidden');
       return;
     }
 
-    this.container.removeClass('claudian-hidden');
+    this.container.removeClass('grandemonium-hidden');
     const { active, inactive } = this.resolveOptionPair(selectorConfig);
     const currentOption = selectorConfig.options.find((option) => option.value === selectorConfig.value)
       ?? selectorConfig.options[0];
@@ -251,7 +251,7 @@ export class ThinkingBudgetSelector {
 
   constructor(parentEl: HTMLElement, callbacks: ToolbarCallbacks) {
     this.callbacks = callbacks;
-    this.container = parentEl.createDiv({ cls: 'claudian-thinking-selector' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-thinking-selector' });
     this.render();
   }
 
@@ -259,16 +259,16 @@ export class ThinkingBudgetSelector {
     this.container.empty();
 
     // Effort selector (for adaptive thinking models)
-    this.effortEl = this.container.createDiv({ cls: 'claudian-thinking-effort' });
-    const effortLabel = this.effortEl.createSpan({ cls: 'claudian-thinking-label-text' });
+    this.effortEl = this.container.createDiv({ cls: 'grandemonium-thinking-effort' });
+    const effortLabel = this.effortEl.createSpan({ cls: 'grandemonium-thinking-label-text' });
     effortLabel.setText('Effort:');
-    this.effortGearsEl = this.effortEl.createDiv({ cls: 'claudian-thinking-gears' });
+    this.effortGearsEl = this.effortEl.createDiv({ cls: 'grandemonium-thinking-gears' });
 
     // Legacy budget selector (for custom models)
-    this.budgetEl = this.container.createDiv({ cls: 'claudian-thinking-budget' });
-    const budgetLabel = this.budgetEl.createSpan({ cls: 'claudian-thinking-label-text' });
+    this.budgetEl = this.container.createDiv({ cls: 'grandemonium-thinking-budget' });
+    const budgetLabel = this.budgetEl.createSpan({ cls: 'grandemonium-thinking-label-text' });
     budgetLabel.setText('Thinking:');
-    this.budgetGearsEl = this.budgetEl.createDiv({ cls: 'claudian-thinking-gears' });
+    this.budgetGearsEl = this.budgetEl.createDiv({ cls: 'grandemonium-thinking-gears' });
 
     this.updateDisplay();
   }
@@ -284,13 +284,13 @@ export class ThinkingBudgetSelector {
     const options = uiConfig.getReasoningOptions(model, settings);
     const currentInfo = options.find(e => e.value === currentEffort);
 
-    const currentEl = this.effortGearsEl.createDiv({ cls: 'claudian-thinking-current' });
+    const currentEl = this.effortGearsEl.createDiv({ cls: 'grandemonium-thinking-current' });
     currentEl.setText(currentInfo?.label || options[0]?.label || 'High');
 
-    const optionsEl = this.effortGearsEl.createDiv({ cls: 'claudian-thinking-options' });
+    const optionsEl = this.effortGearsEl.createDiv({ cls: 'grandemonium-thinking-options' });
 
     for (const effort of [...options].reverse()) {
-      const gearEl = optionsEl.createDiv({ cls: 'claudian-thinking-gear' });
+      const gearEl = optionsEl.createDiv({ cls: 'grandemonium-thinking-gear' });
       gearEl.setText(effort.label);
       if (effort.description) {
         gearEl.setAttribute('title', effort.description);
@@ -321,13 +321,13 @@ export class ThinkingBudgetSelector {
     const options: ProviderReasoningOption[] = uiConfig.getReasoningOptions(model, settings);
     const currentBudgetInfo = options.find(b => b.value === currentBudget);
 
-    const currentEl = this.budgetGearsEl.createDiv({ cls: 'claudian-thinking-current' });
+    const currentEl = this.budgetGearsEl.createDiv({ cls: 'grandemonium-thinking-current' });
     currentEl.setText(currentBudgetInfo?.label || options[0]?.label || 'Off');
 
-    const optionsEl = this.budgetGearsEl.createDiv({ cls: 'claudian-thinking-options' });
+    const optionsEl = this.budgetGearsEl.createDiv({ cls: 'grandemonium-thinking-options' });
 
     for (const budget of [...options].reverse()) {
-      const gearEl = optionsEl.createDiv({ cls: 'claudian-thinking-gear' });
+      const gearEl = optionsEl.createDiv({ cls: 'grandemonium-thinking-gear' });
       gearEl.setText(budget.label);
       const tokens = budget.tokens ?? 0;
       gearEl.setAttribute('title', tokens > 0 ? `${tokens.toLocaleString()} tokens` : 'Disabled');
@@ -349,8 +349,8 @@ export class ThinkingBudgetSelector {
   updateDisplay() {
     const capabilities = this.callbacks.getCapabilities();
     if (capabilities.reasoningControl === 'none') {
-      this.effortEl?.addClass('claudian-hidden');
-      this.budgetEl?.addClass('claudian-hidden');
+      this.effortEl?.addClass('grandemonium-hidden');
+      this.budgetEl?.addClass('grandemonium-hidden');
       return;
     }
 
@@ -363,18 +363,18 @@ export class ThinkingBudgetSelector {
       || (options.length === 1 && options[0]?.value === defaultValue);
 
     if (shouldHide) {
-      this.effortEl?.addClass('claudian-hidden');
-      this.budgetEl?.addClass('claudian-hidden');
+      this.effortEl?.addClass('grandemonium-hidden');
+      this.budgetEl?.addClass('grandemonium-hidden');
       return;
     }
 
     const adaptive = uiConfig.isAdaptiveReasoningModel(model, settings);
 
     if (this.effortEl) {
-      this.effortEl.toggleClass('claudian-hidden', !adaptive);
+      this.effortEl.toggleClass('grandemonium-hidden', !adaptive);
     }
     if (this.budgetEl) {
-      this.budgetEl.toggleClass('claudian-hidden', adaptive);
+      this.budgetEl.toggleClass('grandemonium-hidden', adaptive);
     }
 
     if (adaptive) {
@@ -394,7 +394,7 @@ export class PermissionToggle {
 
   constructor(parentEl: HTMLElement, callbacks: ToolbarCallbacks) {
     this.callbacks = callbacks;
-    this.container = parentEl.createDiv({ cls: 'claudian-permission-toggle' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-permission-toggle' });
     this.render();
   }
 
@@ -406,8 +406,8 @@ export class PermissionToggle {
   private render() {
     this.container.empty();
 
-    this.labelEl = this.container.createSpan({ cls: 'claudian-permission-label' });
-    this.toggleEl = this.container.createDiv({ cls: 'claudian-toggle-switch' });
+    this.labelEl = this.container.createSpan({ cls: 'grandemonium-permission-label' });
+    this.toggleEl = this.container.createDiv({ cls: 'grandemonium-toggle-switch' });
 
     this.updateDisplay();
 
@@ -426,11 +426,11 @@ export class PermissionToggle {
 
     const toggleConfig = this.getToggleConfig();
     if (!this.visible || !toggleConfig) {
-      this.container.addClass('claudian-hidden');
+      this.container.addClass('grandemonium-hidden');
       return;
     }
 
-    this.container.removeClass('claudian-hidden');
+    this.container.removeClass('grandemonium-hidden');
     const mode = this.callbacks.getSettings().permissionMode;
     if (mode === toggleConfig.activeValue) {
       this.toggleEl.addClass('active');
@@ -462,15 +462,15 @@ export class ServiceTierToggle {
 
   constructor(parentEl: HTMLElement, callbacks: ToolbarCallbacks) {
     this.callbacks = callbacks;
-    this.container = parentEl.createDiv({ cls: 'claudian-service-tier-toggle' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-service-tier-toggle' });
     this.render();
   }
 
   private render() {
     this.container.empty();
 
-    this.buttonEl = this.container.createDiv({ cls: 'claudian-service-tier-button' });
-    this.iconEl = this.buttonEl.createSpan({ cls: 'claudian-service-tier-icon' });
+    this.buttonEl = this.container.createDiv({ cls: 'grandemonium-service-tier-button' });
+    this.iconEl = this.buttonEl.createSpan({ cls: 'grandemonium-service-tier-icon' });
     setIcon(this.iconEl, 'zap');
 
     this.updateDisplay();
@@ -492,11 +492,11 @@ export class ServiceTierToggle {
 
     const toggleConfig = this.getToggleConfig();
     if (!toggleConfig) {
-      this.container.addClass('claudian-hidden');
+      this.container.addClass('grandemonium-hidden');
       return;
     }
 
-    this.container.removeClass('claudian-hidden');
+    this.container.removeClass('grandemonium-hidden');
     if (toggleConfig.isActive) {
       this.buttonEl.addClass('active');
     } else {
@@ -525,18 +525,18 @@ export class ContextUsageMeter {
   private circumference: number = 0;
 
   constructor(parentEl: HTMLElement) {
-    this.container = parentEl.createDiv({ cls: 'claudian-context-meter' });
+    this.container = parentEl.createDiv({ cls: 'grandemonium-context-meter' });
     this.container.setAttribute('role', 'progressbar');
     this.container.setAttribute('aria-label', 'Context usage');
     this.container.setAttribute('aria-valuemin', '0');
     this.container.setAttribute('aria-valuemax', '100');
     this.render();
     // Initially hidden
-    this.container.addClass('claudian-hidden');
+    this.container.addClass('grandemonium-hidden');
   }
 
   setVisible(visible: boolean): void {
-    this.container.toggleClass('claudian-hidden', !visible);
+    this.container.toggleClass('grandemonium-hidden', !visible);
   }
 
   private render() {
@@ -560,7 +560,7 @@ export class ContextUsageMeter {
     const x2 = cx + radius * Math.cos(endRad);
     const y2 = cy + radius * Math.sin(endRad);
 
-    const gaugeEl = this.container.createDiv({ cls: 'claudian-context-meter-gauge' });
+    const gaugeEl = this.container.createDiv({ cls: 'grandemonium-context-meter-gauge' });
     const svg = gaugeEl.createSvg('svg');
     svg.setAttribute('width', String(size));
     svg.setAttribute('height', String(size));
@@ -568,14 +568,14 @@ export class ContextUsageMeter {
 
     const pathData = `M ${x1} ${y1} A ${radius} ${radius} 0 1 1 ${x2} ${y2}`;
     const backgroundPath = svg.createSvg('path');
-    backgroundPath.classList.add('claudian-meter-bg');
+    backgroundPath.classList.add('grandemonium-meter-bg');
     backgroundPath.setAttribute('d', pathData);
     backgroundPath.setAttribute('fill', 'none');
     backgroundPath.setAttribute('stroke-width', String(strokeWidth));
     backgroundPath.setAttribute('stroke-linecap', 'round');
 
     const fillPath = svg.createSvg('path');
-    fillPath.classList.add('claudian-meter-fill');
+    fillPath.classList.add('grandemonium-meter-fill');
     fillPath.setAttribute('d', pathData);
     fillPath.setAttribute('fill', 'none');
     fillPath.setAttribute('stroke-width', String(strokeWidth));
@@ -588,15 +588,15 @@ export class ContextUsageMeter {
     gaugeEl.appendChild(svg);
     this.fillPath = fillPath;
 
-    this.percentEl = this.container.createSpan({ cls: 'claudian-context-meter-percent' });
+    this.percentEl = this.container.createSpan({ cls: 'grandemonium-context-meter-percent' });
   }
 
   update(usage: UsageInfo | null): void {
     if (!usage || usage.contextTokens <= 0) {
-      this.container.addClass('claudian-hidden');
+      this.container.addClass('grandemonium-hidden');
       return;
     }
-    this.container.removeClass('claudian-hidden');
+    this.container.removeClass('grandemonium-hidden');
     const fillLength = (usage.percentage / 100) * this.circumference;
     if (this.fillPath) {
       this.fillPath.setAttribute('stroke-dashoffset', String(this.circumference - fillLength));
@@ -634,7 +634,7 @@ export class ContextUsageMeter {
   }
 }
 
-const TOOLBAR_COMPACT_CLASS = 'claudian-input-toolbar--compact';
+const TOOLBAR_COMPACT_CLASS = 'grandemonium-input-toolbar--compact';
 const ROW_CENTER_TOLERANCE = 1;
 
 /** Hides optional labels only when the full toolbar would wrap. */

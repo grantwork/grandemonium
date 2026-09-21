@@ -18,8 +18,8 @@ import {
   TicketRepository,
 } from '@/app/collab/authority/TicketRepository';
 import { type CollabOperationKind } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface TicketDatabasePort {
   read<T>(reader: (connection: AuthorityDatabaseConnection) => T): Promise<T>;
@@ -76,7 +76,7 @@ function normalizeMarkdown(value: string, maxBytes: number, field: string): stri
 
 function normalizeTitle(value: string): string {
   const normalized = value.trim();
-  if (normalized.length === 0 || normalized.length > CLAUDIAN_COLLAB_LIMITS.maxTicketTitleUtf16) {
+  if (normalized.length === 0 || normalized.length > GRANDEMONIUM_COLLAB_LIMITS.maxTicketTitleUtf16) {
     throw ticketError('protocol-payload-invalid', 'ticket-title-invalid');
   }
   return normalized;
@@ -206,8 +206,8 @@ export class TicketService {
     actorMemberId: CollabMemberId,
     request: ListTicketsRequest,
   ): Promise<CollabTicketPage> {
-    const limit = request.limit ?? CLAUDIAN_COLLAB_LIMITS.defaultTicketPageSize;
-    if (!Number.isSafeInteger(limit) || limit < 1 || limit > CLAUDIAN_COLLAB_LIMITS.maxTicketPageSize) {
+    const limit = request.limit ?? GRANDEMONIUM_COLLAB_LIMITS.defaultTicketPageSize;
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > GRANDEMONIUM_COLLAB_LIMITS.maxTicketPageSize) {
       throw ticketError('protocol-payload-invalid', 'ticket-list-limit-invalid');
     }
     const cursor = decodeCursor(request.cursor);
@@ -223,7 +223,7 @@ export class TicketService {
       const page = trimAuthorityKeysetPage(
         rows,
         limit,
-        CLAUDIAN_COLLAB_LIMITS.ticketPageMaxUtf8Bytes,
+        GRANDEMONIUM_COLLAB_LIMITS.ticketPageMaxUtf8Bytes,
         ticket => ({ createdAt: ticket.updatedAt, id: String(ticket.number) }),
         key => encodeCursor({ ticketNumber: Number(key.id), updatedAt: key.createdAt }),
         'tickets',
@@ -254,11 +254,11 @@ export class TicketService {
     ticketId: string,
     query: { readonly cursor?: string; readonly limit?: number },
   ): Promise<CollabTicketCommentPage> {
-    const limit = query.limit ?? CLAUDIAN_COLLAB_LIMITS.defaultCommentPageSize;
+    const limit = query.limit ?? GRANDEMONIUM_COLLAB_LIMITS.defaultCommentPageSize;
     if (
       !Number.isSafeInteger(limit)
       || limit < 1
-      || limit > CLAUDIAN_COLLAB_LIMITS.maxCommentPageSize
+      || limit > GRANDEMONIUM_COLLAB_LIMITS.maxCommentPageSize
     ) {
       throw ticketError('protocol-payload-invalid', 'ticket-comment-page-limit-invalid');
     }
@@ -285,11 +285,11 @@ export class TicketService {
     ticketId: string,
     query: { readonly cursor?: string; readonly limit?: number },
   ): Promise<CollabTicketAcceptedRelationPage> {
-    const limit = query.limit ?? CLAUDIAN_COLLAB_LIMITS.maxRelationsPerPage;
+    const limit = query.limit ?? GRANDEMONIUM_COLLAB_LIMITS.maxRelationsPerPage;
     if (
       !Number.isSafeInteger(limit)
       || limit < 1
-      || limit > CLAUDIAN_COLLAB_LIMITS.maxRelationsPerPage
+      || limit > GRANDEMONIUM_COLLAB_LIMITS.maxRelationsPerPage
     ) {
       throw ticketError('protocol-payload-invalid', 'ticket-relation-page-limit-invalid');
     }
@@ -317,7 +317,7 @@ export class TicketService {
     const title = normalizeTitle(request.title);
     const body = normalizeMarkdown(
       request.body,
-      CLAUDIAN_COLLAB_LIMITS.maxTicketBodyBytes,
+      GRANDEMONIUM_COLLAB_LIMITS.maxTicketBodyBytes,
       'ticket-body',
     );
     return this.mutateIdempotently(
@@ -353,7 +353,7 @@ export class TicketService {
     const title = normalizeTitle(request.title);
     const body = normalizeMarkdown(
       request.body,
-      CLAUDIAN_COLLAB_LIMITS.maxTicketBodyBytes,
+      GRANDEMONIUM_COLLAB_LIMITS.maxTicketBodyBytes,
       'ticket-body',
     );
     return this.mutateIdempotently(
@@ -404,7 +404,7 @@ export class TicketService {
   ): Promise<CreateTicketCommentResponse> {
     const body = normalizeMarkdown(
       request.body,
-      CLAUDIAN_COLLAB_LIMITS.maxTicketCommentBytes,
+      GRANDEMONIUM_COLLAB_LIMITS.maxTicketCommentBytes,
       'ticket-comment',
     );
     return this.mutateIdempotently(
@@ -426,7 +426,7 @@ export class TicketService {
       (connection, actor, createdAt) => {
         const current = this.requireTicket(connection, request.ticketId).ticket;
         this.requireNoIncompleteAcceptance(connection, current.id);
-        if (current.commentCount >= CLAUDIAN_COLLAB_LIMITS.maxTicketComments) {
+        if (current.commentCount >= GRANDEMONIUM_COLLAB_LIMITS.maxTicketComments) {
           throw ticketError('quota-exceeded', 'ticket-comment-limit');
         }
         const response = this.tickets.createComment(connection, {

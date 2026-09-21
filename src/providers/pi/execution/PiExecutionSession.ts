@@ -22,6 +22,7 @@ import {
   buildSystemPrompt,
   type SystemPromptSettings,
 } from '../../../core/prompt/mainAgent';
+import { resolveAgentName } from '../../../core/providers/agentName';
 import { getRuntimeEnvironmentText } from '../../../core/providers/providerEnvironment';
 import type { ProviderHost } from '../../../core/providers/ProviderHost';
 import type {
@@ -73,6 +74,7 @@ import {
 import { buildPiSetModelPayload } from '../runtime/PiRpcPayloads';
 import type { PiRpcRecord } from '../runtime/PiRpcTransport';
 import {
+  DEFAULT_PI_PROVIDER_SETTINGS,
   getPiProviderSettings,
   type PiProviderSettings,
 } from '../settings';
@@ -1481,7 +1483,7 @@ function resolveSelectedModel(
     || !settings.visibleModels.includes(model)
   ) {
     throw new PiConfigurationError(
-      'No Pi model is selected. Enable a discovered model in Claudian settings.',
+      'No Pi model is selected. Enable a discovered model in Grandemonium settings.',
     );
   }
   return model;
@@ -1542,6 +1544,10 @@ function resolveSystemPrompt(
     mediaFolder: getString(settings.mediaFolder) ?? undefined,
     userName: getString(settings.userName) ?? undefined,
     vaultPath,
+    agentName: resolveAgentName(
+      getPiProviderSettings(settings).agentName,
+      DEFAULT_PI_PROVIDER_SETTINGS.agentName,
+    ),
   } satisfies SystemPromptSettings, {
     dynamicSections: request.configuration.systemInstructions.dynamicSections
       ? [...request.configuration.systemInstructions.dynamicSections]

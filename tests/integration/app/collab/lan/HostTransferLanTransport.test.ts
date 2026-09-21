@@ -42,7 +42,7 @@ describe('Host transfer provisional LAN transport', () => {
   });
 
   it('pins the target CA and authenticates probe, streamed stage, activation, and cancellation', async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transfer-lan-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transfer-lan-'));
     const tls = new LanTlsIdentity(vaultRoot, { installationKey: TEST_INSTALLATION_A });
     const identity = await tls.issueServerIdentity('127.0.0.1');
     const router = new HostTransferProvisionalRouter();
@@ -242,7 +242,7 @@ describe('Host transfer provisional LAN transport', () => {
   });
 
   it('fetches only the public Host-transition chain after pinning the advertised CA', async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transition-lan-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transition-lan-'));
     const tls = new LanTlsIdentity(vaultRoot, { installationKey: TEST_INSTALLATION_A });
     const identity = await tls.issueServerIdentity('127.0.0.1');
     const proof = {

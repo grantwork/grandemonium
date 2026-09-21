@@ -201,21 +201,21 @@ describe('CodexModelPicker', () => {
     expect(settingDescriptions).toContain(
       'Choose which models are available in the chat selector. Drag to reorder them; the provider uses the first currently usable model as its default. Select at least one model to use this provider.',
     );
-    expect(settingClasses).toContain('claudian-provider-model-picker-setting');
+    expect(settingClasses).toContain('grandemonium-provider-model-picker-setting');
     expect(elements.filter(element => element.attrs.type === 'checkbox').map(element => element.checked))
       .toEqual([true, true]);
     expect(elements.filter(element => element.tag === 'label' && element.title).map(element => element.title))
       .toEqual(['gpt-5.4-mini', 'gpt-5.5']);
 
     const aliasField = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-alias-field')
+      element.classes.has('grandemonium-provider-model-picker-selected-alias-field')
     );
     expect(aliasField.tag).toBe('label');
     expect(aliasField.children.find(element =>
-      element.classes.has('claudian-provider-model-picker-selected-alias-label')
+      element.classes.has('grandemonium-provider-model-picker-selected-alias-label')
     )?.text).toBe('Alias (optional)');
     expect(aliasField.children.some(element =>
-      element.classes.has('claudian-provider-model-picker-selected-alias')
+      element.classes.has('grandemonium-provider-model-picker-selected-alias')
     )).toBe(true);
 
     findElement(element => element.attrs['aria-label'] === 'Clear all selected Codex models')
@@ -236,13 +236,13 @@ describe('CodexModelPicker', () => {
     } as any);
 
     expect(elements.filter(element =>
-      element.classes.has('claudian-provider-model-picker-selected-default')
+      element.classes.has('grandemonium-provider-model-picker-selected-default')
     ).map(element => element.text)).toEqual(['Default']);
     expect(elements.some(element =>
-      element.classes.has('claudian-provider-model-picker-selected-order')
+      element.classes.has('grandemonium-provider-model-picker-selected-order')
     )).toBe(false);
     const dragHandle = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-drag')
+      element.classes.has('grandemonium-provider-model-picker-selected-drag')
     );
     expect(dragHandle.attrs['aria-label']).toContain('Reorder ');
     const preventDefault = jest.fn();
@@ -276,7 +276,7 @@ describe('CodexModelPicker', () => {
     } as any);
 
     const defaultBadge = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-default')
+      element.classes.has('grandemonium-provider-model-picker-selected-default')
     );
     expect(defaultBadge.parent?.parent?.parent?.attrs['data-model-id']).toBe('gpt-5.5');
   });
@@ -291,10 +291,10 @@ describe('CodexModelPicker', () => {
     } as any);
 
     const dragHandles = elements.filter(element =>
-      element.classes.has('claudian-provider-model-picker-selected-drag')
+      element.classes.has('grandemonium-provider-model-picker-selected-drag')
     );
     const selectedRows = elements.filter(element =>
-      element.classes.has('claudian-provider-model-picker-selected-row')
+      element.classes.has('grandemonium-provider-model-picker-selected-row')
     );
     const dataTransfer = {
       effectAllowed: '',
@@ -335,10 +335,10 @@ describe('CodexModelPicker', () => {
     renderCodexModelPicker(createElement() as any, createContext(plugin), {} as any);
 
     expect(findElement(element =>
-      element.classes.has('claudian-provider-model-picker-row-badge')
+      element.classes.has('grandemonium-provider-model-picker-row-badge')
     ).text).toBe('Unavailable');
     expect(findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-unavailable')
+      element.classes.has('grandemonium-provider-model-picker-selected-unavailable')
     ).text).toBe('Requires Ultra effort to be enabled');
   });
 
@@ -353,18 +353,18 @@ describe('CodexModelPicker', () => {
     renderCodexModelPicker(createElement() as any, context, { refreshModelCatalog } as any);
 
     const actionButton = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-action')
+      element.classes.has('grandemonium-provider-model-picker-action')
     );
     expect(actionButton.trigger('click')).toEqual([undefined]);
 
     const catalog = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-catalog')
+      element.classes.has('grandemonium-provider-model-picker-catalog')
     );
     catalog.open = true;
     expect(catalog.trigger('toggle')).toEqual([undefined]);
 
     const aliasInput = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-alias')
+      element.classes.has('grandemonium-provider-model-picker-selected-alias')
     );
     expect(aliasInput.trigger('blur')).toEqual([undefined]);
 
@@ -373,7 +373,7 @@ describe('CodexModelPicker', () => {
     expect(checkbox.trigger('change')).toEqual([undefined]);
 
     const removeButton = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-remove')
+      element.classes.has('grandemonium-provider-model-picker-selected-remove')
     );
     expect(removeButton.trigger('click')).toEqual([undefined]);
 
@@ -409,7 +409,7 @@ describe('CodexModelPicker', () => {
     renderCodexModelPicker(createElement() as any, context, {} as any);
 
     const aliasInput = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-selected-alias')
+      element.classes.has('grandemonium-provider-model-picker-selected-alias')
       && element.attrs['aria-label'] === 'Alias for GPT-5.5'
     );
     aliasInput.value = 'Primary';
@@ -435,7 +435,7 @@ describe('CodexModelPicker', () => {
       modelCatalogCoordinator: { ensureFresh },
     } as any);
 
-    findElement(element => element.classes.has('claudian-provider-model-picker-action'))
+    findElement(element => element.classes.has('grandemonium-provider-model-picker-action'))
       .trigger('click');
     await flushPromises();
 
@@ -456,7 +456,7 @@ describe('CodexModelPicker', () => {
       modelCatalogCoordinator: { ensureFresh },
     } as any);
 
-    findElement(element => element.classes.has('claudian-provider-model-picker-action'))
+    findElement(element => element.classes.has('grandemonium-provider-model-picker-action'))
       .trigger('click');
     await flushPromises();
 
@@ -500,7 +500,7 @@ describe('CodexModelPicker', () => {
     } as any);
 
     const catalog = findElement(element =>
-      element.classes.has('claudian-provider-model-picker-catalog')
+      element.classes.has('grandemonium-provider-model-picker-catalog')
     );
     catalog.open = true;
     catalog.trigger('toggle');

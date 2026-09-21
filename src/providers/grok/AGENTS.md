@@ -25,13 +25,13 @@
 - Preserve `Conversation.sessionId` and provider state across prompt, CLI-path, and environment changes. Recycle the process and load the same native session.
 - Use Grok's native history under `~/.grok/sessions/` read-only.
 - Send image attachments as ACP image content blocks and rehydrate their persisted native blocks. Use Grok's `_x.ai/interject` and `_x.ai/session/fork` extensions behind typed provider-owned boundaries for steering and forks.
-- Grok's `_x.ai/session/fork` request does not carry system-prompt metadata. After adopting the child, load that child with the current complete Grok/Claudian system-prompt replacement before its first prompt, and record the configuration as applied only after that load succeeds.
-- Keep Grok/xAI tools enabled except native plan entry/exit, which Claudian blocks without replacing native or user agent profiles. Preserve unknown tool data losslessly. Adapt Grok task-family lifecycle calls into the shared subagent renderer while retaining their raw names and payloads.
+- Grok's `_x.ai/session/fork` request does not carry system-prompt metadata. After adopting the child, load that child with the current complete Grok/Grandemonium system-prompt replacement before its first prompt, and record the configuration as applied only after that load succeeds.
+- Keep Grok/xAI tools enabled except native plan entry/exit, which Grandemonium blocks without replacing native or user agent profiles. Preserve unknown tool data losslessly. Adapt Grok task-family lifecycle calls into the shared subagent renderer while retaining their raw names and payloads.
 - Grok client-hook errors and timeouts fail open. Answer plan-hook callbacks with a native denial directly, including during cancellation; do not route them through user approval or throw on malformed callbacks.
 
 ## Models and Settings
 
-- Model selections are `grok/<raw-id>` in Claudian and raw ids on the ACP wire. With legacy `visibleModels: null`, catalog order retains native-default compatibility. Once the user persists an explicit enabled-model order, its first entry is the provider fallback and supersedes the discovered native default.
+- Model selections are `grok/<raw-id>` in Grandemonium and raw ids on the ACP wire. With legacy `visibleModels: null`, catalog order retains native-default compatibility. Once the user persists an explicit enabled-model order, its first entry is the provider fallback and supersedes the discovered native default.
 - `GrokChatUIConfig` emits enabled options in reverse persisted order because the shared upward-opening toolbar reverses options for display; settings/default resolution continue to use the persisted order directly.
 - Catalog snapshots are current-device scoped and contain only normalized non-secret metadata.
 - Expose Low, Medium, and High as the initial fallback for enabled models. After a real ACP session, persist and prefer the chosen model's advertised reasoning metadata; never create a session solely for discovery, and prune reasoning state when a model is disabled.
@@ -40,9 +40,9 @@
 
 ## Repository Instructions vs Runtime Instructions
 
-- This `AGENTS.md` is a repository developer guide for contributors editing Claudian's Grok adapter.
+- This `AGENTS.md` is a repository developer guide for contributors editing Grandemonium's Grok adapter.
 - Vault/runtime `AGENTS.md` files belong to the user and are discovered natively by Grok.
-- Claudian must never create, import, append, suppress, rewrite, or explicitly inject vault/runtime `AGENTS.md` files.
+- Grandemonium must never create, import, append, suppress, rewrite, or explicitly inject vault/runtime `AGENTS.md` files.
 
 ## Evidence and Fixtures
 

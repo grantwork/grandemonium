@@ -9,7 +9,7 @@ import { COLLAB_AUTHORITY_SCHEMA_VERSION } from '@/app/collab/CollabSchemaVersio
 import type { GitCommandRunner } from '@/app/collab/git/GitCommandRunner';
 import { COLLAB_HOST_TRANSFER_PROTOCOL_VERSION } from '@/app/collab/lan/LanCollabConstants';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export const HOST_TRANSFER_MANIFEST_SCHEMA_VERSION = 1 as const;
 export const HOST_TRANSFER_MANIFEST_FILE = 'host-transfer-metadata.json' as const;

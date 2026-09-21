@@ -194,7 +194,7 @@ async function createFixture(root: string): Promise<RecoveryFixture> {
   await mkdir(repositoryPath);
   await git(repositoryPath, ['init', '--initial-branch=main']);
   await git(repositoryPath, ['config', 'user.name', 'Cloud Recovery']);
-  await git(repositoryPath, ['config', 'user.email', 'recovery@claudian.local']);
+  await git(repositoryPath, ['config', 'user.email', 'recovery@grandemonium.local']);
   await writeFile(path.join(repositoryPath, 'shared.md'), 'shared state\n');
   await git(repositoryPath, ['add', 'shared.md']);
   await git(repositoryPath, ['commit', '-m', 'main']);
@@ -316,7 +316,7 @@ async function createEffects(fixture: RecoveryFixture): Promise<CloudBootstrapBi
       dispose: () => undefined,
       events: { connect: () => ({ dispose: () => undefined }) },
       git: {
-        headers: [{ name: 'X-Claudian-Development-Actor', value: MEMBER_ID }],
+        headers: [{ name: 'X-Grandemonium-Development-Actor', value: MEMBER_ID }],
         remoteUrl: CLOUD_REMOTE,
       },
       supports: (capability: string) => [
@@ -353,7 +353,7 @@ async function createEffects(fixture: RecoveryFixture): Promise<CloudBootstrapBi
       fetchFromUrl: async (repositoryPath, remote, _refspecs, network) => {
         expect(remote).toBe(CLOUD_REMOTE);
         expect(network?.headers).toEqual([
-          { name: 'X-Claudian-Development-Actor', value: MEMBER_ID },
+          { name: 'X-Grandemonium-Development-Actor', value: MEMBER_ID },
         ]);
         await git(repositoryPath, [
           'update-ref',
@@ -465,14 +465,14 @@ async function expectTerminalRecovery(fixture: RecoveryFixture): Promise<void> {
     .resolves.toBe('preserved local work\n');
   await expect(stat(path.join(
     fixture.vaultRoot,
-    '.claudian',
+    '.grandemonium',
     'collab',
     'authorities',
     PROJECT_ID,
   ))).rejects.toMatchObject({ code: 'ENOENT' });
   await expect(readFile(path.join(
     fixture.vaultRoot,
-    '.claudian',
+    '.grandemonium',
     'collab',
     'retired-lan-authorities',
     PROJECT_ID,
@@ -508,7 +508,7 @@ async function crashAfterCheckpoint(
 
 describe('Cloud binding durable recovery', () => {
   it('restarts fresh stores from the durable intent checkpoint and completes forward-only', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-checkpoint-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-checkpoint-'));
     try {
       const fixture = await createFixture(root);
       await expectTerminalRecovery(fixture);
@@ -523,7 +523,7 @@ describe('Cloud binding durable recovery', () => {
     'restarts fresh stores from the durable %s checkpoint and completes forward-only',
     async phase => {
       expect.hasAssertions();
-      const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-checkpoint-'));
+      const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-checkpoint-'));
       try {
         const fixture = await createFixture(root);
         await crashAfterCheckpoint(fixture, phase);
@@ -538,7 +538,7 @@ describe('Cloud binding durable recovery', () => {
   it.each(EFFECT_PHASES)(
     'restarts after real %s effect %s completes before its checkpoint',
     async (_phase, effectName) => {
-      const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-effect-'));
+      const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-effect-'));
       try {
         const fixture = await createFixture(root);
         const effects = failAfterEffect(await createEffects(fixture), effectName);
@@ -555,7 +555,7 @@ describe('Cloud binding durable recovery', () => {
   it.each(['index-repaired', 'lan-authority-retired'] as const)(
     'blocks %s recovery when the exact Cloud origin drifts',
     async phase => {
-      const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-origin-drift-'));
+      const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-origin-drift-'));
       try {
         const fixture = await createFixture(root);
         const store = await crashAfterCheckpoint(fixture, phase);
@@ -578,7 +578,7 @@ describe('Cloud binding durable recovery', () => {
         await expect(store.load(PROJECT_ID)).resolves.toMatchObject({ phase });
         const authorityExists = await stat(path.join(
           fixture.vaultRoot,
-          '.claudian',
+          '.grandemonium',
           'collab',
           'authorities',
           PROJECT_ID,
@@ -599,7 +599,7 @@ describe('Cloud binding durable recovery', () => {
   it.each(['index-repaired', 'lan-authority-retired'] as const)(
     'repairs Git refs and the complete index before advancing %s recovery',
     async phase => {
-      const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-repair-drift-'));
+      const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-repair-drift-'));
       try {
         const fixture = await createFixture(root);
         const store = await crashAfterCheckpoint(fixture, phase);
@@ -610,7 +610,7 @@ describe('Cloud binding durable recovery', () => {
           `refs/remotes/origin/members/${MEMBER_ID}`,
         ]);
         await writeFile(
-          path.join(fixture.vaultRoot, '.claudian', 'collab', 'index.json'),
+          path.join(fixture.vaultRoot, '.grandemonium', 'collab', 'index.json'),
           JSON.stringify({ projects: [], schemaVersion: 3, selectedProjectId: null }),
         );
         const pending = await store.load(PROJECT_ID);
@@ -639,13 +639,13 @@ describe('Cloud binding durable recovery', () => {
   );
 
   it('refuses the terminal fence when the attempt-scoped retired authority is missing', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-binding-retired-drift-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-binding-retired-drift-'));
     try {
       const fixture = await createFixture(root);
       const store = await crashAfterCheckpoint(fixture, 'lan-authority-retired');
       await rm(path.join(
         fixture.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'retired-lan-authorities',
         PROJECT_ID,

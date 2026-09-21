@@ -11,7 +11,7 @@ import { AuthorityIdempotencyRepository } from '@/app/collab/authority/Authority
 import { decodeAuthorityChangeRequest } from '@/app/collab/authority/RequestEnsureRepository';
 import type { RequestEnsureDatabasePort } from '@/app/collab/authority/RequestEnsureService';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AcceptCoordinatorGitPort {
   commitTree(input: {
@@ -50,8 +50,8 @@ export interface AcceptCoordinatorOptions {
 }
 
 const ACCEPT_IDENTITY = Object.freeze({
-  email: 'collab@claudian.local',
-  name: 'Claudian Collab',
+  email: 'collab@grandemonium.local',
+  name: 'Grandemonium Collab',
 });
 
 function acceptError(

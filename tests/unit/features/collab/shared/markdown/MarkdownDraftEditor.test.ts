@@ -37,9 +37,9 @@ describe('MarkdownDraftEditor', () => {
       'Updated #17',
       expect.any(HTMLElement),
     );
-    expect(root.querySelector<HTMLElement>('.claudian-collab-markdown-draft-editor')?.hidden)
+    expect(root.querySelector<HTMLElement>('.grandemonium-collab-markdown-draft-editor')?.hidden)
       .toBe(true);
-    expect(root.querySelector<HTMLElement>('.claudian-collab-markdown-draft-preview')?.hidden)
+    expect(root.querySelector<HTMLElement>('.grandemonium-collab-markdown-draft-preview')?.hidden)
       .toBe(false);
 
     root.querySelector<HTMLButtonElement>('[data-action="edit-test-draft"]')?.click();
@@ -58,17 +58,17 @@ describe('MarkdownDraftEditor', () => {
     });
     editable.setSelection(editable.getValue().length);
     const suggestions = editableRoot.querySelectorAll<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     );
     expect(suggestions).toHaveLength(1);
     expect(suggestions[0]?.textContent).toBe('#17 Preserve the draft');
     editableRoot.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     )?.click();
 
     expect(editable.getValue()).toBe('Investigate Resolves #17 ');
     expect(editable.getSelection()).toEqual({ anchor: 25, head: 25 });
-    expect(editableRoot.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(editableRoot.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
 
     const readOnlyRoot = document.createElement('div');
     const renderMarkdown = jest.fn().mockResolvedValue(undefined);
@@ -80,7 +80,7 @@ describe('MarkdownDraftEditor', () => {
     });
     await nextTurn();
 
-    expect(readOnlyRoot.querySelector('.claudian-collab-markdown-draft-modes')).toBeNull();
+    expect(readOnlyRoot.querySelector('.grandemonium-collab-markdown-draft-modes')).toBeNull();
     expect(readOnlyRoot.querySelector('.cm-editor')).toBeNull();
     expect(renderMarkdown).toHaveBeenCalledWith(
       'Rendered description',
@@ -120,7 +120,7 @@ describe('MarkdownDraftEditor', () => {
       key: 'Enter',
     }));
     expect(editor.getValue()).toBe('Related #18 ');
-    expect(root.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
 
     editor.destroy();
   });
@@ -147,7 +147,7 @@ describe('MarkdownDraftEditor', () => {
       anchor: 'Related #17 '.length,
       head: 'Related #17 '.length,
     });
-    expect(root.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
     editor.destroy();
   });
 
@@ -165,7 +165,7 @@ describe('MarkdownDraftEditor', () => {
     editor.setSelection(editor.getValue().length);
 
     const suggestions = root.querySelectorAll<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     );
     expect(suggestions).toHaveLength(1);
     expect(suggestions[0]?.textContent).toBe('Alice Chen');
@@ -173,7 +173,7 @@ describe('MarkdownDraftEditor', () => {
 
     expect(editor.getValue()).toBe('Please check with @Alice Chen ');
     expect(editor.getSelection()).toEqual({ anchor: 30, head: 30 });
-    expect(root.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
     editor.destroy();
   });
 
@@ -187,7 +187,7 @@ describe('MarkdownDraftEditor', () => {
     });
     editor.setSelection(editor.getValue().length);
 
-    expect(root.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
     editor.destroy();
   });
 
@@ -216,7 +216,7 @@ describe('MarkdownDraftEditor', () => {
     const root = document.createElement('div');
     const editor = new MarkdownDraftEditor(root, {
       ariaLabel: 'Description',
-      initialValue: 'Claudian',
+      initialValue: 'Grandemonium',
       renderMarkdown: jest.fn().mockResolvedValue(undefined),
     });
     editor.setSelection(0, editor.getValue().length);
@@ -225,12 +225,12 @@ describe('MarkdownDraftEditor', () => {
     const event = new Event('paste', { bubbles: true, cancelable: true });
     Object.defineProperty(event, 'clipboardData', {
       value: {
-        getData: (type: string) => type === 'text/plain' ? 'https://claudian.dev' : '',
+        getData: (type: string) => type === 'text/plain' ? 'https://grandemonium.dev' : '',
       },
     });
     view.contentDOM.dispatchEvent(event);
 
-    expect(editor.getValue()).toBe('[Claudian](https://claudian.dev)');
+    expect(editor.getValue()).toBe('[Grandemonium](https://grandemonium.dev)');
     editor.destroy();
   });
 });
@@ -243,7 +243,7 @@ function markdownEditor(root: HTMLElement): EditorView {
 
 function selectedSuggestions(root: HTMLElement): string[] {
   return [...root.querySelectorAll<HTMLElement>(
-    '.claudian-collab-markdown-suggestion',
+    '.grandemonium-collab-markdown-suggestion',
   )].map(item => item.getAttribute('aria-selected') ?? 'missing');
 }
 

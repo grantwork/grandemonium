@@ -20,7 +20,7 @@ describe('Long conversation message styles', () => {
 
     document.body.classList.add(platformClass);
     const assistantMessage = document.createElement('div');
-    assistantMessage.className = 'claudian-message-assistant';
+    assistantMessage.className = 'grandemonium-message-assistant';
     document.body.appendChild(assistantMessage);
 
     return window.getComputedStyle(assistantMessage);
@@ -61,9 +61,9 @@ describe('Message action row visibility', () => {
     style.textContent = readFileSync(path.resolve('src/style/components/messages.css'), 'utf8');
     document.head.appendChild(style);
     const message = document.createElement('div');
-    message.className = kind === 'images' ? 'claudian-message-images' : `claudian-message claudian-message-${kind}`;
+    message.className = kind === 'images' ? 'grandemonium-message-images' : `grandemonium-message grandemonium-message-${kind}`;
     const actions = document.createElement('div');
-    actions.className = 'claudian-message-actions claudian-user-msg-actions';
+    actions.className = 'grandemonium-message-actions grandemonium-user-msg-actions';
     actions.innerHTML = '<button type="button">Copy message</button>';
     message.appendChild(actions);
     document.body.appendChild(message);

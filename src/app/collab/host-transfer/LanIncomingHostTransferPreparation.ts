@@ -11,7 +11,7 @@ import type {
 import type { HostTransferRecoveryRecord } from '@/app/collab/host-transfer/HostTransferRecoveryRecord';
 import type { IncomingHostTransferCoordinator } from '@/app/collab/host-transfer/IncomingHostTransferCoordinator';
 import type { HostTransferProvisionalRegistration } from '@/app/collab/lan/HostTransferProvisionalRouter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const RECEIVER_CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
@@ -298,7 +298,7 @@ export class LanIncomingHostTransferPreparation implements IncomingHostTransferP
   }
 
   private stagingName(transferId: string): string {
-    return `.claudian-host-transfer-${transferId}`;
+    return `.grandemonium-host-transfer-${transferId}`;
   }
 
   private ownership(projectId: string, transferId: string, childName: string) {

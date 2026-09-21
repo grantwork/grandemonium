@@ -17,7 +17,7 @@ import {
   createAuthorityTransferClaimantRecord,
 } from '@/app/collab/authority-transfer/claim/AuthorityTransferClaimantRecord';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferClaimantSource {
   getClaim(

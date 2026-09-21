@@ -25,7 +25,7 @@ test('TypeScript promise rejections require Error reasons with type information'
 test('source lint matches strict Obsidian and type-aware review policy', async () => {
   const eslint = new ESLint();
   const config = await eslint.calculateConfigForFile(
-    'src/features/chat/ClaudianView.ts',
+    'src/features/chat/GrandemoniumView.ts',
   );
 
   for (const rule of [

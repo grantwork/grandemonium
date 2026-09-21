@@ -16,8 +16,8 @@ import { TEST_INSTALLATION_A } from '@test/helpers/installations';
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import {
-  ClaudianCollabService,
   type CollabAuthorityFoundation,
+  GrandemoniumCollabService,
 } from '@/app/collab';
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
 import {
@@ -81,15 +81,15 @@ describe('CollabProjectSetupService', () => {
   });
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-project-setup-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-project-setup-'));
   });
 
   afterEach(async () => {
     await rm(vaultRoot, { force: true, recursive: true });
   });
 
-  function createFoundation(getProjectsFolder?: () => string): ClaudianCollabService {
-    return new ClaudianCollabService({
+  function createFoundation(getProjectsFolder?: () => string): GrandemoniumCollabService {
+    return new GrandemoniumCollabService({
       createAuthorityDatabase: authorityDirectory => (
         new SqlJsProjectDatabase(authorityDirectory, { loadSqlJs: async () => SQL })
       ),
@@ -133,7 +133,7 @@ describe('CollabProjectSetupService', () => {
     const workingCopy = path.join(vaultRoot, 'Shared', 'Collab Projects', 'alpha-notes');
     const bareRepository = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -175,7 +175,7 @@ describe('CollabProjectSetupService', () => {
       { cwd: directPublisher, encoding: 'utf8' },
     );
     expect(blockedPush.status).not.toBe(0);
-    expect(blockedPush.stderr).toContain('Claudian Collab hosting is not active.');
+    expect(blockedPush.stderr).toContain('Grandemonium Collab hosting is not active.');
 
     await expect(foundation.local.projects.loadMembership(PROJECT_ID)).resolves.toMatchObject({
       hostOwnership: { autoStart: true, ownsAuthority: true },
@@ -207,14 +207,14 @@ describe('CollabProjectSetupService', () => {
     });
     expect((await readdir(path.join(vaultRoot, 'Shared', 'Collab Projects'))).sort())
       .toEqual([
-        '.claudian-collab-root.json',
         '.gitignore',
+        '.grandemonium-collab-root.json',
         'alpha-notes',
       ]);
     expect(JSON.parse(await readFile(
-      path.join(vaultRoot, 'Shared', 'Collab Projects', '.claudian-collab-root.json'),
+      path.join(vaultRoot, 'Shared', 'Collab Projects', '.grandemonium-collab-root.json'),
       'utf8',
-    ))).toEqual({ owner: 'claudian-collab-projects', schemaVersion: 1 });
+    ))).toEqual({ owner: 'grandemonium-collab-projects', schemaVersion: 1 });
     await foundation.close();
   });
 
@@ -256,21 +256,21 @@ describe('CollabProjectSetupService', () => {
     )).resolves.toBeNull();
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(readdir(path.join(vaultRoot, 'workspace'))).resolves.toEqual(
       expect.not.arrayContaining([
-        expect.stringMatching(/^\.claudian-(?:clone|seed)-/u),
+        expect.stringMatching(/^\.grandemonium-(?:clone|seed)-/u),
       ]),
     );
     expect((foundation as unknown as {
@@ -317,7 +317,7 @@ describe('CollabProjectSetupService', () => {
     )).resolves.toMatchObject({ operationId: OPERATION_ID });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -325,7 +325,7 @@ describe('CollabProjectSetupService', () => {
     await expect(stat(path.join(
       vaultRoot,
       'workspace',
-      `.claudian-seed-${PROJECT_ID}`,
+      `.grandemonium-seed-${PROJECT_ID}`,
     ))).resolves.toBeDefined();
 
     await expect(service.resumeSetup({ operationId: OPERATION_ID })).resolves.toMatchObject({
@@ -440,7 +440,7 @@ describe('CollabProjectSetupService', () => {
     const legacyClonePath = path.join(
       vaultRoot,
       'workspace',
-      `.claudian-clone-${PROJECT_ID}`,
+      `.grandemonium-clone-${PROJECT_ID}`,
     );
     const initialCommitOid = git(finalPath, ['rev-parse', 'HEAD']);
     await rename(finalPath, legacyClonePath);
@@ -449,7 +449,7 @@ describe('CollabProjectSetupService', () => {
       PROJECT_ID,
       'pending-operation',
       {
-        cloneDirectoryName: `.claudian-clone-${PROJECT_ID}`,
+        cloneDirectoryName: `.grandemonium-clone-${PROJECT_ID}`,
         createdAt: CREATED_AT,
         initialCommitOid,
         memberCredential: MEMBER_CREDENTIAL,
@@ -460,7 +460,7 @@ describe('CollabProjectSetupService', () => {
         phase: 'committed',
         projectId: PROJECT_ID,
         schemaVersion: 1,
-        seedDirectoryName: `.claudian-seed-${PROJECT_ID}`,
+        seedDirectoryName: `.grandemonium-seed-${PROJECT_ID}`,
         slug: 'legacy-recovery',
         sourcePaths: [],
         updatedAt: CREATED_AT,
@@ -495,9 +495,9 @@ describe('CollabProjectSetupService', () => {
     await mkdir(path.join(vaultRoot, 'notes'));
     await writeFile(path.join(vaultRoot, 'notes', 'brief.md'), 'keep me\n');
     await foundation.local.workspace.claimProjectsFolder('workspace');
-    await mkdir(path.join(vaultRoot, 'workspace', `.claudian-seed-${PROJECT_ID}`));
+    await mkdir(path.join(vaultRoot, 'workspace', `.grandemonium-seed-${PROJECT_ID}`));
     const legacyRecord = {
-      cloneDirectoryName: `.claudian-clone-${PROJECT_ID}`,
+      cloneDirectoryName: `.grandemonium-clone-${PROJECT_ID}`,
       createdAt: CREATED_AT,
       initialCommitOid: null,
       memberCredential: MEMBER_CREDENTIAL,
@@ -508,7 +508,7 @@ describe('CollabProjectSetupService', () => {
       phase: 'planned',
       projectId: PROJECT_ID,
       schemaVersion: 1,
-      seedDirectoryName: `.claudian-seed-${PROJECT_ID}`,
+      seedDirectoryName: `.grandemonium-seed-${PROJECT_ID}`,
       slug: 'legacy-import',
       sourcePaths: ['notes/brief.md'],
       updatedAt: CREATED_AT,
@@ -539,14 +539,14 @@ describe('CollabProjectSetupService', () => {
     });
     await expect(readFile(path.join(vaultRoot, 'notes', 'brief.md'), 'utf8'))
       .resolves.toBe('keep me\n');
-    await expect(stat(path.join(vaultRoot, 'workspace', `.claudian-seed-${PROJECT_ID}`)))
+    await expect(stat(path.join(vaultRoot, 'workspace', `.grandemonium-seed-${PROJECT_ID}`)))
       .resolves.toBeDefined();
     await expect(foundation.local.projects.loadIndex()).resolves.toMatchObject({
       projects: [expect.objectContaining({ id: PROJECT_ID })],
     });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -565,7 +565,7 @@ describe('CollabProjectSetupService', () => {
       workspacePath: 'workspace/staged',
     });
     await foundation.local.projects.saveProjectDocument(PROJECT_ID, 'pending-operation', {
-      cloneDirectoryName: `.claudian-clone-${PROJECT_ID}`,
+      cloneDirectoryName: `.grandemonium-clone-${PROJECT_ID}`,
       createdAt: CREATED_AT,
       initialCommitOid: '1'.repeat(40),
       memberCredential: MEMBER_CREDENTIAL,
@@ -577,7 +577,7 @@ describe('CollabProjectSetupService', () => {
       projectId: PROJECT_ID,
       projectsFolder: 'workspace',
       schemaVersion: 2,
-      seedDirectoryName: `.claudian-seed-${PROJECT_ID}`,
+      seedDirectoryName: `.grandemonium-seed-${PROJECT_ID}`,
       slug: 'staged',
       updatedAt: CREATED_AT,
     });
@@ -594,7 +594,7 @@ describe('CollabProjectSetupService', () => {
     });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -645,7 +645,7 @@ describe('CollabProjectSetupService', () => {
     });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -690,21 +690,21 @@ describe('CollabProjectSetupService', () => {
     )).resolves.toBeNull();
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(readdir(path.join(vaultRoot, 'workspace'))).resolves.toEqual(
       expect.not.arrayContaining([
-        expect.stringMatching(/^\.claudian-(?:clone|seed)-/u),
+        expect.stringMatching(/^\.grandemonium-(?:clone|seed)-/u),
       ]),
     );
     expect((foundation as unknown as {
@@ -715,12 +715,12 @@ describe('CollabProjectSetupService', () => {
 
   it('never cleans generated-looking children from an unowned captured root', async () => {
     const projectsFolder = 'Unowned Projects';
-    const seedPath = path.join(vaultRoot, projectsFolder, `.claudian-seed-${PROJECT_ID}`);
+    const seedPath = path.join(vaultRoot, projectsFolder, `.grandemonium-seed-${PROJECT_ID}`);
     await mkdir(seedPath, { recursive: true });
     await writeFile(path.join(seedPath, 'keep.md'), 'user content\n');
     const foundation = createFoundation();
     const record = {
-      cloneDirectoryName: `.claudian-clone-${PROJECT_ID}`,
+      cloneDirectoryName: `.grandemonium-clone-${PROJECT_ID}`,
       createdAt: CREATED_AT,
       initialCommitOid: null,
       memberCredential: MEMBER_CREDENTIAL,
@@ -732,7 +732,7 @@ describe('CollabProjectSetupService', () => {
       projectId: PROJECT_ID,
       projectsFolder,
       schemaVersion: 2,
-      seedDirectoryName: `.claudian-seed-${PROJECT_ID}`,
+      seedDirectoryName: `.grandemonium-seed-${PROJECT_ID}`,
       slug: 'unsafe-cleanup-probe',
       updatedAt: CREATED_AT,
     } as const;

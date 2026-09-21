@@ -58,7 +58,7 @@ import {
   NodeCloudAuthorityHttpTransport,
 } from '@/app/collab/remote-authority/NodeCloudAuthorityHttpTransport';
 import type { CollabCloudProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MIN_RECONNECT_DELAY_MS = 1_000;
 const MAX_RECONNECT_DELAY_MS = 30_000;
@@ -227,7 +227,7 @@ class CloudAuthorityControl implements CollabAuthorityControlPort, CollabAuthori
     const response = await this.artifacts.upload({
       body: input.body,
       byteCount: input.byteCount,
-      headers: { 'x-claudian-development-actor': this.actorId },
+      headers: { 'x-grandemonium-development-actor': this.actorId },
       maximumBytes: this.#artifactLimit(input.artifact),
       ...(options.signal ? { signal: options.signal } : {}),
       url: new URL(route.target, this.origin).toString(),
@@ -249,7 +249,7 @@ class CloudAuthorityControl implements CollabAuthorityControlPort, CollabAuthori
       input.artifact,
     );
     const response = await this.artifacts.download({
-      headers: { 'x-claudian-development-actor': this.actorId },
+      headers: { 'x-grandemonium-development-actor': this.actorId },
       maximumBytes: this.#artifactLimit(input.artifact),
       ...(options.signal ? { signal: options.signal } : {}),
       url: new URL(route.target, this.origin).toString(),
@@ -277,7 +277,7 @@ class CloudAuthorityControl implements CollabAuthorityControlPort, CollabAuthori
         protocolVersion: COLLAB_PROTOCOL_VERSION,
         requestId: this.requestId(),
       },
-      headers: { 'x-claudian-development-actor': this.actorId },
+      headers: { 'x-grandemonium-development-actor': this.actorId },
       method: route.method,
       ...(options.signal ? { signal: options.signal } : {}),
       url: new URL(route.target, this.origin).toString(),
@@ -565,7 +565,7 @@ class CloudAuthorityControl implements CollabAuthorityControlPort, CollabAuthori
         protocolVersion: COLLAB_PROTOCOL_VERSION,
         requestId: this.requestId(),
       },
-      headers: { 'x-claudian-development-actor': this.actorId },
+      headers: { 'x-grandemonium-development-actor': this.actorId },
       method: route.method,
       ...(options.signal ? { signal: options.signal } : {}),
       url: new URL(route.target, this.origin).toString(),
@@ -682,7 +682,7 @@ export class CloudProjectEventClient {
     const url = new URL(route.target, this.origin);
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = this.#createSocket({
-      headers: { 'x-claudian-development-actor': this.input.developmentActorId },
+      headers: { 'x-grandemonium-development-actor': this.input.developmentActorId },
       url: url.toString(),
     });
     this.#socket = socket;
@@ -899,7 +899,7 @@ export class CloudAuthorityAdapter implements CollabAuthorityAdapter {
       },
       git: {
         headers: [{
-          name: 'X-Claudian-Development-Actor',
+          name: 'X-Grandemonium-Development-Actor',
           sensitive: false,
           value: membership.authority.developmentActorId,
         }],
@@ -948,7 +948,7 @@ export class CloudAuthorityAdapter implements CollabAuthorityAdapter {
     const origin = canonicalCloudOrigin(serverUrl, 'serverUrl');
     const route = collabCloudCapabilitiesRoute();
     const response = await this.request({
-      headers: { 'x-claudian-development-actor': developmentActorId },
+      headers: { 'x-grandemonium-development-actor': developmentActorId },
       method: route.method,
       url: new URL(route.target, origin).toString(),
     });

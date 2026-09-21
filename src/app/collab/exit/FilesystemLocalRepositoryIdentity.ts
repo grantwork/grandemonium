@@ -6,7 +6,7 @@ import { collabMemberRef, isCollabMemberId, isCollabProjectId } from '@claudian-
 
 import type { LocalCleanupGitIdentityPort } from '@/app/collab/exit/LocalProjectCleanupCoordinator';
 import type { GitLocalRepositoryIdentity } from '@/app/collab/git/GitRepositoryService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MAX_CONFIG_BYTES = 64 * 1024;
 
@@ -19,7 +19,7 @@ function identityError(reason: string): CollabError {
 }
 
 /**
- * Verifies the Claudian-owned local Git identity without launching Native Git.
+ * Verifies the Grandemonium-owned local Git identity without launching Native Git.
  * This narrow reader exists so a terminal Retired Project can detach its own
  * `.git` directory even after the user's Git installation becomes unavailable.
  */
@@ -77,7 +77,7 @@ export class FilesystemLocalRepositoryIdentity implements LocalCleanupGitIdentit
     } finally {
       await handle.close().catch(() => undefined);
     }
-    const values = parseClaudianConfig(serialized);
+    const values = parseGrandemoniumConfig(serialized);
     const required: ReadonlyArray<readonly [string, string]> = [
       ['projectid', expected.projectId],
       ['memberid', expected.memberId],
@@ -92,19 +92,19 @@ export class FilesystemLocalRepositoryIdentity implements LocalCleanupGitIdentit
   }
 }
 
-function parseClaudianConfig(contents: string): Map<string, string[]> {
+function parseGrandemoniumConfig(contents: string): Map<string, string[]> {
   const result = new Map<string, string[]>();
-  let inClaudianSection = false;
+  let inGrandemoniumSection = false;
   for (const sourceLine of contents.split(/\r?\n/)) {
     const line = sourceLine.trim();
     if (!line || line.startsWith('#') || line.startsWith(';')) continue;
     if (line.startsWith('[')) {
       const match = /^\[\s*([A-Za-z0-9.-]+)(?:\s+"[^"]*")?\s*\]$/.exec(line);
       if (!match) throw identityError('collab-local-config-invalid');
-      inClaudianSection = match[1].toLocaleLowerCase('en-US') === 'claudian';
+      inGrandemoniumSection = match[1].toLocaleLowerCase('en-US') === 'grandemonium';
       continue;
     }
-    if (!inClaudianSection) continue;
+    if (!inGrandemoniumSection) continue;
     const separator = line.indexOf('=');
     if (separator <= 0) throw identityError('collab-local-config-invalid');
     const key = line.slice(0, separator).trim().toLocaleLowerCase('en-US');

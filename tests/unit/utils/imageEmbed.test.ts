@@ -50,7 +50,7 @@ describe('replaceImageEmbedsWithHtml', () => {
 
       expect(result).toContain('<img');
       expect(result).toContain('src="app://local/image.png"');
-      expect(result).toContain('class="claudian-embedded-image"');
+      expect(result).toContain('class="grandemonium-embedded-image"');
     });
 
     it('replaces image embed with folder path', () => {
@@ -81,7 +81,7 @@ describe('replaceImageEmbedsWithHtml', () => {
       );
 
       expect(result).toBe(
-        'Visible <span class="claudian-embedded-image"><img src="app://local/visible.png" alt="visible" loading="lazy"></span> and `literal ![[literal.png]]`'
+        'Visible <span class="grandemonium-embedded-image"><img src="app://local/visible.png" alt="visible" loading="lazy"></span> and `literal ![[literal.png]]`'
       );
     });
   });
@@ -225,7 +225,7 @@ describe('replaceImageEmbedsWithHtml', () => {
       const app = createMockApp(); // Empty vault
       const result = replaceImageEmbedsWithHtml('![[missing.png]]', app);
 
-      expect(result).toContain('class="claudian-embedded-image-fallback"');
+      expect(result).toContain('class="grandemonium-embedded-image-fallback"');
       expect(result).toContain('![[missing.png]]');
     });
 
@@ -444,7 +444,7 @@ describe('replaceImageEmbedsWithHtml', () => {
 
       const result = replaceImageEmbedsWithHtml('![[test.png]]', app);
 
-      expect(result).toContain('class="claudian-embedded-image-fallback"');
+      expect(result).toContain('class="grandemonium-embedded-image-fallback"');
     });
   });
 

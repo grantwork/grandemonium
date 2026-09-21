@@ -17,6 +17,7 @@ export type ClaudeSettingSource = 'user' | 'project' | 'local';
 
 export interface ClaudeProviderSettings {
   enabled: boolean;
+  agentName: string;
   safeMode: ClaudeSafeMode;
   cliPath: string;
   cliPathsByHost: HostnameCliPaths;
@@ -33,6 +34,7 @@ export interface ClaudeProviderSettings {
 
 export const DEFAULT_CLAUDE_PROVIDER_SETTINGS: Readonly<ClaudeProviderSettings> = Object.freeze({
   enabled: true,
+  agentName: 'claude',
   safeMode: 'acceptEdits',
   cliPath: '',
   cliPathsByHost: {},
@@ -83,6 +85,10 @@ export function getClaudeProviderSettings(
     enabled: readStoredBoolean(
       config.enabled,
       DEFAULT_CLAUDE_PROVIDER_SETTINGS.enabled,
+    ),
+    agentName: readStoredString(
+      config.agentName,
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.agentName,
     ),
     safeMode: readStoredClaudeSafeMode(
       config.safeMode,

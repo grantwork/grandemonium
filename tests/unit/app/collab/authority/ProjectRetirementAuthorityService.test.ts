@@ -35,7 +35,7 @@ describe('ProjectRetirementAuthorityService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-retirement-authority-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-retirement-authority-'));
     authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

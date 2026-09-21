@@ -606,10 +606,10 @@ describe('GrokSettingsTab', () => {
     grokSettingsTabRenderer.render(createContainer(), createContext(plugin));
 
     expect(findSetting('MCP Servers').heading).toBe(true);
-    const notice = createdElements.find(element => element.cls === 'claudian-mcp-settings-desc');
+    const notice = createdElements.find(element => element.cls === 'grandemonium-mcp-settings-desc');
     const description = notice?.children[0];
     expect(description?.text).toBe(
-      'Grok Build manages MCP servers through its own CLI. Configure them with  and they will be available in Claudian. ',
+      'Grok Build manages MCP servers through its own CLI. Configure them with  and they will be available in Grandemonium. ',
     );
     expect(description?.children).toEqual(expect.arrayContaining([
       expect.objectContaining({ tag: 'code', text: 'grok mcp add' }),

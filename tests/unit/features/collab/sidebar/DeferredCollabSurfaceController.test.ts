@@ -80,6 +80,6 @@ describe('DeferredCollabSurfaceController', () => {
     await flush();
 
     expect(host.textContent).toContain('Collab failed to load.');
-    expect(host.querySelector('.claudian-collab-panel-status--warning')).not.toBeNull();
+    expect(host.querySelector('.grandemonium-collab-panel-status--warning')).not.toBeNull();
   });
 });

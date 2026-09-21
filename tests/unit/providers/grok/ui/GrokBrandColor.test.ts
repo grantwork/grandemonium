@@ -7,16 +7,16 @@ describe('Grok brand color', () => {
     'utf8',
   );
   it('uses white in dark mode and black in light mode', () => {
-    expect(variablesCss).toContain('--claudian-brand-grok: #ffffff;');
-    expect(variablesCss).toContain('--claudian-brand-grok-rgb: 255, 255, 255;');
+    expect(variablesCss).toContain('--grandemonium-brand-grok: #ffffff;');
+    expect(variablesCss).toContain('--grandemonium-brand-grok-rgb: 255, 255, 255;');
     expect(variablesCss).toMatch(
-      /body\.theme-light \.claudian-container \{[\s\S]*?--claudian-brand-grok: #000000;[\s\S]*?--claudian-brand-grok-rgb: 0, 0, 0;[\s\S]*?\}/,
+      /body\.theme-light \.grandemonium-container \{[\s\S]*?--grandemonium-brand-grok: #000000;[\s\S]*?--grandemonium-brand-grok-rgb: 0, 0, 0;[\s\S]*?\}/,
     );
   });
 
   it('routes active Grok surfaces through its brand token', () => {
     expect(variablesCss).toMatch(
-      /\.claudian-container\[data-provider="grok"\] \{[\s\S]*?--claudian-brand: var\(--claudian-brand-grok\);[\s\S]*?--claudian-brand-rgb: var\(--claudian-brand-grok-rgb\);[\s\S]*?\}/,
+      /\.grandemonium-container\[data-provider="grok"\] \{[\s\S]*?--grandemonium-brand: var\(--grandemonium-brand-grok\);[\s\S]*?--grandemonium-brand-rgb: var\(--grandemonium-brand-grok-rgb\);[\s\S]*?\}/,
     );
   });
 });

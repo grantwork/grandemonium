@@ -12,9 +12,9 @@ import {
   COLLAB_INVITATION_TTL_MS,
   COLLAB_TOKEN_BYTES,
 } from '@/app/collab/lan/LanCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const INVITATION_PREFIX = 'claudian-collab';
+const INVITATION_PREFIX = 'grandemonium-collab';
 const LEGACY_PENDING_JOIN_PROTOCOL_VERSION = 7;
 const MAX_ENCODED_INVITATION_LENGTH = 8 * 1024;
 const FINGERPRINT_PATTERN = /^[0-9a-f]{64}$/;
@@ -192,7 +192,7 @@ export class InvitationCodec {
     ) {
       throw invitationError('invitation-length-invalid');
     }
-    const match = /^claudian-collab:v(\d+):([A-Za-z0-9_-]+)$/.exec(encodedInvitation);
+    const match = /^grandemonium-collab:v(\d+):([A-Za-z0-9_-]+)$/.exec(encodedInvitation);
     if (!match) throw invitationError('invitation-format-invalid');
     const prefixVersion = Number(match[1]);
     let payload: unknown;

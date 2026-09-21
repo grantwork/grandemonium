@@ -42,6 +42,8 @@ export interface TabRuntimeFactoryOptions {
   conversation?: Conversation;
   tabId?: TabId;
   draftModel?: string | null;
+  /** Binds a blank tab to one provider even when it has no model to seed. */
+  providerId?: ProviderId;
   lifecycleState?: Extract<
     AssembledTabRuntime['lifecycleState'],
     'provisional' | 'cold'

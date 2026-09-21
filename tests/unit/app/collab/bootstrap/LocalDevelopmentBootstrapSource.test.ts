@@ -10,7 +10,7 @@ import {
 import {
   LocalDevelopmentBootstrapSource,
 } from '@/app/collab/bootstrap/LocalDevelopmentBootstrapSource';
-import type { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
+import type { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 
 import {
   HOST_OID,
@@ -30,7 +30,7 @@ describe('LocalDevelopmentBootstrapSource', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-bootstrap-source-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-bootstrap-source-'));
   });
 
   afterEach(async () => {
@@ -43,7 +43,7 @@ describe('LocalDevelopmentBootstrapSource', () => {
     let sourceEventSequence = 12;
     let latestEventActorMemberId = sourceHostMemberId;
     let latestEventKind = 'project.updated';
-    const authorityDirectory = path.join(vaultRoot, '.claudian', 'collab', 'authorities', PROJECT_ID);
+    const authorityDirectory = path.join(vaultRoot, '.grandemonium', 'collab', 'authorities', PROJECT_ID);
     await mkdir(path.join(authorityDirectory, 'repository.git'), { recursive: true });
     const refs = [
       `${MAIN_OID} ${COLLAB_MAIN_REF}`,
@@ -170,7 +170,7 @@ describe('LocalDevelopmentBootstrapSource', () => {
         },
       }),
       requireGitFoundation: async () => ({ runner }),
-    } as unknown as ClaudianCollabService;
+    } as unknown as GrandemoniumCollabService;
     const source = new LocalDevelopmentBootstrapSource({
       createAttemptId: () => 'bootstrap-attempt-source',
       foundation,
@@ -265,7 +265,7 @@ describe('LocalDevelopmentBootstrapSource', () => {
     await expect(source.discardBundle(manifest)).resolves.toBeUndefined();
     await expect(lstat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'cloud-bootstrap-artifacts',
       'bootstrap-attempt-source.bundle',
@@ -286,7 +286,7 @@ describe('LocalDevelopmentBootstrapSource', () => {
     await expect(capture).rejects.toMatchObject({ code: 'cancelled' });
     await expect(lstat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'cloud-bootstrap-artifacts',
       'bootstrap-attempt-cancelled.bundle',

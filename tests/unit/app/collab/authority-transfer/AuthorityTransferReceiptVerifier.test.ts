@@ -29,7 +29,7 @@ function terminalRecord(receiptKeyId: string, receiptPublicKey: string) {
       signatureAlgorithm: 'ed25519',
       transferId: TRANSFER_ID,
     },
-    stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+    stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
     status: {
       batchRevision: 1,
       batchSha256: 'b'.repeat(64),

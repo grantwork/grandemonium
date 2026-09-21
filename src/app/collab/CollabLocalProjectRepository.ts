@@ -60,16 +60,16 @@ import {
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabAuthorityKind } from '@/core/collab';
 import { type CollabLocalCleanupStatus, type CollabProjectLifecycle, parseCollabProjectsFolder } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   type InstallationKey,
   isInstallationKey,
   parseInstallationKey,
 } from '@/core/device/InstallationKey';
 
-const PRIVATE_STATE_DIRECTORY = '.claudian/collab';
+const PRIVATE_STATE_DIRECTORY = '.grandemonium/collab';
 const RETIREMENT_ACKNOWLEDGEMENT_DIRECTORY = `${PRIVATE_STATE_DIRECTORY}/retirement-acknowledgements`;
-const AUTHORITY_OWNERSHIP_MARKER = '.claudian-authority.json';
+const AUTHORITY_OWNERSHIP_MARKER = '.grandemonium-authority.json';
 const LEGACY_AUTHORITY_OWNERSHIP_SCHEMA_VERSION = 1 as const;
 const AUTHORITY_OWNERSHIP_SCHEMA_VERSION = 2 as const;
 const AUTHORITY_OWNERSHIP_MARKER_MAX_BYTES = 1_024;

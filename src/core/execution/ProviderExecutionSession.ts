@@ -10,7 +10,7 @@ import type {
 } from './ProviderSessionSnapshot';
 
 export interface ProviderExecutionRun {
-  /** Claudian-local identities shared by every requested event envelope. */
+  /** Grandemonium-local identities shared by every requested event envelope. */
   readonly executionId: string;
   readonly turnId: string;
   /**

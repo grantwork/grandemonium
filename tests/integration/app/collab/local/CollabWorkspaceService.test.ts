@@ -18,7 +18,7 @@ describe('CollabWorkspaceService', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-collab-workspace-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-collab-workspace-'));
   });
 
   afterEach(async () => {
@@ -38,9 +38,9 @@ describe('CollabWorkspaceService', () => {
     expect(await readFile(path.join(vaultRoot, 'workspace', '.gitignore'), 'utf8'))
       .toBe('# Retain this comment\n/custom\n\n/*\n\n');
     expect(JSON.parse(await readFile(
-      path.join(vaultRoot, 'workspace', '.claudian-collab-root.json'),
+      path.join(vaultRoot, 'workspace', '.grandemonium-collab-root.json'),
       'utf8',
-    ))).toEqual({ owner: 'claudian-collab-projects', schemaVersion: 1 });
+    ))).toEqual({ owner: 'grandemonium-collab-projects', schemaVersion: 1 });
   });
 
   it('claims a nested custom Projects folder with a marker and guard', async () => {
@@ -49,9 +49,9 @@ describe('CollabWorkspaceService', () => {
     await service.claimProjectsFolder('Shared/Collab Projects');
 
     expect(JSON.parse(await readFile(
-      path.join(vaultRoot, 'Shared', 'Collab Projects', '.claudian-collab-root.json'),
+      path.join(vaultRoot, 'Shared', 'Collab Projects', '.grandemonium-collab-root.json'),
       'utf8',
-    ))).toEqual({ owner: 'claudian-collab-projects', schemaVersion: 1 });
+    ))).toEqual({ owner: 'grandemonium-collab-projects', schemaVersion: 1 });
     expect(await readFile(
       path.join(vaultRoot, 'Shared', 'Collab Projects', '.gitignore'),
       'utf8',
@@ -84,9 +84,9 @@ describe('CollabWorkspaceService', () => {
     await expect(service.resolveManagedProjectPath('workspace/project-alpha'))
       .resolves.toBe(path.join(vaultRoot, 'workspace', 'project-alpha'));
     await expect(readFile(
-      path.join(vaultRoot, 'workspace', '.claudian-collab-root.json'),
+      path.join(vaultRoot, 'workspace', '.grandemonium-collab-root.json'),
       'utf8',
-    )).resolves.toContain('claudian-collab-projects');
+    )).resolves.toContain('grandemonium-collab-projects');
 
     await mkdir(path.join(vaultRoot, 'Unowned', 'project-beta'), { recursive: true });
     await expect(service.resolveManagedProjectPath('Unowned/project-beta')).rejects.toMatchObject({
@@ -107,7 +107,7 @@ describe('CollabWorkspaceService', () => {
       safeContext: { reason: 'projects-root-unowned-nonempty' },
     });
     await expect(readFile(
-      path.join(vaultRoot, 'Shared', 'Projects', '.claudian-collab-root.json'),
+      path.join(vaultRoot, 'Shared', 'Projects', '.grandemonium-collab-root.json'),
       'utf8',
     )).rejects.toMatchObject({ code: 'ENOENT' });
     expect((await stat(path.join(vaultRoot, 'Shared'))).mode & 0o777).toBe(0o700);
@@ -116,23 +116,23 @@ describe('CollabWorkspaceService', () => {
   });
 
   it('rejects invalid or symlinked ownership files without overwriting them', async () => {
-    const outside = await mkdtemp(path.join(tmpdir(), 'claudian-collab-root-files-'));
+    const outside = await mkdtemp(path.join(tmpdir(), 'grandemonium-collab-root-files-'));
     try {
       const invalidRoot = path.join(vaultRoot, 'InvalidRoot');
       await mkdir(invalidRoot);
-      await writeFile(path.join(invalidRoot, '.claudian-collab-root.json'), JSON.stringify({
+      await writeFile(path.join(invalidRoot, '.grandemonium-collab-root.json'), JSON.stringify({
         owner: 'another-application',
         schemaVersion: 1,
       }));
       const linkedRoot = path.join(vaultRoot, 'LinkedRoot');
       await mkdir(linkedRoot);
       await writeFile(path.join(outside, 'marker.json'), JSON.stringify({
-        owner: 'claudian-collab-projects',
+        owner: 'grandemonium-collab-projects',
         schemaVersion: 1,
       }));
       await symlink(
         path.join(outside, 'marker.json'),
-        path.join(linkedRoot, '.claudian-collab-root.json'),
+        path.join(linkedRoot, '.grandemonium-collab-root.json'),
       );
       const service = new CollabWorkspaceService(vaultRoot);
 
@@ -143,7 +143,7 @@ describe('CollabWorkspaceService', () => {
         code: 'workspace-boundary-invalid',
       });
       expect(JSON.parse(await readFile(
-        path.join(invalidRoot, '.claudian-collab-root.json'),
+        path.join(invalidRoot, '.grandemonium-collab-root.json'),
         'utf8',
       ))).toEqual({ owner: 'another-application', schemaVersion: 1 });
     } finally {
@@ -155,7 +155,7 @@ describe('CollabWorkspaceService', () => {
     const service = new CollabWorkspaceService(vaultRoot);
     await service.claimProjectsFolder('Shared/Projects');
     const ownership = {
-      childName: '.claudian-seed-project-alpha',
+      childName: '.grandemonium-seed-project-alpha',
       operationId: 'create-alpha',
       projectId: 'project-alpha',
       purpose: 'create-seed' as const,
@@ -184,7 +184,7 @@ describe('CollabWorkspaceService', () => {
     const service = new CollabWorkspaceService(vaultRoot);
     await service.claimProjectsFolder('Shared/Projects');
     const ownership = {
-      childName: '.claudian-host-transfer-transfer-alpha',
+      childName: '.grandemonium-host-transfer-transfer-alpha',
       operationId: 'transfer-alpha',
       projectId: 'project-alpha',
       purpose: 'host-transfer-staging' as const,
@@ -219,7 +219,7 @@ describe('CollabWorkspaceService', () => {
   });
 
   it('rejects a symlinked Projects folder without writing through it', async () => {
-    const outside = await mkdtemp(path.join(tmpdir(), 'claudian-collab-outside-'));
+    const outside = await mkdtemp(path.join(tmpdir(), 'grandemonium-collab-outside-'));
     try {
       await symlink(outside, path.join(vaultRoot, 'workspace'), 'junction');
       const service = new CollabWorkspaceService(vaultRoot);

@@ -51,7 +51,7 @@ describe('OpencodeAcpSessionKernel read policy', () => {
   });
 
   it('rejects an in-workspace symlink whose canonical target is outside', () => {
-    const testRoot = mkdtempSync(path.join(tmpdir(), 'claudian-opencode-read-'));
+    const testRoot = mkdtempSync(path.join(tmpdir(), 'grandemonium-opencode-read-'));
     const workspaceRoot = path.join(testRoot, 'vault');
     const outsideRoot = path.join(testRoot, 'outside');
     mkdirSync(workspaceRoot);
@@ -71,7 +71,7 @@ describe('OpencodeAcpSessionKernel read policy', () => {
   });
 
   it('rejects a dangling in-workspace symlink targeting an outside path', () => {
-    const testRoot = mkdtempSync(path.join(tmpdir(), 'claudian-opencode-read-'));
+    const testRoot = mkdtempSync(path.join(tmpdir(), 'grandemonium-opencode-read-'));
     const workspaceRoot = path.join(testRoot, 'vault');
     const outsideTarget = path.join(testRoot, 'outside', 'missing.md');
     mkdirSync(workspaceRoot);
@@ -88,7 +88,7 @@ describe('OpencodeAcpSessionKernel read policy', () => {
   });
 
   it('returns the canonical validated target and preserves missing paths', () => {
-    const testRoot = mkdtempSync(path.join(tmpdir(), 'claudian-opencode-read-'));
+    const testRoot = mkdtempSync(path.join(tmpdir(), 'grandemonium-opencode-read-'));
     const workspaceRoot = path.join(testRoot, 'vault');
     const notesRoot = path.join(workspaceRoot, 'notes');
     mkdirSync(notesRoot, { recursive: true });

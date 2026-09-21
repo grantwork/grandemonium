@@ -28,7 +28,7 @@
 - Opening the editable Project file belongs only to a My changes working-tree review. Request, publication, and conflict reviews display exact reviewed content and must not expose that action. Publishing from a working-tree review retains any exact prepared publication review for the sidebar and closes the working-tree leaf; navigation to the retained review is explicit.
 - The Ticket surface is split by lifetime: the sidebar owns filtering, pagination, and navigation; detail owns create/read/edit, comments, accepted relations, and close/reopen. Authority-backed mutations remain online-only.
 - Project management is opened only from the sidebar Project-header action. Membership, invitation, Leave, Retire, and LAN Host controls remain in the Project-management modal and must not be duplicated in the sidebar.
-- `navigation/ResponsiveCollabRouter.ts` selects and reveals a compatible Claudian surface, falling back to a prepared main-tab view. It must not mutate chat or Collab application state.
+- `navigation/ResponsiveCollabRouter.ts` selects and reveals a compatible Grandemonium surface, falling back to a prepared main-tab view. It must not mutate chat or Collab application state.
 - User-facing copy describes Projects, changes, Publish, review, and recovery. Git refs, staging, branches, receive-pack, and database phases are advanced diagnostics only.
 - A missing working copy or interrupted setup keeps the Project visible and repairable. Presentation code never treats absence as permission to delete local records or Host authority.
 

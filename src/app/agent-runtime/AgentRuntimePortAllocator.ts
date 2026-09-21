@@ -5,7 +5,7 @@ export const AGENT_RUNTIME_PORT_MIN = 49_152;
 export const AGENT_RUNTIME_PORT_COUNT = 16_384;
 export const AGENT_RUNTIME_MAX_PORT_CANDIDATES = 64;
 
-const AGENT_RUNTIME_PORT_NAMESPACE = 'claudian-agent-runtime:v1:';
+const AGENT_RUNTIME_PORT_NAMESPACE = 'grandemonium-agent-runtime:v1:';
 
 export interface AgentRuntimePortCandidateOptions {
   readonly maxCandidates?: number;

@@ -25,7 +25,7 @@ import {
   PublishCoordinator,
   type PublishProjectContext,
 } from '@/app/collab/publish/PublishCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 jest.setTimeout(30_000);
 
@@ -37,7 +37,7 @@ describe('Publish offline recovery integration', () => {
   let git: GitRepositoryService;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-publish-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-publish-'));
     const emptyConfigPath = path.join(root, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');
     const resolution = await new GitRuntimeResolver().resolve();

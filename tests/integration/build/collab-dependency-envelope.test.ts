@@ -32,7 +32,7 @@ const packageJsonPath = path.join(root, 'package.json');
 const performanceScriptPath = path.join(root, 'scripts/check-startup-performance.mjs');
 
 describe('Collab dependency envelope', () => {
-  const tempDirectory = mkdtempSync(path.join(tmpdir(), 'claudian-collab-build-'));
+  const tempDirectory = mkdtempSync(path.join(tmpdir(), 'grandemonium-collab-build-'));
   const bundlePath = path.join(tempDirectory, 'dependency-envelope.cjs');
   let bundleContributors: string[] = [];
   let bundleInputs: string[] = [];

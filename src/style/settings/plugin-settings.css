@@ -1,13 +1,13 @@
 /* Plugin Settings */
-.claudian-plugin-settings-desc {
+.grandemonium-plugin-settings-desc {
   margin-bottom: 12px;
 }
 
-.claudian-plugins-container {
+.grandemonium-plugins-container {
   margin-top: 8px;
 }
 
-.claudian-plugin-header {
+.grandemonium-plugin-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,13 +15,13 @@
   padding: 0 12px;
 }
 
-.claudian-plugin-label {
+.grandemonium-plugin-label {
   font-size: var(--font-ui-small);
   color: var(--text-muted);
   font-weight: var(--font-medium);
 }
 
-.claudian-plugin-empty {
+.grandemonium-plugin-empty {
   padding: 16px;
   text-align: center;
   color: var(--text-muted);
@@ -30,13 +30,13 @@
   border-radius: 6px;
 }
 
-.claudian-plugin-list {
+.grandemonium-plugin-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.claudian-plugin-section-header {
+.grandemonium-plugin-section-header {
   font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -44,7 +44,7 @@
   font-weight: 600;
 }
 
-.claudian-plugin-item {
+.grandemonium-plugin-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -54,15 +54,15 @@
   transition: background 0.15s ease;
 }
 
-.claudian-plugin-item:hover {
+.grandemonium-plugin-item:hover {
   background: var(--background-modifier-hover);
 }
 
-.claudian-plugin-item-disabled {
+.grandemonium-plugin-item-disabled {
   opacity: 0.6;
 }
 
-.claudian-plugin-status {
+.grandemonium-plugin-status {
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -70,37 +70,37 @@
   flex-shrink: 0;
 }
 
-.claudian-plugin-status-enabled {
+.grandemonium-plugin-status-enabled {
   background: var(--color-green);
 }
 
-.claudian-plugin-status-disabled {
+.grandemonium-plugin-status-disabled {
   background: var(--text-muted);
 }
 
-.claudian-plugin-info {
+.grandemonium-plugin-info {
   flex: 1;
   min-width: 0;
 }
 
-.claudian-plugin-name-row {
+.grandemonium-plugin-name-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.claudian-plugin-name {
+.grandemonium-plugin-name {
   font-weight: 600;
 }
 
-.claudian-plugin-actions {
+.grandemonium-plugin-actions {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
 }
 
-.claudian-plugin-action-btn {
+.grandemonium-plugin-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,12 +115,12 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.claudian-plugin-action-btn:hover {
+.grandemonium-plugin-action-btn:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.claudian-plugin-action-btn svg {
+.grandemonium-plugin-action-btn svg {
   width: 14px;
   height: 14px;
 }

@@ -104,7 +104,7 @@ export class TeamChangesPanel {
   ) {
     this.project = options.project;
     this.reviewLoader = new TeamReviewLoader(options.port, options.preparedReviews);
-    this.rootEl = containerEl.createDiv({ cls: 'claudian-collab-team' });
+    this.rootEl = containerEl.createDiv({ cls: 'grandemonium-collab-team' });
     let observedState = options.port.state;
     this.subscription = options.port.subscribe(state => {
       if (state === observedState) return;
@@ -295,7 +295,7 @@ export class TeamChangesPanel {
   private render(): void {
     const focus = this.captureFocus();
     this.rootEl.replaceChildren();
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-team-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-team-header' });
     header.createEl('h4', { text: t('collab.team.title') });
     if (this.viewState.kind === 'loading') {
       this.rootEl.createDiv({ text: t('collab.team.loading') });
@@ -304,7 +304,7 @@ export class TeamChangesPanel {
     }
     if (this.viewState.kind === 'error' || !this.viewState.snapshot) {
       this.rootEl.createDiv({
-        cls: 'claudian-collab-team-status mod-warning',
+        cls: 'grandemonium-collab-team-status mod-warning',
         text: t('collab.team.loadFailed'),
       });
       const retry = this.rootEl.createEl('button', {
@@ -320,18 +320,18 @@ export class TeamChangesPanel {
     const requests = [...coordination.snapshot.openRequests]
       .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
     header.createSpan({
-      cls: 'claudian-collab-team-count',
+      cls: 'grandemonium-collab-team-count',
       text: String(requests.length),
     });
     if (coordination.stale) {
       this.rootEl.createDiv({
-        cls: 'claudian-collab-team-status',
+        cls: 'grandemonium-collab-team-status',
         text: t('collab.team.stale'),
       });
     }
     if (requests.length === 0) {
       this.rootEl.createDiv({
-        cls: 'claudian-collab-team-empty',
+        cls: 'grandemonium-collab-team-empty',
         text: t('collab.team.empty'),
       });
       this.restoreFocus(focus);
@@ -340,7 +340,7 @@ export class TeamChangesPanel {
     const names = new Map(
       coordination.snapshot.members.map(member => [member.id, member.displayName]),
     );
-    const list = this.rootEl.createDiv({ cls: 'claudian-collab-team-list' });
+    const list = this.rootEl.createDiv({ cls: 'grandemonium-collab-team-list' });
     for (const request of requests) {
       const memberName = names.get(request.memberId) ?? t('collab.team.unknownMember');
       const displayName = request.memberId === coordination.snapshot.currentMember.id
@@ -348,8 +348,8 @@ export class TeamChangesPanel {
         : memberName;
       const conflict = this.conflictFor(request);
       const expanded = request.id === this.expandedRequestId;
-      const item = list.createDiv({ cls: 'claudian-collab-team-request-item' });
-      const bodyId = `claudian-collab-request-${request.id}`;
+      const item = list.createDiv({ cls: 'grandemonium-collab-team-request-item' });
+      const bodyId = `grandemonium-collab-request-${request.id}`;
       const row = item.createEl('button', {
         attr: {
           'aria-controls': bodyId,
@@ -357,15 +357,15 @@ export class TeamChangesPanel {
           'data-request-id': request.id,
           type: 'button',
         },
-        cls: 'claudian-collab-team-request',
+        cls: 'grandemonium-collab-team-request',
       });
       row.createSpan({
-        cls: 'claudian-collab-team-member',
+        cls: 'grandemonium-collab-team-member',
         text: displayName,
       });
       if (conflict) {
         row.createSpan({
-          cls: 'claudian-collab-team-request-conflict',
+          cls: 'grandemonium-collab-team-request-conflict',
           text: t('collab.conflict.title'),
         });
       }
@@ -387,13 +387,13 @@ export class TeamChangesPanel {
   ): void {
     const body = item.createDiv({
       attr: { id: bodyId },
-      cls: 'claudian-collab-team-request-body',
+      cls: 'grandemonium-collab-team-request-body',
     });
     const conflict = this.conflictFor(request);
     if (conflict) {
       const resolve = body.createEl('button', {
         attr: { 'data-action': 'resolve-request-conflict', type: 'button' },
-        cls: 'claudian-collab-team-request-resolve',
+        cls: 'grandemonium-collab-team-request-resolve',
         text: t('collab.conflict.title'),
       });
       resolve.disabled = !this.options.onOpenConflict;
@@ -426,7 +426,7 @@ export class TeamChangesPanel {
       });
       if (publication.review.files.length === 0) {
         body.createDiv({
-          cls: 'claudian-collab-team-request-status',
+          cls: 'grandemonium-collab-team-request-status',
           text: t('collab.review.noFiles'),
         });
       }
@@ -436,14 +436,14 @@ export class TeamChangesPanel {
     if (!state || state.requestId !== request.id || state.kind === 'loading') {
       body.createDiv({
         attr: { 'aria-live': 'polite' },
-        cls: 'claudian-collab-team-request-status',
+        cls: 'grandemonium-collab-team-request-status',
         text: t('collab.review.loading'),
       });
       return;
     }
     if (state.kind === 'error') {
       body.createDiv({
-        cls: 'claudian-collab-team-request-status mod-warning',
+        cls: 'grandemonium-collab-team-request-status mod-warning',
         text: t('collab.review.loadFailed'),
       });
       const retry = body.createEl('button', {
@@ -486,7 +486,7 @@ export class TeamChangesPanel {
     });
     if (review.files.length === 0) {
       body.createDiv({
-        cls: 'claudian-collab-team-request-status',
+        cls: 'grandemonium-collab-team-request-status',
         text: t('collab.review.noFiles'),
       });
     }

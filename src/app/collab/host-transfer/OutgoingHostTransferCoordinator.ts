@@ -19,7 +19,7 @@ import {
 import type { HostTransferRecoveryRecord } from '@/app/collab/host-transfer/HostTransferRecoveryRecord';
 import { HostTrustTransitionService } from '@/app/collab/host-transfer/HostTrustTransitionService';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface OutgoingHostTransferCoordinatorOptions {

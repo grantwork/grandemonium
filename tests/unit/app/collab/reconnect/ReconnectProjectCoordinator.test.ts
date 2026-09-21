@@ -2,9 +2,9 @@ import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import type { CollabGitFoundation } from '@/app/collab/ClaudianCollabService';
 import type { CollabLocalMembershipRecord } from '@/app/collab/CollabLocalProjectRepository';
 import { COLLAB_LOCAL_PROJECT_SCHEMA_VERSION } from '@/app/collab/CollabSchemaVersions';
+import type { CollabGitFoundation } from '@/app/collab/GrandemoniumCollabService';
 import { LocalHostTransferProjection } from '@/app/collab/host-transfer/LocalHostTransferProjection';
 import type {
   CollabHostTrustStore,
@@ -90,7 +90,7 @@ describe('ReconnectProjectCoordinator', () => {
   let foundation: ReconnectProjectFoundationPort;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(os.tmpdir(), 'claudian-reconnect-'));
+    vaultRoot = await mkdtemp(path.join(os.tmpdir(), 'grandemonium-reconnect-'));
     await mkdir(path.join(vaultRoot, 'workspace/project-a'), { recursive: true });
     codec = new InvitationCodec({ now: () => now });
     currentMembership = membership();

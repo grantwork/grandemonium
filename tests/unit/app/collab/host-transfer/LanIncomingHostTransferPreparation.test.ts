@@ -32,7 +32,7 @@ describe('LanIncomingHostTransferPreparation', () => {
   let service: LanIncomingHostTransferPreparation;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-host-transfer-target-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-host-transfer-target-'));
     workspace = new CollabWorkspaceService(root);
     await workspace.claimProjectsFolder('Projects');
     await mkdir(path.join(root, membership.project.workspacePath));
@@ -76,12 +76,12 @@ describe('LanIncomingHostTransferPreparation', () => {
     expect(prepared).toEqual({
       endpoint: 'https://192.168.1.20:27000',
       receiverCredential: Buffer.alloc(32, 1).toString('base64url'),
-      stagingDirectoryName: '.claudian-host-transfer-transfer-alpha',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-alpha',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\ntarget\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'a'.repeat(64),
     });
     await expect(stat(path.join(
-      root, 'Projects', '.claudian-host-transfer-transfer-alpha',
+      root, 'Projects', '.grandemonium-host-transfer-transfer-alpha',
     ))).resolves.toMatchObject({ isDirectory: expect.any(Function) });
     expect(lanHost.startProvisionalTransfer).toHaveBeenCalledWith(expect.objectContaining({
       projectId: 'project-alpha',
@@ -116,10 +116,10 @@ describe('LanIncomingHostTransferPreparation', () => {
     expect(lanHost.startProvisionalTransfer).toHaveBeenCalledTimes(1);
     expect(lanHost.stopProvisionalTransfer).toHaveBeenCalledWith('transfer-alpha');
     await expect(readFile(path.join(
-      root, 'Projects', '.claudian-host-transfer-transfer-alpha', 'keep',
+      root, 'Projects', '.grandemonium-host-transfer-transfer-alpha', 'keep',
     ))).rejects.toBeDefined();
     await expect(stat(path.join(
-      root, 'Projects', '.claudian-host-transfer-transfer-alpha',
+      root, 'Projects', '.grandemonium-host-transfer-transfer-alpha',
     ))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
@@ -133,7 +133,7 @@ describe('LanIncomingHostTransferPreparation', () => {
       createdAt: '2026-08-13T00:00:00.000Z', direction: 'incoming',
       projectId: 'project-alpha', receiverCredential: Buffer.alloc(32, 1).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-alpha',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-alpha',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\ntarget\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'a'.repeat(64),
       targetEndpoint: 'https://192.168.1.20:27000', targetHostMemberId: 'member-target',
@@ -141,7 +141,7 @@ describe('LanIncomingHostTransferPreparation', () => {
     });
     const record = {
       ...validRecord,
-      stagingDirectoryName: '.claudian-host-transfer-other',
+      stagingDirectoryName: '.grandemonium-host-transfer-other',
     } as typeof validRecord;
     await expect(service.cancelProvisional(record)).rejects.toMatchObject({
       code: 'workspace-boundary-invalid',

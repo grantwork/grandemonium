@@ -17,7 +17,7 @@ import type {
 import {
   RequestQueryRepository,
 } from '@/app/collab/authority/RequestQueryRepository';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RequestQueryGitInput {
   readonly firstBaseOid: string;

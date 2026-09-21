@@ -48,30 +48,30 @@ export class ComposerDropdownView {
       const selectable = item.kind !== 'status' && !item.disabled;
       const itemEl = dropdown.createDiv({
         cls: [
-          'claudian-composer-dropdown-item',
+          'grandemonium-composer-dropdown-item',
           item.className ?? '',
           item.kind === 'status' ? `is-${item.state}` : '',
           index === selectedIndex ? 'is-selected' : '',
         ].filter(Boolean).join(' '),
       });
-      const itemId = `claudian-composer-dropdown-item-${index}`;
+      const itemId = `grandemonium-composer-dropdown-item-${index}`;
       itemEl.setAttribute('id', itemId);
       itemEl.setAttribute('role', 'option');
       itemEl.setAttribute('aria-selected', String(index === selectedIndex));
       if (!selectable) itemEl.setAttribute('aria-disabled', 'true');
 
       if (item.kind !== 'status' && item.icon) {
-        const iconEl = itemEl.createSpan({ cls: 'claudian-composer-dropdown-icon' });
+        const iconEl = itemEl.createSpan({ cls: 'grandemonium-composer-dropdown-icon' });
         setIcon(iconEl, item.icon);
       }
 
-      const copyEl = itemEl.createDiv({ cls: 'claudian-composer-dropdown-copy' });
-      copyEl.createDiv({ cls: 'claudian-composer-dropdown-label', text: item.label });
+      const copyEl = itemEl.createDiv({ cls: 'grandemonium-composer-dropdown-copy' });
+      copyEl.createDiv({ cls: 'grandemonium-composer-dropdown-label', text: item.label });
       if (item.detail) {
-        copyEl.createDiv({ cls: 'claudian-composer-dropdown-detail', text: item.detail });
+        copyEl.createDiv({ cls: 'grandemonium-composer-dropdown-detail', text: item.detail });
       }
       if (item.kind === 'folder') {
-        const folderIcon = itemEl.createSpan({ cls: 'claudian-composer-dropdown-folder-icon' });
+        const folderIcon = itemEl.createSpan({ cls: 'grandemonium-composer-dropdown-folder-icon' });
         setIcon(folderIcon, 'chevron-right');
       }
 
@@ -108,8 +108,8 @@ export class ComposerDropdownView {
     if (this.dropdownEl) return this.dropdownEl;
     this.dropdownEl = this.containerEl.createDiv({
       cls: [
-        'claudian-composer-dropdown',
-        this.options.fixed ? 'claudian-composer-dropdown--fixed' : '',
+        'grandemonium-composer-dropdown',
+        this.options.fixed ? 'grandemonium-composer-dropdown--fixed' : '',
       ].filter(Boolean).join(' '),
       attr: { role: 'listbox' },
     });
@@ -124,9 +124,9 @@ export class ComposerDropdownView {
     const viewportHeight = this.options.inputEl.ownerDocument.defaultView?.innerHeight
       ?? window.innerHeight;
     this.dropdownEl.setCssProps({
-      '--claudian-fixed-dropdown-bottom': `${viewportHeight - inputRect.top + 4}px`,
-      '--claudian-fixed-dropdown-left': `${inputRect.left}px`,
-      '--claudian-fixed-dropdown-width': `${Math.max(inputRect.width, 280)}px`,
+      '--grandemonium-fixed-dropdown-bottom': `${viewportHeight - inputRect.top + 4}px`,
+      '--grandemonium-fixed-dropdown-left': `${inputRect.left}px`,
+      '--grandemonium-fixed-dropdown-width': `${Math.max(inputRect.width, 280)}px`,
     });
   }
 }

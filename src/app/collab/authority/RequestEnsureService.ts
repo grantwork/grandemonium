@@ -13,8 +13,8 @@ import type {
   SqlJsMutationResult,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { TicketRepository } from '@/app/collab/authority/TicketRepository';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RequestEnsureDatabasePort {
   read<T>(reader: (connection: AuthorityDatabaseConnection) => T): Promise<T>;
@@ -69,7 +69,7 @@ function normalizeDescription(description: string): string {
     throw new CollabError({ code: 'description-required' });
   }
   if (new TextEncoder().encode(normalized).byteLength >
-    CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes) {
+    GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes) {
     throw new CollabError({ code: 'quota-exceeded' });
   }
   return normalized;
@@ -371,7 +371,7 @@ export class RequestEnsureService {
         ticketId: ticket.id,
       });
     }
-    if (relations.length > CLAUDIAN_COLLAB_LIMITS.maxRequestTicketRelations) {
+    if (relations.length > GRANDEMONIUM_COLLAB_LIMITS.maxRequestTicketRelations) {
       throw new CollabError({ code: 'quota-exceeded' });
     }
     return relations;

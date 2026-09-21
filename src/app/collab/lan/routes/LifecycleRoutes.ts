@@ -11,7 +11,7 @@ import type {
   CollabControlRouteResult,
   CollabLifecycleRouteRequest,
 } from '@/app/collab/lan/routes/RouteTypes';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface LifecycleRouteMatch {
   readonly memberId?: string;

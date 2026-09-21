@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
 import { type CollabRequestReview, type CollabReviewFileContent } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   type CollabDetailDiffPort,
   type CollabDetailObjectUrlPort,

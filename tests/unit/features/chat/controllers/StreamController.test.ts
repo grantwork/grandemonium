@@ -2898,9 +2898,9 @@ describe('StreamController - Text Content', () => {
       // Manually set up a rendered tool element with name + summary children
       // (the mock renderToolCall doesn't actually populate toolCallElements)
       const toolEl = createMockEl();
-      const nameChild = toolEl.createDiv({ cls: 'claudian-tool-name' });
+      const nameChild = toolEl.createDiv({ cls: 'grandemonium-tool-name' });
       nameChild.setText('Read');
-      const summaryChild = toolEl.createDiv({ cls: 'claudian-tool-summary' });
+      const summaryChild = toolEl.createDiv({ cls: 'grandemonium-tool-summary' });
       summaryChild.setText('test.md');
       deps.state.toolCallElements.set('read-1', toolEl);
 
@@ -2937,8 +2937,8 @@ describe('StreamController - Text Content', () => {
       await controller.handleStreamChunk({ type: 'done' }, msg);
 
       const toolEl = createMockEl();
-      const nameChild = toolEl.createDiv({ cls: 'claudian-tool-name' });
-      const summaryChild = toolEl.createDiv({ cls: 'claudian-tool-summary' });
+      const nameChild = toolEl.createDiv({ cls: 'grandemonium-tool-name' });
+      const summaryChild = toolEl.createDiv({ cls: 'grandemonium-tool-summary' });
       deps.state.toolCallElements.set('title-only', toolEl);
       getToolName.mockReturnValueOnce('Read');
       getToolSummary.mockReturnValueOnce('');

@@ -131,7 +131,7 @@ describe('SelectionController', () => {
     delete (global as any).Highlight;
   });
 
-  it('captures selection and updates indicator', () => {
+  it('captures the active editor selection', () => {
     controller.start();
     jest.advanceTimersByTime(250);
 
@@ -143,10 +143,6 @@ describe('SelectionController', () => {
       lineCount: 1,
       startLine: 1,
     });
-    expect(contextTray.setItems).toHaveBeenLastCalledWith('editor-selection', [
-      expect.objectContaining({ label: '1 line selected' }),
-    ]);
-    expect(contextTray.setItems.mock.calls[0][1][0]).not.toHaveProperty('title');
 
     controller.showHighlight();
     expect(showSelectionHighlight).toHaveBeenCalledWith(editorView, 0, 4);
@@ -161,19 +157,7 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(false);
-    expect(contextTray.clearItems).toHaveBeenCalledWith('editor-selection');
     expect(hideSelectionHighlight).toHaveBeenCalledWith(editorView);
-  });
-
-  it('clears a sticky selection from the tray remove action', () => {
-    controller.start();
-    jest.advanceTimersByTime(250);
-
-    const items = contextTray.setItems.mock.calls[0][1];
-    items[0].onRemove();
-
-    expect(controller.hasSelection()).toBe(false);
-    expect(contextTray.clearItems).toHaveBeenCalledWith('editor-selection');
   });
 
   it('preserves selection when focus moves into the chat sidebar', () => {
@@ -188,7 +172,6 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(true);
-    expect(contextTray.clearItems).not.toHaveBeenCalledWith('editor-selection');
   });
 
   it('preserves selection when the owning chat view is active in a detached window', () => {
@@ -213,7 +196,6 @@ describe('SelectionController', () => {
 
     expect(app.workspace.getMostRecentLeaf).toHaveBeenCalled();
     expect(controller.hasSelection()).toBe(true);
-    expect(contextTray.clearItems).not.toHaveBeenCalledWith('editor-selection');
   });
 
   it('clears selection when a different chat leaf is active', () => {
@@ -237,7 +219,6 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(false);
-    expect(contextTray.clearItems).toHaveBeenCalledWith('editor-selection');
   });
 
   it('preserves selection when a relocated composer outside tab content has focus', () => {
@@ -261,7 +242,6 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(true);
-    expect(contextTray.clearItems).not.toHaveBeenCalledWith('editor-selection');
   });
 
   it('preserves selection when shared footer controls have focus', () => {
@@ -287,7 +267,6 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(true);
-    expect(contextTray.clearItems).not.toHaveBeenCalledWith('editor-selection');
   });
 
   it('shows selection highlight when focus enters shared footer controls', () => {
@@ -353,7 +332,6 @@ describe('SelectionController', () => {
     jest.advanceTimersByTime(250);
 
     expect(controller.hasSelection()).toBe(false);
-    expect(contextTray.clearItems).toHaveBeenCalledWith('editor-selection');
     expect(hideSelectionHighlight).toHaveBeenCalledWith(editorView);
   });
 
@@ -427,9 +405,6 @@ describe('SelectionController', () => {
         selectedText: 'reading selection',
         lineCount: 1,
       });
-      expect(contextTray.setItems).toHaveBeenLastCalledWith('editor-selection', [
-        expect.objectContaining({ label: '1 line selected' }),
-      ]);
     });
 
     it('preserves raw reading mode text and omits line metadata', () => {
@@ -450,9 +425,6 @@ describe('SelectionController', () => {
         selectedText: '  reading selection\nsecond line  ',
         lineCount: 2,
       });
-      expect(contextTray.setItems).toHaveBeenLastCalledWith('editor-selection', [
-        expect.objectContaining({ label: '2 lines selected' }),
-      ]);
     });
 
     it('prefers native DOM selection in reading mode, falls back to CSS Highlight API when lost', () => {
@@ -483,7 +455,7 @@ describe('SelectionController', () => {
 
       expect(showSelectionHighlight).not.toHaveBeenCalled();
       expect(mockHighlights.set).toHaveBeenCalledWith(
-        'claudian-selection',
+        'grandemonium-selection',
         expect.any(Object),
       );
     });
@@ -507,7 +479,7 @@ describe('SelectionController', () => {
       controller.showHighlight();
 
       expect(mockHighlights.set).toHaveBeenCalledWith(
-        'claudian-selection',
+        'grandemonium-selection',
         expect.any(Object),
       );
     });
@@ -531,7 +503,6 @@ describe('SelectionController', () => {
       jest.advanceTimersByTime(250);
 
       expect(controller.hasSelection()).toBe(false);
-      expect(contextTray.clearItems).toHaveBeenCalledWith('editor-selection');
     });
 
     it('preserves reading mode selection when input is focused', () => {
@@ -576,7 +547,6 @@ describe('SelectionController', () => {
       jest.advanceTimersByTime(250);
 
       expect(controller.hasSelection()).toBe(true);
-      expect(contextTray.clearItems).not.toHaveBeenCalledWith('editor-selection');
     });
 
     it('clears CSS highlight when reading mode selection is deselected', () => {
@@ -598,7 +568,7 @@ describe('SelectionController', () => {
       );
       jest.advanceTimersByTime(250);
 
-      expect(mockHighlights.delete).toHaveBeenCalledWith('claudian-selection');
+      expect(mockHighlights.delete).toHaveBeenCalledWith('grandemonium-selection');
     });
 
     it('skips CSS highlight for disconnected DOM ranges', () => {
@@ -653,7 +623,7 @@ describe('SelectionController', () => {
       controller.showHighlight();
 
       expect(mockHighlights.set).toHaveBeenCalledWith(
-        'claudian-selection',
+        'grandemonium-selection',
         { ranges: [secondRange] },
       );
     });

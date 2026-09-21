@@ -7,14 +7,14 @@ import { normalizeTabManagerState } from '../../core/bootstrap/tabManagerState';
 import type { AppTabManagerState } from '../../core/providers/types';
 import { VaultFileAdapter } from '../../core/storage/VaultFileAdapter';
 import { getHostnameKey } from '../../utils/env';
-import { ClaudianSettingsStorage, type StoredClaudianSettings } from '../settings/ClaudianSettingsStorage';
+import { GrandemoniumSettingsStorage, type StoredGrandemoniumSettings } from '../settings/GrandemoniumSettingsStorage';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
 export class SharedStorageService implements SharedAppStorage {
-  readonly claudianSettings: ClaudianSettingsStorage;
+  readonly grandemoniumSettings: GrandemoniumSettingsStorage;
   readonly sessions: SessionStorage;
   readonly conversationPersistence: ConversationPersistenceStore;
 
@@ -25,18 +25,18 @@ export class SharedStorageService implements SharedAppStorage {
     this.plugin = plugin;
     this.adapter = new VaultFileAdapter(plugin.app);
     const deviceKey = getHostnameKey();
-    this.claudianSettings = new ClaudianSettingsStorage(this.adapter);
+    this.grandemoniumSettings = new GrandemoniumSettingsStorage(this.adapter);
     this.sessions = new SessionStorage(this.adapter, deviceKey);
     this.conversationPersistence = new ConversationPersistenceStore(this.adapter, deviceKey);
   }
 
-  async initialize(): Promise<{ claudian: Record<string, unknown> }> {
-    const claudian = await this.claudianSettings.load();
-    return { claudian };
+  async initialize(): Promise<{ grandemonium: Record<string, unknown> }> {
+    const grandemonium = await this.grandemoniumSettings.load();
+    return { grandemonium };
   }
 
-  async saveClaudianSettings(settings: Record<string, unknown>): Promise<void> {
-    await this.claudianSettings.save(settings as StoredClaudianSettings);
+  async saveGrandemoniumSettings(settings: Record<string, unknown>): Promise<void> {
+    await this.grandemoniumSettings.save(settings as StoredGrandemoniumSettings);
   }
 
   async getTabManagerState(): Promise<AppTabManagerState | null> {

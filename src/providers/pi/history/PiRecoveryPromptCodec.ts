@@ -1,6 +1,6 @@
-const RECOVERY_HISTORY_PREFIX = '<claudian_recovery_history length="';
+const RECOVERY_HISTORY_PREFIX = '<grandemonium_recovery_history length="';
 const RECOVERY_HISTORY_HEADER_SUFFIX = '">\n';
-const RECOVERY_HISTORY_SUFFIX = '\n</claudian_recovery_history>';
+const RECOVERY_HISTORY_SUFFIX = '\n</grandemonium_recovery_history>';
 const RECOVERY_INPUT_PREFIX = '\n\nUser: ';
 
 export interface DecodedPiRecoveryPrompt {

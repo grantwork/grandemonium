@@ -23,7 +23,7 @@ function emptyElement(container: HTMLElement): void {
 }
 
 function appendFallback(container: HTMLElement, markdown: string): void {
-  container.createDiv({ cls: 'claudian-inline-markdown-fallback', text: markdown });
+  container.createDiv({ cls: 'grandemonium-inline-markdown-fallback', text: markdown });
 }
 
 export async function renderInlineEditMarkdownPreview({

@@ -4,7 +4,7 @@ import {
   type RetirementClientStore,
 } from '@/app/collab/retirement/RetirementAcknowledgementWorker';
 import type { RetirementRecord } from '@/app/collab/retirement/RetirementRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const RETIRED_AT = '2026-08-13T00:00:00.000Z';
 const ACKNOWLEDGED_AT = '2026-08-13T00:01:00.000Z';

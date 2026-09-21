@@ -18,7 +18,7 @@ describe('systemPrompt', () => {
       );
     });
 
-    it('should retain the complete Claudian context with custom instructions', () => {
+    it('should retain the complete Grandemonium context with custom instructions', () => {
       const prompt = buildSystemPrompt(
         {
           customPrompt: 'Use curl if the user explicitly asks for it.',
@@ -29,14 +29,14 @@ describe('systemPrompt', () => {
 
       expect(prompt).not.toContain('## User Context');
       expect(prompt).toContain(
-        "You are Claudian, operating inside **Alice**'s Obsidian Vault. The current working directory is the Vault root.",
+        "You are Grandemonium, operating inside **Alice**'s Obsidian Vault. The current working directory is the Vault root.",
       );
       expect(prompt).toContain('## Runtime Context');
       expect(prompt).toContain('Vault absolute path: /vault');
       expect(prompt).toContain('## Path Conventions');
       expect(prompt).toContain('## Reference Conventions');
       expect(prompt).toContain('## User Message Context');
-      expect(prompt).not.toContain('## Claudian Response Formatting');
+      expect(prompt).not.toContain('## Grandemonium Response Formatting');
       expect(prompt).not.toContain('## Obsidian Context');
       expect(prompt).not.toContain('## Selection Context');
       expect(prompt).not.toContain('## Current Date');
@@ -67,7 +67,7 @@ describe('systemPrompt', () => {
       const prompt = buildSystemPrompt();
       expect(prompt).toContain('Use `bash: date` to get the current date and time. Never guess or assume.');
       expect(prompt).not.toContain('## Current Date');
-      expect(prompt).toContain('Claudian');
+      expect(prompt).toContain('Grandemonium');
       expect(prompt).toContain('## Path Conventions');
       expect(prompt).toContain('# User Message Context');
       expect(prompt).not.toContain('Knowledge Status');
@@ -88,26 +88,26 @@ describe('systemPrompt', () => {
     it('should document only current live context shapes', () => {
       const prompt = buildSystemPrompt();
 
-      expect(prompt).toContain('<linked_content path="path/to/content" />');
+      expect(prompt).toContain('<review_target path="path/to/note.md" />');
+      expect(prompt).toContain('<comment_target path="path/to/note.md" id="a1f3">');
       expect(prompt).toContain('<editor_cursor path="path/to/note.md" line="8">');
       expect(prompt).toContain('<canvas_selection path="boards/project.canvas">');
       expect(prompt).not.toContain('Legacy messages may');
       expect(prompt).not.toContain('<linked_note>');
       expect(prompt).not.toContain('<current_note>');
       expect(prompt).not.toContain('<context_file');
-      expect(prompt).toContain('file, Note, or directory');
+      // Retired shapes: nothing populates these, so documenting them would tell
+      // the AI to expect context it will never receive.
+      expect(prompt).not.toContain('<linked_content');
+      expect(prompt).not.toContain('<editor_selection');
       expect(prompt).toContain('Inspect only the files needed');
-      expect(prompt).toContain('not an instruction to recursively read');
-      expect(prompt).toContain('does not change the vault-root working directory');
-      expect(prompt).toContain('does not grant access');
-      expect(prompt).toContain('Missing Linked content');
+      expect(prompt).toContain('only that comment');
     });
 
     it('should document selection context and image embeds without duplicate sections', () => {
       const prompt = buildSystemPrompt();
 
       expect(prompt).not.toContain('## Selection Context');
-      expect(prompt.match(/<editor_selection path=/g)).toHaveLength(1);
       expect(prompt.match(/<browser_selection source=/g)).toHaveLength(1);
       expect(prompt.match(/Use `!\[\[image\.png\]\]`/g)).toHaveLength(1);
     });
@@ -148,7 +148,7 @@ describe('systemPrompt', () => {
       expect(prompt).toContain('## Runtime Context');
       expect(prompt).not.toContain('## User Context');
       expect(prompt).toContain(
-        "You are Claudian, operating inside **Alice**'s Obsidian Vault. The current working directory is the Vault root.",
+        "You are Grandemonium, operating inside **Alice**'s Obsidian Vault. The current working directory is the Vault root.",
       );
       expect(prompt).not.toContain('You are collaborating with');
     });
@@ -230,11 +230,12 @@ describe('systemPrompt', () => {
         customPrompt: 'Be helpful',
         vaultPath: '/vault',
         userName: 'Alice',
+        agentName: 'gpt',
       };
 
       const key = computeSystemPromptKey(settings);
 
-      expect(key).toBe('attachments::Be helpful::/vault::Alice');
+      expect(key).toBe('attachments::Be helpful::/vault::Alice::gpt');
     });
 
     it('handles empty or undefined values', () => {
@@ -243,9 +244,30 @@ describe('systemPrompt', () => {
         customPrompt: '',
         vaultPath: '',
         userName: '',
+        agentName: '',
       });
 
-      expect(key).toBe('::::::');
+      expect(key).toBe('::::::::');
     });
+  });
+});
+
+describe('agentName in runtime context', () => {
+  it('tells the agent which author name to sign review comments with', () => {
+    const prompt = buildSystemPrompt({ agentName: 'gpt' });
+
+    expect(prompt).toContain('"gpt"');
+    expect(prompt).toContain('author');
+  });
+
+  it('omits the identity line when no agent name is configured', () => {
+    const prompt = buildSystemPrompt({});
+
+    expect(prompt).not.toContain('Sign review comments');
+  });
+
+  it('changes the prompt cache key when the agent name changes', () => {
+    expect(computeSystemPromptKey({ agentName: 'gpt' }))
+      .not.toBe(computeSystemPromptKey({ agentName: 'claude' }));
   });
 });

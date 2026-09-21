@@ -1,12 +1,12 @@
 import { ChatModelSelectionCoordinator } from '@/app/settings/ChatModelSelectionCoordinator';
-import { DEFAULT_CLAUDIAN_SETTINGS } from '@/app/settings/defaultSettings';
+import { DEFAULT_GRANDEMONIUM_SETTINGS } from '@/app/settings/defaultSettings';
 import { SettingsCoordinator } from '@/app/settings/SettingsCoordinator';
-import type { ClaudianSettings } from '@/core/types';
+import type { GrandemoniumSettings } from '@/core/types';
 
 function createCoordinator(
-  persist: (settings: ClaudianSettings) => Promise<void> = async () => undefined,
+  persist: (settings: GrandemoniumSettings) => Promise<void> = async () => undefined,
 ) {
-  const settings = structuredClone(DEFAULT_CLAUDIAN_SETTINGS);
+  const settings = structuredClone(DEFAULT_GRANDEMONIUM_SETTINGS);
   const settingsCoordinator = new SettingsCoordinator(settings, persist);
   return {
     coordinator: new ChatModelSelectionCoordinator(settingsCoordinator),

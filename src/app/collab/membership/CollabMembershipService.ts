@@ -17,7 +17,7 @@ import type {
   CollabProjectSnapshot,
 } from '@/core/collab';
 import { type CollabCancelManagerResponsibilityOfferRequest, type CollabCoordinationSnapshot, type CollabCreateManagerResponsibilityOfferRequest, type CollabDemoteManagerRequest, type CollabInvitationView, type CollabOperationOptions, type CollabPromoteManagerRequest, type CollabRemoveMemberRequest, isCollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabMembershipSnapshotPort {
   readCoordinationSnapshot(

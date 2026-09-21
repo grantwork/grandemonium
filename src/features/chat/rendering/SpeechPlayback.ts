@@ -9,7 +9,7 @@
 import { requestUrl } from 'obsidian';
 
 import { getProviderEnvironmentVariables, getSharedEnvironmentVariables } from '@/core/providers/providerEnvironment';
-import type { ClaudianSettings } from '@/core/types/settings';
+import type { GrandemoniumSettings } from '@/core/types/settings';
 import { parseEnvironmentVariables } from '@/utils/env';
 
 type Replacement = string | ((...args: string[]) => string);
@@ -75,7 +75,7 @@ export function isSpeechSynthesisSupported(): boolean {
 }
 
 /** Resolves the OpenAI key from the explicit setting, then shared env, then the Codex provider env. */
-export function resolveOpenAiSpeechApiKey(settings: ClaudianSettings): string {
+export function resolveOpenAiSpeechApiKey(settings: GrandemoniumSettings): string {
   const explicit = settings.readAloudOpenAiApiKey?.trim();
   if (explicit) return explicit;
   const record = settings as unknown as Record<string, unknown>;
@@ -206,7 +206,7 @@ class OpenAiSpeechBackend implements SpeechBackend {
 }
 
 /** Picks the backend for the current settings, or null when none can work. */
-export function createSpeechBackend(settings: ClaudianSettings | undefined): SpeechBackend | null {
+export function createSpeechBackend(settings: GrandemoniumSettings | undefined): SpeechBackend | null {
   if (settings?.readAloudProvider === 'openai') {
     const apiKey = resolveOpenAiSpeechApiKey(settings);
     if (apiKey) {
@@ -220,7 +220,7 @@ export function createSpeechBackend(settings: ClaudianSettings | undefined): Spe
   return isSpeechSynthesisSupported() ? new SystemSpeechBackend() : null;
 }
 
-export function isReadAloudAvailable(settings: ClaudianSettings | undefined): boolean {
+export function isReadAloudAvailable(settings: GrandemoniumSettings | undefined): boolean {
   return createSpeechBackend(settings) !== null;
 }
 

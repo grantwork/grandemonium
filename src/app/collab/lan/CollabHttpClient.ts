@@ -18,7 +18,7 @@ import {
   COLLAB_CONTROL_PROTOCOL_VERSION,
 } from '@/app/collab/lan/LanCollabConstants';
 import { fingerprintCertificatePem } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
@@ -281,7 +281,7 @@ function validateRequestPath(
   const encodedProjectId = encodeURIComponent(projectId);
   let parsed: URL;
   try {
-    parsed = new URL(requestPath, 'https://claudian.invalid');
+    parsed = new URL(requestPath, 'https://grandemonium.invalid');
   } catch {
     throw transportError('operation-failed', 'control-request-path-invalid');
   }
@@ -293,7 +293,7 @@ function validateRequestPath(
     ? COLLAB_CONTROL_OPERATION_BINDINGS[operationMatch.operation]
     : null;
   if (
-    parsed.origin !== 'https://claudian.invalid'
+    parsed.origin !== 'https://grandemonium.invalid'
     || `${parsed.pathname}${parsed.search}` !== requestPath
     || match?.[2] !== encodedProjectId
     || Number(match?.[1]) !== binding?.version
@@ -389,7 +389,7 @@ export class PinnedCollabHttpClient {
     return this.requestJson(
       request,
       'invitation',
-      `Claudian-Invitation ${invitationSecret}`,
+      `Grandemonium-Invitation ${invitationSecret}`,
       options,
     );
   }

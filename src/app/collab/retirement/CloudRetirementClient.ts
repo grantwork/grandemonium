@@ -20,7 +20,7 @@ import type {
   CollabRetirementResult,
   CollabRetireProjectRequest,
 } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CloudRetirementClientOptions {
   readonly createSession: (

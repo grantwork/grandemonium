@@ -1,6 +1,6 @@
 import { type CollabProjectId } from '@claudian-collab/protocol';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { toError } from '@/utils/error';
 
 export type ProjectOperationPolicy = 'active' | 'retired-local';

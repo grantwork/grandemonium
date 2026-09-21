@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
 import { type CollabLocalProjectSummary } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   LanHostSection,
   type LanHostSectionPort,
@@ -59,7 +59,7 @@ describe('LanHostSection', () => {
       project: project(),
     });
 
-    const sectionEl = container.querySelector<HTMLElement>('.claudian-collab-host-section')!;
+    const sectionEl = container.querySelector<HTMLElement>('.grandemonium-collab-host-section')!;
     expect(sectionEl.tagName).toBe('DIV');
     expect(sectionEl.textContent).toContain('LAN Host');
     expect(sectionEl.textContent).toContain('Hosted on this device');
@@ -109,7 +109,7 @@ describe('LanHostSection', () => {
       project: project({ hostStatus: 'needs-attention' }),
     });
 
-    const sectionEl = container.querySelector<HTMLElement>('.claudian-collab-host-section')!;
+    const sectionEl = container.querySelector<HTMLElement>('.grandemonium-collab-host-section')!;
     expect(sectionEl.textContent).toContain('Needs attention');
     expect(sectionEl.querySelector<HTMLButtonElement>('[data-action="start-host"]')?.textContent)
       .toContain('Needs attention');
@@ -136,7 +136,7 @@ describe('LanHostSection', () => {
     await flush();
     expect(port.startHost).toHaveBeenCalledTimes(2);
     expect(sectionEl.textContent).toContain('Running');
-    expect(sectionEl.querySelector('.claudian-collab-host-body')).toBeNull();
+    expect(sectionEl.querySelector('.grandemonium-collab-host-body')).toBeNull();
     section.destroy();
   });
 

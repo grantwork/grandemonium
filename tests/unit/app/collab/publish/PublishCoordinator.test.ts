@@ -15,7 +15,7 @@ import {
   type PublishRepositorySnapshot,
   type PublishRequestEnsurePort,
 } from '@/app/collab/publish/PublishCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT: PublishProjectContext = {
   memberId: 'member-a',

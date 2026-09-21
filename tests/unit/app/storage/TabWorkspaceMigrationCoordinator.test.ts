@@ -35,7 +35,7 @@ describe('TabWorkspaceMigrationCoordinator', () => {
       getTabManagerState: jest.fn().mockResolvedValue(legacyState),
     };
     const { leaves, markLayoutReady, workspace } = createWorkspaceHarness();
-    const liveView = { kind: 'claudian' };
+    const liveView = { kind: 'grandemonium' };
     leaves.push({
       view: liveView,
       getViewState: jest.fn().mockReturnValue({
@@ -105,7 +105,7 @@ describe('TabWorkspaceMigrationCoordinator', () => {
       getTabManagerState: jest.fn(),
     };
     const { leaves, markLayoutReady, workspace } = createWorkspaceHarness();
-    const liveView = { kind: 'claudian' };
+    const liveView = { kind: 'grandemonium' };
     leaves.push(
       { view: liveView, getViewState: jest.fn().mockReturnValue({ state: {} }) },
       {
@@ -147,7 +147,7 @@ describe('TabWorkspaceMigrationCoordinator', () => {
       getTabManagerState: jest.fn().mockResolvedValue(legacyState),
     };
     const { leaves, markLayoutReady, workspace } = createWorkspaceHarness();
-    const liveView = { kind: 'claudian' };
+    const liveView = { kind: 'grandemonium' };
     leaves.push({ view: liveView, getViewState: jest.fn().mockReturnValue({ state: {} }) });
     const coordinator = new TabWorkspaceMigrationCoordinator(
       storage,

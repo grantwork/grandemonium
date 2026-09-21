@@ -18,6 +18,7 @@ import { type AuthorColorOverrides,resolveAuthorColor } from "./author-color";
 import type { CommentsController } from "./CommentsController";
 import { confirmAction } from "./confirm-action";
 import { formatComment, formatTs } from "./export";
+import type { SelectionRange } from "./selection-comment";
 import { shouldSubmitComment, sortSidebarComments } from "./sidebar-preferences";
 import {
   addComment,
@@ -29,6 +30,7 @@ import {
   removeComment,
   removeThreadEntry,
   resolveAll,
+  resolveAnchor,
   setStatus,
   type SuggestionFailureReason,
 } from "./store";
@@ -48,7 +50,12 @@ function truncate(s: string, n: number): string {
 }
 
 /** Colors an author name span with accessible light and dark variants. */
-function paintAuthor(
+/**
+ * Publishes an author's colour as CSS variables on an element. Anything inside
+ * it can then use that colour, which is how an entry's left rail matches the
+ * author name without the element itself being recoloured.
+ */
+function applyAuthorColorVars(
   el: HTMLElement,
   author: string,
   overrides: AuthorColorOverrides,
@@ -56,13 +63,25 @@ function paintAuthor(
 ): void {
   el.dataset.tcAuthor = author;
   if (!enabled) {
-    el.removeClass("tc-author-colored");
     el.style.removeProperty("--tc-author-color-light");
     el.style.removeProperty("--tc-author-color-dark");
     return;
   }
   el.style.setProperty("--tc-author-color-light", resolveAuthorColor(author, overrides, "light"));
   el.style.setProperty("--tc-author-color-dark", resolveAuthorColor(author, overrides, "dark"));
+}
+
+function paintAuthor(
+  el: HTMLElement,
+  author: string,
+  overrides: AuthorColorOverrides,
+  enabled: boolean
+): void {
+  applyAuthorColorVars(el, author, overrides, enabled);
+  if (!enabled) {
+    el.removeClass("tc-author-colored");
+    return;
+  }
   el.addClass("tc-author-colored");
 }
 
@@ -137,6 +156,15 @@ export class CommentSidebar extends ItemView implements HoverParent {
     void this.render();
   }
 
+  /** Where the open draft sits in this file's prose, so a repeat selection can be ignored. */
+  draftRange(filePath: string, prose: string): SelectionRange | null {
+    if (!this.draft || this.draft.filePath !== filePath) return null;
+    const resolution = resolveAnchor(prose, this.draft.anchor);
+    return resolution.kind === "resolved"
+      ? { from: resolution.start, to: resolution.end }
+      : null;
+  }
+
   focusComment(id: string): void {
     this.focusedId = id;
     void this.render();
@@ -153,6 +181,19 @@ export class CommentSidebar extends ItemView implements HoverParent {
   }
 
   refreshAuthorColors(): void {
+    for (const el of Array.from(
+      this.contentEl.querySelectorAll<HTMLElement>(".tc-entry[data-tc-author]")
+    )) {
+      const author = el.dataset.tcAuthor;
+      if (author != null) {
+        applyAuthorColorVars(
+          el,
+          author,
+          this.plugin.settings.authorColorOverrides,
+          this.plugin.settings.colorAuthorNames
+        );
+      }
+    }
     for (const el of Array.from(this.contentEl.querySelectorAll<HTMLElement>(".tc-author[data-tc-author]"))) {
       const author = el.dataset.tcAuthor;
       if (author != null) {
@@ -272,6 +313,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
             if (ok) {
               this.draft = null;
               void this.render();
+              void this.plugin.notifyUserCommentAdded(file.path, text);
             }
           });
       }
@@ -408,6 +450,21 @@ export class CommentSidebar extends ItemView implements HoverParent {
         })();
       };
     };
+    const addReviewButton = (controls: HTMLElement): void => {
+      if (!this.plugin.canRequestReview()) return;
+      const reviewBtn = controls.createEl("button", {
+        cls: "tc-entry-action clickable-icon",
+        attr: {
+          "aria-label": "Ask AI to review open comments",
+          type: "button",
+        },
+      });
+      setIcon(reviewBtn, "sparkles");
+      setTooltip(reviewBtn, "Ask AI to review");
+      reviewBtn.onclick = () => {
+        void this.plugin.requestReview(file.path);
+      };
+    };
     const addMenuTrigger = (
       controls: HTMLElement,
       ariaLabel: string,
@@ -528,7 +585,10 @@ export class CommentSidebar extends ItemView implements HoverParent {
       if (r.comment.thread.length === 0) {
         const fallbackMeta = card.createDiv({ cls: "tc-meta" });
         const fallbackControls = fallbackMeta.createDiv({ cls: "tc-entry-controls" });
-        if (r.comment.status === "open") addResolveButton(fallbackControls);
+        if (r.comment.status === "open") {
+          addReviewButton(fallbackControls);
+          addResolveButton(fallbackControls);
+        }
         addMenuTrigger(
           fallbackControls,
           "More options for comment",
@@ -540,7 +600,16 @@ export class CommentSidebar extends ItemView implements HoverParent {
     }
 
     for (const [entryIndex, entry] of r.comment.thread.entries()) {
-      const row = card.createDiv({ cls: "tc-entry" });
+      const isAgentEntry = this.plugin.isAgentAuthor(entry.author);
+      const row = card.createDiv({
+        cls: isAgentEntry ? "tc-entry tc-entry-agent" : "tc-entry",
+      });
+      applyAuthorColorVars(
+        row,
+        entry.author,
+        this.plugin.settings.authorColorOverrides,
+        this.plugin.settings.colorAuthorNames
+      );
       const meta = row.createDiv({ cls: "tc-meta" });
       paintAuthor(
         meta.createSpan({ text: entry.author, cls: "tc-author" }),
@@ -550,7 +619,28 @@ export class CommentSidebar extends ItemView implements HoverParent {
       );
       this.addTimestamp(meta, entry.ts);
       const entryControls = meta.createDiv({ cls: "tc-entry-controls" });
+      if (r.comment.status === "open" && this.plugin.isAgentAuthor(entry.author)) {
+        const implementBtn = entryControls.createEl("button", {
+          cls: "tc-entry-action clickable-icon",
+          attr: {
+            "aria-label": `Ask ${entry.author} to make these changes`,
+            type: "button",
+          },
+        });
+        setIcon(implementBtn, "wand-2");
+        setTooltip(implementBtn, `Ask ${entry.author} to implement`);
+        implementBtn.onclick = () => {
+          void this.plugin.requestImplementation(entry.author, {
+            commentId: r.id,
+            filePath: file.path,
+            quote: r.comment.anchor.exact,
+            reply: entry.text,
+            thread: r.comment.thread.map(({ author, text, ts }) => ({ author, text, ts })),
+          });
+        };
+      }
       if (entryIndex === 0 && r.comment.status === "open" && !r.comment.suggestion) {
+        addReviewButton(entryControls);
         addResolveButton(entryControls);
       }
       addMenuTrigger(
@@ -717,9 +807,13 @@ export class CommentSidebar extends ItemView implements HoverParent {
           const text = reply.value.trim();
           if (!text) return;
           reply.value = "";
-          void this.plugin.updateDoc(file, (d) =>
-            addReply(d.comments, r.id, this.plugin.currentAuthor(), this.plugin.nowTs(), text)
-          );
+          void this.plugin
+            .updateDoc(file, (d) =>
+              addReply(d.comments, r.id, this.plugin.currentAuthor(), this.plugin.nowTs(), text)
+            )
+            .then((ok) => {
+              if (ok) void this.plugin.notifyUserCommentAdded(file.path, text);
+            });
         }
       };
     }

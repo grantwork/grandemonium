@@ -21,6 +21,7 @@ export interface GrokCatalogSnapshot {
 
 export interface PersistedGrokProviderSettings {
   enabled: boolean;
+  agentName: string;
   cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   catalogsByHost: Record<string, GrokCatalogSnapshot>;
@@ -36,6 +37,7 @@ export interface GrokProviderSettings extends PersistedGrokProviderSettings {
 }
 
 export const DEFAULT_GROK_PROVIDER_SETTINGS: Readonly<PersistedGrokProviderSettings> = Object.freeze({
+  agentName: 'grok',
   catalogsByHost: {},
   cliPath: '',
   cliPathsByHost: {},
@@ -117,6 +119,8 @@ export function getGrokProviderSettings(
       || DEFAULT_GROK_PROVIDER_SETTINGS.cliPath,
     cliPathsByHost,
     currentCatalog,
+    agentName: readTrimmedString(config.agentName)
+      || DEFAULT_GROK_PROVIDER_SETTINGS.agentName,
     enabled: typeof config.enabled === 'boolean'
       ? config.enabled
       : DEFAULT_GROK_PROVIDER_SETTINGS.enabled,
@@ -186,6 +190,7 @@ export function updateGrokProviderSettings(
     catalogsByHost,
     cliPath,
     cliPathsByHost,
+    agentName: updates.agentName ?? current.agentName,
     enabled: updates.enabled ?? current.enabled,
     environmentHash: updates.environmentHash !== undefined
       ? readTrimmedString(updates.environmentHash)

@@ -22,7 +22,7 @@ import {
   cloudProjectGitRemoteUrl,
 } from '@/app/collab/remote-authority/CloudAuthorityUrls';
 import type { CollabProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface AuthorityTransferConvergenceProjects {
   loadMembership(projectId: CollabProjectId): Promise<CollabLocalMembershipRecord | null>;

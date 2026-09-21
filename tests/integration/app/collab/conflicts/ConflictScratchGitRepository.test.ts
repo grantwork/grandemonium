@@ -66,8 +66,8 @@ describe('ConflictScratchGitRepository', () => {
     expect(runSpy).toHaveBeenCalledWith(expect.objectContaining({
       args: expect.arrayContaining(['merge']),
       identity: {
-        email: 'collab@claudian.local',
-        name: 'Claudian Collab',
+        email: 'collab@grandemonium.local',
+        name: 'Grandemonium Collab',
       },
     }));
   });
@@ -197,7 +197,7 @@ describe('ConflictScratchGitRepository', () => {
       harness.scratchPath,
       resultOid,
       '%an%x00%ae',
-    )).resolves.toBe('Claudian Collab\0collab@claudian.local');
+    )).resolves.toBe('Grandemonium Collab\0collab@grandemonium.local');
   });
 
   it.each([
@@ -345,7 +345,7 @@ describe('ConflictScratchGitRepository', () => {
     expect(await harness.git.getWorkingTreeStatus(harness.repositoryPath)).toEqual([]);
     expect(await harness.git.resolveRef(
       harness.repositoryPath,
-      `refs/claudian/publications/${harness.descriptor.operationId}`,
+      `refs/grandemonium/publications/${harness.descriptor.operationId}`,
     )).toBe(resultOid);
 
     await expect(harness.scratch.retainResultForPublication(
@@ -468,7 +468,7 @@ describe('ConflictScratchGitRepository', () => {
   async function createHarness(
     scenario: 'binary' | 'delete-modify' | 'rename-delete' | 'text' = 'text',
   ) {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-conflict-git-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-conflict-git-'));
     const repositoryPath = path.join(root, 'project');
     const scratchPath = path.join(root, 'scratch');
     const emptyConfigPath = path.join(root, 'empty.gitconfig');

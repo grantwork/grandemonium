@@ -20,7 +20,7 @@ import {
   type SqlJsSnapshotStore,
 } from '@/app/collab/authority/SqlJsSnapshotStore';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type AuthoritySqlValue = SqlValue;
 export type AuthoritySqlRow = Readonly<Record<string, AuthoritySqlValue>>;

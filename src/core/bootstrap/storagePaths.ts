@@ -1,12 +1,12 @@
 import { type InstallationKey, isInstallationKey } from '@/core/device/InstallationKey';
 
-export const CLAUDIAN_STORAGE_PATH = '.claudian';
+export const GRANDEMONIUM_STORAGE_PATH = '.grandemonium';
 
-export const LEGACY_CLAUDIAN_SETTINGS_PATH = '.claude/claudian-settings.json';
-export const CLAUDIAN_SETTINGS_PATH = `${CLAUDIAN_STORAGE_PATH}/claudian-settings.json`;
+export const LEGACY_GRANDEMONIUM_SETTINGS_PATH = '.claude/grandemonium-settings.json';
+export const GRANDEMONIUM_SETTINGS_PATH = `${GRANDEMONIUM_STORAGE_PATH}/grandemonium-settings.json`;
 
 export const LEGACY_SESSIONS_PATH = '.claude/sessions';
-export const SESSIONS_PATH = `${CLAUDIAN_STORAGE_PATH}/sessions`;
+export const SESSIONS_PATH = `${GRANDEMONIUM_STORAGE_PATH}/sessions`;
 export const DEVICE_SESSIONS_PATH = `${SESSIONS_PATH}/devices`;
 export const INPUT_LEDGER_SUFFIX = '.inputs.json';
 export const DELETION_MARKER_SUFFIX = '.deleted.json';

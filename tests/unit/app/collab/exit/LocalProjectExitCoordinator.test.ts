@@ -17,7 +17,7 @@ import {
   ManagerResponsibilityOperationCoordinator,
 } from '@/app/collab/membership/ManagerResponsibilityOperationCoordinator';
 import { type CollabLocalCleanupStatus } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const NOW = '2026-08-13T00:00:00.000Z';
 

@@ -4,7 +4,7 @@ import type {
   CollabResult,
   CollabTicketPageProjection,
 } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 export interface TicketReferenceResolverPort {
   listTickets(
@@ -59,7 +59,7 @@ export class TicketReferenceResolver {
         if (signal.aborted) return null;
         const result = await this.port.listTickets({
           ...(cursor ? { cursor } : {}),
-          limit: CLAUDIAN_COLLAB_LIMITS.maxTicketPageSize,
+          limit: GRANDEMONIUM_COLLAB_LIMITS.maxTicketPageSize,
           projectId,
           status,
         }, { signal });

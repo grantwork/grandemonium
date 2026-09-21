@@ -28,7 +28,7 @@ import {
 } from '@/app/collab/publish/CollabPublicationService';
 import type { CollabRequestDraftRecord } from '@/app/collab/publish/CollabRequestDraftRecord';
 import { type CollabUpdateRequestMetadataRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -195,7 +195,7 @@ describe('CollabPublicationService reconnect', () => {
   let tlsRoot: string;
 
   beforeAll(async () => {
-    tlsRoot = await mkdtemp(path.join(tmpdir(), 'claudian-publication-lanes-'));
+    tlsRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-publication-lanes-'));
     const identity = await new LanTlsIdentity(tlsRoot, {
       installationKey: TEST_INSTALLATION_A,
     }).loadOrCreate();
@@ -701,7 +701,7 @@ describe('CollabPublicationService reconnect', () => {
       reconnect,
     }));
     const request = {
-      encodedInvitation: 'claudian-collab:v2:payload',
+      encodedInvitation: 'grandemonium-collab:v2:payload',
       projectId: 'project-a',
     };
 

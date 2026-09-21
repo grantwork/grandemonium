@@ -197,7 +197,7 @@ export function buildTabRuntimeControllers(
     },
   });
   options.registerCleanup('tab stream controller', () => streamController.dispose());
-  streamController.setTabActive(!dom.contentEl.hasClass('claudian-hidden'));
+  streamController.setTabActive(!dom.contentEl.hasClass('grandemonium-hidden'));
 
   const renderWindow = dom.messagesEl.ownerDocument.defaultView;
   const IntersectionObserverConstructor = renderWindow?.IntersectionObserver;

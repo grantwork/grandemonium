@@ -10,6 +10,7 @@ import type {
 import { t } from '../../../i18n/i18n';
 import { renderEnvironmentSettingsSection } from '../../../shared/settings/EnvironmentSettingsSection';
 import { renderHostnameCliPathSetting } from '../../../shared/settings/HostnameCliPathSetting';
+import { renderProviderAgentNameSetting } from '../../../shared/settings/ProviderAgentNameSetting';
 import { renderProviderEnablementSetting } from '../../../shared/settings/ProviderEnablementSetting';
 import {
   renderLastEnabledProviderWarning,
@@ -71,6 +72,18 @@ export const piSettingsTabRenderer: ProviderSettingsTabRenderer = {
           lastProviderWarning.showFor();
         }
         modelWarning.context.notifyProviderModelOptionsChanged('pi');
+      },
+    });
+
+    renderProviderAgentNameSetting({
+      container,
+      defaultAgentName: 'pi',
+      getValue: () => getPiProviderSettings(settingsBag).agentName,
+      name: 'Agent name',
+      onChange: async (agentName) => {
+        await context.plugin.mutateSettings((settings) => {
+          updatePiProviderSettings(settings, { agentName });
+        });
       },
     });
 

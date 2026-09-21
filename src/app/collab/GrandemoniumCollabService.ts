@@ -124,7 +124,7 @@ import { RetirementTerminalService } from '@/app/collab/retirement/RetirementTer
 import { RetirementTombstoneRepository } from '@/app/collab/retirement/RetirementTombstoneRepository';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabRetirementResult, CollabRetireProjectRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface CollabLocalFoundation {
@@ -152,7 +152,7 @@ export interface CollabGitRuntimeResolver {
   rescan(input?: GitRuntimeResolveInput): Promise<GitRuntimeResolution>;
 }
 
-export interface ClaudianCollabServiceOptions {
+export interface GrandemoniumCollabServiceOptions {
   readonly createAuthorityDatabase?: (
     authorityDirectory: string,
   ) => SqlJsProjectDatabase;
@@ -213,13 +213,13 @@ function environmentPath(environment: NodeJS.ProcessEnv): string | undefined {
   return entry?.[1];
 }
 
-export class ClaudianCollabService {
+export class GrandemoniumCollabService {
   readonly authorityTransfers: AuthorityTransferPersistence;
   readonly cloudBootstrapTransitions: CloudBootstrapTransitionStore;
   readonly discovery: CollabLanDiscoveryService;
   readonly hostTransitionCandidates: HostTransitionCandidateResolver;
   readonly hostInstallations: HostInstallationBindingService;
-  readonly installationKey: ClaudianCollabServiceOptions['installationKey'];
+  readonly installationKey: GrandemoniumCollabServiceOptions['installationKey'];
   readonly join: JoinProjectCoordinator;
   readonly lanHost: LanHostCoordinator;
   readonly local: CollabLocalFoundation;
@@ -256,7 +256,7 @@ export class ClaudianCollabService {
     ): Promise<void>;
   } | null = null;
 
-  constructor(private readonly options: ClaudianCollabServiceOptions) {
+  constructor(private readonly options: GrandemoniumCollabServiceOptions) {
     this.installationKey = options.installationKey;
     const pathPolicy = new CollabPathPolicy({
       obsidianConfigDirectory: options.obsidianConfigDirectory,
@@ -545,7 +545,7 @@ export class ClaudianCollabService {
     }, input.memberCredential, input.signal ? { signal: input.signal } : {});
   }
 
-  setRetirementHandler(handler: NonNullable<ClaudianCollabService['retirementHandler']>): void {
+  setRetirementHandler(handler: NonNullable<GrandemoniumCollabService['retirementHandler']>): void {
     this.#assertOpen();
     this.retirementHandler = handler;
   }

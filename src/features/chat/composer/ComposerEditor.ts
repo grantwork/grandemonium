@@ -28,7 +28,7 @@ class WikilinkWidget extends WidgetType {
   toDOM(view: EditorView): HTMLElement {
     const ownerWindow = view.dom.ownerDocument.win as Window & { createSpan: typeof createSpan };
     const el = ownerWindow.createSpan();
-    el.className = 'claudian-composer-wikilink markdown-rendered';
+    el.className = 'grandemonium-composer-wikilink markdown-rendered';
     el.contentEditable = 'false';
     void MarkdownRenderer.render(this.app, this.markdown, el, '', this.component).then(() => {
       if (el.isConnected) view.requestMeasure();
@@ -53,7 +53,7 @@ export class ComposerEditor {
 
   constructor(parent: HTMLElement, private readonly app: App, private readonly component: Component) {
     const host = parent.createDiv({
-      cls: 'claudian-input claudian-composer-editor',
+      cls: 'grandemonium-input grandemonium-composer-editor',
       attr: { role: 'textbox', 'aria-label': 'Message', 'aria-multiline': 'true', tabindex: '0', dir: 'auto' },
     });
     this.element = host as unknown as ComposerInputElement;

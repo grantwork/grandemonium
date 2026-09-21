@@ -1,4 +1,4 @@
-.claudian-composer-dropdown {
+.grandemonium-composer-dropdown {
   display: none;
   position: absolute;
   right: 0;
@@ -14,20 +14,20 @@
   box-shadow: 0 -4px 16px rgb(0 0 0 / 20%);
 }
 
-.claudian-composer-dropdown.is-visible {
+.grandemonium-composer-dropdown.is-visible {
   display: block;
 }
 
-.claudian-composer-dropdown--fixed {
+.grandemonium-composer-dropdown--fixed {
   position: fixed;
   right: auto;
-  bottom: var(--claudian-fixed-dropdown-bottom);
-  left: var(--claudian-fixed-dropdown-left);
+  bottom: var(--grandemonium-fixed-dropdown-bottom);
+  left: var(--grandemonium-fixed-dropdown-left);
   z-index: 10001;
-  width: var(--claudian-fixed-dropdown-width);
+  width: var(--grandemonium-fixed-dropdown-width);
 }
 
-.claudian-composer-dropdown-item {
+.grandemonium-composer-dropdown-item {
   display: flex;
   gap: 8px;
   align-items: center;
@@ -37,77 +37,77 @@
   cursor: pointer;
 }
 
-.claudian-composer-dropdown-item:hover,
-.claudian-composer-dropdown-item.is-selected {
+.grandemonium-composer-dropdown-item:hover,
+.grandemonium-composer-dropdown-item.is-selected {
   background: var(--background-modifier-hover);
 }
 
-.claudian-composer-dropdown-item[aria-disabled="true"] {
+.grandemonium-composer-dropdown-item[aria-disabled="true"] {
   color: var(--text-muted);
   cursor: default;
 }
 
-.claudian-composer-dropdown-item[aria-disabled="true"]:hover {
+.grandemonium-composer-dropdown-item[aria-disabled="true"]:hover {
   background: transparent;
 }
 
-.claudian-composer-dropdown-icon,
-.claudian-composer-dropdown-folder-icon {
+.grandemonium-composer-dropdown-icon,
+.grandemonium-composer-dropdown-folder-icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   color: var(--text-muted);
 }
 
-.claudian-composer-dropdown-icon svg,
-.claudian-composer-dropdown-folder-icon svg {
+.grandemonium-composer-dropdown-icon svg,
+.grandemonium-composer-dropdown-folder-icon svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-composer-dropdown-folder-icon {
+.grandemonium-composer-dropdown-folder-icon {
   margin-left: auto;
 }
 
-.claudian-composer-dropdown-copy {
+.grandemonium-composer-dropdown-copy {
   min-width: 0;
   flex: 1;
 }
 
-.claudian-composer-dropdown-label,
-.claudian-composer-dropdown-detail {
+.grandemonium-composer-dropdown-label,
+.grandemonium-composer-dropdown-detail {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.claudian-composer-dropdown-label {
+.grandemonium-composer-dropdown-label {
   font-size: 13px;
 }
 
-.claudian-composer-dropdown-detail {
+.grandemonium-composer-dropdown-detail {
   margin-top: 2px;
   color: var(--text-muted);
   font-size: 11px;
 }
 
-.claudian-composer-dropdown-item.is-loading,
-.claudian-composer-dropdown-item.is-empty,
-.claudian-composer-dropdown-item.is-error {
+.grandemonium-composer-dropdown-item.is-loading,
+.grandemonium-composer-dropdown-item.is-empty,
+.grandemonium-composer-dropdown-item.is-error {
   justify-content: center;
   padding: 12px;
   text-align: center;
 }
 
-.claudian-composer-dropdown::-webkit-scrollbar {
+.grandemonium-composer-dropdown::-webkit-scrollbar {
   width: 6px;
 }
 
-.claudian-composer-dropdown::-webkit-scrollbar-track {
+.grandemonium-composer-dropdown::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.claudian-composer-dropdown::-webkit-scrollbar-thumb {
+.grandemonium-composer-dropdown::-webkit-scrollbar-thumb {
   background: var(--background-modifier-border);
   border-radius: 3px;
 }

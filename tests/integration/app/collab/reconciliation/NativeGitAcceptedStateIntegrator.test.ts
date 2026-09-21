@@ -222,7 +222,7 @@ describe('NativeGitAcceptedStateIntegrator', () => {
   async function createHarness(
     scenario: 'conflicting' | 'delete-modify-space' | 'divergent-clean' | 'fast-forward',
   ) {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-reconciliation-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-reconciliation-'));
     const repositoryPath = path.join(root, 'project');
     const emptyConfigPath = path.join(root, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');

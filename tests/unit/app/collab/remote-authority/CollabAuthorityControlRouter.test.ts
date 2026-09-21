@@ -2,7 +2,7 @@ import {
   CollabProjectWorkSessionRegistry,
 } from '@/app/collab/activity/CollabProjectWorkSession';
 import { CollabAuthorityControlRouter } from '@/app/collab/remote-authority/CollabAuthorityControlRouter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-authority-router';
 
@@ -13,7 +13,7 @@ describe('CollabAuthorityControlRouter', () => {
       code: 'endpoint-unreachable',
     }));
     const second = jest.fn().mockResolvedValue({
-      encodedInvitation: 'claudian-collab:v2:invite-router',
+      encodedInvitation: 'grandemonium-collab:v2:invite-router',
       expiresAt: '2026-08-29T00:15:00.000Z',
     });
     const create = jest.fn()
@@ -50,7 +50,7 @@ describe('CollabAuthorityControlRouter', () => {
       idempotencyKey: 'create-invitation-router',
       projectId: PROJECT_ID,
     })).resolves.toEqual({
-      encodedInvitation: 'claudian-collab:v2:invite-router',
+      encodedInvitation: 'grandemonium-collab:v2:invite-router',
       expiresAt: '2026-08-29T00:15:00.000Z',
     });
 

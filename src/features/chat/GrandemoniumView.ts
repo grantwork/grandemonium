@@ -16,7 +16,7 @@ import {
 } from '../../core/providers/conversationModel';
 import { ProviderRegistry } from '../../core/providers/ProviderRegistry';
 import { type AppTabManagerState, DEFAULT_CHAT_PROVIDER_ID, type ProviderId } from '../../core/providers/types';
-import { type ConversationMeta, VIEW_TYPE_CLAUDIAN } from '../../core/types';
+import { type ConversationMeta, VIEW_TYPE_GRANDEMONIUM } from '../../core/types';
 import { t } from '../../i18n/i18n';
 import {
   cancelScheduledAnimationFrame,
@@ -27,6 +27,7 @@ import type {
   CollabSidebarSurfaceController,
   FeatureHost,
   FeatureTabManagerHost,
+  ProviderBroadcastResult,
   TabWorkspaceStateDeliveryRegistration,
 } from '../FeatureHost';
 import type { HistoryConversationStatus } from './controllers/ConversationController';
@@ -34,6 +35,7 @@ import { MentionCacheCoordinator } from './services/MentionCacheCoordinator';
 import { TabStatePersistenceCoordinator } from './services/TabStatePersistenceCoordinator';
 import { getObsidianLanguage } from './session-manager/ProvisionalNoteNames';
 import { renderSessionGroupToggleIcon } from './session-manager/SessionManagerIcons';
+import { selectProviderBroadcastTargets } from './tabs/promptBroadcast';
 import { getTabProviderId } from './tabs/providerResolution';
 import { TabBar } from './tabs/TabBar';
 import { sendTabInputMessageFromExplicitEnterShortcut } from './tabs/TabInputEvents';
@@ -64,7 +66,7 @@ const MIN_SESSION_SIDEBAR_WIDTH = 180;
 const SESSION_RESIZER_WIDTH = 5;
 const SESSION_RESIZE_KEYBOARD_STEP = 16;
 
-export class ClaudianView extends ItemView {
+export class GrandemoniumView extends ItemView {
   private plugin: FeatureHost;
 
   // Tab management
@@ -99,6 +101,7 @@ export class ClaudianView extends ItemView {
   private sidebarSurfaceSwitcherEl: HTMLElement | null = null;
   private sessionsSurfaceButtonEl: HTMLButtonElement | null = null;
   private collabSurfaceButtonEl: HTMLButtonElement | null = null;
+  private compactCollabContainerEl: HTMLElement | null = null;
   private sessionSurfaceEl: HTMLElement | null = null;
   private collabSurfaceEl: HTMLElement | null = null;
   private activeSidebarSurface: SidebarSurface = 'sessions';
@@ -148,7 +151,7 @@ export class ClaudianView extends ItemView {
     this.plugin = plugin;
 
     // Hover Editor compatibility: Define load as an instance method that can't be
-    // overwritten by prototype patching. Hover Editor patches ClaudianView.prototype.load
+    // overwritten by prototype patching. Hover Editor patches GrandemoniumView.prototype.load
     // after our class is defined, but instance methods take precedence over prototype methods.
     const prototype = Object.getPrototypeOf(this) as LoadableView;
     const originalLoad = prototype.load.bind(this);
@@ -171,11 +174,11 @@ export class ClaudianView extends ItemView {
   }
 
   getViewType(): string {
-    return VIEW_TYPE_CLAUDIAN;
+    return VIEW_TYPE_GRANDEMONIUM;
   }
 
   getDisplayText(): string {
-    return 'Tandemonium';
+    return 'Grandemonium';
   }
 
   getIcon(): string {
@@ -337,7 +340,7 @@ export class ClaudianView extends ItemView {
 
     this.viewContainerEl = container;
     this.viewContainerEl.empty();
-    this.viewContainerEl.addClass('claudian-container');
+    this.viewContainerEl.addClass('grandemonium-container');
 
     this.buildViewLayout();
     if (!this.tabContentEl) return;
@@ -596,12 +599,12 @@ export class ClaudianView extends ItemView {
   private buildViewLayout(): void {
     if (!this.viewContainerEl) return;
 
-    this.chatPanelEl = this.viewContainerEl.createDiv({ cls: 'claudian-chat-panel' });
-    this.tabContentEl = this.chatPanelEl.createDiv({ cls: 'claudian-tab-content-container' });
+    this.chatPanelEl = this.viewContainerEl.createDiv({ cls: 'grandemonium-chat-panel' });
+    this.tabContentEl = this.chatPanelEl.createDiv({ cls: 'grandemonium-tab-content-container' });
     this.buildInputFooter();
 
     this.sessionSidebarResizerEl = this.viewContainerEl.createDiv({
-      cls: 'claudian-session-resizer',
+      cls: 'grandemonium-session-resizer',
     });
     this.sessionSidebarResizerEl.setAttribute('role', 'separator');
     this.sessionSidebarResizerEl.setAttribute('aria-label', 'Resize conversation sessions');
@@ -614,18 +617,18 @@ export class ClaudianView extends ItemView {
       this.handleSessionSidebarResizeKeydown(event);
     });
 
-    this.sessionSidebarEl = this.viewContainerEl.createDiv({ cls: 'claudian-session-sidebar' });
+    this.sessionSidebarEl = this.viewContainerEl.createDiv({ cls: 'grandemonium-session-sidebar' });
     this.sidebarSurfaceTrackEl = this.sessionSidebarEl.createDiv({
-      cls: 'claudian-sidebar-surface-track',
+      cls: 'grandemonium-sidebar-surface-track',
     });
     this.sessionSurfaceEl = this.sidebarSurfaceTrackEl.createDiv({
-      cls: 'claudian-session-surface',
+      cls: 'grandemonium-session-surface',
     });
     this.collabSurfaceEl = this.plugin?.collabSurfaceFactory
-      ? this.sidebarSurfaceTrackEl.createDiv({ cls: 'claudian-collab-surface' })
+      ? this.sidebarSurfaceTrackEl.createDiv({ cls: 'grandemonium-collab-surface' })
       : null;
     this.sidebarSurfaceSwitcherEl = this.sessionSidebarEl.createDiv({
-      cls: 'claudian-sidebar-surface-switcher',
+      cls: 'grandemonium-sidebar-surface-switcher',
     });
     this.sidebarSurfaceSwitcherEl.setAttribute('role', 'group');
     this.sidebarSurfaceSwitcherEl.setAttribute('aria-label', t('collab.surfaceGroupLabel'));
@@ -633,7 +636,7 @@ export class ClaudianView extends ItemView {
       this.handleSidebarSurfaceKeydown(event);
     });
     this.sessionsSurfaceButtonEl = this.sidebarSurfaceSwitcherEl.createEl('button', {
-      cls: 'claudian-sidebar-surface-button claudian-sidebar-surface-button--sessions',
+      cls: 'grandemonium-sidebar-surface-button grandemonium-sidebar-surface-button--sessions',
       attr: { 'aria-label': t('collab.sessionsSurfaceLabel'), type: 'button' },
     });
     this.sessionsSurfaceButtonEl.addEventListener('click', () => {
@@ -641,7 +644,7 @@ export class ClaudianView extends ItemView {
     });
     this.collabSurfaceButtonEl = this.plugin?.collabSurfaceFactory
       ? this.sidebarSurfaceSwitcherEl.createEl('button', {
-        cls: 'claudian-sidebar-surface-button claudian-sidebar-surface-button--collab',
+        cls: 'grandemonium-sidebar-surface-button grandemonium-sidebar-surface-button--collab',
         attr: { 'aria-label': t('collab.surfaceLabel'), type: 'button' },
       })
       : null;
@@ -666,9 +669,9 @@ export class ClaudianView extends ItemView {
    * The wrapper is moved to the active tab's nav row on tab switches.
    */
   private buildNavRowContent(): HTMLElement {
-    const wrapper = this.containerEl.createDiv({ cls: 'claudian-input-nav-content' });
+    const wrapper = this.containerEl.createDiv({ cls: 'grandemonium-input-nav-content' });
 
-    this.tabBarContainerEl = wrapper.createDiv({ cls: 'claudian-tab-bar-container' });
+    this.tabBarContainerEl = wrapper.createDiv({ cls: 'grandemonium-tab-bar-container' });
     this.tabBar = new TabBar(this.tabBarContainerEl, {
       onTabClick: (tabId) => this.handleTabClick(tabId),
       onTabClose: (tabId) => {
@@ -678,10 +681,10 @@ export class ClaudianView extends ItemView {
       onTitleExpansionChanged: () => this.persistTabWorkspaceState(),
     });
 
-    const navActionsEl = wrapper.createDiv({ cls: 'claudian-input-nav-actions' });
+    const navActionsEl = wrapper.createDiv({ cls: 'grandemonium-input-nav-actions' });
 
     this.newTabButtonEl = navActionsEl.createEl('button', {
-      cls: 'claudian-input-nav-btn claudian-new-tab-btn',
+      cls: 'grandemonium-input-nav-btn grandemonium-new-tab-btn',
       attr: { type: 'button' },
     });
     setIcon(this.newTabButtonEl, 'square-plus');
@@ -689,7 +692,7 @@ export class ClaudianView extends ItemView {
     this.newTabButtonEl.addEventListener('click', () => this.requestNewTab());
 
     const newBtn = navActionsEl.createEl('button', {
-      cls: 'claudian-input-nav-btn claudian-new-conversation-btn',
+      cls: 'grandemonium-input-nav-btn grandemonium-new-conversation-btn',
       attr: { type: 'button' },
     });
     setIcon(newBtn, 'square-pen');
@@ -698,17 +701,17 @@ export class ClaudianView extends ItemView {
 
     // History dropdown
     const historyContainer = navActionsEl.createDiv({
-      cls: 'claudian-history-container claudian-nav-dropup-container',
+      cls: 'grandemonium-history-container grandemonium-nav-dropup-container',
     });
     const historyBtn = historyContainer.createEl('button', {
-      cls: 'claudian-input-nav-btn',
+      cls: 'grandemonium-input-nav-btn',
       attr: { type: 'button' },
     });
     setIcon(historyBtn, 'history');
     historyBtn.setAttribute('aria-label', 'Chat history');
 
     this.historyDropdown = historyContainer.createDiv({
-      cls: 'claudian-history-menu claudian-nav-dropup-menu',
+      cls: 'grandemonium-history-menu grandemonium-nav-dropup-menu',
     });
 
     historyBtn.addEventListener('click', (e) => {
@@ -718,10 +721,11 @@ export class ClaudianView extends ItemView {
 
     if (this.plugin?.collabSurfaceFactory) {
       const compactCollabContainer = navActionsEl.createDiv({
-        cls: 'claudian-compact-collab-container claudian-nav-dropup-container',
+        cls: 'grandemonium-compact-collab-container grandemonium-nav-dropup-container',
       });
+      this.compactCollabContainerEl = compactCollabContainer;
       this.compactCollabButtonEl = compactCollabContainer.createEl('button', {
-        cls: 'claudian-input-nav-btn claudian-compact-collab-button',
+        cls: 'grandemonium-input-nav-btn grandemonium-compact-collab-button',
         attr: {
           'aria-expanded': 'false',
           'aria-haspopup': 'true',
@@ -731,7 +735,7 @@ export class ClaudianView extends ItemView {
       });
       setIcon(this.compactCollabButtonEl, 'users');
       this.compactCollabMenuEl = compactCollabContainer.createDiv({
-        cls: 'claudian-compact-collab-menu claudian-nav-dropup-menu claudian-nav-dropup-menu--surface',
+        cls: 'grandemonium-compact-collab-menu grandemonium-nav-dropup-menu grandemonium-nav-dropup-menu--surface',
       });
       this.compactCollabMenuEl.setAttribute('aria-label', t('collab.surfaceLabel'));
       this.compactCollabMenuEl.setAttribute('role', 'region');
@@ -746,9 +750,11 @@ export class ClaudianView extends ItemView {
         this.toggleCompactCollabMenu();
       });
     } else {
+      this.compactCollabContainerEl = null;
       this.compactCollabButtonEl = null;
       this.compactCollabMenuEl = null;
     }
+    this.updateCompactCollabVisibility();
 
     return wrapper;
   }
@@ -808,7 +814,87 @@ export class ClaudianView extends ItemView {
     this.updateSessionSidebarLayout(this.viewContainerEl.getBoundingClientRect().width);
   }
 
+  /** Collab's nav icon only exists while Collab is enabled for this Vault. */
+  private updateCompactCollabVisibility(): void {
+    const container = this.compactCollabContainerEl;
+    if (!container) return;
+
+    const available = this.isCollabAvailable();
+    container.toggleClass('grandemonium-hidden', !available);
+    if (available) {
+      container.removeAttribute('aria-hidden');
+    } else {
+      container.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  /**
+   * Sends one prompt to every enabled AI's tab, so each answers under its own
+   * name. A tab mid-turn takes the prompt onto its queue instead of running it,
+   * which is reported separately so a queued request is never read as sent.
+   */
+  async broadcastPromptToProviderTabs(
+    prompt: string,
+    targetProviderId?: ProviderId,
+  ): Promise<ProviderBroadcastResult> {
+    const tabManager = this.tabManager;
+    const text = prompt.trim();
+    if (!tabManager || !text) return { queued: [], sent: [] };
+
+    await tabManager.ensureProviderTabs();
+    const enabledProviderIds = ProviderRegistry.getEnabledProviderIds(this.plugin.settings);
+    const targets = selectProviderBroadcastTargets(
+      tabManager.getAllTabs(),
+      tab => getTabProviderId(tab, this.plugin),
+      targetProviderId
+        ? enabledProviderIds.filter(providerId => providerId === targetProviderId)
+        : enabledProviderIds,
+    );
+
+    const sent: ProviderId[] = [];
+    const queued: ProviderId[] = [];
+    for (const tab of targets) {
+      const providerId = getTabProviderId(tab, this.plugin);
+      try {
+        // A background tab has never been activated, so its provider workspace
+        // is not initialised and it would drop the message silently.
+        if (!await tabManager.prepareTabForExecution(tab)) {
+          new Notice(
+            `${ProviderRegistry.getAgentName(providerId, this.plugin.settings)} is not ready yet `
+            + 'and did not receive the request.',
+          );
+          continue;
+        }
+        const wasStreaming = tab.state.isStreaming;
+        await tab.controllers.inputController.sendMessage({ content: text });
+        (wasStreaming ? queued : sent).push(providerId);
+      } catch (error) {
+        // One AI failing must not stop the others, but a silent drop would be
+        // indistinguishable from success, so name the one that refused.
+        new Notice(
+          `${ProviderRegistry.getAgentName(providerId, this.plugin.settings)} could not accept the request: `
+          + (error instanceof Error ? error.message : String(error)),
+        );
+      }
+    }
+    this.updateTabBar();
+    return { queued, sent };
+  }
+
+  /** Gives a newly enabled AI its tab without waiting for a reload. */
+  refreshProviderTabs(): void {
+    const tabManager = this.tabManager;
+    if (!tabManager) return;
+    void tabManager.ensureProviderTabs()
+      .then(() => {
+        this.updateTabBar();
+        this.updateTabBarVisibility();
+      })
+      .catch(() => undefined);
+  }
+
   refreshCollabAvailability(): void {
+    this.updateCompactCollabVisibility();
     if (!this.isCollabAvailable() && this.collabSurfaceController) {
       this.compactCollabMenuEl?.removeClass('visible');
       this.compactCollabButtonEl?.removeClass('is-active');
@@ -833,11 +919,11 @@ export class ClaudianView extends ItemView {
   private buildInputFooter(): void {
     if (!this.chatPanelEl) return;
 
-    this.inputFooterEl = this.chatPanelEl.createDiv({ cls: 'claudian-input-footer' });
+    this.inputFooterEl = this.chatPanelEl.createDiv({ cls: 'grandemonium-input-footer' });
     this.inputNavRowHostEl = this.inputFooterEl.createDiv({
-      cls: 'claudian-input-nav-row claudian-view-input-nav-row',
+      cls: 'grandemonium-input-nav-row grandemonium-view-input-nav-row',
     });
-    this.activeInputSlotEl = this.inputFooterEl.createDiv({ cls: 'claudian-active-input-slot' });
+    this.activeInputSlotEl = this.inputFooterEl.createDiv({ cls: 'grandemonium-active-input-slot' });
   }
 
   private attachNavRowContentToInputFooter(): void {
@@ -917,7 +1003,16 @@ export class ClaudianView extends ItemView {
   }
 
   async createNewTab(): Promise<AssembledTabRuntime | null> {
-    const tab = await this.tabManager?.createTab();
+    if (!this.tabManager) return null;
+    // One tab per enabled provider: the next tab opens the first enabled
+    // provider without one, seeded with that provider's default model so the
+    // tab binds to it instead of starting unbound.
+    const providerId = this.tabManager.getNextTabProviderId();
+    if (!providerId) {
+      new Notice('Every enabled AI already has a tab.');
+      return null;
+    }
+    const tab = await this.tabManager.createProviderTab(providerId);
     if (!tab) return null;
     this.updateTabBarVisibility();
     tab.dom.inputEl.focus();
@@ -948,7 +1043,7 @@ export class ClaudianView extends ItemView {
     const tabCount = this.tabManager.getTabCount();
     const showTabBar = tabCount >= 2;
 
-    this.tabBarContainerEl.toggleClass('claudian-hidden', !showTabBar);
+    this.tabBarContainerEl.toggleClass('grandemonium-hidden', !showTabBar);
 
     this.updateNewTabButtonVisibility();
   }
@@ -956,7 +1051,10 @@ export class ClaudianView extends ItemView {
   private updateNewTabButtonVisibility(): void {
     if (!this.tabManager) return;
 
-    const canCreateTab = this.tabManager.canCreateTab();
+    // One tab per enabled provider, so the New tab action disappears once every
+    // enabled provider owns one rather than failing on click.
+    const canCreateTab = this.tabManager.canCreateTab()
+      && this.tabManager.getNextTabProviderId() !== null;
     this.setNewButtonAvailability(this.newTabButtonEl, canCreateTab);
     this.setNewButtonAvailability(
       this.sessionNewButtonEl,
@@ -967,7 +1065,7 @@ export class ClaudianView extends ItemView {
   private setNewButtonAvailability(button: HTMLElement | null, isAvailable: boolean): void {
     if (!button) return;
 
-    button.toggleClass('claudian-hidden', !isAvailable);
+    button.toggleClass('grandemonium-hidden', !isAvailable);
     if (isAvailable) {
       button.removeAttribute('aria-disabled');
       button.removeAttribute('aria-hidden');
@@ -1167,7 +1265,7 @@ export class ClaudianView extends ItemView {
             && (signal.aborted || this.historyDropdown !== container)
           ) return;
           const targetItem = Array.from(
-            container.querySelectorAll<HTMLElement>('.claudian-history-item'),
+            container.querySelectorAll<HTMLElement>('.grandemonium-history-item'),
           ).find(item => item.getAttribute('data-conversation-id') === conversationId);
           if (!targetItem) return;
 
@@ -1258,17 +1356,17 @@ export class ClaudianView extends ItemView {
   }
 
   private buildSessionHeaderActions(container: HTMLElement): void {
-    const header = container.querySelector<HTMLElement>('.claudian-session-list-header');
-    const list = container.querySelector<HTMLElement>('.claudian-history-list');
+    const header = container.querySelector<HTMLElement>('.grandemonium-session-list-header');
+    const list = container.querySelector<HTMLElement>('.grandemonium-history-list');
     if (!header || !list) return;
 
-    const newControl = container.createDiv({ cls: 'claudian-session-new-control' });
+    const newControl = container.createDiv({ cls: 'grandemonium-session-new-control' });
     newControl.setAttribute('role', 'button');
     newControl.setAttribute('tabindex', '0');
     newControl.setAttribute('aria-label', 'New');
-    const newIcon = newControl.createSpan({ cls: 'claudian-session-new-icon' });
+    const newIcon = newControl.createSpan({ cls: 'grandemonium-session-new-icon' });
     setIcon(newIcon, 'square-pen');
-    newControl.createSpan({ cls: 'claudian-session-new-label', text: 'New' });
+    newControl.createSpan({ cls: 'grandemonium-session-new-label', text: 'New' });
     newControl.addEventListener('click', () => this.requestSessionNew());
     newControl.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -1279,11 +1377,11 @@ export class ClaudianView extends ItemView {
     this.sessionNewButtonEl = newControl;
 
     if (this.isSessionSearchActive) {
-      const searchField = container.createDiv({ cls: 'claudian-session-search-field' });
-      const searchIcon = searchField.createSpan({ cls: 'claudian-session-nav-icon' });
+      const searchField = container.createDiv({ cls: 'grandemonium-session-search-field' });
+      const searchIcon = searchField.createSpan({ cls: 'grandemonium-session-nav-icon' });
       setIcon(searchIcon, 'search');
       const searchInput = searchField.createEl('input', {
-        cls: 'claudian-session-search-input',
+        cls: 'grandemonium-session-search-input',
         attr: {
           type: 'search',
           autocomplete: 'off',
@@ -1334,13 +1432,13 @@ export class ClaudianView extends ItemView {
       this.sessionSearchFieldEl = searchField;
       this.sessionSearchInputEl = searchInput;
     } else {
-      const searchControl = container.createDiv({ cls: 'claudian-session-search-control' });
+      const searchControl = container.createDiv({ cls: 'grandemonium-session-search-control' });
       searchControl.setAttribute('role', 'button');
       searchControl.setAttribute('tabindex', '0');
       searchControl.setAttribute('aria-label', 'Search');
-      const searchIcon = searchControl.createSpan({ cls: 'claudian-session-nav-icon' });
+      const searchIcon = searchControl.createSpan({ cls: 'grandemonium-session-nav-icon' });
       setIcon(searchIcon, 'search');
-      searchControl.createSpan({ cls: 'claudian-session-nav-label', text: 'Search' });
+      searchControl.createSpan({ cls: 'grandemonium-session-nav-label', text: 'Search' });
       const activateSearch = (): void => this.activateSessionSearch();
       searchControl.addEventListener('click', activateSearch);
       searchControl.addEventListener('keydown', (event) => {
@@ -1351,15 +1449,15 @@ export class ClaudianView extends ItemView {
       container.insertBefore(searchControl, list);
     }
 
-    const archiveControl = container.createDiv({ cls: 'claudian-session-archive-control' });
+    const archiveControl = container.createDiv({ cls: 'grandemonium-session-archive-control' });
     archiveControl.setAttribute('role', 'button');
     archiveControl.setAttribute('tabindex', '0');
     const archiveLabel = this.isArchiveSessionView ? 'Sessions' : 'Archive';
     archiveControl.setAttribute('aria-label', archiveLabel);
-    const archiveIcon = archiveControl.createSpan({ cls: 'claudian-session-nav-icon' });
+    const archiveIcon = archiveControl.createSpan({ cls: 'grandemonium-session-nav-icon' });
     setIcon(archiveIcon, this.isArchiveSessionView ? 'arrow-left' : 'archive');
     archiveControl.createSpan({
-      cls: 'claudian-session-nav-label',
+      cls: 'grandemonium-session-nav-label',
       text: archiveLabel,
     });
     const toggleArchiveView = (): void => {
@@ -1374,7 +1472,7 @@ export class ClaudianView extends ItemView {
     container.insertBefore(archiveControl, list);
 
     this.sessionGroupToggleButtonEl = null;
-    const actions = header.createDiv({ cls: 'claudian-session-header-actions' });
+    const actions = header.createDiv({ cls: 'grandemonium-session-header-actions' });
     const sessionGroupKeys = this.getSessionGroupKeys();
     if (
       this.getSessionManagerOrganization() === 'linked-content'
@@ -1569,12 +1667,12 @@ export class ClaudianView extends ItemView {
     }
 
     this.sidebarSurfaceSwitcherEl?.toggleClass(
-      'claudian-hidden',
+      'grandemonium-hidden',
       !collabEnabled,
     );
-    this.collabSurfaceButtonEl?.toggleClass('claudian-hidden', !collabEnabled);
+    this.collabSurfaceButtonEl?.toggleClass('grandemonium-hidden', !collabEnabled);
     this.collabSurfaceButtonEl?.setAttribute('aria-hidden', String(!collabEnabled));
-    this.compactCollabButtonEl?.toggleClass('claudian-hidden', !collabEnabled);
+    this.compactCollabButtonEl?.toggleClass('grandemonium-hidden', !collabEnabled);
     this.compactCollabButtonEl?.setAttribute('aria-hidden', String(!collabEnabled));
     this.compactCollabButtonEl?.setAttribute('tabindex', collabEnabled ? '0' : '-1');
     const showWideCollab = Boolean(collabEnabled
@@ -1587,10 +1685,10 @@ export class ClaudianView extends ItemView {
       && this.compactCollabMenuEl?.hasClass('visible'));
     const showCollab = showWideCollab || showCompactCollab;
     const showSessions = !showWideCollab;
-    this.sessionSurfaceEl?.removeClass('claudian-hidden');
+    this.sessionSurfaceEl?.removeClass('grandemonium-hidden');
     this.sessionSurfaceEl?.setAttribute('aria-hidden', String(!showSessions));
     this.setSidebarSurfaceInert(this.sessionSurfaceEl, !showSessions);
-    this.collabSurfaceEl?.toggleClass('claudian-hidden', !collabEnabled);
+    this.collabSurfaceEl?.toggleClass('grandemonium-hidden', !collabEnabled);
     this.collabSurfaceEl?.setAttribute('aria-hidden', String(!showCollab));
     this.setSidebarSurfaceInert(this.collabSurfaceEl, !showCollab);
     this.setSidebarSurfaceIndicatorVisual(this.activeSidebarSurface);
@@ -1817,11 +1915,11 @@ export class ClaudianView extends ItemView {
   }
 
   private captureSessionSearchScrollState(): SessionSearchScrollState {
-    const list = this.sessionSidebarEl?.querySelector<HTMLElement>('.claudian-history-list');
-    const sessionList = list?.querySelector<HTMLElement>('.claudian-session-list-items') ?? list;
-    const pinnedSection = list?.querySelector<HTMLElement>('.claudian-history-section--pinned');
+    const list = this.sessionSidebarEl?.querySelector<HTMLElement>('.grandemonium-history-list');
+    const sessionList = list?.querySelector<HTMLElement>('.grandemonium-session-list-items') ?? list;
+    const pinnedSection = list?.querySelector<HTMLElement>('.grandemonium-history-section--pinned');
     const pinnedList = pinnedSection?.querySelector<HTMLElement>(
-      '.claudian-history-section-items',
+      '.grandemonium-history-section-items',
     );
     return {
       pinnedScrollTop: pinnedList?.scrollTop ?? 0,
@@ -1833,11 +1931,11 @@ export class ClaudianView extends ItemView {
     const state = this.sessionSearchRestoreState;
     if (!state) return;
 
-    const list = this.sessionSidebarEl?.querySelector<HTMLElement>('.claudian-history-list');
-    const sessionList = list?.querySelector<HTMLElement>('.claudian-session-list-items') ?? list;
-    const pinnedSection = list?.querySelector<HTMLElement>('.claudian-history-section--pinned');
+    const list = this.sessionSidebarEl?.querySelector<HTMLElement>('.grandemonium-history-list');
+    const sessionList = list?.querySelector<HTMLElement>('.grandemonium-session-list-items') ?? list;
+    const pinnedSection = list?.querySelector<HTMLElement>('.grandemonium-history-section--pinned');
     const pinnedList = pinnedSection?.querySelector<HTMLElement>(
-      '.claudian-history-section-items',
+      '.grandemonium-history-section-items',
     );
     if (sessionList) sessionList.scrollTop = state.sessionScrollTop;
     if (pinnedList) pinnedList.scrollTop = state.pinnedScrollTop;
@@ -1868,17 +1966,17 @@ export class ClaudianView extends ItemView {
   }
 
   private buildHistoryArchiveNavigation(container: HTMLElement): void {
-    const list = container.querySelector<HTMLElement>('.claudian-history-list');
+    const list = container.querySelector<HTMLElement>('.grandemonium-history-list');
     if (!list) return;
 
     const label = this.isArchiveSessionView ? 'Sessions' : 'Archive';
-    const control = list.createDiv({ cls: 'claudian-history-archive-control' });
+    const control = list.createDiv({ cls: 'grandemonium-history-archive-control' });
     control.setAttribute('role', 'button');
     control.setAttribute('tabindex', '0');
     control.setAttribute('aria-label', label);
-    const icon = control.createSpan({ cls: 'claudian-session-nav-icon' });
+    const icon = control.createSpan({ cls: 'grandemonium-session-nav-icon' });
     setIcon(icon, this.isArchiveSessionView ? 'arrow-left' : 'archive');
-    control.createSpan({ cls: 'claudian-session-nav-label', text: label });
+    control.createSpan({ cls: 'grandemonium-session-nav-label', text: label });
     const toggleArchiveView = (): void => {
       this.setArchiveSessionView(!this.isArchiveSessionView);
     };
@@ -2004,12 +2102,12 @@ export class ClaudianView extends ItemView {
     label: string,
     action: (event?: MouseEvent) => void,
   ): HTMLElement {
-    const control = parent.createDiv({ cls: 'claudian-session-header-btn' });
+    const control = parent.createDiv({ cls: 'grandemonium-session-header-btn' });
     control.setAttribute('role', 'button');
     control.setAttribute('tabindex', '0');
     control.setAttribute('aria-label', label);
 
-    const iconEl = control.createDiv({ cls: 'claudian-session-header-icon' });
+    const iconEl = control.createDiv({ cls: 'grandemonium-session-header-icon' });
     if (typeof icon === 'string') {
       setIcon(iconEl, icon);
     } else {
@@ -2063,7 +2161,7 @@ export class ClaudianView extends ItemView {
       'aria-label',
       allCollapsed ? 'Expand all groups' : 'Collapse all groups',
     );
-    const icon = button.querySelector<HTMLElement>('.claudian-session-header-icon');
+    const icon = button.querySelector<HTMLElement>('.grandemonium-session-header-icon');
     if (icon) {
       renderSessionGroupToggleIcon(
         icon,
@@ -2186,7 +2284,7 @@ export class ClaudianView extends ItemView {
 
     this.requestedWideSessionLayout = false;
     this.isWideSessionLayout = false;
-    this.viewContainerEl.removeClass('claudian-wide-session-layout');
+    this.viewContainerEl.removeClass('grandemonium-wide-session-layout');
     this.updateSessionSidebarLayout(
       this.viewContainerEl.getBoundingClientRect().width,
       { renderSidebar: false },
@@ -2220,12 +2318,12 @@ export class ClaudianView extends ItemView {
     ownerDocument.addEventListener('pointermove', handlePointerMove);
     ownerDocument.addEventListener('pointerup', handlePointerEnd);
     ownerDocument.addEventListener('pointercancel', handlePointerEnd);
-    this.viewContainerEl?.addClass('claudian-resizing-session-sidebar');
+    this.viewContainerEl?.addClass('grandemonium-resizing-session-sidebar');
     this.sessionSidebarResizeCleanup = () => {
       ownerDocument.removeEventListener('pointermove', handlePointerMove);
       ownerDocument.removeEventListener('pointerup', handlePointerEnd);
       ownerDocument.removeEventListener('pointercancel', handlePointerEnd);
-      this.viewContainerEl?.removeClass('claudian-resizing-session-sidebar');
+      this.viewContainerEl?.removeClass('grandemonium-resizing-session-sidebar');
     };
   }
 
@@ -2265,7 +2363,7 @@ export class ClaudianView extends ItemView {
     ));
 
     this.sessionSidebarWidth = width;
-    this.viewContainerEl.style.setProperty('--claudian-session-sidebar-width', `${width}px`);
+    this.viewContainerEl.style.setProperty('--grandemonium-session-sidebar-width', `${width}px`);
     this.sessionSidebarResizerEl?.setAttribute('aria-valuenow', String(width));
     this.sessionSidebarResizerEl?.setAttribute('aria-valuemin', String(MIN_SESSION_SIDEBAR_WIDTH));
     this.sessionSidebarResizerEl?.setAttribute('aria-valuemax', String(Math.round(maxWidth)));
@@ -2280,7 +2378,7 @@ export class ClaudianView extends ItemView {
     const renderSidebar = options.renderSidebar ?? true;
 
     const isLeft = this.plugin?.settings?.dualPaneSide === 'left';
-    this.viewContainerEl.toggleClass('claudian-session-sidebar-left', isLeft);
+    this.viewContainerEl.toggleClass('grandemonium-session-sidebar-left', isLeft);
 
     const isDualPaneEnabled = this.plugin?.settings?.enableDualPane ?? true;
     const shouldUseWideLayout = isDualPaneEnabled && width >= WIDE_SESSION_LAYOUT_MIN_WIDTH;
@@ -2309,7 +2407,7 @@ export class ClaudianView extends ItemView {
     if (shouldUseWideLayout) {
       if (!this.isWideSessionLayout) {
         this.isWideSessionLayout = true;
-        this.viewContainerEl.addClass('claudian-wide-session-layout');
+        this.viewContainerEl.addClass('grandemonium-wide-session-layout');
       }
       this.refreshSidebarSurfacePager();
       this.historyDropdown?.removeClass('visible');
@@ -2367,7 +2465,7 @@ export class ClaudianView extends ItemView {
     ) return;
 
     this.isWideSessionLayout = false;
-    this.viewContainerEl.removeClass('claudian-wide-session-layout');
+    this.viewContainerEl.removeClass('grandemonium-wide-session-layout');
     this.updateSidebarSurfaceVisibility();
   }
 

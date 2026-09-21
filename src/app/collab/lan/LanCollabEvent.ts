@@ -1,7 +1,7 @@
 import { type CollabProjectId, isCollabProjectId } from '@claudian-collab/protocol';
 
 import { COLLAB_CONTROL_PROTOCOL_VERSION } from '@/app/collab/lan/LanCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export const LAN_COLLAB_EVENT_KINDS = Object.freeze([
   'project-updated',

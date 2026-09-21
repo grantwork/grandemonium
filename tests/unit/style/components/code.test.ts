@@ -23,8 +23,8 @@ describe('Chat code styles', () => {
     document.head.appendChild(style);
 
     document.body.innerHTML = `
-      <div class="claudian-container">
-        <div class="claudian-message-content">
+      <div class="grandemonium-container">
+        <div class="grandemonium-message-content">
           <p>Use <code data-testid="inline-code">test</code></p>
           <pre><code data-testid="block-code">block</code></pre>
         </div>

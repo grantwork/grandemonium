@@ -10,7 +10,7 @@ import type {
 } from '@/app/collab/publish/PublishCoordinator';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import { type CollabConflictDescriptor, type CollabOperationOptions, type CollabProjectSnapshot, type CollabReconciliationOutcome, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type ReconciliationPlan =
   | { readonly kind: 'current' }

@@ -3,7 +3,7 @@ import {
   type RequestEnsureGitPort,
 } from '@/app/collab/authority/RequestEnsureGitPolicy';
 import type { GitRecursiveTreeEntry } from '@/app/collab/git/GitRepositoryService';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 const HEAD = '2'.repeat(40);
 const MAIN = '1'.repeat(40);
@@ -114,9 +114,9 @@ describe('RequestEnsureGitPolicy', () => {
   it('enforces portable paths, blob size, file count, and total checkout size', async () => {
     const cases: readonly GitRecursiveTreeEntry[][] = [
       [file('Note.md'), file('note.md')],
-      [file('large.bin', { size: CLAUDIAN_COLLAB_LIMITS.maxBlobBytes + 1 })],
+      [file('large.bin', { size: GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes + 1 })],
       Array.from(
-        { length: CLAUDIAN_COLLAB_LIMITS.maxChangedPaths + 1 },
+        { length: GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths + 1 },
         (_, index) => file(`notes/${index}.md`),
       ),
       Array.from(

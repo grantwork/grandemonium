@@ -375,7 +375,7 @@ export class InputController {
     // Hide welcome message when sending first message
     const welcomeEl = this.deps.getWelcomeEl();
     if (welcomeEl) {
-      welcomeEl.addClass('claudian-hidden');
+      welcomeEl.addClass('grandemonium-hidden');
     }
 
     const linkedContentController = this.deps.getLinkedContentController();
@@ -460,7 +460,7 @@ export class InputController {
 
     streamController.showThinkingIndicator(
       isCompact ? 'Compacting...' : undefined,
-      isCompact ? 'claudian-thinking--compact' : undefined,
+      isCompact ? 'grandemonium-thinking--compact' : undefined,
     );
     state.responseStartTime = performance.now();
 
@@ -559,11 +559,11 @@ export class InputController {
           this.finishAcceptedMissingSession(streamGeneration);
         }
         const notice = resolution === 'deleted'
-            ? 'The provider session no longer exists. Its Claudian record was removed; send again to start a new session.'
+            ? 'The provider session no longer exists. Its Grandemonium record was removed; send again to start a new session.'
             : resolution === 'reset'
-              ? 'The provider session no longer exists. Claudian preserved the recoverable history; send again to rebuild the session.'
+              ? 'The provider session no longer exists. Grandemonium preserved the recoverable history; send again to rebuild the session.'
               : resolution === 'preserved'
-                ? 'The provider session no longer exists. Claudian preserved its record because the remaining history could not be verified.'
+                ? 'The provider session no longer exists. Grandemonium preserved its record because the remaining history could not be verified.'
                 : 'The provider session no longer exists. Send again to start a new session.';
         new Notice(notice);
         wasInvalidated = true;
@@ -683,16 +683,16 @@ export class InputController {
     if (visibleQueuedMessage) {
       const isPendingSteerOnly = !state.queuedMessage && !!visiblePendingSteer;
       indicatorEl.createSpan({
-        cls: 'claudian-queue-indicator-text',
+        cls: 'grandemonium-queue-indicator-text',
         text: `${isPendingSteerOnly ? '⌙ Steering: ' : '⌙ Queued: '}${this.getQueuedMessageDisplay(visibleQueuedMessage)}`,
       });
 
       if (state.queuedMessage) {
-        const actionsEl = indicatorEl.createDiv({ cls: 'claudian-queue-indicator-actions' });
+        const actionsEl = indicatorEl.createDiv({ cls: 'grandemonium-queue-indicator-actions' });
 
         if (this.canSteerQueuedMessage()) {
           const steerButton = actionsEl.createEl('button', {
-            cls: 'claudian-queue-indicator-action',
+            cls: 'grandemonium-queue-indicator-action',
             text: pendingSteer?.providerDisposition === 'awaiting-result'
               ? 'Steering...'
               : 'Steer Now',
@@ -729,13 +729,13 @@ export class InputController {
         });
       }
 
-      indicatorEl.addClass('claudian-visible-flex');
-      indicatorEl.removeClass('claudian-hidden');
+      indicatorEl.addClass('grandemonium-visible-flex');
+      indicatorEl.removeClass('grandemonium-hidden');
       return;
     }
 
-    indicatorEl.removeClass('claudian-visible-flex');
-    indicatorEl.addClass('claudian-hidden');
+    indicatorEl.removeClass('grandemonium-visible-flex');
+    indicatorEl.addClass('grandemonium-hidden');
   }
 
   clearQueuedMessage(): void {
@@ -1005,12 +1005,9 @@ export class InputController {
         ...(request.canvasSelection
           ? { canvasSelection: request.canvasSelection }
           : {}),
-        ...(request.linkedContentPath
-          ? { linkedContent: { path: request.linkedContentPath } }
-          : {}),
-        ...(request.editorSelection
-          ? { editorSelection: request.editorSelection }
-          : {}),
+        // Linked content and editor selection are no longer sent: file context
+        // reaches the AIs through review comments, which name their own file.
+        // The stored linked path is still kept for session-history grouping.
       },
       conversationHistory: user && assistant
         ? this.deps.state.messages.slice(0, -2)
@@ -1050,7 +1047,7 @@ export class InputController {
     label: string,
   ): HTMLElement {
     const button = parentEl.createEl('button', {
-      cls: 'claudian-queue-indicator-icon-action',
+      cls: 'grandemonium-queue-indicator-icon-action',
       attr: {
         'aria-label': label,
         title: label,
@@ -1315,7 +1312,7 @@ export class InputController {
   private activateStreamingAssistantMessage(message: ChatMessage): void {
     const { state, renderer } = this.deps;
     const msgEl = renderer.addMessage(message);
-    const contentEl = msgEl.querySelector<HTMLElement>('.claudian-message-content');
+    const contentEl = msgEl.querySelector<HTMLElement>('.grandemonium-message-content');
 
     if (!contentEl) {
       return;
@@ -1489,7 +1486,7 @@ export class InputController {
     this.resetTurnStreamingState();
 
     if (messagesBeforeTurn.length === 0) {
-      this.deps.getWelcomeEl()?.removeClass('claudian-hidden');
+      this.deps.getWelcomeEl()?.removeClass('grandemonium-hidden');
     }
   }
 
@@ -1781,28 +1778,28 @@ export class InputController {
     }
 
     // Build header element, then detach — InlineAskUserQuestion will re-attach it
-    const headerEl = parentEl.createDiv({ cls: 'claudian-ask-approval-info' });
+    const headerEl = parentEl.createDiv({ cls: 'grandemonium-ask-approval-info' });
     headerEl.remove();
 
-    const toolEl = headerEl.createDiv({ cls: 'claudian-ask-approval-tool' });
-    const iconEl = toolEl.createSpan({ cls: 'claudian-ask-approval-icon' });
+    const toolEl = headerEl.createDiv({ cls: 'grandemonium-ask-approval-tool' });
+    const iconEl = toolEl.createSpan({ cls: 'grandemonium-ask-approval-icon' });
     iconEl.setAttribute('aria-hidden', 'true');
     setToolIcon(iconEl, toolName);
-    toolEl.createSpan({ text: toolName, cls: 'claudian-ask-approval-tool-name' });
+    toolEl.createSpan({ text: toolName, cls: 'grandemonium-ask-approval-tool-name' });
 
     if (approvalOptions?.decisionReason) {
-      headerEl.createDiv({ text: approvalOptions.decisionReason, cls: 'claudian-ask-approval-reason' });
+      headerEl.createDiv({ text: approvalOptions.decisionReason, cls: 'grandemonium-ask-approval-reason' });
     }
     if (approvalOptions?.blockedPath) {
-      headerEl.createDiv({ text: approvalOptions.blockedPath, cls: 'claudian-ask-approval-blocked-path' });
+      headerEl.createDiv({ text: approvalOptions.blockedPath, cls: 'grandemonium-ask-approval-blocked-path' });
     }
     if (approvalOptions?.agentID) {
-      headerEl.createDiv({ text: `Agent: ${approvalOptions.agentID}`, cls: 'claudian-ask-approval-agent' });
+      headerEl.createDiv({ text: `Agent: ${approvalOptions.agentID}`, cls: 'grandemonium-ask-approval-agent' });
     }
 
     const descriptionEl = headerEl.createDiv({
       text: description,
-      cls: 'claudian-ask-approval-desc',
+      cls: 'grandemonium-ask-approval-desc',
     });
     descriptionEl.setAttribute('aria-label', `${toolName} approval details`);
     descriptionEl.setAttribute('role', 'region');
@@ -1950,21 +1947,21 @@ export class InputController {
 
   private hideInputContainer(inputContainerEl: HTMLElement): void {
     this.inputContainerHideDepth++;
-    inputContainerEl.addClass('claudian-hidden');
+    inputContainerEl.addClass('grandemonium-hidden');
   }
 
   private restoreInputContainer(inputContainerEl: HTMLElement): void {
     if (this.inputContainerHideDepth <= 0) return;
     this.inputContainerHideDepth--;
     if (this.inputContainerHideDepth === 0) {
-      inputContainerEl.removeClass('claudian-hidden');
+      inputContainerEl.removeClass('grandemonium-hidden');
     }
   }
 
   private resetInputContainerVisibility(): void {
     if (this.inputContainerHideDepth > 0) {
       this.inputContainerHideDepth = 0;
-      this.deps.getInputContainerEl().removeClass('claudian-hidden');
+      this.deps.getInputContainerEl().removeClass('grandemonium-hidden');
     }
   }
 

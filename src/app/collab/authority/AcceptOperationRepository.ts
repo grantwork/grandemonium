@@ -7,7 +7,7 @@ import {
 import { RequestTicketRelationRepository } from '@/app/collab/authority/RequestTicketRelationRepository';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { TicketRepository } from '@/app/collab/authority/TicketRepository';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type AcceptOperationState = 'prepared' | 'ref_updated' | 'completed';
 

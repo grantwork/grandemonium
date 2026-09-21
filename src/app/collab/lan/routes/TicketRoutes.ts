@@ -11,8 +11,8 @@ import type {
   CollabControlRouteHandler,
   CollabControlRouteRequest,
 } from '@/app/collab/lan/routes/RouteTypes';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function routeError(reason: string): CollabError {
   return new CollabError({
@@ -63,7 +63,7 @@ function listRequest(request: CollabControlRouteRequest): ListTicketsRequest {
       !/^\d+$/.test(limitValue)
       || !Number.isSafeInteger(limit)
       || limit < 1
-      || limit > CLAUDIAN_COLLAB_LIMITS.maxTicketPageSize
+      || limit > GRANDEMONIUM_COLLAB_LIMITS.maxTicketPageSize
     ))
   ) {
     throw routeError('ticket-list-query-invalid');

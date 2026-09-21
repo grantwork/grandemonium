@@ -1,6 +1,6 @@
 import type { LocalProjectCleanupPort } from '@/app/collab/exit/LocalProjectCleanupCoordinator';
 import { RetiredProjectFinalizer } from '@/app/collab/exit/RetiredProjectFinalizer';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 describe('RetiredProjectFinalizer', () => {
   it.each(['keep-files', 'delete-files'] as const)(

@@ -22,6 +22,7 @@ import {
   validateExportNameTemplate,
   validateVaultFolderPath,
 } from "./settings-model";
+import { DEFAULT_IMPLEMENT_PROMPT, DEFAULT_REVIEW_PROMPT } from "./settings-model";
 import { exportSkill } from "./skill-export";
 
 class VaultFolderSuggest extends AbstractInputSuggest<TFolder> {
@@ -226,6 +227,58 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
+      .setName("Comment on selection")
+      .setDesc(
+        "Open the comment box as soon as a passage is selected in the editor, without using the right-click menu."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.commentOnSelection)
+          .onChange((value) => this.plugin.updateSettings({ commentOnSelection: value }))
+      );
+
+    new Setting(containerEl)
+      .setName("AI review request")
+      .setDesc(
+        "Sent to every enabled AI when the review action on a comment is used. Each replies under its own agent name."
+      )
+      .addTextArea((text) =>
+        text
+          .setPlaceholder(DEFAULT_REVIEW_PROMPT)
+          .setValue(this.plugin.settings.reviewPrompt)
+          .onChange((value) =>
+            this.plugin.updateSettings({ reviewPrompt: value.trim() || DEFAULT_REVIEW_PROMPT })
+          )
+      );
+
+    new Setting(containerEl)
+      .setName("Ask AI to review new comments")
+      .setDesc(
+        "Send the review request automatically when you add a comment or reply, without using the review action."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.reviewOnComment)
+          .onChange((value) => this.plugin.updateSettings({ reviewOnComment: value }))
+      );
+
+    new Setting(containerEl)
+      .setName("AI implementation request")
+      .setDesc(
+        "Sent to a single AI when the implement action on its reply is used, asking it to carry out what it proposed."
+      )
+      .addTextArea((text) =>
+        text
+          .setPlaceholder(DEFAULT_IMPLEMENT_PROMPT)
+          .setValue(this.plugin.settings.implementPrompt)
+          .onChange((value) =>
+            this.plugin.updateSettings({
+              implementPrompt: value.trim() || DEFAULT_IMPLEMENT_PROMPT,
+            })
+          )
+      );
+
+    new Setting(containerEl)
       .setName("Confirm destructive actions")
       .setDesc("Ask before permanently deleting a comment, reply, suggestion, or resolved thread.")
       .addToggle((toggle) =>
@@ -310,7 +363,7 @@ export class CommentsSettingsSection {
         .addButton((button) =>
           button.setButtonText("Export skill").onClick(() => {
             try {
-              new Notice("Skill exported: " + exportSkill());
+              new Notice("Skill exported: " + exportSkill(this.plugin.claudeAgentName()));
             } catch (error) {
               new Notice("Export failed: " + (error instanceof Error ? error.message : String(error)));
             }

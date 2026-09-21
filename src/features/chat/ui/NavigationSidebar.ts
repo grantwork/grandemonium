@@ -32,15 +32,15 @@ export class NavigationSidebar {
     private parentEl: HTMLElement,
     private messagesEl: HTMLElement,
   ) {
-    this.container = this.parentEl.createDiv({ cls: 'claudian-nav-sidebar' });
+    this.container = this.parentEl.createDiv({ cls: 'grandemonium-nav-sidebar' });
 
     try {
       // Create buttons
-      this.topBtn = this.createButton('claudian-nav-btn-top', 'chevrons-up', 'Scroll to top');
-      this.prevBtn = this.createButton('claudian-nav-btn-prev', 'chevron-up', 'Previous message');
-      this.tocBtn = this.createButton('claudian-nav-btn-toc', 'list-tree', 'Conversation directory');
-      this.nextBtn = this.createButton('claudian-nav-btn-next', 'chevron-down', 'Next message');
-      this.bottomBtn = this.createButton('claudian-nav-btn-bottom', 'chevrons-down', 'Scroll to bottom');
+      this.topBtn = this.createButton('grandemonium-nav-btn-top', 'chevrons-up', 'Scroll to top');
+      this.prevBtn = this.createButton('grandemonium-nav-btn-prev', 'chevron-up', 'Previous message');
+      this.tocBtn = this.createButton('grandemonium-nav-btn-toc', 'list-tree', 'Conversation directory');
+      this.nextBtn = this.createButton('grandemonium-nav-btn-next', 'chevron-down', 'Next message');
+      this.bottomBtn = this.createButton('grandemonium-nav-btn-bottom', 'chevrons-down', 'Scroll to bottom');
 
       this.setupEventListeners();
       this.applyVisibility();
@@ -51,7 +51,7 @@ export class NavigationSidebar {
   }
 
   private createButton(cls: string, icon: string, label: string): HTMLElement {
-    const btn = this.container.createDiv({ cls: `claudian-nav-btn ${cls}` });
+    const btn = this.container.createDiv({ cls: `grandemonium-nav-btn ${cls}` });
     setIcon(btn, icon);
     btn.setAttribute('aria-label', label);
     return btn;
@@ -130,14 +130,14 @@ export class NavigationSidebar {
   private applyVisibility(): void {
     const { scrollHeight, clientHeight } = this.messagesEl;
     const isScrollable = scrollHeight > clientHeight + 50; // Small buffer
-    this.tocBtn.classList.remove('claudian-hidden');
+    this.tocBtn.classList.remove('grandemonium-hidden');
     if (this.isVisible === isScrollable) return;
     this.isVisible = isScrollable;
     this.container.classList.toggle('visible', isScrollable);
   }
 
   private getDirectoryEntries(): Array<{ el: HTMLElement; title: string }> {
-    return Array.from(this.messagesEl.querySelectorAll<HTMLElement>('.claudian-message-user, [data-role="user"]'))
+    return Array.from(this.messagesEl.querySelectorAll<HTMLElement>('.grandemonium-message-user, [data-role="user"]'))
       .map(el => ({
         el,
         title: this.getDirectoryTitle(el),
@@ -149,7 +149,7 @@ export class NavigationSidebar {
     const explicitTitle = (el.getAttribute('data-toc-title') ?? '').trim();
     if (explicitTitle) return explicitTitle;
 
-    const contentEl = el.querySelector<HTMLElement>('.claudian-message-content');
+    const contentEl = el.querySelector<HTMLElement>('.grandemonium-message-content');
     return formatConversationDirectoryTitle(contentEl?.textContent ?? el.textContent ?? '');
   }
 
@@ -170,7 +170,7 @@ export class NavigationSidebar {
     if (this.isDirectoryMessageElement(node)) return true;
     const candidate = node as { querySelector?: (selector: string) => Element | null };
     return typeof candidate.querySelector === 'function'
-      && candidate.querySelector('.claudian-message-user, [data-role="user"]') !== null;
+      && candidate.querySelector('.grandemonium-message-user, [data-role="user"]') !== null;
   }
 
   private isDirectoryMessageElement(node: Node): boolean {
@@ -180,9 +180,9 @@ export class NavigationSidebar {
       getAttribute?: (name: string) => string | null;
     };
     if (typeof candidate.matches === 'function') {
-      return candidate.matches('.claudian-message-user, [data-role="user"]');
+      return candidate.matches('.grandemonium-message-user, [data-role="user"]');
     }
-    return candidate.classList?.contains?.('claudian-message-user') === true
+    return candidate.classList?.contains?.('grandemonium-message-user') === true
       || candidate.getAttribute?.('data-role') === 'user';
   }
 
@@ -197,13 +197,13 @@ export class NavigationSidebar {
   private openDirectory(): void {
     const entries = this.getDirectoryEntries();
     this.closeDirectory();
-    this.tocPopover = this.parentEl.createDiv({ cls: 'claudian-nav-toc-popover' });
-    this.tocPopover.createDiv({ cls: 'claudian-nav-toc-title', text: 'Conversation directory' });
-    const listEl = this.tocPopover.createDiv({ cls: 'claudian-nav-toc-list' });
+    this.tocPopover = this.parentEl.createDiv({ cls: 'grandemonium-nav-toc-popover' });
+    this.tocPopover.createDiv({ cls: 'grandemonium-nav-toc-title', text: 'Conversation directory' });
+    const listEl = this.tocPopover.createDiv({ cls: 'grandemonium-nav-toc-list' });
 
     if (entries.length === 0) {
       listEl.createDiv({
-        cls: 'claudian-nav-toc-empty',
+        cls: 'grandemonium-nav-toc-empty',
         text: 'No user prompts in this conversation',
       });
       return;
@@ -211,7 +211,7 @@ export class NavigationSidebar {
 
     entries.forEach((entry, index) => {
       const itemEl = listEl.createDiv({
-        cls: 'claudian-nav-toc-item',
+        cls: 'grandemonium-nav-toc-item',
         text: `${index + 1}. ${entry.title}`,
       });
       itemEl.setAttribute('role', 'button');
@@ -253,7 +253,7 @@ export class NavigationSidebar {
    * Scrolls to previous or next user message, skipping assistant messages.
    */
   private scrollToMessage(direction: 'prev' | 'next'): void {
-    const messages = Array.from(this.messagesEl.querySelectorAll<HTMLElement>('.claudian-message-user'));
+    const messages = Array.from(this.messagesEl.querySelectorAll<HTMLElement>('.grandemonium-message-user'));
 
     if (messages.length === 0) return;
 

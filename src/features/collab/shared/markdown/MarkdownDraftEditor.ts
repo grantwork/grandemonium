@@ -88,19 +88,19 @@ export class MarkdownDraftEditor {
     this.editable = options.editable !== false;
     this.mode = this.editable ? options.initialMode ?? 'edit' : 'preview';
     this.value = options.initialValue ?? '';
-    this.rootEl.classList.add('claudian-collab-markdown-draft');
+    this.rootEl.classList.add('grandemonium-collab-markdown-draft');
     this.rootEl.setAttribute('data-markdown-mode', this.mode);
     if (options.onUpdate) this.updateListeners.add(options.onUpdate);
 
     if (this.editable) {
       this.renderModeControls(options.toolbarEl ?? this.rootEl.createDiv());
       this.editorHostEl = this.rootEl.createDiv({
-        cls: 'claudian-collab-markdown-draft-editor',
+        cls: 'grandemonium-collab-markdown-draft-editor',
       });
       this.view = this.createView(this.editorHostEl);
     }
     this.previewEl = this.rootEl.createDiv({
-      cls: 'claudian-collab-markdown-draft-preview markdown-rendered',
+      cls: 'grandemonium-collab-markdown-draft-preview markdown-rendered',
     });
     this.renderSuggestions();
     this.syncMode();
@@ -234,7 +234,7 @@ export class MarkdownDraftEditor {
   }
 
   private renderModeControls(host: HTMLElement): void {
-    host.classList.add('claudian-collab-markdown-draft-modes');
+    host.classList.add('grandemonium-collab-markdown-draft-modes');
     const actionName = this.options.actionName ?? 'markdown';
     this.editButton = host.createEl('button', {
       attr: {
@@ -276,7 +276,7 @@ export class MarkdownDraftEditor {
 
   private renderSuggestions(): void {
     let suggestions = this.rootEl.querySelector<HTMLElement>(
-      ':scope > .claudian-collab-markdown-suggestions',
+      ':scope > .grandemonium-collab-markdown-suggestions',
     );
     if (!this.editable) {
       suggestions?.remove();
@@ -284,7 +284,7 @@ export class MarkdownDraftEditor {
     }
     suggestions ??= this.rootEl.createDiv({
       attr: { role: 'listbox' },
-      cls: 'claudian-collab-markdown-suggestions',
+      cls: 'grandemonium-collab-markdown-suggestions',
     });
     suggestions.replaceChildren();
     suggestions.hidden = true;
@@ -311,7 +311,7 @@ export class MarkdownDraftEditor {
           tabindex: '-1',
           type: 'button',
         },
-        cls: 'claudian-collab-markdown-suggestion',
+        cls: 'grandemonium-collab-markdown-suggestion',
         text: entry.label,
       });
       action.addEventListener('mouseenter', () => this.setSuggestionIndex(index));
@@ -397,7 +397,7 @@ export class MarkdownDraftEditor {
     if (event.key === 'Escape') {
       event.preventDefault();
       const menu = this.rootEl.querySelector<HTMLElement>(
-        ':scope > .claudian-collab-markdown-suggestions',
+        ':scope > .grandemonium-collab-markdown-suggestions',
       );
       if (menu) menu.hidden = true;
       return true;
@@ -422,11 +422,11 @@ export class MarkdownDraftEditor {
 
   private suggestionButtons(): HTMLButtonElement[] {
     const menu = this.rootEl.querySelector<HTMLElement>(
-      ':scope > .claudian-collab-markdown-suggestions',
+      ':scope > .grandemonium-collab-markdown-suggestions',
     );
     if (!menu || menu.hidden) return [];
     return [...menu.querySelectorAll<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     )];
   }
 

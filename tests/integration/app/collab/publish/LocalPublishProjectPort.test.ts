@@ -20,7 +20,7 @@ import {
 } from '@/app/collab/publish/LocalPublishProjectPort';
 import { CollabAuthoritySessionFactory } from '@/app/collab/remote-authority/CollabAuthoritySessionFactory';
 import { LanAuthorityAdapter } from '@/app/collab/remote-authority/LanAuthorityAdapter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-a';
 const NOW = '2026-08-08T00:00:00.000Z';
@@ -34,7 +34,7 @@ describe('Local Publish adapters', () => {
   let workspace: CollabWorkspaceService;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-publish-local-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-publish-local-'));
     projects = new CollabLocalProjectRepository(vaultRoot);
     workspace = new CollabWorkspaceService(vaultRoot);
     repositories = { assertLocalRepositoryIdentity: jest.fn().mockResolvedValue(undefined) };
@@ -134,7 +134,7 @@ describe('Local Publish adapters', () => {
     expect(result).toBe('completed');
     expect(await readdir(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,

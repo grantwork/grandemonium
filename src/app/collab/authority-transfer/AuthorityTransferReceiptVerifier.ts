@@ -9,7 +9,7 @@ import {
 import type {
   AuthorityTransferRecord,
 } from '@/app/collab/authority-transfer/AuthorityTransferRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function verifierUnavailable(reason: string): CollabError {
   return new CollabError({

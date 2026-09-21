@@ -1,6 +1,6 @@
 import { type CollabGitOid, type CollabProjectId, type CollabRequestId, isCollabGitOid, isCollabOpaqueId, isCollabProjectId } from '@claudian-collab/protocol';
 
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 export const COLLAB_REQUEST_DRAFT_SCHEMA_VERSION = 1 as const;
 
@@ -69,12 +69,12 @@ export function decodeCollabRequestDraftRecord(value: unknown): CollabRequestDra
   const description = requiredString(
     value,
     'description',
-    CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes,
+    GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes,
   );
   if (
     description.trim().length === 0
     || new TextEncoder().encode(description).byteLength
-      > CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes
+      > GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes
   ) throw new TypeError('Invalid description');
   const baseRequestRevision = value.baseRequestRevision;
   if (

@@ -10,7 +10,7 @@ import type {
   MembershipTerminationResponse,
   PromoteManagerResponse,
 } from '@/app/collab/lan/LanCollabControlOperations';
-import { CollabError, type CollabRecoveryAction } from '@/core/collab/ClaudianCollabError';
+import { CollabError, type CollabRecoveryAction } from '@/core/collab/GrandemoniumCollabError';
 
 export interface MembershipAdminContext {
   readonly actorRole: CollabRole;

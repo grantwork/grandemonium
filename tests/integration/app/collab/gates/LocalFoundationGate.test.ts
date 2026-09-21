@@ -11,8 +11,8 @@ import { TEST_INSTALLATION_A } from '@test/helpers/installations';
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import {
-  ClaudianCollabService,
   type CollabAuthorityFoundation,
+  GrandemoniumCollabService,
 } from '@/app/collab';
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
 import type { GitRuntimeResolution } from '@/app/collab/git/GitRuntimeResolver';
@@ -30,7 +30,7 @@ describe('G2 local foundation gate', () => {
   });
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-local-foundation-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-local-foundation-'));
   });
 
   afterEach(async () => {
@@ -45,7 +45,7 @@ describe('G2 local foundation gate', () => {
     };
     const createAuthorityDatabase = jest.fn();
 
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       createAuthorityDatabase,
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
@@ -60,7 +60,7 @@ describe('G2 local foundation gate', () => {
     expect(service.local.pathPolicy.validateRepositoryPath(
       '.obsidian-custom/settings.json',
     )).toMatchObject({ ok: false });
-    await expect(readFile(path.join(vaultRoot, '.claudian', 'collab', '.gitignore')))
+    await expect(readFile(path.join(vaultRoot, '.grandemonium', 'collab', '.gitignore')))
       .rejects.toMatchObject({ code: 'ENOENT' });
 
     await expect(service.resolveGitRuntime()).resolves.toEqual(resolution);
@@ -77,7 +77,7 @@ describe('G2 local foundation gate', () => {
     const createAuthorityDatabase = (authorityDirectory: string) => (
       new SqlJsProjectDatabase(authorityDirectory, { loadSqlJs: async () => SQL })
     );
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       createAuthorityDatabase,
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
@@ -155,7 +155,7 @@ describe('G2 local foundation gate', () => {
     )).toMatch(/^[0-9a-f]{40,64}$/);
     await service.close();
 
-    const reopenedService = new ClaudianCollabService({
+    const reopenedService = new GrandemoniumCollabService({
       createAuthorityDatabase,
       getConfiguredGitPath: () => git.runtime.executablePath,
       installationKey: TEST_INSTALLATION_A,
@@ -173,7 +173,7 @@ describe('G2 local foundation gate', () => {
       expect.objectContaining({ kind: 'project.created', sequence: 1 }),
     ]);
     expect(await readFile(
-      path.join(vaultRoot, '.claudian', 'collab', '.gitignore'),
+      path.join(vaultRoot, '.grandemonium', 'collab', '.gitignore'),
       'utf8',
     )).toContain('/*');
     await reopenedService.close();
@@ -211,7 +211,7 @@ describe('G2 local foundation gate', () => {
     ];
 
     for (const testCase of cases) {
-      const service = new ClaudianCollabService({
+      const service = new GrandemoniumCollabService({
         getConfiguredGitPath: () => '',
         installationKey: TEST_INSTALLATION_A,
         gitRuntimeResolver: {

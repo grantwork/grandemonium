@@ -3,7 +3,7 @@ import { type CollabProjectId } from '@claudian-collab/protocol';
 import type { AuthorityTransferRecord } from '@/app/collab/authority-transfer/AuthorityTransferRecord';
 import type { AuthorityTransferRecoveryHandler } from '@/app/collab/authority-transfer/recovery/AuthorityTransferRecovery';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferDirectionRuntime {
   resume(

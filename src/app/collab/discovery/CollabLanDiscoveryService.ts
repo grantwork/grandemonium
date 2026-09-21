@@ -8,12 +8,13 @@ import { InvitationCodec } from '@/app/collab/lan/InvitationCodec';
 import { COLLAB_CONTROL_PROTOCOL_VERSION } from '@/app/collab/lan/LanCollabConstants';
 import { type CollabOperationOptions } from '@/core/collab';
 
-const COLLAB_DNS_SD_TYPE = 'claudian-collab';
+const COLLAB_DNS_SD_TYPE = 'grandemonium-collab';
 const DEFAULT_DISCOVERY_TIMEOUT_MS = 3_000;
 const DISCOVERY_RETRY_DELAYS_MS = [750, 1_750] as const;
 const CANDIDATE_SETTLE_MS = 400;
 const MAX_DISCOVERED_CANDIDATES = 8;
 const FINGERPRINT_PATTERN = /^[0-9a-f]{64}$/;
+const DNS_SD_INSTANCE_NAME_MAX_BYTES = 63;
 
 export interface CollabDiscoveredHost {
   readonly caFingerprint: string;
@@ -145,7 +146,9 @@ function publicationName(projectId: string, endpoint: string): string {
     .update(`${projectId}\0${endpoint}`)
     .digest('hex')
     .slice(0, 12);
-  return `Claudian Collab ${projectId.slice(0, 34)} ${instanceId}`;
+  const prefix = 'Grandemonium Collab ';
+  const projectIdBudget = DNS_SD_INSTANCE_NAME_MAX_BYTES - prefix.length - 1 - instanceId.length;
+  return `${prefix}${projectId.slice(0, projectIdBudget)} ${instanceId}`;
 }
 
 export class CollabLanDiscoveryService implements CollabLanDiscoveryPort {

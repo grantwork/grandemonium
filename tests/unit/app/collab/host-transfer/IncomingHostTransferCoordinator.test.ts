@@ -63,7 +63,7 @@ describe('IncomingHostTransferCoordinator', () => {
         return {
           endpoint: 'https://192.168.1.9:54545',
           receiverCredential: Buffer.alloc(32, 4).toString('base64url'),
-          stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+          stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
           targetCaCertificatePem: TARGET_CA,
           targetCaFingerprint: TARGET_FINGERPRINT,
         };
@@ -370,7 +370,7 @@ describe('IncomingHostTransferCoordinator', () => {
       ...completedRecord,
       receiverCredential: null,
       receiverCredentialHash: expect.any(String),
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
     }));
     expect(record).toMatchObject({
       phase: 'completed',
@@ -479,7 +479,7 @@ describe('IncomingHostTransferCoordinator', () => {
       phase: 'cancelled',
       receiverCredential: expect.any(String),
       receiverCredentialHash: null,
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
     });
     expect(preparation.cancelProvisional).not.toHaveBeenCalled();
 
@@ -516,7 +516,7 @@ describe('IncomingHostTransferCoordinator', () => {
       phase: 'cancelled',
       receiverCredential: null,
       receiverCredentialHash: expect.any(String),
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
     });
 
     await coordinator().resume('project-alpha');

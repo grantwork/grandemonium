@@ -17,7 +17,7 @@ import type { CollabAuthorityControlPort } from '@/app/collab/remote-authority/C
 import { CollabAuthorityGitNetworkEnvironment } from '@/app/collab/remote-authority/CollabAuthorityGitNetworkEnvironment';
 import type { CollabAuthoritySession } from '@/app/collab/remote-authority/CollabAuthoritySession';
 import type { CollabAuthoritySessionFactory } from '@/app/collab/remote-authority/CollabAuthoritySessionFactory';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function projectError(
   code: 'host-stopped' | 'project-not-found' | 'stale-project-selection',

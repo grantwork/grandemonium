@@ -1,10 +1,10 @@
 import { normalizeLinkedContentPath } from '../../core/path/LinkedContentPath';
-import type { ClaudianSettings } from '../../core/types';
+import type { GrandemoniumSettings } from '../../core/types';
 import type { SettingsCoordinator } from './SettingsCoordinator';
 
 export class PinnedLinkedContentPathCoordinator {
   constructor(
-    private readonly settingsCoordinator: SettingsCoordinator<ClaudianSettings>,
+    private readonly settingsCoordinator: SettingsCoordinator<GrandemoniumSettings>,
   ) {}
 
   async setPinned(contentPath: string, isPinned: boolean): Promise<boolean> {

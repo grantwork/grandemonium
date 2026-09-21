@@ -36,8 +36,8 @@ import {
 } from '@/app/collab/reconciliation/ReconciliationCoordinator';
 import type { ReconciliationRepositoryLockPort } from '@/app/collab/reconciliation/ReconciliationMutationSafety';
 import { type CollabConflictEntry } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const TEXT_EXTENSIONS = new Set([
   '.canvas', '.css', '.csv', '.html', '.js', '.json', '.jsx', '.md',
@@ -375,12 +375,12 @@ export class NativeGitAcceptedStateIntegrator implements
     if (conflictPaths.length === 0) {
       throw integrationError('repository-invalid', 'reconciliation-conflict-paths-missing');
     }
-    if (conflictPaths.length > CLAUDIAN_COLLAB_LIMITS.maxChangedPaths) {
+    if (conflictPaths.length > GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths) {
       throw new CollabError({
         code: 'quota-exceeded',
         recoveryActions: ['open-diagnostics'],
         safeContext: {
-          limit: CLAUDIAN_COLLAB_LIMITS.maxChangedPaths,
+          limit: GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths,
           quota: 'maxChangedPaths',
         },
       });

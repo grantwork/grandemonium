@@ -8,7 +8,7 @@ import type { ComposerContextTray } from '../ui/ComposerContextTray';
 
 const SELECTION_POLL_INTERVAL = 250;
 const INPUT_HANDOFF_GRACE_MS = 1500;
-const HIGHLIGHT_KEY = 'claudian-selection';
+const HIGHLIGHT_KEY = 'grandemonium-selection';
 
 type CustomHighlightRegistry = {
   delete: (name: string) => boolean;
@@ -392,25 +392,12 @@ export class SelectionController {
   // ============================================
 
   private updateIndicator(): void {
-    if (this.storedSelection) {
-      const lineText = this.storedSelection.lineCount === 1 ? 'line' : 'lines';
-      const label = `${this.storedSelection.lineCount} ${lineText} selected`;
-      this.contextTray.setItems('editor-selection', [{
-        id: 'editor-selection',
-        kind: 'selection',
-        label,
-        icon: 'text-select',
-        ariaLabel: label,
-        onRemove: () => {
-          this.clear();
-          this.onUserSelectionChanged?.();
-        },
-      }]);
-    } else {
-      this.contextTray.clearItems('editor-selection');
-    }
+    // The selected-line chip is no longer shown: a selection reaches the AIs as
+    // a comment instead. Selection tracking itself stays live for other callers.
+    this.contextTray.clearItems('editor-selection');
     this.updateContextRowVisibility();
   }
+
 
   updateContextRowVisibility(): void {
     this.onVisibilityChange?.();

@@ -20,10 +20,10 @@ import {
   resolveCollabVaultPath,
   writeCollabFileAtomically,
 } from '@/app/collab/CollabFilesystemBoundary';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { type InstallationKey, parseInstallationKey } from '@/core/device/InstallationKey';
 
-const LEGACY_TLS_DIRECTORY = '.claudian/collab/tls';
+const LEGACY_TLS_DIRECTORY = '.grandemonium/collab/tls';
 const LEGACY_HOST_CA_PATH = `${LEGACY_TLS_DIRECTORY}/host-ca.json`;
 const HOST_CA_SCHEMA_VERSION = 1;
 const CA_VALIDITY_MS = 10 * 365 * 24 * 60 * 60 * 1000;
@@ -174,7 +174,7 @@ export class LanTlsIdentity {
     options: LanTlsIdentityOptions,
   ) {
     this.installationKey = parseInstallationKey(options.installationKey);
-    this.tlsDirectory = `.claudian/collab/installations/${this.installationKey}/tls`;
+    this.tlsDirectory = `.grandemonium/collab/installations/${this.installationKey}/tls`;
     this.hostCaPath = `${this.tlsDirectory}/host-ca.json`;
     this.hostCaLockPath = `${this.tlsDirectory}/host-ca.lock`;
     this.now = options.now ?? (() => new Date());
@@ -211,12 +211,12 @@ export class LanTlsIdentity {
   async adoptLegacyGlobalIdentity(
     expectedFingerprint: string | null,
   ): Promise<LanTlsHostCa> {
-    await ensureCollabContainerGuard(this.vaultRoot, '.claudian/collab', {
+    await ensureCollabContainerGuard(this.vaultRoot, '.grandemonium/collab', {
       privateContainer: true,
     });
     await ensureCollabVaultDirectory(
       this.vaultRoot,
-      `.claudian/collab/installations/${this.installationKey}`,
+      `.grandemonium/collab/installations/${this.installationKey}`,
       { mode: 0o700 },
     );
     await ensureCollabVaultDirectory(this.vaultRoot, this.tlsDirectory, { mode: 0o700 });
@@ -266,8 +266,8 @@ export class LanTlsIdentity {
     certificate.validity.notBefore = notBefore;
     certificate.validity.notAfter = notAfter;
     certificate.setSubject([
-      { name: 'commonName', value: 'Claudian LAN Host' },
-      { name: 'organizationName', value: 'Claudian Collab' },
+      { name: 'commonName', value: 'Grandemonium LAN Host' },
+      { name: 'organizationName', value: 'Grandemonium Collab' },
     ]);
     certificate.setIssuer(caCertificate.subject.attributes);
     certificate.setExtensions([
@@ -297,12 +297,12 @@ export class LanTlsIdentity {
   }
 
   private async loadOrCreateUnlocked(): Promise<LanTlsHostCa> {
-    await ensureCollabContainerGuard(this.vaultRoot, '.claudian/collab', {
+    await ensureCollabContainerGuard(this.vaultRoot, '.grandemonium/collab', {
       privateContainer: true,
     });
     await ensureCollabVaultDirectory(
       this.vaultRoot,
-      `.claudian/collab/installations/${this.installationKey}`,
+      `.grandemonium/collab/installations/${this.installationKey}`,
       { mode: 0o700 },
     );
     await ensureCollabVaultDirectory(this.vaultRoot, this.tlsDirectory, { mode: 0o700 });
@@ -391,8 +391,8 @@ export class LanTlsIdentity {
     certificate.validity.notBefore = new Date(now.getTime() - CERTIFICATE_CLOCK_SKEW_MS);
     certificate.validity.notAfter = new Date(now.getTime() + CA_VALIDITY_MS);
     const attributes = [
-      { name: 'commonName', value: 'Claudian Vault Host CA' },
-      { name: 'organizationName', value: 'Claudian Collab' },
+      { name: 'commonName', value: 'Grandemonium Vault Host CA' },
+      { name: 'organizationName', value: 'Grandemonium Collab' },
     ];
     certificate.setSubject(attributes);
     certificate.setIssuer(attributes);

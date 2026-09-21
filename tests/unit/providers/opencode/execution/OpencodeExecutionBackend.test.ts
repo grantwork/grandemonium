@@ -119,10 +119,10 @@ class FakeKernel implements OpencodeAcpSessionKernel {
     ],
     modes: {
       availableModes: [
-        { id: 'claudian-yolo', name: 'YOLO' },
-        { id: 'claudian-safe', name: 'Safe' },
+        { id: 'grandemonium-yolo', name: 'YOLO' },
+        { id: 'grandemonium-safe', name: 'Safe' },
       ],
-      currentModeId: 'claudian-yolo',
+      currentModeId: 'grandemonium-yolo',
     },
     models: {
       availableModels: [{ id: 'anthropic/claude', name: 'Claude' }],
@@ -213,8 +213,8 @@ function createPlugin(): any {
       providerConfigs: {
         opencode: {
           availableModes: [
-            { id: 'claudian-yolo', name: 'YOLO' },
-            { id: 'claudian-safe', name: 'Safe' },
+            { id: 'grandemonium-yolo', name: 'YOLO' },
+            { id: 'grandemonium-safe', name: 'Safe' },
           ],
           discoveredModels: [
             { label: 'Claude', rawId: 'anthropic/claude' },
@@ -310,10 +310,10 @@ describe('OpencodeExecutionBackend', () => {
     mockConnectionInitialize.mockResolvedValue({});
     mockPrepareLaunchArtifacts.mockResolvedValue({
       configContent: '{}',
-      configPath: '/vault/.claudian/opencode/config.json',
+      configPath: '/vault/.grandemonium/opencode/config.json',
       databasePath: '/native/opencode.db',
       launchKey: 'launch-key',
-      systemPromptPath: '/vault/.claudian/opencode/system.md',
+      systemPromptPath: '/vault/.grandemonium/opencode/system.md',
     });
   });
 
@@ -355,10 +355,10 @@ describe('OpencodeExecutionBackend', () => {
     const disposal = session.dispose();
     artifacts.resolve({
       configContent: '{}',
-      configPath: '/vault/.claudian/opencode/config.json',
+      configPath: '/vault/.grandemonium/opencode/config.json',
       databasePath: '/native/opencode.db',
       launchKey: 'launch-key',
-      systemPromptPath: '/vault/.claudian/opencode/system.md',
+      systemPromptPath: '/vault/.grandemonium/opencode/system.md',
     });
 
     await disposal;
@@ -935,7 +935,7 @@ describe('OpencodeExecutionBackend', () => {
     expect(harness.kernels[0].configCalls).toEqual(expect.arrayContaining([
       expect.objectContaining({ configId: 'model', value: 'anthropic/claude' }),
       expect.objectContaining({ configId: 'effort', value: 'high' }),
-      expect.objectContaining({ configId: 'mode', value: 'claudian-safe' }),
+      expect.objectContaining({ configId: 'mode', value: 'grandemonium-safe' }),
     ]));
   });
 
@@ -1022,7 +1022,7 @@ describe('OpencodeExecutionBackend', () => {
     const run = harness.session.execute(createRequest());
     await waitForPrompt(harness.kernels[0]);
     harness.kernels[0].notify({
-      currentModeId: 'claudian-safe',
+      currentModeId: 'grandemonium-safe',
       sessionUpdate: 'current_mode_update',
     });
     harness.kernels[0].notify({

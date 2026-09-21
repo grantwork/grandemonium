@@ -1,7 +1,7 @@
 import { TEST_INSTALLATION_A, TEST_INSTALLATION_B } from '@test/helpers/installations';
 
-import { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 jest.mock('@/app/collab/lan/CollabHttpClient', () => {
   const actual = jest.requireActual('@/app/collab/lan/CollabHttpClient');
@@ -24,17 +24,17 @@ async function admitProjectRecovery(
   await operation();
 }
 
-describe('ClaudianCollabService retirement recovery', () => {
+describe('GrandemoniumCollabService retirement recovery', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
   it('rejects a foreign tombstone before starting a responder or cleanup', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-foreign-owner',
+      vaultRoot: '/tmp/grandemonium-retirement-foreign-owner',
     });
     const internal = service as never as {
       closeAuthority: jest.Mock;
@@ -65,11 +65,11 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('treats an authenticated terminal Retired result as Retire replay success', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-replay',
+      vaultRoot: '/tmp/grandemonium-retirement-replay',
     });
     const internal = service as never as {
       local: { projects: { loadMembership: jest.Mock } };
@@ -117,17 +117,17 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('fences LAN Host startup as soon as a retirement tombstone is durable', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-start-fence',
+      vaultRoot: '/tmp/grandemonium-retirement-start-fence',
     });
     const internal = service as never as {
       local: { projects: { loadRetirementTombstone: jest.Mock } };
     };
     jest.spyOn(service.hostInstallations, 'assertOwned').mockResolvedValue({
-      authorityDirectory: '/tmp/claudian-retirement-start-fence/authority',
+      authorityDirectory: '/tmp/grandemonium-retirement-start-fence/authority',
       projectId: 'project-a',
     } as never);
     internal.local.projects.loadRetirementTombstone = jest.fn().mockResolvedValue({
@@ -144,11 +144,11 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('restores a terminal responder without recreating finalized local projection', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-restore',
+      vaultRoot: '/tmp/grandemonium-retirement-restore',
     });
     const internal = service as never as {
       closeAuthority: jest.Mock;
@@ -197,11 +197,11 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('tears down retired authority after local projection recovery fails', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-local-recovery-failure',
+      vaultRoot: '/tmp/grandemonium-retirement-local-recovery-failure',
     });
     const internal = service as never as {
       closeAuthority: jest.Mock;
@@ -249,11 +249,11 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('continues restoring other terminal responders after one Project fails', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-retirement-isolation',
+      vaultRoot: '/tmp/grandemonium-retirement-isolation',
     });
     const internal = service as never as {
       closeAuthority: jest.Mock;
@@ -294,11 +294,11 @@ describe('ClaudianCollabService retirement recovery', () => {
   });
 
   it('converges an expired tombstone before removing its terminal state', async () => {
-    const service = new ClaudianCollabService({
+    const service = new GrandemoniumCollabService({
       getConfiguredGitPath: () => '',
       installationKey: TEST_INSTALLATION_A,
       obsidianConfigDirectory: '.obsidian',
-      vaultRoot: '/tmp/claudian-expired-retirement-convergence',
+      vaultRoot: '/tmp/grandemonium-expired-retirement-convergence',
     });
     const order: string[] = [];
     const result = { projectId: 'project-a', retiredAt: '2026-07-14T00:00:00.000Z' };

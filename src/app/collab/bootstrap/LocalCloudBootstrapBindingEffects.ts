@@ -26,7 +26,7 @@ import type {
   CollabAuthorityGitNetwork,
 } from '@/app/collab/remote-authority/CollabAuthoritySession';
 import type { CollabProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface LocalCloudBootstrapBindingProjects {
   loadMembership(projectId: CollabProjectId): Promise<CollabLocalMembershipRecord | null>;

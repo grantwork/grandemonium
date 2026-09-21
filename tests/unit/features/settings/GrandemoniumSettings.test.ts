@@ -1,20 +1,21 @@
 import '@/providers';
 
-import { ClaudianSettingTab } from '@/features/settings/ClaudianSettings';
+import { GrandemoniumSettingTab } from '@/features/settings/GrandemoniumSettings';
 
-describe('ClaudianSettingTab model option updates', () => {
+describe('GrandemoniumSettingTab model option updates', () => {
   it('refreshes provider-scoped chat selectors and the live title model menu together', () => {
     const refreshModelSelector = jest.fn();
+    const refreshProviderTabs = jest.fn();
     const notifyProviderChatOptionsChanged = jest.fn();
     const plugin = {
-      getAllViews: jest.fn(() => [{ refreshModelSelector }]),
+      getAllViews: jest.fn(() => [{ refreshModelSelector, refreshProviderTabs }]),
       notifyProviderChatOptionsChanged,
       notifyAgentSkillsChanged: jest.fn(),
       storage: {
         getAdapter: jest.fn(() => ({})),
       },
     };
-    const tab = new ClaudianSettingTab({} as any, plugin as any);
+    const tab = new GrandemoniumSettingTab({} as any, plugin as any);
     const refreshTitleModelOptions = jest.fn();
     (tab as any).refreshTitleModelOptions = refreshTitleModelOptions;
 
@@ -23,6 +24,7 @@ describe('ClaudianSettingTab model option updates', () => {
     expect(notifyProviderChatOptionsChanged).toHaveBeenCalledWith('codex');
     expect(refreshModelSelector).not.toHaveBeenCalled();
     expect(refreshTitleModelOptions).toHaveBeenCalledTimes(1);
+    expect(refreshProviderTabs).toHaveBeenCalledTimes(1);
   });
 
   it('invalidates provider executions when prompt settings change', async () => {
@@ -37,7 +39,7 @@ describe('ClaudianSettingTab model option updates', () => {
         getAdapter: jest.fn(() => ({})),
       },
     };
-    const tab = new ClaudianSettingTab({} as any, plugin as any);
+    const tab = new GrandemoniumSettingTab({} as any, plugin as any);
 
     await (tab as any).restartServiceForPromptChange();
 

@@ -14,7 +14,7 @@ import {
 import type { HostTransferActivationCertificate } from '@/app/collab/host-transfer/HostTrustTransitionService';
 import { HostTrustTransitionService } from '@/app/collab/host-transfer/HostTrustTransitionService';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface AuthoritySnapshotRow {
   readonly [key: string]: SqlValue;

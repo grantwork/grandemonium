@@ -2,6 +2,13 @@ import { type AuthorColorOverrides,normalizeAuthorColorOverrides } from "./autho
 
 export const SETTINGS_VERSION = 1;
 
+/** Sent to every enabled AI when the review action is triggered. */
+export const DEFAULT_REVIEW_PROMPT =
+  'review and reply to open comments where the user, not an LLM, was the last commenter';
+
+/** Sent to one AI when asked to carry out what it proposed in a reply. */
+export const DEFAULT_IMPLEMENT_PROMPT = 'Implement your suggested changes';
+
 export type ResolveBehavior = "keep" | "remove";
 export type ExportScope = "all" | "open";
 export type ExportDestination = "source" | "folder";
@@ -20,6 +27,10 @@ export interface CommentsSettings {
   submitShortcut: SubmitShortcut;
   timestampDisplay: TimestampDisplay;
   confirmDestructiveActions: boolean;
+  commentOnSelection: boolean;
+  reviewPrompt: string;
+  implementPrompt: string;
+  reviewOnComment: boolean;
   showReadingViewIndicator: boolean;
   schemaHint: boolean;
   copyIncludeQuote: boolean;
@@ -41,6 +52,10 @@ export const DEFAULT_SETTINGS: CommentsSettings = {
   submitShortcut: "enter",
   timestampDisplay: "full",
   confirmDestructiveActions: true,
+  commentOnSelection: true,
+  reviewPrompt: DEFAULT_REVIEW_PROMPT,
+  implementPrompt: DEFAULT_IMPLEMENT_PROMPT,
+  reviewOnComment: true,
   showReadingViewIndicator: true,
   schemaHint: true,
   copyIncludeQuote: true,
@@ -140,6 +155,12 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
       raw.confirmDestructiveActions,
       DEFAULT_SETTINGS.confirmDestructiveActions
     ),
+    commentOnSelection: booleanSetting(raw.commentOnSelection, DEFAULT_SETTINGS.commentOnSelection),
+    reviewPrompt: stringSetting(raw.reviewPrompt, DEFAULT_SETTINGS.reviewPrompt).trim()
+      || DEFAULT_REVIEW_PROMPT,
+    implementPrompt: stringSetting(raw.implementPrompt, DEFAULT_SETTINGS.implementPrompt).trim()
+      || DEFAULT_IMPLEMENT_PROMPT,
+    reviewOnComment: booleanSetting(raw.reviewOnComment, DEFAULT_SETTINGS.reviewOnComment),
     showReadingViewIndicator: booleanSetting(
       raw.showReadingViewIndicator,
       DEFAULT_SETTINGS.showReadingViewIndicator

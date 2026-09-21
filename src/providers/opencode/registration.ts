@@ -40,6 +40,9 @@ export const opencodeProviderRegistration: ProviderModule = {
   historyService: new OpencodeConversationHistoryService(),
   isEnabled: (settings) => getOpencodeProviderSettings(settings).enabled,
   setEnabled: (settings, enabled) => updateOpencodeProviderSettings(settings, { enabled }),
+  defaultAgentName: 'opencode',
+  getAgentName: settings => getOpencodeProviderSettings(settings).agentName,
+  setAgentName: (settings, agentName) => updateOpencodeProviderSettings(settings, { agentName }),
   settingsReconciler: opencodeSettingsReconciler,
   settingsStorage: {
     hostScopedFields: ['cliPathsByHost'],

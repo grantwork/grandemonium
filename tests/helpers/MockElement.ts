@@ -80,20 +80,20 @@ export interface MockElement {
 }
 
 const CLASS_DISPLAY: Record<string, string> = {
-  'claudian-context-meter': 'flex',
-  'claudian-mcp-selector': 'flex',
-  'claudian-mode-selector': 'flex',
-  'claudian-permission-toggle': 'flex',
-  'claudian-service-tier-toggle': 'flex',
-  'claudian-tab-content': 'flex',
-  'claudian-thinking-budget': 'flex',
-  'claudian-thinking-effort': 'flex',
+  'grandemonium-context-meter': 'flex',
+  'grandemonium-mcp-selector': 'flex',
+  'grandemonium-mode-selector': 'flex',
+  'grandemonium-permission-toggle': 'flex',
+  'grandemonium-service-tier-toggle': 'flex',
+  'grandemonium-tab-content': 'flex',
+  'grandemonium-thinking-budget': 'flex',
+  'grandemonium-thinking-effort': 'flex',
 };
 
 const DISPLAY_CLASSES = new Set([
-  'claudian-hidden',
-  'claudian-visible-block',
-  'claudian-visible-flex',
+  'grandemonium-hidden',
+  'grandemonium-visible-block',
+  'grandemonium-visible-flex',
   ...Object.keys(CLASS_DISPLAY),
 ]);
 
@@ -111,9 +111,9 @@ export function createMockEl(tag = 'div'): any {
   let textContent = '';
 
   const resolveDisplay = (): string | null => {
-    if (classes.has('claudian-hidden')) return 'none';
-    if (classes.has('claudian-visible-flex')) return 'flex';
-    if (classes.has('claudian-visible-block')) return 'block';
+    if (classes.has('grandemonium-hidden')) return 'none';
+    if (classes.has('grandemonium-visible-flex')) return 'flex';
+    if (classes.has('grandemonium-visible-block')) return 'block';
 
     for (const [cls, display] of Object.entries(CLASS_DISPLAY)) {
       if (classes.has(cls)) return display;

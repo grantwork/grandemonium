@@ -115,9 +115,9 @@ describe('MessageRenderer', () => {
 
     expect(emptySpy).toHaveBeenCalled();
     expect(renderStoredSpy).toHaveBeenCalledTimes(1);
-    expect(welcomeEl.hasClass('claudian-welcome')).toBe(true);
-    expect(welcomeEl.children[0].hasClass('claudian-welcome-brand')).toBe(true);
-    expect(welcomeEl.children[0].textContent).toBe('Tandemonium');
+    expect(welcomeEl.hasClass('grandemonium-welcome')).toBe(true);
+    expect(welcomeEl.children[0].hasClass('grandemonium-welcome-brand')).toBe(true);
+    expect(welcomeEl.children[0].textContent).toBe('Grandemonium');
     expect(welcomeEl.children[1].textContent).toBe('Hello');
   });
 
@@ -128,7 +128,7 @@ describe('MessageRenderer', () => {
     const welcomeEl = renderer.renderMessages([], () => 'Welcome!');
 
     expect(renderStoredSpy).not.toHaveBeenCalled();
-    expect(welcomeEl.hasClass('claudian-welcome')).toBe(true);
+    expect(welcomeEl.hasClass('grandemonium-welcome')).toBe(true);
   });
 
   // ============================================
@@ -153,12 +153,12 @@ describe('MessageRenderer', () => {
     // Should create assistant-style message with interrupt content
     expect(messagesEl.children.length).toBe(1);
     const msgEl = messagesEl.children[0];
-    expect(msgEl.hasClass('claudian-message-assistant')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-assistant')).toBe(true);
     // Check the content contains interrupt styling
     const contentEl = msgEl.children[0];
     const textEl = contentEl.children[0];
     const interruptedEl = textEl.children[0];
-    expect(interruptedEl.hasClass('claudian-interrupted')).toBe(true);
+    expect(interruptedEl.hasClass('grandemonium-interrupted')).toBe(true);
     expect(interruptedEl.textContent).toBe('Interrupted');
   });
 
@@ -180,13 +180,13 @@ describe('MessageRenderer', () => {
     // Should create an assistant message (not a bare interrupt marker)
     expect(messagesEl.children.length).toBe(1);
     const msgEl = messagesEl.children[0];
-    expect(msgEl.hasClass('claudian-message-assistant')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-assistant')).toBe(true);
 
     // The content div should have both content rendering and an interrupt indicator
     const contentEl = msgEl.children[0];
     const lastChild = contentEl.children[contentEl.children.length - 1];
     const interruptedEl = lastChild.children[0];
-    expect(interruptedEl.hasClass('claudian-interrupted')).toBe(true);
+    expect(interruptedEl.hasClass('grandemonium-interrupted')).toBe(true);
     expect(interruptedEl.textContent).toBe('Interrupted');
   });
 
@@ -203,7 +203,7 @@ describe('MessageRenderer', () => {
     });
 
     const msgEl = messagesEl.children[0];
-    const timestampEl = msgEl.querySelector('.claudian-message-timestamp');
+    const timestampEl = msgEl.querySelector('.grandemonium-message-timestamp');
     expect(timestampEl).toBeTruthy();
     expect(timestampEl.textContent).toBe(new Date(timestamp).toLocaleTimeString(undefined, {
       hour: '2-digit',
@@ -225,7 +225,7 @@ describe('MessageRenderer', () => {
     });
 
     const msgEl = messagesEl.children[0];
-    expect(msgEl.children.some((child: any) => child.hasClass('claudian-message-timestamp'))).toBe(false);
+    expect(msgEl.children.some((child: any) => child.hasClass('grandemonium-message-timestamp'))).toBe(false);
   });
 
   it('renders persisted citation content blocks', () => {
@@ -260,7 +260,7 @@ describe('MessageRenderer', () => {
     const messagesEl = createMockEl();
     const { renderer } = createRenderer(messagesEl);
     const legacyMarker =
-      '<span class="claudian-interrupted">Interrupted</span> <span class="claudian-interrupted-hint">· What should Claudian do instead?</span>';
+      '<span class="grandemonium-interrupted">Interrupted</span> <span class="grandemonium-interrupted-hint">· What should Grandemonium do instead?</span>';
     const interruptMsg: ChatMessage = {
       id: 'interrupt-legacy-1',
       role: 'assistant',
@@ -279,7 +279,7 @@ describe('MessageRenderer', () => {
     );
     const contentEl = messagesEl.children[0].children[0];
     const indicatorEl = contentEl.children[contentEl.children.length - 1];
-    expect(indicatorEl.children[0].hasClass('claudian-interrupted')).toBe(true);
+    expect(indicatorEl.children[0].hasClass('grandemonium-interrupted')).toBe(true);
     expect(indicatorEl.children[0].textContent).toBe('Interrupted');
   });
 
@@ -301,10 +301,10 @@ describe('MessageRenderer', () => {
     // Should create a bare interrupt marker (same as Claude-style)
     expect(messagesEl.children.length).toBe(1);
     const msgEl = messagesEl.children[0];
-    expect(msgEl.hasClass('claudian-message-assistant')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-assistant')).toBe(true);
     const contentEl = msgEl.children[0];
     const textEl = contentEl.children[0];
-    expect(textEl.children[0].hasClass('claudian-interrupted')).toBe(true);
+    expect(textEl.children[0].hasClass('grandemonium-interrupted')).toBe(true);
   });
 
   it('skips rebuilt context messages', () => {
@@ -340,7 +340,7 @@ describe('MessageRenderer', () => {
 
     expect(messagesEl.children.length).toBe(1);
     const msgEl = messagesEl.children[0];
-    expect(msgEl.hasClass('claudian-message-user')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-user')).toBe(true);
   });
 
   it('renders user message with displayContent instead of content', () => {
@@ -397,7 +397,7 @@ describe('MessageRenderer', () => {
     expect(renderer.renderMessageImages).toHaveBeenCalled();
     // Only the images container, no message bubble
     const bubbles = messagesEl.children.filter(
-      (c: any) => c.hasClass('claudian-message')
+      (c: any) => c.hasClass('grandemonium-message')
     );
     expect(bubbles.length).toBe(0);
   });
@@ -446,8 +446,8 @@ describe('MessageRenderer', () => {
 
     renderer.renderStoredMessage(allMessages[0], allMessages, 0);
 
-    expect(messagesEl.querySelector('.claudian-message-rewind-btn')).not.toBeNull();
-    expect(messagesEl.querySelector('.claudian-message-fork-btn')).toBeNull();
+    expect(messagesEl.querySelector('.grandemonium-message-rewind-btn')).not.toBeNull();
+    expect(messagesEl.querySelector('.grandemonium-message-fork-btn')).toBeNull();
     expect((renderer as any).liveMessageEls.has('u1')).toBe(false);
   });
 
@@ -467,7 +467,7 @@ describe('MessageRenderer', () => {
 
     renderer.renderStoredMessage(msg);
 
-    expect(messagesEl.querySelector('.claudian-message-rewind-btn')).toBeNull();
+    expect(messagesEl.querySelector('.grandemonium-message-rewind-btn')).toBeNull();
   });
 
   it('positions the rewind menu for pointer and keyboard activation', async () => {
@@ -493,7 +493,7 @@ describe('MessageRenderer', () => {
 
     renderer.refreshActionButtons(userMsg, allMessages, 1);
 
-    const btn = messagesEl.querySelector('.claudian-message-rewind-btn');
+    const btn = messagesEl.querySelector('.grandemonium-message-rewind-btn');
     expect(btn).not.toBeNull();
 
     const pointerEvent = {
@@ -557,8 +557,8 @@ describe('MessageRenderer', () => {
       { id: 'a1', role: 'assistant', content: 'response', timestamp: 2, assistantMessageId: 'resp-a' },
     ], 0);
 
-    expect(messagesEl.querySelector('.claudian-message-rewind-btn')).not.toBeNull();
-    expect(messagesEl.querySelector('.claudian-message-fork-btn')).toBeNull();
+    expect(messagesEl.querySelector('.grandemonium-message-rewind-btn')).not.toBeNull();
+    expect(messagesEl.querySelector('.grandemonium-message-fork-btn')).toBeNull();
   });
 
   // ============================================
@@ -1103,7 +1103,7 @@ describe('MessageRenderer', () => {
 
     const msgEl = renderer.addMessage(msg);
 
-    expect(msgEl.hasClass('claudian-message-user')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-user')).toBe(true);
   });
 
   it('addMessage stores a truncated first-line table-of-contents title for user messages', () => {
@@ -1180,7 +1180,7 @@ describe('MessageRenderer', () => {
 
     const msgEl = renderer.addMessage(msg);
 
-    expect(msgEl.hasClass('claudian-message-assistant')).toBe(true);
+    expect(msgEl.hasClass('grandemonium-message-assistant')).toBe(true);
   });
 
   // ============================================
@@ -1219,7 +1219,7 @@ describe('MessageRenderer', () => {
     // Should create images container with 2 image wrappers
     expect(containerEl.children.length).toBe(1);
     const imagesContainer = containerEl.children[0];
-    expect(imagesContainer.hasClass('claudian-message-images')).toBe(true);
+    expect(imagesContainer.hasClass('grandemonium-message-images')).toBe(true);
     expect(imagesContainer.children.length).toBe(2);
   });
 
@@ -1260,7 +1260,7 @@ describe('MessageRenderer', () => {
 
     try {
       renderer.showFullImage(image);
-      expect(mockBody.createDiv).toHaveBeenCalledWith({ cls: 'claudian-image-modal-overlay' });
+      expect(mockBody.createDiv).toHaveBeenCalledWith({ cls: 'grandemonium-image-modal-overlay' });
 
       renderer.dispose();
       renderer.showFullImage(image);
@@ -1284,7 +1284,7 @@ describe('MessageRenderer', () => {
 
     expect(textEl.children.length).toBe(1);
     const copyBtn = textEl.children[0];
-    expect(copyBtn.hasClass('claudian-text-copy-btn')).toBe(true);
+    expect(copyBtn.hasClass('grandemonium-text-copy-btn')).toBe(true);
     expect(copyBtn.tagName).toBe('BUTTON');
     expect(copyBtn.getAttribute('type')).toBe('button');
     expect(copyBtn.getAttribute('aria-label')).toBe('Copy message');
@@ -1466,7 +1466,7 @@ describe('MessageRenderer', () => {
       renderer.addTextCopyButton(textEl, 'markdown content');
 
       const copyBtn = textEl.children[0];
-      expect(copyBtn.hasClass('claudian-text-copy-btn')).toBe(true);
+      expect(copyBtn.hasClass('grandemonium-text-copy-btn')).toBe(true);
 
       // Simulate click
       const clickHandlers = copyBtn._eventListeners.get('click');
@@ -1521,7 +1521,7 @@ describe('MessageRenderer', () => {
     const welcomeEl = renderer.renderMessages(messages, () => 'Good morning!');
 
     expect(welcomeEl).toBeDefined();
-    expect(welcomeEl!.hasClass('claudian-welcome')).toBe(true);
+    expect(welcomeEl!.hasClass('grandemonium-welcome')).toBe(true);
   });
 
   it('renderMessages should store table-of-contents title from displayContent before content', () => {
@@ -1541,7 +1541,7 @@ describe('MessageRenderer', () => {
 
     renderer.renderMessages(messages, () => 'Hello');
 
-    const msgEl = messagesEl.querySelector('.claudian-message-user');
+    const msgEl = messagesEl.querySelector('.grandemonium-message-user');
     expect(msgEl?.getAttribute('data-toc-title')).toBe('Visible slash command');
   });
 
@@ -1568,7 +1568,7 @@ describe('MessageRenderer', () => {
     const welcomeEl = renderer.renderMessages([], () => 'Welcome');
 
     expect(welcomeEl).toBeDefined();
-    expect(welcomeEl!.hasClass('claudian-welcome')).toBe(true);
+    expect(welcomeEl!.hasClass('grandemonium-welcome')).toBe(true);
   });
 
   // ============================================
@@ -1882,7 +1882,7 @@ describe('MessageRenderer', () => {
       await renderer.renderContent(el, '**broken markdown**');
 
       const errorDiv = el.children.find(
-        (c: any) => c.hasClass('claudian-render-error')
+        (c: any) => c.hasClass('grandemonium-render-error')
       );
       expect(errorDiv).toBeDefined();
       expect(errorDiv!.textContent).toBe('Failed to render message content.');
@@ -2011,7 +2011,7 @@ describe('MessageRenderer', () => {
 
       await renderer.renderContent(el, '```js\nconsole.log("hello")\n```');
 
-      // The pre should be wrapped in a claudian-code-wrapper
+      // The pre should be wrapped in a grandemonium-code-wrapper
       // Due to mock limitations, check that querySelectorAll was called on el
       // The actual wrapping logic runs on real DOM, but the mock captures calls
       expect(MarkdownRenderer.renderMarkdown).toHaveBeenCalled();
@@ -2025,7 +2025,7 @@ describe('MessageRenderer', () => {
       // Mock renderMarkdown to create an already-wrapped pre element
       (MarkdownRenderer.renderMarkdown as jest.Mock).mockImplementationOnce(
         async (_md: string, container: any) => {
-          const wrapper = container.createDiv({ cls: 'claudian-code-wrapper' });
+          const wrapper = container.createDiv({ cls: 'grandemonium-code-wrapper' });
           wrapper.createEl('pre');
         }
       );
@@ -2101,10 +2101,10 @@ describe('MessageRenderer', () => {
       await renderer.renderContent(el, '```dataview\nTABLE file.name\n```');
 
       const renderedMarkdown = (MarkdownRenderer.renderMarkdown as jest.Mock).mock.calls[0][0];
-      expect(renderedMarkdown).toContain('```claudian-display-only-fence-0');
+      expect(renderedMarkdown).toContain('```grandemonium-display-only-fence-0');
       expect(renderedMarkdown).not.toContain('```dataview');
       expect(code?.hasClass('language-dataview')).toBe(true);
-      expect(code?.hasClass('language-claudian-display-only-fence-0')).toBe(false);
+      expect(code?.hasClass('language-grandemonium-display-only-fence-0')).toBe(false);
       expect(highlightElement).toHaveBeenCalledWith(code);
     });
 

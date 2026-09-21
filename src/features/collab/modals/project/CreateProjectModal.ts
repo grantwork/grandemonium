@@ -36,7 +36,7 @@ export class CreateProjectModal extends Modal {
     this.abortController = new AbortController();
     this.submitting = false;
     this.setTitle(t('collab.createProject.title'));
-    this.modalEl.classList.add('claudian-collab-create-modal');
+    this.modalEl.classList.add('grandemonium-collab-create-modal');
     this.contentEl.replaceChildren();
 
     this.projectNameInput = this.renderTextField(
@@ -54,10 +54,10 @@ export class CreateProjectModal extends Modal {
 
     this.statusEl = this.contentEl.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-create-status',
+      cls: 'grandemonium-collab-create-status',
     });
 
-    const actions = this.contentEl.createDiv({ cls: 'claudian-collab-create-actions' });
+    const actions = this.contentEl.createDiv({ cls: 'grandemonium-collab-create-actions' });
     const cancelButton = actions.createEl('button', {
       attr: { type: 'button' },
       text: t('common.cancel'),
@@ -85,8 +85,8 @@ export class CreateProjectModal extends Modal {
     label: string,
     placeholder: string,
   ): HTMLInputElement {
-    const row = this.contentEl.createDiv({ cls: 'claudian-collab-create-field' });
-    const id = `claudian-collab-create-${field}`;
+    const row = this.contentEl.createDiv({ cls: 'grandemonium-collab-create-field' });
+    const id = `grandemonium-collab-create-${field}`;
     row.createEl('label', { attr: { for: id }, text: label });
     return row.createEl('input', {
       attr: {
@@ -124,7 +124,7 @@ export class CreateProjectModal extends Modal {
     if (!this.statusEl) return;
     this.statusEl.replaceChildren();
     this.statusEl.createDiv({
-      cls: 'claudian-collab-create-warning',
+      cls: 'grandemonium-collab-create-warning',
       text: t('collab.createProject.resumeRequired'),
     });
     const resumeButton = this.statusEl.createEl('button', {
@@ -159,7 +159,7 @@ export class CreateProjectModal extends Modal {
     if (!this.statusEl) return;
     this.statusEl.replaceChildren();
     this.statusEl.createDiv({
-      cls: warning ? 'claudian-collab-create-warning' : undefined,
+      cls: warning ? 'grandemonium-collab-create-warning' : undefined,
       text,
     });
   }

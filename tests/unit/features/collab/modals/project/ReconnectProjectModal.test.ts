@@ -60,13 +60,13 @@ describe('ReconnectProjectModal', () => {
     expect(modal.contentEl.querySelector('[data-field="member-name"]')).toBeNull();
     expect(reconnect.disabled).toBe(true);
 
-    invitation.value = ' claudian-collab:v2:payload ';
+    invitation.value = ' grandemonium-collab:v2:payload ';
     invitation.dispatchEvent(new Event('input'));
     reconnect.click();
     await flush();
 
     expect(port.reconnectProject).toHaveBeenCalledWith({
-      encodedInvitation: 'claudian-collab:v2:payload',
+      encodedInvitation: 'grandemonium-collab:v2:payload',
       projectId: 'project-alpha',
     }, expect.objectContaining({ signal: expect.any(AbortSignal) }));
     expect(onReconnected).toHaveBeenCalledWith(project());
@@ -87,12 +87,12 @@ describe('ReconnectProjectModal', () => {
     const invitation = modal.contentEl.querySelector<HTMLTextAreaElement>(
       '[data-field="invitation"]',
     )!;
-    invitation.value = 'claudian-collab:v2:payload';
+    invitation.value = 'grandemonium-collab:v2:payload';
     invitation.dispatchEvent(new Event('input'));
     modal.contentEl.querySelector<HTMLButtonElement>('[data-action="reconnect"]')?.click();
     await flush();
 
-    expect(invitation.value).toBe('claudian-collab:v2:payload');
+    expect(invitation.value).toBe('grandemonium-collab:v2:payload');
     expect(modal.contentEl.querySelector('[role="alert"]')).not.toBeNull();
     expect(modal.contentEl.querySelector<HTMLButtonElement>(
       '[data-action="reconnect"]',
@@ -121,7 +121,7 @@ describe('ReconnectProjectModal', () => {
     const invitation = modal.contentEl.querySelector<HTMLTextAreaElement>(
       '[data-field="invitation"]',
     )!;
-    invitation.value = 'claudian-collab:v2:payload';
+    invitation.value = 'grandemonium-collab:v2:payload';
     invitation.dispatchEvent(new Event('input'));
     modal.contentEl.querySelector<HTMLButtonElement>('[data-action="reconnect"]')?.click();
 

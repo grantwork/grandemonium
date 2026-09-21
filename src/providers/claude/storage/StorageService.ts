@@ -1,7 +1,7 @@
 import type { App } from 'obsidian';
 
-import { ClaudianSettingsStorage, type StoredClaudianSettings } from '../../../app/settings/ClaudianSettingsStorage';
-import { CLAUDIAN_STORAGE_PATH, SESSIONS_PATH } from '../../../core/bootstrap/storagePaths';
+import { GrandemoniumSettingsStorage, type StoredGrandemoniumSettings } from '../../../app/settings/GrandemoniumSettingsStorage';
+import { GRANDEMONIUM_STORAGE_PATH, SESSIONS_PATH } from '../../../core/bootstrap/storagePaths';
 import { VaultFileAdapter } from '../../../core/storage/VaultFileAdapter';
 import type {
   SlashCommand,
@@ -20,7 +20,7 @@ export const CLAUDE_PATH = '.claude';
 
 export interface CombinedSettings {
   cc: CCSettings;
-  claudian: StoredClaudianSettings;
+  grandemonium: StoredGrandemoniumSettings;
 }
 
 interface StorageServicePlugin {
@@ -29,7 +29,7 @@ interface StorageServicePlugin {
 
 export class StorageService {
   readonly ccSettings: CCSettingsStorage;
-  readonly claudianSettings: ClaudianSettingsStorage;
+  readonly grandemoniumSettings: GrandemoniumSettingsStorage;
   readonly commands: SlashCommandStorage;
   readonly skills: SkillStorage;
   readonly agents: AgentVaultStorage;
@@ -41,7 +41,7 @@ export class StorageService {
     this.app = plugin.app;
     this.adapter = adapter ?? new VaultFileAdapter(this.app);
     this.ccSettings = new CCSettingsStorage(this.adapter);
-    this.claudianSettings = new ClaudianSettingsStorage(this.adapter);
+    this.grandemoniumSettings = new GrandemoniumSettingsStorage(this.adapter);
     this.commands = new SlashCommandStorage(this.adapter);
     this.skills = new SkillStorage(this.adapter);
     this.agents = new AgentVaultStorage(this.adapter);
@@ -51,14 +51,14 @@ export class StorageService {
     await this.ensureDirectories();
 
     const cc = await this.ccSettings.load();
-    const claudian = await this.claudianSettings.load();
+    const grandemonium = await this.grandemoniumSettings.load();
 
-    return { cc, claudian };
+    return { cc, grandemonium };
   }
 
   async ensureDirectories(): Promise<void> {
     await this.adapter.ensureFolder(CLAUDE_PATH);
-    await this.adapter.ensureFolder(CLAUDIAN_STORAGE_PATH);
+    await this.adapter.ensureFolder(GRANDEMONIUM_STORAGE_PATH);
     await this.adapter.ensureFolder(COMMANDS_PATH);
     await this.adapter.ensureFolder(SKILLS_PATH);
     await this.adapter.ensureFolder(SESSIONS_PATH);
@@ -95,16 +95,16 @@ export class StorageService {
     return this.ccSettings.removeRule(createPermissionRule(rule));
   }
 
-  async updateClaudianSettings(updates: Partial<StoredClaudianSettings>): Promise<void> {
-    return this.claudianSettings.update(updates);
+  async updateGrandemoniumSettings(updates: Partial<StoredGrandemoniumSettings>): Promise<void> {
+    return this.grandemoniumSettings.update(updates);
   }
 
-  async saveClaudianSettings(settings: StoredClaudianSettings): Promise<void> {
-    return this.claudianSettings.save(settings);
+  async saveGrandemoniumSettings(settings: StoredGrandemoniumSettings): Promise<void> {
+    return this.grandemoniumSettings.save(settings);
   }
 
-  async loadClaudianSettings(): Promise<StoredClaudianSettings> {
-    return this.claudianSettings.load();
+  async loadGrandemoniumSettings(): Promise<StoredGrandemoniumSettings> {
+    return this.grandemoniumSettings.load();
   }
 
 }

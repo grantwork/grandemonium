@@ -1,6 +1,6 @@
 import {
-  CLAUDIAN_SETTINGS_PATH,
-  LEGACY_CLAUDIAN_SETTINGS_PATH,
+  GRANDEMONIUM_SETTINGS_PATH,
+  LEGACY_GRANDEMONIUM_SETTINGS_PATH,
 } from '../../core/bootstrap/storagePaths';
 import {
   DEFAULT_COLLAB_PROJECTS_FOLDER,
@@ -21,25 +21,25 @@ import type { VaultFileAdapter } from '../../core/storage/VaultFileAdapter';
 import {
   CHAT_VIEW_PLACEMENTS,
   type ChatViewPlacement,
-  type ClaudianSettings,
   DUAL_PANE_SIDES,
   type DualPaneSide,
   type EnvironmentScope,
   type EnvSnippet,
+  type GrandemoniumSettings,
   type HiddenProviderCommands,
   type ProviderConfigMap,
   type SessionManagerOrganization,
   type StoredChatModelSelection,
 } from '../../core/types/settings';
 import { getHostnameKey, getLegacyDeviceSettingsKey } from '../../utils/env';
-import { DEFAULT_CLAUDIAN_SETTINGS } from './defaultSettings';
+import { DEFAULT_GRANDEMONIUM_SETTINGS } from './defaultSettings';
 
 export {
-  CLAUDIAN_SETTINGS_PATH,
-  LEGACY_CLAUDIAN_SETTINGS_PATH,
+  GRANDEMONIUM_SETTINGS_PATH,
+  LEGACY_GRANDEMONIUM_SETTINGS_PATH,
 };
 
-export type StoredClaudianSettings = ClaudianSettings;
+export type StoredGrandemoniumSettings = GrandemoniumSettings;
 
 const LEGACY_STRIPPED_SHARED_SETTING_FIELDS = [
   'activeConversationId',
@@ -95,7 +95,7 @@ function normalizeChatViewPlacement(
     return legacyOpenInMainTab ? 'main-tab' : 'right-sidebar';
   }
 
-  return DEFAULT_CLAUDIAN_SETTINGS.chatViewPlacement;
+  return DEFAULT_GRANDEMONIUM_SETTINGS.chatViewPlacement;
 }
 
 function shouldPersistChatViewPlacementMigration(
@@ -112,37 +112,37 @@ function shouldPersistChatViewPlacementMigration(
 function normalizeEnableDualPane(value: unknown): boolean {
   return typeof value === 'boolean'
     ? value
-    : DEFAULT_CLAUDIAN_SETTINGS.enableDualPane;
+    : DEFAULT_GRANDEMONIUM_SETTINGS.enableDualPane;
 }
 
 function normalizeDualPaneSide(value: unknown): DualPaneSide {
   return typeof value === 'string'
     && (DUAL_PANE_SIDES as readonly string[]).includes(value)
     ? value as DualPaneSide
-    : DEFAULT_CLAUDIAN_SETTINGS.dualPaneSide;
+    : DEFAULT_GRANDEMONIUM_SETTINGS.dualPaneSide;
 }
 
 function normalizeRestoreTabsOnStartup(value: unknown): boolean {
   return typeof value === 'boolean'
     ? value
-    : DEFAULT_CLAUDIAN_SETTINGS.restoreTabsOnStartup;
+    : DEFAULT_GRANDEMONIUM_SETTINGS.restoreTabsOnStartup;
 }
 
 function normalizeCollabGitPath(value: unknown): string {
-  if (typeof value !== 'string') return DEFAULT_CLAUDIAN_SETTINGS.collabGitPath;
+  if (typeof value !== 'string') return DEFAULT_GRANDEMONIUM_SETTINGS.collabGitPath;
   const trimmed = value.trim();
   return trimmed.length <= 4_096
     && !trimmed.includes('\u0000')
     && !trimmed.includes('\r')
     && !trimmed.includes('\n')
     ? trimmed
-    : DEFAULT_CLAUDIAN_SETTINGS.collabGitPath;
+    : DEFAULT_GRANDEMONIUM_SETTINGS.collabGitPath;
 }
 
 function normalizeCollabEnabled(value: unknown): boolean {
   return typeof value === 'boolean'
     ? value
-    : DEFAULT_CLAUDIAN_SETTINGS.collabEnabled;
+    : DEFAULT_GRANDEMONIUM_SETTINGS.collabEnabled;
 }
 
 function normalizeSessionManagerOrganization(
@@ -151,7 +151,7 @@ function normalizeSessionManagerOrganization(
   if (value === 'linked-note') return 'linked-content';
   return value === 'linked-content' || value === 'list'
     ? value
-    : DEFAULT_CLAUDIAN_SETTINGS.sessionManagerOrganization ?? 'list';
+    : DEFAULT_GRANDEMONIUM_SETTINGS.sessionManagerOrganization ?? 'list';
 }
 
 function normalizePinnedLinkedContentPaths(value: unknown): string[] {
@@ -445,10 +445,10 @@ function migrateLegacyChatModelSelection(
   return model ? { providerId, model } : null;
 }
 
-export class ClaudianSettingsStorage {
+export class GrandemoniumSettingsStorage {
   constructor(private adapter: VaultFileAdapter) {}
 
-  async load(): Promise<StoredClaudianSettings> {
+  async load(): Promise<StoredGrandemoniumSettings> {
     const settingsPath = await this.getLoadPath();
     if (!settingsPath) {
       return this.getDefaults();
@@ -549,7 +549,7 @@ export class ClaudianSettingsStorage {
     );
 
     if (
-      settingsPath !== CLAUDIAN_SETTINGS_PATH
+      settingsPath !== GRANDEMONIUM_SETTINGS_PATH
       || (
       hasLegacyTopLevelProviderFields(stored)
       || 'show1MModel' in stored
@@ -608,7 +608,7 @@ export class ClaudianSettingsStorage {
     return merged;
   }
 
-  async save(settings: StoredClaudianSettings): Promise<void> {
+  async save(settings: StoredGrandemoniumSettings): Promise<void> {
     const { providerConfigs } = projectPersistableProviderConfigs(settings.providerConfigs);
     const content = JSON.stringify(
       stripLegacyFields({
@@ -624,42 +624,42 @@ export class ClaudianSettingsStorage {
       null,
       2,
     );
-    await this.adapter.write(CLAUDIAN_SETTINGS_PATH, content);
+    await this.adapter.write(GRANDEMONIUM_SETTINGS_PATH, content);
     await this.deleteLegacyFileIfPresent();
   }
 
   async exists(): Promise<boolean> {
-    if (await this.adapter.exists(CLAUDIAN_SETTINGS_PATH)) {
+    if (await this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH)) {
       return true;
     }
 
-    return this.adapter.exists(LEGACY_CLAUDIAN_SETTINGS_PATH);
+    return this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
   }
 
-  async update(updates: Partial<StoredClaudianSettings>): Promise<void> {
+  async update(updates: Partial<StoredGrandemoniumSettings>): Promise<void> {
     const current = await this.load();
     await this.save({ ...current, ...updates });
   }
 
-  private getDefaults(): StoredClaudianSettings {
-    return DEFAULT_CLAUDIAN_SETTINGS;
+  private getDefaults(): StoredGrandemoniumSettings {
+    return DEFAULT_GRANDEMONIUM_SETTINGS;
   }
 
   private async getLoadPath(): Promise<string | null> {
-    if (await this.adapter.exists(CLAUDIAN_SETTINGS_PATH)) {
-      return CLAUDIAN_SETTINGS_PATH;
+    if (await this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH)) {
+      return GRANDEMONIUM_SETTINGS_PATH;
     }
 
-    if (await this.adapter.exists(LEGACY_CLAUDIAN_SETTINGS_PATH)) {
-      return LEGACY_CLAUDIAN_SETTINGS_PATH;
+    if (await this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH)) {
+      return LEGACY_GRANDEMONIUM_SETTINGS_PATH;
     }
 
     return null;
   }
 
   private async deleteLegacyFileIfPresent(): Promise<void> {
-    if (await this.adapter.exists(LEGACY_CLAUDIAN_SETTINGS_PATH)) {
-      await this.adapter.delete(LEGACY_CLAUDIAN_SETTINGS_PATH);
+    if (await this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH)) {
+      await this.adapter.delete(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
     }
   }
 }

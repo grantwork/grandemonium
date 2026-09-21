@@ -20,7 +20,7 @@ import type {
   DeclineManagerResponsibilityRequest,
 } from '@/app/collab/lan/LanCollabControlOperations';
 import type { CollabManagerResponsibilityOfferSummary } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const OFFER_TTL_MS = 10 * 60 * 1_000;
 

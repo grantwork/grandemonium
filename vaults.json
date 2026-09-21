@@ -12,6 +12,10 @@
     {
       "name": "PostLever",
       "path": "/Users/grant/hq/PostLever"
+    },
+    {
+      "name": "PostLever-gpt",
+      "path": "/Users/grant/hq/PostLever-gpt"
     }
   ]
 }

@@ -41,8 +41,8 @@ export const COLLAB_LOCAL_ERROR_CODES = Object.freeze([
   'durable-progress-recovery-required',
 ] as const);
 
-export type ClaudianCollabErrorCode = typeof COLLAB_LOCAL_ERROR_CODES[number];
-export type CollabErrorCode = SharedCollabErrorCode | ClaudianCollabErrorCode;
+export type GrandemoniumCollabErrorCode = typeof COLLAB_LOCAL_ERROR_CODES[number];
+export type CollabErrorCode = SharedCollabErrorCode | GrandemoniumCollabErrorCode;
 export type CollabErrorGroup = SharedCollabErrorGroup | 'connectivity';
 
 export const COLLAB_LOCAL_RECOVERY_ACTIONS = Object.freeze([
@@ -58,8 +58,8 @@ export const COLLAB_LOCAL_RECOVERY_ACTIONS = Object.freeze([
   'export-repair-data',
 ] as const);
 
-export type ClaudianCollabRecoveryAction = typeof COLLAB_LOCAL_RECOVERY_ACTIONS[number];
-export type CollabRecoveryAction = SharedCollabRecoveryAction | ClaudianCollabRecoveryAction;
+export type GrandemoniumCollabRecoveryAction = typeof COLLAB_LOCAL_RECOVERY_ACTIONS[number];
+export type CollabRecoveryAction = SharedCollabRecoveryAction | GrandemoniumCollabRecoveryAction;
 
 export interface CollabErrorOptions {
   code: CollabErrorCode;
@@ -70,7 +70,7 @@ export interface CollabErrorOptions {
 
 const SHARED_ERROR_CODES: ReadonlySet<string> = new Set(SHARED_COLLAB_ERROR_CODES);
 
-function localCollabErrorGroup(code: ClaudianCollabErrorCode): CollabErrorGroup {
+function localCollabErrorGroup(code: GrandemoniumCollabErrorCode): CollabErrorGroup {
   switch (code) {
     case 'not-initialized':
     case 'git-not-found':
@@ -113,10 +113,10 @@ function localCollabErrorGroup(code: ClaudianCollabErrorCode): CollabErrorGroup 
 export function collabErrorGroup(code: CollabErrorCode): CollabErrorGroup {
   return SHARED_ERROR_CODES.has(code)
     ? sharedCollabErrorGroup(code as SharedCollabErrorCode)
-    : localCollabErrorGroup(code as ClaudianCollabErrorCode);
+    : localCollabErrorGroup(code as GrandemoniumCollabErrorCode);
 }
 
-/** Claudian error value with application-only vocabulary layered over the shared wire errors. */
+/** Grandemonium error value with application-only vocabulary layered over the shared wire errors. */
 export class CollabError extends Error {
   readonly code: CollabErrorCode;
   readonly group: CollabErrorGroup;

@@ -7,7 +7,7 @@ import type {
   ReconciliationSafety,
   ReconciliationSafetyPort,
 } from '@/app/collab/reconciliation/ReconciliationCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ReconciliationRepositoryLockPort {
   hasMutationLock(context: PublishProjectContext): Promise<boolean>;

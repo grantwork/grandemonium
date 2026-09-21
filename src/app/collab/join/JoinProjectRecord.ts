@@ -171,7 +171,7 @@ export function decodeJoinProjectRecord(value: unknown): JoinProjectRecord {
   );
   if (
     operationId !== joinAttemptId
-    || stagingDirectoryName !== `.claudian-join-${joinAttemptId}`
+    || stagingDirectoryName !== `.grandemonium-join-${joinAttemptId}`
   ) {
     throw new TypeError('Invalid Join operation identity');
   }

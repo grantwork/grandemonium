@@ -13,11 +13,11 @@ import type {
   PublishProjectContext,
   PublishRepositorySnapshot,
 } from '@/app/collab/publish/PublishCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CANDIDATE_IDENTITY = Object.freeze({
-  email: 'collab@claudian.local',
-  name: 'Claudian Collab',
+  email: 'collab@grandemonium.local',
+  name: 'Grandemonium Collab',
 });
 const CANDIDATE_MESSAGE = 'Prepare publication candidate';
 
@@ -73,7 +73,7 @@ export function publicationCandidateRef(operationId: CollabOperationId): string 
   if (!isCollabOpaqueId(operationId)) {
     throw candidateError('repository-invalid', 'publication-operation-id-invalid');
   }
-  return `refs/claudian/publications/${operationId}`;
+  return `refs/grandemonium/publications/${operationId}`;
 }
 
 export class NativeGitPublicationCandidateRepository {

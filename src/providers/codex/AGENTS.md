@@ -31,7 +31,7 @@ Live execution state and replay state are separate authorities. Do not fill gaps
 ## Live Output vs History
 
 - Live turn output comes from JSON-RPC notifications. `thread/start` and `thread/resume` request `experimentalRawEvents: true`.
-- `CodexNotificationRouter` projects normalized notifications and raw response items into Claudian `StreamChunk`s.
+- `CodexNotificationRouter` projects normalized notifications and raw response items into Grandemonium `StreamChunk`s.
 - Do not reintroduce live JSONL polling unless the app-server stops emitting equivalent notifications and the tradeoff is documented with a current wire trace.
 - JSONL is the replay source for history hydration and session-file discovery.
 
@@ -57,7 +57,7 @@ Live execution state and replay state are separate authorities. Do not fill gaps
 
 - Images are written to a temp directory, passed as local image paths, and cleaned up in `query()` `finally`.
 - `serverRequest/resolved` can auto-dismiss approval or ask-user UI without client input.
-- The shared no-op task-result interpreter is intentional because Claudian's Claude async-agent task system does not apply to Codex.
+- The shared no-op task-result interpreter is intentional because Grandemonium's Claude async-agent task system does not apply to Codex.
 - Codex is opt-in and must stay disabled by default.
 
 ## Invariants

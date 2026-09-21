@@ -24,20 +24,20 @@ describe('DisplayOnlyCodeFences', () => {
     const prepared = prepareDisplayOnlyCodeFences(markdown);
 
     expect(prepared.markdown).toBe([
-      '> ```claudian-display-only-fence-0',
+      '> ```grandemonium-display-only-fence-0',
       '> TABLE file.name',
       '> ```',
-      '- ~~~claudian-display-only-fence-1 title="sample"',
+      '- ~~~grandemonium-display-only-fence-1 title="sample"',
       '  const value = 1;',
       '  ~~~',
     ].join('\n'));
     expect(prepared.fences).toEqual([
       {
-        placeholderLanguage: 'claudian-display-only-fence-0',
+        placeholderLanguage: 'grandemonium-display-only-fence-0',
         originalLanguage: 'dataview',
       },
       {
-        placeholderLanguage: 'claudian-display-only-fence-1',
+        placeholderLanguage: 'grandemonium-display-only-fence-1',
         originalLanguage: 'typescript',
       },
     ]);
@@ -55,7 +55,7 @@ describe('DisplayOnlyCodeFences', () => {
     const prepared = prepareDisplayOnlyCodeFences(markdown);
 
     expect(prepared.markdown).toBe([
-      '````claudian-display-only-fence-0',
+      '````grandemonium-display-only-fence-0',
       '```dataview',
       'TABLE file.name',
       '```',
@@ -82,7 +82,7 @@ describe('DisplayOnlyCodeFences', () => {
       '```',
       'plain code',
       '```',
-      '```claudian-display-only-fence-0',
+      '```grandemonium-display-only-fence-0',
       'TABLE file.name',
     ].join('\n'));
     expect(prepared.fences).toHaveLength(1);
@@ -93,16 +93,16 @@ describe('DisplayOnlyCodeFences', () => {
     (loadPrism as jest.Mock).mockResolvedValueOnce({ highlightElement });
     const container = createMockEl();
     const code = container.createEl('code', {
-      cls: 'language-claudian-display-only-fence-0 extra-class',
+      cls: 'language-grandemonium-display-only-fence-0 extra-class',
       text: 'const value = 1;',
     });
 
     await restoreDisplayOnlyCodeFences(container, [{
-      placeholderLanguage: 'claudian-display-only-fence-0',
+      placeholderLanguage: 'grandemonium-display-only-fence-0',
       originalLanguage: 'typescript',
     }]);
 
-    expect(code.hasClass('language-claudian-display-only-fence-0')).toBe(false);
+    expect(code.hasClass('language-grandemonium-display-only-fence-0')).toBe(false);
     expect(code.hasClass('language-typescript')).toBe(true);
     expect(code.hasClass('extra-class')).toBe(true);
     expect(highlightElement).toHaveBeenCalledWith(code);
@@ -116,7 +116,7 @@ describe('DisplayOnlyCodeFences', () => {
     });
     (loadPrism as jest.Mock).mockResolvedValueOnce({ highlightElement });
     const container = createMockEl();
-    const placeholderClass = 'language-claudian-display-only-fence-0';
+    const placeholderClass = 'language-grandemonium-display-only-fence-0';
     const pre = container.createEl('pre', { cls: placeholderClass });
     const code = pre.createEl('code', {
       cls: placeholderClass,
@@ -125,7 +125,7 @@ describe('DisplayOnlyCodeFences', () => {
     const copyButton = pre.createEl('button', { cls: 'copy-code-button' });
 
     await restoreDisplayOnlyCodeFences(container, [{
-      placeholderLanguage: 'claudian-display-only-fence-0',
+      placeholderLanguage: 'grandemonium-display-only-fence-0',
       originalLanguage: 'typescript',
     }]);
 
@@ -139,12 +139,12 @@ describe('DisplayOnlyCodeFences', () => {
     (loadPrism as jest.Mock).mockRejectedValueOnce(new Error('Prism unavailable'));
     const container = createMockEl();
     const code = container.createEl('code', {
-      cls: 'language-claudian-display-only-fence-0',
+      cls: 'language-grandemonium-display-only-fence-0',
       text: 'TABLE file.name',
     });
 
     await expect(restoreDisplayOnlyCodeFences(container, [{
-      placeholderLanguage: 'claudian-display-only-fence-0',
+      placeholderLanguage: 'grandemonium-display-only-fence-0',
       originalLanguage: 'dataview',
     }])).resolves.toBeUndefined();
 

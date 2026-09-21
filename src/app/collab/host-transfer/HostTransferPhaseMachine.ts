@@ -1,4 +1,4 @@
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type HostTransferDurablePhase =
   | 'offered'

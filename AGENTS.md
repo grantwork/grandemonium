@@ -2,7 +2,7 @@
 
 ## Project
 
-Tandemonium is an Obsidian plugin that embeds provider-backed coding agents in a sidebar and inline-edit flow. Claude is the default provider. Codex, Grok, OpenCode, and Pi are optional providers that plug into the same conversation model through `Conversation.providerId` and opaque provider-owned `providerState`.
+Grandemonium is an Obsidian plugin that embeds provider-backed coding agents in a sidebar and inline-edit flow. Claude is the default provider. Codex, Grok, OpenCode, and Pi are optional providers that plug into the same conversation model through `Conversation.providerId` and opaque provider-owned `providerState`.
 
 Do not assume provider parity. Check each provider's `capabilities.ts`, `registration.ts`, and UI config before wiring shared behavior.
 
@@ -81,7 +81,7 @@ providers -> ProviderHost + core contracts + shared provider and UI primitives
 ```
 
 - `core/` must not import feature code, app composition, or provider implementations.
-- `src/` consumes the standalone shared contract only through the `@claudian-collab/protocol` package root. Claudian must not retain package source, source aliases, compatibility policy, or copied registries; `src/core/collab/` retains only client-owned Collab contracts without re-exporting package symbols.
+- `src/` consumes the standalone shared contract only through the `@claudian-collab/protocol` package root. Grandemonium must not retain package source, source aliases, compatibility policy, or copied registries; `src/core/collab/` retains only client-owned Collab contracts without re-exporting package symbols.
 - Feature code must not import provider implementations. Resolve provider behavior through core registries and contracts.
 - Provider runtime and protocol code must not import chat views, feature controllers, or other feature orchestration.
 - Existing Claude compatibility re-exports that point into `src/app/` are migration seams, not an allowed general dependency direction. Do not add new provider-to-app imports; move shared contracts into `core/` when touching those seams materially.
@@ -131,7 +131,7 @@ Provider-specific session fields belong behind typed helpers in the owning provi
 
 - The owner and public contracts named in the applicable scoped guides are the accepted seams for their areas.
 - Accepted Collab protocol fixtures and captured provider-native examples are independent sources of expected behavior.
-- Mock only environment, Obsidian, and provider boundaries. Keep Claudian-owned modules real. For shared provider contracts, prove provider-neutral behavior first, then cover each adapter's distinct native behavior.
+- Mock only environment, Obsidian, and provider boundaries. Keep Grandemonium-owned modules real. For shared provider contracts, prove provider-neutral behavior first, then cover each adapter's distinct native behavior.
 
 ## UI Semantics and Tests
 
@@ -146,9 +146,9 @@ Provider-specific session fields belong behind typed helpers in the owning provi
 - Model, permission, command, MCP, skill, and subagent behavior is provider-specific unless the core contract explicitly makes it shared.
 - Treat persisted provider configuration as untrusted runtime input. Provider settings readers and storage normalization must decode every field; invalid permission, tool, and sandbox modes must fail closed.
 - When provider behavior is uncertain, inspect real runtime output first. Put throwaway scripts, traces, and handoff notes in `.context/`.
-- Treat provider-native history and transcripts as read-only. Never mutate or delete provider session data when a Claudian conversation changes.
+- Treat provider-native history and transcripts as read-only. Never mutate or delete provider session data when a Grandemonium conversation changes.
 - Only explicitly enabled models belong in the chat selector: no synthetic provider entries, no hidden session models, and no provider-default fallback when none are enabled.
-- Runtime-discovered commands are read-only in Claudian; providers own their editing and deletion.
+- Runtime-discovered commands are read-only in Grandemonium; providers own their editing and deletion.
 - Auxiliary query runners own their own process and session, independent from the chat runtime.
 
 ## Review Checks
@@ -173,3 +173,6 @@ style, so upstream fixes stay easy to compare. Three adaptations matter:
   the chat side's `tabManagerState`.
 - The settings surface renders as a lazily activated tab inside the shared
   settings shell, not as its own `PluginSettingTab`.
+- Selection-triggered comment drafts (`selection-comment.ts`, the editor
+  extension's pointer handlers, and the `commentOnSelection` setting) are a
+  Grandemonium addition with no upstream counterpart.

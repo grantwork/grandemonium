@@ -22,9 +22,9 @@ type PagerPhase = 'idle' | 'recentering' | 'settling' | 'tracking';
 const HORIZONTAL_INTENT_RATIO = 0.75;
 const POSITION_EPSILON = 0.5;
 const TWO_PANEL_ORDER_CLASSES = [
-  'claudian-sidebar-surface-page--before',
-  'claudian-sidebar-surface-page--active',
-  'claudian-sidebar-surface-page--after',
+  'grandemonium-sidebar-surface-page--before',
+  'grandemonium-sidebar-surface-page--active',
+  'grandemonium-sidebar-surface-page--after',
 ] as const;
 const REPLICA_REFERENCE_ATTRIBUTES = [
   'aria-activedescendant',
@@ -88,7 +88,7 @@ export class HorizontalPanelPager<PanelId extends string> {
     this.enabled = state.enabled && this.panels.length > 1;
     this.viewportWidth = Math.max(1, state.viewportWidth);
     this.options.trackEl.classList.toggle(
-      'claudian-sidebar-surface-track--paging',
+      'grandemonium-sidebar-surface-track--paging',
       this.enabled,
     );
 
@@ -106,7 +106,7 @@ export class HorizontalPanelPager<PanelId extends string> {
     this.options.trackEl.removeEventListener('wheel', this.handleWheel, true);
     this.options.trackEl.removeEventListener('scroll', this.handleScroll);
     this.options.trackEl.removeEventListener('scrollend', this.handleScrollEnd);
-    this.options.trackEl.classList.remove('claudian-sidebar-surface-track--paging');
+    this.options.trackEl.classList.remove('grandemonium-sidebar-surface-track--paging');
     this.announcedDragTargets.clear();
     this.clearTwoPanelLayout(true);
     this.panels = [];
@@ -252,12 +252,12 @@ export class HorizontalPanelPager<PanelId extends string> {
   private getTwoPanelReplica(panelId: PanelId): HorizontalPanelPagerPanel<PanelId> {
     if (!this.twoPanelReplicaEl) {
       this.twoPanelReplicaEl = this.options.trackEl.createDiv({
-        cls: 'claudian-sidebar-surface-replica',
+        cls: 'grandemonium-sidebar-surface-replica',
       });
       this.twoPanelReplicaEl.setAttribute('aria-hidden', 'true');
       this.twoPanelReplicaEl.setAttribute('inert', '');
     }
-    this.twoPanelReplicaEl.classList.remove('claudian-hidden');
+    this.twoPanelReplicaEl.classList.remove('grandemonium-hidden');
     this.twoPanelReplicaEl.dataset.panelReplica = panelId;
     return { element: this.twoPanelReplicaEl, id: panelId };
   }
@@ -270,8 +270,8 @@ export class HorizontalPanelPager<PanelId extends string> {
     const replica = this.getTwoPanelReplica(other.id).element;
     const content = other.element.cloneNode(true) as HTMLElement;
     this.copyReplicaVisualState(other.element, content);
-    content.classList.add('claudian-sidebar-surface-replica-content');
-    content.classList.remove('claudian-hidden');
+    content.classList.add('grandemonium-sidebar-surface-replica-content');
+    content.classList.remove('grandemonium-hidden');
     this.sanitizeReplicaTree(content);
     replica.replaceChildren(content);
   }
@@ -354,7 +354,7 @@ export class HorizontalPanelPager<PanelId extends string> {
     this.twoPanelOrderedElements.clear();
     this.twoPanelDirection = 1;
     if (!this.twoPanelReplicaEl) return;
-    this.twoPanelReplicaEl.classList.add('claudian-hidden');
+    this.twoPanelReplicaEl.classList.add('grandemonium-hidden');
     this.twoPanelReplicaEl.replaceChildren();
     if (!removeReplica) return;
     this.twoPanelReplicaEl.remove();

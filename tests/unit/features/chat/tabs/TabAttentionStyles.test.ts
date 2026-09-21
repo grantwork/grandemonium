@@ -9,28 +9,28 @@ describe('tab attention styles', () => {
 
   it('visually distinguishes review from action-required attention', () => {
     expect(tabsCss).toMatch(
-      /\.claudian-tab-badge-review \{[\s\S]*?border-color: var\(--color-green\);[\s\S]*?\}/,
+      /\.grandemonium-tab-badge-review \{[\s\S]*?border-color: var\(--color-green\);[\s\S]*?\}/,
     );
     expect(tabsCss).toMatch(
-      /\.claudian-tab-badge-review-error \{[\s\S]*?border-color: var\(--text-error\);[\s\S]*?\}/,
+      /\.grandemonium-tab-badge-review-error \{[\s\S]*?border-color: var\(--text-error\);[\s\S]*?\}/,
     );
     expect(tabsCss).toMatch(
-      /\.claudian-tab-badge-action-required \{[\s\S]*?border-color: var\(--color-orange\);[\s\S]*?\}/,
+      /\.grandemonium-tab-badge-action-required \{[\s\S]*?border-color: var\(--color-orange\);[\s\S]*?\}/,
     );
   });
 
   it('uses theme-neutral working borders without provider overrides', () => {
     expect(tabsCss).toMatch(
-      /\.claudian-tab-badge-streaming \{[\s\S]*?border-color: var\(--text-normal\);[\s\S]*?\}/,
+      /\.grandemonium-tab-badge-streaming \{[\s\S]*?border-color: var\(--text-normal\);[\s\S]*?\}/,
     );
     expect(tabsCss).toMatch(
-      /body\.theme-light \.claudian-tab-badge-streaming \{[\s\S]*?border-color: #000000;[\s\S]*?\}/,
+      /body\.theme-light \.grandemonium-tab-badge-streaming \{[\s\S]*?border-color: #000000;[\s\S]*?\}/,
     );
     expect(tabsCss).toMatch(
-      /body\.theme-dark \.claudian-tab-badge-streaming \{[\s\S]*?border-color: #ffffff;[\s\S]*?\}/,
+      /body\.theme-dark \.grandemonium-tab-badge-streaming \{[\s\S]*?border-color: #ffffff;[\s\S]*?\}/,
     );
     expect(tabsCss).not.toMatch(
-      /\.claudian-tab-badge-streaming\[data-provider=/,
+      /\.grandemonium-tab-badge-streaming\[data-provider=/,
     );
   });
 });

@@ -34,7 +34,7 @@ it('restores a completed Bash result without mounting its collapsed body until e
   };
   const parent = document.body.createDiv();
   const block = renderStoredToolCall(parent, tool);
-  const content = block.querySelector<HTMLElement>('.claudian-tool-content')!;
+  const content = block.querySelector<HTMLElement>('.grandemonium-tool-content')!;
   const header = within(block).getByRole('button', { name: /Bash: printf fixture/ });
 
   expect(header.getAttribute('aria-expanded')).toBe('false');
@@ -68,7 +68,7 @@ it('restores an Edit summary without mounting diff rows until keyboard expansion
     },
   };
   const block = renderStoredWriteEdit(document.body.createDiv(), tool);
-  const content = block.querySelector<HTMLElement>('.claudian-write-edit-content')!;
+  const content = block.querySelector<HTMLElement>('.grandemonium-write-edit-content')!;
   const header = within(block).getByRole('button', { name: /Edit: fixture.md/ });
 
   expect(header.textContent).toContain('+1');
@@ -77,7 +77,7 @@ it('restores an Edit summary without mounting diff rows until keyboard expansion
 
   fireEvent.keyDown(header, { key: ' ' });
   expect(header.getAttribute('aria-expanded')).toBe('true');
-  expect(Array.from(content.querySelectorAll('.claudian-diff-text'), el => el.textContent))
+  expect(Array.from(content.querySelectorAll('.grandemonium-diff-text'), el => el.textContent))
     .toEqual(['old fixture', 'new fixture']);
   const firstRow = content.firstElementChild;
 
@@ -97,7 +97,7 @@ describe.each(['completed', 'error', 'blocked'] as const)('stored %s output', (s
     };
     const original = JSON.stringify(tool);
     const block = renderStoredToolCall(document.body.createDiv(), tool, { initiallyExpanded: true });
-    const content = block.querySelector<HTMLElement>('.claudian-tool-content')!;
+    const content = block.querySelector<HTMLElement>('.grandemonium-tool-content')!;
     const header = within(block).getByRole('button', { name: /Read: fixture.md/ });
 
     expect(header.getAttribute('aria-expanded')).toBe('true');
@@ -119,7 +119,7 @@ describe.each(['completed', 'error', 'blocked'] as const)('stored %s output', (s
     };
     const original = JSON.stringify(tool);
     const block = renderStoredWriteEdit(document.body.createDiv(), tool);
-    const content = block.querySelector<HTMLElement>('.claudian-write-edit-content')!;
+    const content = block.querySelector<HTMLElement>('.grandemonium-write-edit-content')!;
     const header = within(block).getByRole('button', { name: /Edit: fixture.md/ });
 
     expect(content.childElementCount).toBe(0);
@@ -140,19 +140,19 @@ it('keeps running stored tools and live result updates eager', () => {
   };
   const parent = document.body.createDiv();
   const stored = renderStoredToolCall(parent, tool);
-  expect(stored.querySelector('.claudian-tool-content')?.textContent).toContain('partial output');
+  expect(stored.querySelector('.grandemonium-tool-content')?.textContent).toContain('partial output');
 
   const runningEdit = renderStoredWriteEdit(parent, {
     ...tool, name: 'Edit', input: { file_path: 'fixture.md' },
   });
-  expect(runningEdit.querySelector('.claudian-write-edit-content')?.childElementCount).toBeGreaterThan(0);
+  expect(runningEdit.querySelector('.grandemonium-write-edit-content')?.childElementCount).toBeGreaterThan(0);
 
   const liveElements = new Map<string, HTMLElement>();
   const live = renderToolCall(parent, tool, liveElements);
   tool.status = 'completed';
   tool.result = 'finished output';
   updateToolCallResult(tool.id, tool, liveElements);
-  expect(live.querySelector('.claudian-tool-content')?.textContent).toContain('finished output');
+  expect(live.querySelector('.grandemonium-tool-content')?.textContent).toContain('finished output');
 });
 
 it('keeps default-expanded Edit diffs available immediately', async () => {
@@ -172,7 +172,7 @@ it('keeps default-expanded Edit diffs available immediately', async () => {
   }, { initiallyExpanded: true });
   expect(within(block).getByRole('button', { name: /Edit: fixture.md/ }).getAttribute('aria-expanded'))
     .toBe('true');
-  expect(Array.from(block.querySelectorAll('.claudian-diff-text'), el => el.textContent))
+  expect(Array.from(block.querySelectorAll('.grandemonium-diff-text'), el => el.textContent))
     .toEqual(['before', 'after']);
   expect((await axe(block)).violations).toEqual([]);
 });
@@ -188,11 +188,11 @@ it('keeps restored apply_patch statistics available before rendering its diff', 
     result: 'Applied patch',
   });
   const header = within(block).getByRole('button', { name: /apply_patch/ });
-  const content = block.querySelector<HTMLElement>('.claudian-tool-content')!;
+  const content = block.querySelector<HTMLElement>('.grandemonium-tool-content')!;
   expect(header.textContent).toContain('+1');
   expect(header.textContent).toContain('-1');
   expect(content.childElementCount).toBe(0);
   fireEvent.keyDown(header, { key: ' ' });
-  expect(Array.from(content.querySelectorAll('.claudian-diff-text'), el => el.textContent))
+  expect(Array.from(content.querySelectorAll('.grandemonium-diff-text'), el => el.textContent))
     .toEqual(['old', 'new']);
 });

@@ -36,6 +36,9 @@ export const piProviderRegistration: ProviderModule = {
   historyService: new PiConversationHistoryService(),
   isEnabled: (settings) => getPiProviderSettings(settings).enabled,
   setEnabled: (settings, enabled) => updatePiProviderSettings(settings, { enabled }),
+  defaultAgentName: 'pi',
+  getAgentName: settings => getPiProviderSettings(settings).agentName,
+  setAgentName: (settings, agentName) => updatePiProviderSettings(settings, { agentName }),
   settingsReconciler: piSettingsReconciler,
   settingsStorage: {
     hostScopedFields: ['cliPathsByHost'],

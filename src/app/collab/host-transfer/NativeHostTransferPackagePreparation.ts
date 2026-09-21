@@ -35,7 +35,7 @@ import {
 } from '@/app/collab/host-transfer/HostTransferPackage';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const OWNER_FILE = 'owner.json';
 const PROOF_FILE = 'proof.json';
@@ -44,7 +44,7 @@ const SNAPSHOT_FILE = 'authority.db';
 const DIGEST_PATTERN = /^[0-9a-f]{64}$/;
 
 interface PackageOwner {
-  readonly owner: 'claudian-host-transfer-package';
+  readonly owner: 'grandemonium-host-transfer-package';
   readonly projectId: string;
   readonly schemaVersion: 1;
   readonly transferId: string;
@@ -354,7 +354,7 @@ export class NativeHostTransferPackagePreparation implements HostTransferPackage
   }
 
   private owner(projectId: string, transferId: string): PackageOwner {
-    return { owner: 'claudian-host-transfer-package', projectId, schemaVersion: 1, transferId };
+    return { owner: 'grandemonium-host-transfer-package', projectId, schemaVersion: 1, transferId };
   }
 
   private async requireAuthorityDirectory(): Promise<string> {

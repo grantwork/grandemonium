@@ -40,7 +40,7 @@ describe('MembershipAdminService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-membership-admin-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-membership-admin-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

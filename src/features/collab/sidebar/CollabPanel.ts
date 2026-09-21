@@ -130,7 +130,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     private readonly options: CollabPanelOptions,
   ) {
     this.initialGitResolution = options.initialGitResolution ?? null;
-    this.rootEl = containerEl.createDiv({ cls: 'claudian-collab-panel' });
+    this.rootEl = containerEl.createDiv({ cls: 'grandemonium-collab-panel' });
     this.subscription = options.port.subscribe(state => {
       if (this.active && this.shellSignature(state) !== this.shellStateSignature) {
         this.render();
@@ -150,7 +150,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
   setActive(active: boolean): void {
     if (this.destroyed || this.active === active) return;
     this.active = active;
-    this.rootEl.classList.toggle('claudian-collab-panel--inactive', !active);
+    this.rootEl.classList.toggle('grandemonium-collab-panel--inactive', !active);
     if (!active) {
       this.personalPanel?.setActive(false);
       this.teamPanel?.setActive(false);
@@ -304,7 +304,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
   }
 
   private renderGitSetup(resolution: GitSetupResolution): void {
-    const host = this.rootEl.createDiv({ cls: 'claudian-collab-panel-git' });
+    const host = this.rootEl.createDiv({ cls: 'grandemonium-collab-panel-git' });
     new GitSetupPanel(host, {
       configuredPath: this.options.configuredGitPath(),
       ...(this.options.copyText ? { copyText: this.options.copyText } : {}),
@@ -351,7 +351,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     const selected = state.projects.find(project => project.id === effectiveProjectId)!;
     const projectToolbar = this.rootEl.createDiv({
       attr: { title: selected.workspacePath },
-      cls: 'claudian-collab-project-toolbar',
+      cls: 'grandemonium-collab-project-toolbar',
     });
     const picker = projectToolbar.createEl('button', {
       attr: {
@@ -360,17 +360,17 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         'data-field': 'project-picker',
         type: 'button',
       },
-      cls: 'claudian-collab-project-picker',
+      cls: 'grandemonium-collab-project-picker',
     });
     picker.createSpan({
-      cls: 'claudian-collab-project-picker-label',
+      cls: 'grandemonium-collab-project-picker-label',
       text: selected.name,
     });
     picker.addEventListener('click', () => {
       this.showProjectMenu(picker, state.projects, selected.id);
     });
     const projectActions = projectToolbar.createDiv({
-      cls: 'claudian-collab-project-header-actions',
+      cls: 'grandemonium-collab-project-header-actions',
     });
     const addButton = projectActions.createEl('button', {
       attr: {
@@ -380,7 +380,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         title: t('collab.panel.addProject'),
         type: 'button',
       },
-      cls: 'clickable-icon claudian-collab-panel-header-action',
+      cls: 'clickable-icon grandemonium-collab-panel-header-action',
     });
     setIcon(addButton, 'plus');
     addButton.addEventListener('click', () => this.showAddProjectMenu(addButton));
@@ -392,7 +392,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     if (current?.projectId === projectId && current.failed) {
       this.rootEl.createDiv({
         attr: { role: 'alert' },
-        cls: 'claudian-collab-panel-status claudian-collab-panel-status--warning',
+        cls: 'grandemonium-collab-panel-status grandemonium-collab-panel-status--warning',
         text: t('collab.panel.loadFailed'),
       });
       const retry = this.rootEl.createEl('button', {
@@ -409,7 +409,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
 
     this.rootEl.createDiv({
       attr: { 'aria-live': 'polite', role: 'status' },
-      cls: 'claudian-collab-panel-status',
+      cls: 'grandemonium-collab-panel-status',
       text: t('collab.panel.loading'),
     });
     if (current?.projectId === projectId && current.pending) return;
@@ -480,14 +480,14 @@ export class CollabPanel implements CollabSidebarSurfaceController {
   }
 
   private renderEmptyProjectHeader(): void {
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-panel-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-panel-header' });
     header.createEl('h3', { text: t('collab.panel.title') });
   }
 
   private renderEmptyState(): void {
-    const empty = this.rootEl.createDiv({ cls: 'claudian-collab-empty' });
+    const empty = this.rootEl.createDiv({ cls: 'grandemonium-collab-empty' });
     empty.createDiv({ text: t('collab.panel.emptyDescription') });
-    const actions = empty.createDiv({ cls: 'claudian-collab-empty-actions' });
+    const actions = empty.createDiv({ cls: 'grandemonium-collab-empty-actions' });
     const create = actions.createEl('button', {
       attr: { 'data-action': 'empty-create', type: 'button' },
       cls: 'mod-cta',
@@ -496,7 +496,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     create.addEventListener('click', () => this.openCreateProject());
     const join = actions.createEl('button', {
       attr: { 'data-action': 'join-project', type: 'button' },
-      cls: 'claudian-collab-empty-join',
+      cls: 'grandemonium-collab-empty-join',
       text: t('collab.panel.joinProject'),
     });
     join.addEventListener('click', () => this.openJoinProject());
@@ -506,12 +506,12 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     project: CollabLocalProjectSummary,
     projectHeaderActions: HTMLDivElement,
   ): void {
-    const home = this.rootEl.createDiv({ cls: 'claudian-collab-project-home' });
+    const home = this.rootEl.createDiv({ cls: 'grandemonium-collab-project-home' });
 
     if (project.lifecycle === 'retired') {
       this.renderRetiredProject(home, project);
     } else if (project.health === 'needs-attention') {
-      const recovery = home.createDiv({ cls: 'claudian-collab-project-recovery' });
+      const recovery = home.createDiv({ cls: 'grandemonium-collab-project-recovery' });
       recovery.createDiv({ text: t('collab.panel.setupIncomplete') });
       const pendingRecoveryAction: PendingRecoveryAction = {
         operationId: null,
@@ -530,11 +530,11 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         .catch(() => undefined);
     } else if (project.health === 'missing') {
       home.createDiv({
-        cls: 'claudian-collab-project-recovery',
+        cls: 'grandemonium-collab-project-recovery',
         text: t('collab.panel.workingCopyMissing'),
       });
     } else {
-      const personal = home.createDiv({ cls: 'claudian-collab-personal-home' });
+      const personal = home.createDiv({ cls: 'grandemonium-collab-personal-home' });
       this.personalPanel = new PersonalChangesPanel(personal, {
         onInspection: result => {
           if (result.status === 'success' && result.value.coordination) {
@@ -573,7 +573,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         port: this.options.port,
         project,
       });
-      const team = home.createDiv({ cls: 'claudian-collab-team-home' });
+      const team = home.createDiv({ cls: 'grandemonium-collab-team-home' });
       this.teamPanel = new TeamChangesPanel(team, {
         deferInitialRefresh: true,
         onOpenConflict: (operationId, requestId) => (
@@ -590,7 +590,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         preparedReviews: this.options.preparedReviews,
         project,
       });
-      const tickets = home.createDiv({ cls: 'claudian-collab-ticket-home' });
+      const tickets = home.createDiv({ cls: 'grandemonium-collab-ticket-home' });
       this.ticketPanel = new TicketListPanel(tickets, {
         ...(this.options.ticketFocus ? { focus: this.options.ticketFocus } : {}),
         onCreate: () => this.options.onCreateTicket?.(project),
@@ -615,7 +615,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
   ): void {
     const retired = home.createDiv({
       attr: { 'data-state': 'retired' },
-      cls: 'claudian-collab-retired-panel',
+      cls: 'grandemonium-collab-retired-panel',
     });
     retired.createEl('h3', { text: t('collab.retired.title') });
     retired.createDiv({
@@ -626,7 +626,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
       }),
     });
     retired.createDiv({
-      cls: 'claudian-collab-project-path',
+      cls: 'grandemonium-collab-project-path',
       text: project.workspacePath,
     });
     const action = this.retiredAction?.projectId === project.id
@@ -635,7 +635,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     if (project.cleanupStatus === 'failed') {
       retired.createDiv({
         attr: { role: 'alert' },
-        cls: 'claudian-collab-panel-status--warning',
+        cls: 'grandemonium-collab-panel-status--warning',
         text: t('collab.retired.cleanupFailed'),
       });
       const retry = retired.createEl('button', {
@@ -657,14 +657,14 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         text: t('collab.retired.finishingCleanup'),
       });
     } else {
-      const actions = retired.createDiv({ cls: 'claudian-collab-retired-actions' });
+      const actions = retired.createDiv({ cls: 'grandemonium-collab-retired-actions' });
       this.createRetiredFinalizationButton(actions, project, 'keep-files');
       this.createRetiredFinalizationButton(actions, project, 'delete-files');
     }
     if (action?.failed) {
       retired.createDiv({
         attr: { role: 'alert' },
-        cls: 'claudian-collab-panel-status--warning',
+        cls: 'grandemonium-collab-panel-status--warning',
         text: t('collab.access.actionFailed'),
       });
     }
@@ -737,9 +737,9 @@ export class CollabPanel implements CollabSidebarSurfaceController {
         title: t('collab.projectManagement.title'),
         type: 'button',
       },
-      cls: 'clickable-icon claudian-collab-project-management',
+      cls: 'clickable-icon grandemonium-collab-project-management',
     });
-    const icon = management.createSpan({ cls: 'claudian-collab-project-management-icon' });
+    const icon = management.createSpan({ cls: 'grandemonium-collab-project-management-icon' });
     setIcon(icon, 'settings');
     management.addEventListener('click', () => {
       this.openTransientSurface(onClosed => new ProjectManagementModal(
@@ -798,7 +798,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
     this.clearRoot();
     this.rootEl.createDiv({
       attr: { 'aria-live': 'polite', role: 'status' },
-      cls: 'claudian-collab-panel-status',
+      cls: 'grandemonium-collab-panel-status',
       text: t('collab.panel.loading'),
     });
   }
@@ -806,7 +806,7 @@ export class CollabPanel implements CollabSidebarSurfaceController {
   private renderFailure(): void {
     this.rootEl.createDiv({
       attr: { role: 'alert' },
-      cls: 'claudian-collab-panel-status claudian-collab-panel-status--warning',
+      cls: 'grandemonium-collab-panel-status grandemonium-collab-panel-status--warning',
       text: t('collab.panel.loadFailed'),
     });
     const retry = this.rootEl.createEl('button', {

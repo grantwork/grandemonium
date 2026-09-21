@@ -14,7 +14,7 @@ import type {
 } from '@/app/collab/publish/PublishCoordinator';
 import { completeRequestDetail, completeTicketDetail } from '@/app/collab/remote-authority/completeCollabDetails';
 import { type CollabAddTicketCommentRequest, type CollabChangeTicketStatusRequest, type CollabCreateTicketRequest, type CollabListTicketsRequest, type CollabProjectSnapshot, type CollabUpdateRequestMetadataRequest, type CollabUpdateTicketContentRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CONTROL_TIMEOUT_MS = 10_000;
 

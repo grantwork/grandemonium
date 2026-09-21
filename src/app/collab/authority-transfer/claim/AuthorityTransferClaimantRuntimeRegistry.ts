@@ -4,7 +4,7 @@ import type {
   AuthorityTransferClaimantRecord,
 } from '@/app/collab/authority-transfer/claim/AuthorityTransferClaimantRecord';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferClaimantRuntime {
   resume(projectId: CollabProjectId, options?: CollabOperationOptions): Promise<void>;

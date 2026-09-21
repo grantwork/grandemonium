@@ -9,11 +9,12 @@ import type {
   ProviderSettingsTabRenderer,
   ProviderSettingsTabRendererContext,
 } from '../../../core/providers/types';
-import type { ClaudianSettings } from '../../../core/types';
+import type { GrandemoniumSettings } from '../../../core/types';
 import { t } from '../../../i18n/i18n';
 import { renderEnvironmentSettingsSection } from '../../../shared/settings/EnvironmentSettingsSection';
 import { renderHostnameCliPathSetting } from '../../../shared/settings/HostnameCliPathSetting';
 import { renderNativeMcpSettingsSection } from '../../../shared/settings/NativeMcpSettingsSection';
+import { renderProviderAgentNameSetting } from '../../../shared/settings/ProviderAgentNameSetting';
 import { renderProviderEnablementSetting } from '../../../shared/settings/ProviderEnablementSetting';
 import {
   renderLastEnabledProviderWarning,
@@ -94,6 +95,18 @@ export const grokSettingsTabRenderer: ProviderSettingsTabRenderer = {
       },
     });
 
+    renderProviderAgentNameSetting({
+      container,
+      defaultAgentName: 'grok',
+      getValue: () => getGrokProviderSettings(settingsBag).agentName,
+      name: 'Agent name',
+      onChange: async (agentName) => {
+        await context.plugin.mutateSettings((settings) => {
+          updateGrokProviderSettings(settings, { agentName });
+        });
+      },
+    });
+
     const lastProviderWarning = renderLastEnabledProviderWarning(container);
 
     const modelWarning = renderProviderModelEnablementWarning(container, context, {
@@ -123,7 +136,7 @@ export const grokSettingsTabRenderer: ProviderSettingsTabRenderer = {
         } else {
           delete cliPathsByHost[hostnameKey];
         }
-        const mutation = (settings: ClaudianSettings): void => {
+        const mutation = (settings: GrandemoniumSettings): void => {
           updateGrokProviderSettings(settings, {
             cliPath: '',
             cliPathsByHost,
@@ -157,7 +170,7 @@ export const grokSettingsTabRenderer: ProviderSettingsTabRenderer = {
     });
 
     renderNativeMcpSettingsSection(container, {
-      descriptionAfterCommand: ' and they will be available in Claudian. ',
+      descriptionAfterCommand: ' and they will be available in Grandemonium. ',
       descriptionBeforeCommand: 'Grok Build manages MCP servers through its own CLI. Configure them with ',
       documentationLabel: 'Learn more',
       documentationUrl: 'https://docs.x.ai/build/features/mcp-servers',

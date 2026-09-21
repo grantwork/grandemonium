@@ -13,7 +13,7 @@ import {
   type LanAuthorityTransferSourceActiveService,
 } from '@/app/collab/lan/authority-transfer/LanAuthorityTransferRouter';
 import { LanTlsIdentity } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-alpha';
 const HOST_MEMBER_ID = 'member-host';
@@ -53,7 +53,7 @@ describe('LanAuthorityTransferClient', () => {
   });
 
   it('uses pinned TLS, sends Member auth, decodes the independent envelope, and replays', async () => {
-    directory = await mkdtemp(path.join(tmpdir(), 'claudian-authority-transfer-client-'));
+    directory = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-transfer-client-'));
     const identity = await new LanTlsIdentity(directory, {
       installationKey: TEST_INSTALLATION_A,
     }).issueServerIdentity('127.0.0.1');
@@ -141,7 +141,7 @@ describe('LanAuthorityTransferClient', () => {
   });
 
   it('rejects an appended CA even when the pinned CA is first', async () => {
-    directory = await mkdtemp(path.join(tmpdir(), 'claudian-authority-transfer-ca-'));
+    directory = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-transfer-ca-'));
     const pinnedDirectory = path.join(directory, 'pinned');
     const attackerDirectory = path.join(directory, 'attacker');
     await Promise.all([
@@ -169,7 +169,7 @@ describe('LanAuthorityTransferClient', () => {
   }, 20_000);
 
   it('rejects a response with the wrong LAN binding version', async () => {
-    directory = await mkdtemp(path.join(tmpdir(), 'claudian-authority-transfer-version-'));
+    directory = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-transfer-version-'));
     const identity = await new LanTlsIdentity(directory, {
       installationKey: TEST_INSTALLATION_A,
     }).issueServerIdentity('127.0.0.1');

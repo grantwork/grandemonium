@@ -6,14 +6,14 @@ describe('Input styles', () => {
   const historyCss = readFileSync(path.resolve('src/style/components/history.css'), 'utf8');
 
   it('keeps native and non-native navigation buttons chromeless in every state', () => {
-    const baseRule = css.match(/\.claudian-input-nav-btn\s*{[^}]*}/)?.[0];
+    const baseRule = css.match(/\.grandemonium-input-nav-btn\s*{[^}]*}/)?.[0];
     expect(baseRule).toContain('border: 0;');
     expect(baseRule).toContain('background: transparent;');
     expect(baseRule).toContain('box-shadow: none;');
     expect(baseRule).toContain('color: var(--text-muted);');
 
     const interactionRule = css.match(
-      /\.claudian-input-nav-btn:hover,\s*\.claudian-input-nav-btn:focus-visible,\s*\.claudian-input-nav-btn:active\s*{[^}]*}/,
+      /\.grandemonium-input-nav-btn:hover,\s*\.grandemonium-input-nav-btn:focus-visible,\s*\.grandemonium-input-nav-btn:active\s*{[^}]*}/,
     )?.[0];
     expect(interactionRule).toContain('border: 0;');
     expect(interactionRule).toContain('background: transparent;');
@@ -21,7 +21,7 @@ describe('Input styles', () => {
     expect(interactionRule).toContain('color: var(--text-normal);');
 
     const disabledRule = css.match(
-      /\.claudian-input-nav-btn:disabled,\s*\.claudian-input-nav-btn\[aria-disabled='true'\]\s*{[^}]*}/,
+      /\.grandemonium-input-nav-btn:disabled,\s*\.grandemonium-input-nav-btn\[aria-disabled='true'\]\s*{[^}]*}/,
     )?.[0];
     expect(disabledRule).toContain('border: 0;');
     expect(disabledRule).toContain('background: transparent;');
@@ -30,7 +30,7 @@ describe('Input styles', () => {
     expect(disabledRule).toContain('cursor: default;');
 
     const nativeButtonRule = css.match(
-      /button\.claudian-input-nav-btn\s*{[^}]*}/,
+      /button\.grandemonium-input-nav-btn\s*{[^}]*}/,
     )?.[0];
     expect(nativeButtonRule).toContain('min-width: 24px;');
     expect(nativeButtonRule).toContain('min-height: 24px;');
@@ -41,7 +41,7 @@ describe('Input styles', () => {
     expect(nativeButtonRule).toContain('color: var(--text-muted);');
 
     const nativeInteractionRule = css.match(
-      /button\.claudian-input-nav-btn:hover,\s*button\.claudian-input-nav-btn:focus-visible,\s*button\.claudian-input-nav-btn:active\s*{[^}]*}/,
+      /button\.grandemonium-input-nav-btn:hover,\s*button\.grandemonium-input-nav-btn:focus-visible,\s*button\.grandemonium-input-nav-btn:active\s*{[^}]*}/,
     )?.[0];
     expect(nativeInteractionRule).toContain('padding: 0;');
     expect(nativeInteractionRule).toContain('background: transparent;');
@@ -50,7 +50,7 @@ describe('Input styles', () => {
 
   it('keeps the expanded Collab control muted until interaction', () => {
     const activeRule = historyCss.match(
-      /\.claudian-compact-collab-button\.is-active\s*{[^}]*}/,
+      /\.grandemonium-compact-collab-button\.is-active\s*{[^}]*}/,
     )?.[0];
     expect(activeRule).toContain('border: 0;');
     expect(activeRule).toContain('background: transparent;');
@@ -60,14 +60,14 @@ describe('Input styles', () => {
 
   it('lets the browser size the composer textarea from its content', () => {
     const textareaRule = css.match(
-      /\.claudian-input-wrapper textarea\.claudian-input\s*{[^}]*}/,
+      /\.grandemonium-input-wrapper textarea\.grandemonium-input\s*{[^}]*}/,
     )?.[0];
 
     expect(textareaRule).toContain('field-sizing: content;');
     expect(textareaRule).toContain('flex: 1 1 auto;');
     expect(textareaRule).toContain('min-height: 60px;');
     expect(textareaRule).toContain(
-      'max-height: var(--claudian-textarea-max-height, none);',
+      'max-height: var(--grandemonium-textarea-max-height, none);',
     );
     expect(textareaRule).toContain('overflow-y: auto;');
   });

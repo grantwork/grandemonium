@@ -29,7 +29,7 @@ import type {
   CollabAuthorityLifecyclePort,
 } from '@/app/collab/remote-authority/CollabAuthorityLifecyclePort';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface LanToCloudCheckpointArtifact {
@@ -94,7 +94,7 @@ function transferError(reason: string): CollabError {
 }
 
 function stagingDirectory(transferId: string): string {
-  return `.claudian-authority-transfer-${transferId}`;
+  return `.grandemonium-authority-transfer-${transferId}`;
 }
 
 function cancellablePhase(

@@ -13,7 +13,7 @@ describe('Grok system prompt', () => {
     vaultPath: '/vault',
   };
 
-  it('uses the complete shared Claudian system prompt', () => {
+  it('uses the complete shared Grandemonium system prompt', () => {
     const prompt = buildGrokSystemPrompt(promptSettings);
 
     expect(prompt).toBe(buildSystemPrompt(promptSettings));
@@ -24,7 +24,7 @@ describe('Grok system prompt', () => {
     expect(prompt).toContain('## Vault Media');
   });
 
-  it('uses the shared Claudian prompt key', () => {
+  it('uses the shared Grandemonium prompt key', () => {
     expect(computeGrokSystemPromptKey(promptSettings)).toBe(
       computeSystemPromptKey(promptSettings),
     );

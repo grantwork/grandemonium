@@ -57,9 +57,9 @@ describe('DevelopmentBootstrapCloudClient', () => {
       const match = matchCollabCloudRoute(request.method ?? '', request.url ?? '');
       if (match?.kind !== 'development-bootstrap') throw new Error('unexpected route');
       observations.push({
-        actor: Array.isArray(request.headers['x-claudian-development-actor'])
-          ? request.headers['x-claudian-development-actor'][0]
-          : request.headers['x-claudian-development-actor'],
+        actor: Array.isArray(request.headers['x-grandemonium-development-actor'])
+          ? request.headers['x-grandemonium-development-actor'][0]
+          : request.headers['x-grandemonium-development-actor'],
         body,
         kind: match.operation,
       });

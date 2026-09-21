@@ -10,7 +10,7 @@ import type {
 } from '@/app/collab/lifecycle/CollabProjectLifecycleAdmission';
 import type { RetirementRecord } from '@/app/collab/retirement/RetirementRecord';
 import { type CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RetirementLocalRecoveryStore {
   loadIndex(): Promise<CollabLocalProjectIndex>;

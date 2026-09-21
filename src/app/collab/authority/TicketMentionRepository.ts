@@ -1,7 +1,7 @@
 import { type CollabMemberId, type CollabTicketId, isCollabMemberId, isCollabOpaqueId, parseCollabMemberMentions } from '@claudian-collab/protocol';
 
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function mentionError(reason: string): CollabError {
   return new CollabError({

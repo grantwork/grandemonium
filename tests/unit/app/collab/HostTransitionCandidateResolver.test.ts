@@ -1,5 +1,5 @@
 import { HostTransitionCandidateResolver } from '@/app/collab/HostTransitionCandidateResolver';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-alpha';
 const PINNED_CA = '-----BEGIN CERTIFICATE-----\nOLD\n-----END CERTIFICATE-----\n';

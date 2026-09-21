@@ -17,7 +17,7 @@ import type {
 } from '@/app/collab/review/CollabReviewService';
 import { NativeGitExactComparisonRepository } from '@/app/collab/review/NativeGitExactComparisonRepository';
 import { type CollabRequestReview, type CollabReviewFileContent, type CollabReviewFileRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ReviewGitNetworkPort {
   withNetwork<T>(

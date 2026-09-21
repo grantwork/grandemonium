@@ -2,14 +2,14 @@
  * Visibility utilities are imported late so they can override component display
  * defaults without importance flags.
  */
-.claudian-hidden.claudian-hidden {
+.grandemonium-hidden.grandemonium-hidden {
   display: none;
 }
 
-.claudian-visible-block.claudian-visible-block {
+.grandemonium-visible-block.grandemonium-visible-block {
   display: block;
 }
 
-.claudian-visible-flex.claudian-visible-flex {
+.grandemonium-visible-flex.grandemonium-visible-flex {
   display: flex;
 }

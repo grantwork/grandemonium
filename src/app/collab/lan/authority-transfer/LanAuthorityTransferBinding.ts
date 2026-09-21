@@ -37,12 +37,12 @@ export function matchCollabLanAuthorityTransferRoute(
   if (method !== 'POST' || !target || target.length > 2_048) return null;
   let parsed: URL;
   try {
-    parsed = new URL(target, 'https://claudian.invalid');
+    parsed = new URL(target, 'https://grandemonium.invalid');
   } catch {
     return null;
   }
   if (
-    parsed.origin !== 'https://claudian.invalid'
+    parsed.origin !== 'https://grandemonium.invalid'
     || parsed.search.length > 0
     || parsed.hash.length > 0
     || parsed.pathname !== target

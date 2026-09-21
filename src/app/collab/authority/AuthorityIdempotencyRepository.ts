@@ -2,7 +2,7 @@ import { type CollabIdempotencyKey, type CollabMemberId, isCollabMemberId, isCol
 
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { type CollabOperationKind } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const COLLAB_OPERATION_KINDS = new Set<CollabOperationKind>([
   'initialize',

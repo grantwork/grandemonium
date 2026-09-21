@@ -1,9 +1,9 @@
 import '@/providers';
 
 import {
-  CLAUDIAN_SETTINGS_PATH,
-  ClaudianSettingsStorage,
-} from '@/app/settings/ClaudianSettingsStorage';
+  GRANDEMONIUM_SETTINGS_PATH,
+  GrandemoniumSettingsStorage,
+} from '@/app/settings/GrandemoniumSettingsStorage';
 import type { VaultFileAdapter } from '@/core/storage/VaultFileAdapter';
 
 function createAdapter(
@@ -11,7 +11,7 @@ function createAdapter(
 ): jest.Mocked<VaultFileAdapter> {
   return {
     exists: jest.fn().mockImplementation(async (path: string) => (
-      path === CLAUDIAN_SETTINGS_PATH
+      path === GRANDEMONIUM_SETTINGS_PATH
     )),
     read: jest.fn().mockResolvedValue(JSON.stringify(stored)),
     write: jest.fn().mockResolvedValue(undefined),
@@ -19,7 +19,7 @@ function createAdapter(
   } as unknown as jest.Mocked<VaultFileAdapter>;
 }
 
-describe('ClaudianSettingsStorage Linked content migration', () => {
+describe('GrandemoniumSettingsStorage Linked content migration', () => {
   it('imports legacy organization and pinned paths before defaults and awaits canonical persistence', async () => {
     const adapter = createAdapter({
       sessionManagerOrganization: 'linked-note',
@@ -39,7 +39,7 @@ describe('ClaudianSettingsStorage Linked content migration', () => {
       signalWriteStarted();
       releaseWrite = resolve;
     }));
-    const storage = new ClaudianSettingsStorage(adapter);
+    const storage = new GrandemoniumSettingsStorage(adapter);
 
     let resolved = false;
     const load = storage.load().then((settings) => {
@@ -73,7 +73,7 @@ describe('ClaudianSettingsStorage Linked content migration', () => {
       pinnedLinkedContentPaths: [],
       pinnedLinkedNotePaths: ['Notes/Legacy.md'],
     });
-    const storage = new ClaudianSettingsStorage(adapter);
+    const storage = new GrandemoniumSettingsStorage(adapter);
 
     const settings = await storage.load();
 
@@ -93,7 +93,7 @@ describe('ClaudianSettingsStorage Linked content migration', () => {
       ],
       pinnedLinkedNotePaths: ['Notes/Legacy.md'],
     });
-    const storage = new ClaudianSettingsStorage(adapter);
+    const storage = new GrandemoniumSettingsStorage(adapter);
 
     const settings = await storage.load();
 
@@ -105,7 +105,7 @@ describe('ClaudianSettingsStorage Linked content migration', () => {
 
   it('omits legacy pinned paths from future writes', async () => {
     const adapter = createAdapter({});
-    const storage = new ClaudianSettingsStorage(adapter);
+    const storage = new GrandemoniumSettingsStorage(adapter);
 
     await storage.save({
       ...await storage.load(),

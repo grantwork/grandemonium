@@ -6,7 +6,7 @@ import type {
 } from '@/app/collab/publish/PublishCoordinator';
 import { workingTreeSnapshotId } from '@/app/collab/publish/PublishSnapshotProjection';
 import { type CollabChangedFile, type CollabOperationOptions, type CollabReviewFileContent, type CollabWorkingTreeReview, type CollabWorkingTreeReviewFileRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface WorkingTreeSnapshotPort {
   inspect(

@@ -14,27 +14,27 @@ export function renderCitationGroup(
   parentEl: HTMLElement,
   citations: CitationGroup,
 ): HTMLElement {
-  const wrapperEl = parentEl.createDiv({ cls: 'claudian-citations' });
-  const headerEl = wrapperEl.createDiv({ cls: 'claudian-citations-header' });
+  const wrapperEl = parentEl.createDiv({ cls: 'grandemonium-citations' });
+  const headerEl = wrapperEl.createDiv({ cls: 'grandemonium-citations-header' });
   headerEl.setAttribute('tabindex', '0');
   headerEl.setAttribute('role', 'button');
 
-  headerEl.createSpan({ cls: 'claudian-citations-chevron', text: '\u203a' });
-  headerEl.createSpan({ cls: 'claudian-citations-label', text: 'Memory used' });
+  headerEl.createSpan({ cls: 'grandemonium-citations-chevron', text: '\u203a' });
+  headerEl.createSpan({ cls: 'grandemonium-citations-label', text: 'Memory used' });
   headerEl.createSpan({
-    cls: 'claudian-citations-count',
+    cls: 'grandemonium-citations-count',
     text: `${citations.entries.length} ${citations.entries.length === 1 ? 'source' : 'sources'}`,
   });
 
-  const contentEl = wrapperEl.createDiv({ cls: 'claudian-citations-content' });
+  const contentEl = wrapperEl.createDiv({ cls: 'grandemonium-citations-content' });
   for (const entry of citations.entries) {
-    const entryEl = contentEl.createDiv({ cls: 'claudian-citation-entry' });
+    const entryEl = contentEl.createDiv({ cls: 'grandemonium-citation-entry' });
     entryEl.createDiv({
-      cls: 'claudian-citation-location',
+      cls: 'grandemonium-citation-location',
       text: formatCitationLocation(entry),
     });
     if (entry.note) {
-      entryEl.createDiv({ cls: 'claudian-citation-note', text: entry.note });
+      entryEl.createDiv({ cls: 'grandemonium-citation-note', text: entry.note });
     }
   }
 

@@ -18,7 +18,7 @@ import {
   SqlJsProjectDatabase,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { TicketRepository } from '@/app/collab/authority/TicketRepository';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 const MAIN = '1'.repeat(40);
@@ -55,7 +55,7 @@ describe('RequestEnsureService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-request-ensure-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-request-ensure-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

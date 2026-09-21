@@ -2,7 +2,7 @@ import {
   type CollabImportCandidate,
   CollabPathPolicy,
 } from '@/app/collab/CollabPathPolicy';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 function file(path: string, size = 1): CollabImportCandidate {
   return { kind: 'file', path, size };
@@ -31,7 +31,7 @@ describe('CollabPathPolicy', () => {
       'folder/LPT³.txt',
       '.git/config',
       'folder/.Obsidian/theme.css',
-      '.claudian/private.json',
+      '.grandemonium/private.json',
       'workspace/nested.md',
     ])('rejects non-portable path %j', path => {
       const result = policy.validateRepositoryPath(path);
@@ -45,7 +45,7 @@ describe('CollabPathPolicy', () => {
     });
 
     it('enforces UTF-16 segment and repository path limits', () => {
-      const longSegment = `${'a'.repeat(CLAUDIAN_COLLAB_LIMITS.maxPathSegmentUtf16)}x.md`;
+      const longSegment = `${'a'.repeat(GRANDEMONIUM_COLLAB_LIMITS.maxPathSegmentUtf16)}x.md`;
       const longPath = [
         'a'.repeat(100),
         'b'.repeat(100),
@@ -56,7 +56,7 @@ describe('CollabPathPolicy', () => {
         ok: false,
         error: { code: 'path-not-portable' },
       });
-      expect(longPath.length).toBeGreaterThan(CLAUDIAN_COLLAB_LIMITS.maxRepositoryPathUtf16);
+      expect(longPath.length).toBeGreaterThan(GRANDEMONIUM_COLLAB_LIMITS.maxRepositoryPathUtf16);
       expect(policy.validateRepositoryPath(longPath)).toMatchObject({
         ok: false,
         error: { code: 'path-not-portable' },
@@ -128,7 +128,7 @@ describe('CollabPathPolicy', () => {
 
     it('rejects an oversized blob without treating 5 MiB as a hard limit', () => {
       const allowed = file('allowed.bin', 5 * 1024 * 1024 + 1);
-      const oversized = file('oversized.bin', CLAUDIAN_COLLAB_LIMITS.maxBlobBytes + 1);
+      const oversized = file('oversized.bin', GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes + 1);
 
       expect(policy.validateImportCandidates([allowed])).toMatchObject({
         accepted: [allowed],
@@ -146,42 +146,42 @@ describe('CollabPathPolicy', () => {
 
     it('blocks the whole import when checked-out content exceeds its quota', () => {
       const candidates = Array.from({ length: 11 }, (_, index) => (
-        file(`file-${index}.bin`, CLAUDIAN_COLLAB_LIMITS.maxBlobBytes)
+        file(`file-${index}.bin`, GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes)
       ));
 
       const result = policy.validateImportCandidates(candidates);
 
       expect(result.ok).toBe(false);
       expect(result.accepted).toEqual(candidates);
-      expect(result.totalBytes).toBe(11 * CLAUDIAN_COLLAB_LIMITS.maxBlobBytes);
+      expect(result.totalBytes).toBe(11 * GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes);
       expect(result.aggregateError).toMatchObject({ code: 'quota-exceeded' });
     });
   });
 
   describe('non-path quotas', () => {
     it('validates every frozen MVP quota at its exact boundary', () => {
-      expect(policy.validateChangedPathCount(CLAUDIAN_COLLAB_LIMITS.maxChangedPaths)).toBeNull();
-      expect(policy.validateChangedPathCount(CLAUDIAN_COLLAB_LIMITS.maxChangedPaths + 1)).toMatchObject({
+      expect(policy.validateChangedPathCount(GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths)).toBeNull();
+      expect(policy.validateChangedPathCount(GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths + 1)).toMatchObject({
         code: 'quota-exceeded',
       });
-      expect(policy.validateReceivedPackSize(CLAUDIAN_COLLAB_LIMITS.maxReceivedPackBytes)).toBeNull();
-      expect(policy.validateReceivedPackSize(CLAUDIAN_COLLAB_LIMITS.maxReceivedPackBytes + 1)).toMatchObject({
+      expect(policy.validateReceivedPackSize(GRANDEMONIUM_COLLAB_LIMITS.maxReceivedPackBytes)).toBeNull();
+      expect(policy.validateReceivedPackSize(GRANDEMONIUM_COLLAB_LIMITS.maxReceivedPackBytes + 1)).toMatchObject({
         code: 'quota-exceeded',
       });
-      expect(policy.validateCommentSize(CLAUDIAN_COLLAB_LIMITS.maxCommentBytes)).toBeNull();
-      expect(policy.validateCommentSize(CLAUDIAN_COLLAB_LIMITS.maxCommentBytes + 1)).toMatchObject({
+      expect(policy.validateCommentSize(GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes)).toBeNull();
+      expect(policy.validateCommentSize(GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes + 1)).toMatchObject({
         code: 'quota-exceeded',
       });
-      expect(policy.validateHostRepositorySize(CLAUDIAN_COLLAB_LIMITS.hostRepositorySoftLimitBytes)).toBeNull();
+      expect(policy.validateHostRepositorySize(GRANDEMONIUM_COLLAB_LIMITS.hostRepositorySoftLimitBytes)).toBeNull();
       expect(
-        policy.validateHostRepositorySize(CLAUDIAN_COLLAB_LIMITS.hostRepositorySoftLimitBytes + 1),
+        policy.validateHostRepositorySize(GRANDEMONIUM_COLLAB_LIMITS.hostRepositorySoftLimitBytes + 1),
       ).toMatchObject({ code: 'quota-exceeded' });
       expect(policy.classifyTextDiff(
-        CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes,
-        CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines,
+        GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes,
+        GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines,
       )).toBe('text');
-      expect(policy.classifyTextDiff(CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes + 1, 1)).toBe('opaque');
-      expect(policy.classifyTextDiff(1, CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines + 1)).toBe('opaque');
+      expect(policy.classifyTextDiff(GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes + 1, 1)).toBe('opaque');
+      expect(policy.classifyTextDiff(1, GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines + 1)).toBe('opaque');
     });
   });
 });

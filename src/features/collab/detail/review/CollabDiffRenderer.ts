@@ -1,5 +1,5 @@
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { t } from '@/i18n/i18n';
 
 export type CollabDiffTheme = 'dark' | 'light';
@@ -93,7 +93,7 @@ function lineCountExceeds(value: string): boolean {
   let lines = 1;
   for (let index = 0; index < value.length; index += 1) {
     if (value.charCodeAt(index) === 10) lines += 1;
-    if (lines > CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines) return true;
+    if (lines > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines) return true;
   }
   return false;
 }
@@ -118,7 +118,7 @@ function assertRenderable(input: CollabTextDiffInput): void {
   for (const contents of [input.oldText, input.newText]) {
     if (contents === null) continue;
     if (
-      utf8ByteLength(contents) > CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes
+      utf8ByteLength(contents) > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes
       || lineCountExceeds(contents)
     ) {
       throw rendererError('quota-exceeded', 'diff-text-limit');
@@ -295,8 +295,8 @@ export class CollabDiffRenderer {
     const button = createEl('button');
     button.type = 'button';
     button.className = [
-      'claudian-collab-review-display-toggle',
-      'claudian-collab-review-file-open',
+      'grandemonium-collab-review-display-toggle',
+      'grandemonium-collab-review-file-open',
     ].join(' ');
     button.dataset.collabReviewOpenFile = '';
     button.setAttribute('aria-label', t('collab.review.openFile'));

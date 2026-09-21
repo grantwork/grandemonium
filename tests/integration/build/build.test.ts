@@ -7,7 +7,7 @@ describe('build script', () => {
   it('forwards arguments without evaluating them as shell commands', async () => {
     if (process.platform === 'win32') return;
 
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-build-script-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-build-script-'));
     try {
       const scriptsDirectory = path.join(root, 'scripts');
       const binaryDirectory = path.join(root, 'bin');

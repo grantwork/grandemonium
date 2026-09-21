@@ -68,7 +68,7 @@ it('collapses completed history above the answer and puts copy, fork, time below
   const answer = messagesEl.querySelector<HTMLElement>('[data-message-id="a2"]')!;
   const copy = within(answer).getByRole('button', { name: 'Copy message' });
   const forkButton = within(answer).getByRole('button', { name: 'Fork conversation' });
-  const time = copy.parentElement!.querySelector('.claudian-message-timestamp')!;
+  const time = copy.parentElement!.querySelector('.grandemonium-message-timestamp')!;
   expect(copy.parentElement).toBe(forkButton.parentElement);
   expect(copy.parentElement).toBe(time.parentElement);
   expect(Array.from(copy.parentElement!.children)).toEqual([copy, forkButton, time]);
@@ -79,7 +79,7 @@ it('collapses completed history above the answer and puts copy, fork, time below
   expect(fork).toHaveBeenCalledWith('a2');
   const user = messagesEl.querySelector<HTMLElement>('[data-message-id="u1"]')!;
   expect(within(user).getByRole('button', { name: 'Copy message' }).nextElementSibling)
-    .toBe(user.querySelector('.claudian-message-timestamp'));
+    .toBe(user.querySelector('.grandemonium-message-timestamp'));
   expect((await axe(answer)).violations).toEqual([]);
   renderer.dispose();
 });
@@ -89,9 +89,9 @@ it('keeps live output in place until completion, then preserves the same content
   const msg: ChatMessage = { id: 'live', role: 'assistant', content: 'Done.', timestamp: 4,
     contentBlocks: [{ type: 'thinking', content: 'Working' }, { type: 'text', content: 'Done.' }] };
   const el = renderer.addMessage(msg);
-  const content = el.querySelector<HTMLElement>('.claudian-message-content')!;
-  const work = content.createDiv({ cls: 'claudian-thinking-block', text: 'Working' });
-  const answer = content.createDiv({ cls: 'claudian-text-block', text: 'Done.' });
+  const content = el.querySelector<HTMLElement>('.grandemonium-message-content')!;
+  const work = content.createDiv({ cls: 'grandemonium-thinking-block', text: 'Working' });
+  const answer = content.createDiv({ cls: 'grandemonium-text-block', text: 'Done.' });
   expect(within(messagesEl).queryByRole('button', { name: /Worked/ })).toBeNull();
   expect(work.parentElement).toBe(content);
   msg.durationSeconds = 0;
@@ -111,7 +111,7 @@ it('leaves interrupted and unsuccessful output expanded', () => {
     const msg: ChatMessage = { id: `failed-${interrupted}`, role: 'assistant', content: 'Partial', timestamp: 4,
       isInterrupt: interrupted, contentBlocks: [{ type: 'text', content: 'Partial' }] };
     const el = renderer.addMessage(msg);
-    el.querySelector('.claudian-message-content')!.createDiv({ cls: 'claudian-text-block', text: 'Partial' });
+    el.querySelector('.grandemonium-message-content')!.createDiv({ cls: 'grandemonium-text-block', text: 'Partial' });
     renderer.finalizeResponse(msg, [msg], interrupted);
     expect(within(el).queryByRole('button', { name: /Worked/ })).toBeNull();
     expect(within(el).getByRole('button', { name: 'Copy message' })).toBeDefined();
@@ -121,7 +121,7 @@ it('leaves interrupted and unsuccessful output expanded', () => {
 
 it('copies interrupted replay text without legacy marker markup', async () => {
   const { renderer, messagesEl } = setup();
-  const marker = '<span class="claudian-interrupted">Interrupted</span> <span class="claudian-interrupted-hint">· What should Claudian do instead?</span>';
+  const marker = '<span class="grandemonium-interrupted">Interrupted</span> <span class="grandemonium-interrupted-hint">· What should Grandemonium do instead?</span>';
   renderer.renderStoredMessage({ id: 'legacy', role: 'assistant', timestamp: 5,
     content: `Partial answer\n\n${marker}` });
   fireEvent.click(within(messagesEl).getByRole('button', { name: 'Copy message' }));
@@ -140,11 +140,11 @@ it('keeps separate completed turns and refreshes timestamps in their own action 
   expect(headers.map(header => header.textContent)).toEqual(['Worked for 01:05', 'Worked for 01:30']);
   settings.showMessageTimestamps = false;
   renderer.refreshMessageTimestamps();
-  expect(messagesEl.querySelectorAll('.claudian-message-timestamp')).toHaveLength(0);
+  expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp')).toHaveLength(0);
   settings.showMessageTimestamps = true;
   renderer.refreshMessageTimestamps();
   renderer.refreshMessageTimestamps();
-  const times = messagesEl.querySelectorAll('.claudian-message-timestamp');
+  const times = messagesEl.querySelectorAll('.grandemonium-message-timestamp');
   expect(times).toHaveLength(4);
   for (const time of times) expect(time.parentElement!.lastElementChild).toBe(time);
   renderer.dispose();
@@ -162,7 +162,7 @@ it.each([true, false])('keeps the final answer visible with fallback tools (cont
   const history = document.getElementById(header.getAttribute('aria-controls')!)!;
   expect(history.textContent).not.toContain('The final answer.');
   expect(within(messagesEl).getByText('The final answer.').closest('[hidden]')).toBeNull();
-  expect(history.querySelector('.claudian-tool-call')).not.toBeNull();
+  expect(history.querySelector('.grandemonium-tool-call')).not.toBeNull();
   fireEvent.click(within(messagesEl).getByRole('button', { name: 'Copy message' }));
   await Promise.resolve();
   expect(navigator.clipboard.writeText).toHaveBeenCalledWith('The final answer.');
@@ -188,7 +188,7 @@ it('offers fork on the final live response of a multi-message turn', async () =>
   for (const message of messages) {
     const el = renderer.addMessage(message);
     if (message.role === 'assistant') {
-      const text = el.querySelector('.claudian-message-content')!.createDiv({ cls: 'claudian-text-block' });
+      const text = el.querySelector('.grandemonium-message-content')!.createDiv({ cls: 'grandemonium-text-block' });
       await renderer.renderContent(text, message.content);
     }
   }

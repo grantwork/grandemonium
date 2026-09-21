@@ -23,11 +23,11 @@ export class HostDiagnosticsModal extends Modal {
   onOpen(): void {
     this.opened = true;
     this.setTitle(t('collab.host.diagnostics'));
-    this.modalEl.classList.add('claudian-collab-host-diagnostics-modal');
+    this.modalEl.classList.add('grandemonium-collab-host-diagnostics-modal');
     const serialized = this.serialize();
     this.contentEl.replaceChildren();
     this.contentEl.createEl('pre', { text: serialized });
-    const actions = this.contentEl.createDiv({ cls: 'claudian-collab-host-actions' });
+    const actions = this.contentEl.createDiv({ cls: 'grandemonium-collab-host-actions' });
     const copy = actions.createEl('button', {
       attr: { 'data-action': 'copy-host-diagnostics', type: 'button' },
       text: t('collab.host.copyDiagnostics'),

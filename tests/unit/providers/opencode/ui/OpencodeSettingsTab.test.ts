@@ -642,7 +642,7 @@ describe('OpencodeSettingsTab', () => {
     opencodeSettingsTabRenderer.render(createContainer(), createContext(plugin));
 
     expect(findSetting('MCP Servers').heading).toBe(true);
-    const notice = findElement('div', 'claudian-mcp-settings-desc');
+    const notice = findElement('div', 'grandemonium-mcp-settings-desc');
     const description = notice.createEl.mock.results[0].value;
     expect(description.appendText).toHaveBeenNthCalledWith(
       1,
@@ -652,7 +652,7 @@ describe('OpencodeSettingsTab', () => {
       .toHaveBeenCalledWith('opencode mcp add');
     expect(description.appendText).toHaveBeenNthCalledWith(
       2,
-      ' and they will be available in Claudian. ',
+      ' and they will be available in Grandemonium. ',
     );
     expect(description.createEl).toHaveBeenCalledWith('a', {
       href: 'https://opencode.ai/docs/mcp-servers/',
@@ -721,7 +721,7 @@ describe('OpencodeSettingsTab', () => {
 
     opencodeSettingsTabRenderer.render(createContainer(), context);
 
-    const catalogEl = findElement('details', 'claudian-provider-model-picker-catalog');
+    const catalogEl = findElement('details', 'grandemonium-provider-model-picker-catalog');
     catalogEl.open = true;
     await catalogEl.dispatchMockEvent('toggle');
     await flushPromises();
@@ -854,7 +854,7 @@ describe('OpencodeSettingsTab', () => {
 
     opencodeSettingsTabRenderer.render(createContainer(), context);
 
-    const aliasInput = findElement('input', 'claudian-provider-model-picker-selected-alias');
+    const aliasInput = findElement('input', 'grandemonium-provider-model-picker-selected-alias');
     aliasInput.value = 'V4 Pro';
     await aliasInput.dispatchMockEvent('blur');
     await flushPromises();

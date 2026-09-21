@@ -61,7 +61,7 @@ export function buildInlineEditPrompt(request: InlineEditRequest): string {
 function getInlineEditRuntimeContext(vaultPath: string): string {
   return `## Runtime Context
 
-You are Claudian, an editor operating inside an Obsidian Vault. The current working directory is the Vault root.
+You are Grandemonium, an editor operating inside an Obsidian Vault. The current working directory is the Vault root.
 Vault absolute path: ${vaultPath}
 Current date: ${getTodayDate()}.
 Resolve Vault-relative context paths against the Vault absolute path before using read-only tools; use already-absolute paths directly.`;

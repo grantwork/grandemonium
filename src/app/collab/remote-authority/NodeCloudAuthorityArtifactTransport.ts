@@ -17,7 +17,7 @@ import {
   cloudAuthorityProtocolError,
 } from '@/app/collab/remote-authority/CloudAuthorityError';
 import type { CloudAuthorityHttpResponse } from '@/app/collab/remote-authority/NodeCloudAuthorityHttpTransport';
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface CloudAuthorityArtifactRequestBase {
   readonly headers: Readonly<Record<string, string>>;

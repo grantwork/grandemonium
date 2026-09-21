@@ -20,18 +20,18 @@ describe('IncomingHostTransferPackage', () => {
   let run: jest.Mock;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-incoming-package-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-incoming-package-'));
     workspace = new CollabWorkspaceService(root);
     await workspace.claimProjectsFolder('Projects');
     const reserved = await workspace.reserveProjectsFolderChild('Projects', {
-      childName: '.claudian-host-transfer-transfer-alpha',
+      childName: '.grandemonium-host-transfer-transfer-alpha',
       operationId: 'transfer-alpha',
       projectId: 'project-alpha',
       purpose: 'host-transfer-staging',
     });
     stagingDirectory = reserved.absolutePath;
     await mkdir(stagingDirectory);
-    authorityDirectory = path.join(root, '.claudian', 'collab', 'authorities', 'project-alpha');
+    authorityDirectory = path.join(root, '.grandemonium', 'collab', 'authorities', 'project-alpha');
     run = jest.fn(async ({ args }: { readonly args: readonly string[] }) => {
       if (args[0] === 'bundle' && args[1] === 'list-heads') {
         return result(`${MAIN_OID} refs/heads/main\n${MEMBER_OID} refs/heads/members/member-target\n`);
@@ -308,7 +308,7 @@ function acceptedRecord() {
     createdAt: NOW, direction: 'incoming', projectId: 'project-alpha',
     receiverCredential: Buffer.alloc(32, 1).toString('base64url'),
     sourceHostMemberId: 'member-source',
-    stagingDirectoryName: '.claudian-host-transfer-transfer-alpha',
+    stagingDirectoryName: '.grandemonium-host-transfer-transfer-alpha',
     targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\ntarget\n-----END CERTIFICATE-----\n',
     targetCaFingerprint: '4'.repeat(64),
     targetEndpoint: 'https://192.168.1.20:27000', targetHostMemberId: 'member-target',
@@ -356,7 +356,7 @@ function installOwner(manifestDigest: string, bytes: Uint8Array) {
   return {
     activatedSnapshotDigest: sha256(bytes),
     manifestDigest,
-    owner: 'claudian-host-transfer-install',
+    owner: 'grandemonium-host-transfer-install',
     projectId: 'project-alpha',
     schemaVersion: 1,
     transferId: 'transfer-alpha',

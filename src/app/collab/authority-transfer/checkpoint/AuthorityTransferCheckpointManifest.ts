@@ -15,7 +15,7 @@ import {
   encodeCollabProjectCheckpointManifestDigestInput,
 } from '@claudian-collab/protocol';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CreateAuthorityTransferCheckpointManifestInput {
   readonly artifacts: readonly CollabCheckpointArtifactFact[];

@@ -7,7 +7,7 @@ import type {
   LanAuthorityTransferRouteTransition,
 } from '@/app/collab/lan/authority-transfer/LanAuthorityTransferRouter';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function routeStateError(reason: string): CollabError {
   return new CollabError({

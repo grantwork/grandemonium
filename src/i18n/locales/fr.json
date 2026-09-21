@@ -138,7 +138,7 @@
       "addProject": "Ajouter un projet",
       "createProject": "Créer",
       "projectPicker": "Sélectionner un projet",
-      "emptyDescription": "Créez un projet local ou rejoignez celui d’un autre utilisateur Claudian.",
+      "emptyDescription": "Créez un projet local ou rejoignez celui d’un autre utilisateur Grandemonium.",
       "joinProject": "Rejoindre",
       "reconnectProject": "Reconnecter le projet...",
       "joinUnavailable": "La participation sera disponible avec la collaboration LAN.",
@@ -413,7 +413,7 @@
     }
   },
   "settings": {
-    "title": "Paramètres Claudian",
+    "title": "Paramètres Grandemonium",
     "tabs": {
       "general": "Général",
       "comments": "Commentaires",
@@ -430,7 +430,7 @@
     "models": "Modèles",
     "experimental": "Expérimental",
     "userName": {
-      "name": "Comment Claudian doit-il vous appeler ?",
+      "name": "Comment Grandemonium doit-il vous appeler ?",
       "desc": "Votre nom pour les salutations personnalisées (laisser vide pour les salutations génériques)"
     },
     "excludedTags": {
@@ -489,13 +489,13 @@
     },
     "hiddenSlashCommands": {
       "name": "Commandes et compétences masquées",
-      "desc": "Masquez des commandes et compétences spécifiques du menu déroulant. Utile pour masquer les entrées Claude Code qui ne sont pas pertinentes pour Claudian. Saisissez les noms sans le slash initial, un par ligne.",
+      "desc": "Masquez des commandes et compétences spécifiques du menu déroulant. Utile pour masquer les entrées Claude Code qui ne sont pas pertinentes pour Grandemonium. Saisissez les noms sans le slash initial, un par ligne.",
       "placeholder": "commit\nbuild\ntest"
     },
     "mcpServers": {
       "name": "Serveurs MCP",
       "descBeforeCommand": "Claude Code gère les serveurs MCP via sa propre CLI. Configurez-les avec ",
-      "descAfterCommand": " et ils seront disponibles dans Claudian. ",
+      "descAfterCommand": " et ils seront disponibles dans Grandemonium. ",
       "learnMore": "En savoir plus"
     },
     "plugins": {
@@ -604,8 +604,8 @@
     },
     "collabGitInstallation": {
       "summary": "Aide à la configuration de Git",
-      "requirement": "Claudian Collab utilise Native Git 2.38 ou une version ultérieure installée sur cet ordinateur.",
-      "verify": "Demandez à Claudian de vérifier votre installation :",
+      "requirement": "Grandemonium Collab utilise Native Git 2.38 ou une version ultérieure installée sur cet ordinateur.",
+      "verify": "Demandez à Grandemonium de vérifier votre installation :",
       "prompt": "Vérifie l’installation de Git sur cet ordinateur.\n1. Indique si Git est installé, ainsi que le chemin de l’exécutable et sa version.\n2. Si Git n’est pas installé, conseille-moi sur la manière de l’installer sur cet appareil.\n3. N’installe et ne modifie rien."
     },
     "collabGitStatus": {
@@ -613,7 +613,7 @@
       "available": "Exécutable Git détecté",
       "unavailable": "Exécutable Git introuvable"
     },
-    "collabReadMore": "En savoir plus sur le mode Claudian Collab",
+    "collabReadMore": "En savoir plus sur le mode Grandemonium Collab",
     "collabGitPath": {
       "name": "Chemin de Git natif",
       "desc": "Chemin absolu facultatif vers Git natif pour Collab. Laissez vide pour détecter Git automatiquement.",
@@ -625,7 +625,7 @@
     },
     "collabProjectsFolder": {
       "name": "Dossier des projets",
-      "desc": "Dossier relatif au coffre pour les futurs projets Collab. Inutile de le créer à l’avance : Claudian le crée ou l’adopte lors de la prochaine création ou participation. Les projets existants restent en place.",
+      "desc": "Dossier relatif au coffre pour les futurs projets Collab. Inutile de le créer à l’avance : Grandemonium le crée ou l’adopte lors de la prochaine création ou participation. Les projets existants restent en place.",
       "placeholder": "workspace"
     },
     "enableDualPane": {
@@ -674,7 +674,7 @@
       "desc": "Afficher les diffs Write et Edit développés lors de leur première apparition."
     },
     "chatViewPlacement": {
-      "name": "Ouvrir Claudian dans",
+      "name": "Ouvrir Grandemonium dans",
       "desc": "Choisissez où le panneau de chat s'ouvre lors de sa création",
       "rightSidebar": "Barre latérale droite",
       "leftSidebar": "Barre latérale gauche",
@@ -697,13 +697,13 @@
     "providerEnablement": {
       "name": "Activer {provider}",
       "desc": "Rendre les modèles {provider} activés disponibles pour les nouvelles conversations. Les sessions existantes sont conservées après la désactivation.",
-      "lastProviderWarning": "Au moins un fournisseur doit rester activé pour que Claudian fonctionne.",
+      "lastProviderWarning": "Au moins un fournisseur doit rester activé pour que Grandemonium fonctionne.",
       "noModelsWarning": "Aucun modèle {provider} n’est activé. Dans la section Modèles ci-dessous, activez au moins un modèle."
     },
     "codex": {
       "installationMethod": {
         "name": "Méthode d’installation",
-        "desc": "Comment Claudian doit lancer Codex sous Windows. Windows natif utilise un chemin d’exécutable Windows. WSL lance la CLI Linux dans une distribution choisie.",
+        "desc": "Comment Grandemonium doit lancer Codex sous Windows. Windows natif utilise un chemin d’exécutable Windows. WSL lance la CLI Linux dans une distribution choisie.",
         "nativeWindows": "Windows natif",
         "wsl": "WSL"
       },
@@ -754,7 +754,7 @@
       },
       "mcp": {
         "descBeforeCommand": "Codex gère les serveurs MCP via sa propre CLI. Configurez avec ",
-        "descAfterCommand": " et ils seront disponibles dans Claudian. ",
+        "descAfterCommand": " et ils seront disponibles dans Grandemonium. ",
         "learnMore": "En savoir plus"
       },
       "environment": {

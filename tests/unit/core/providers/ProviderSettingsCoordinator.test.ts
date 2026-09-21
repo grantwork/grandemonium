@@ -982,7 +982,7 @@ describe('ProviderSettingsCoordinator', () => {
         providerConfigs: {
           opencode: {
             enabled: true,
-            selectedMode: 'claudian-safe',
+            selectedMode: 'grandemonium-safe',
           },
         },
         model: 'haiku',

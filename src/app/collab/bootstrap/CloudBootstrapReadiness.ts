@@ -7,7 +7,7 @@ import {
   type DevelopmentBootstrapManifest,
 } from '@claudian-collab/protocol';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export const CLOUD_BOOTSTRAP_READINESS_OPERATIONS = Object.freeze([
   'cleanup',

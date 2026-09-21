@@ -51,7 +51,7 @@ export class DeferredCollabSurfaceController implements CollabSidebarSurfaceCont
 
   private startLoading(): void {
     this.statusEl = this.hostEl.createDiv({
-      cls: 'claudian-collab-panel-status',
+      cls: 'grandemonium-collab-panel-status',
       text: this.options.loadingText,
     });
     const pending = this.load();
@@ -77,7 +77,7 @@ export class DeferredCollabSurfaceController implements CollabSidebarSurfaceCont
       if (this.destroyed) return;
       if (this.statusEl) {
         this.statusEl.textContent = this.options.errorText;
-        this.statusEl.classList.add('claudian-collab-panel-status--warning');
+        this.statusEl.classList.add('grandemonium-collab-panel-status--warning');
       }
     }
   }

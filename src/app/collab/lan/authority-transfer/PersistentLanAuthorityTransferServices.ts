@@ -20,7 +20,7 @@ import type {
   LanAuthorityTransferTargetActiveService,
   LanAuthorityTransferTerminalSourceService,
 } from '@/app/collab/lan/authority-transfer/LanAuthorityTransferRouter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type LanClaimRequest = Extract<
   ClaimTransferredMembershipRequest,

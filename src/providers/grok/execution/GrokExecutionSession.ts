@@ -16,6 +16,7 @@ import type {
   RewindableExecutionSession,
   SteerableExecutionSession,
 } from '../../../core/execution';
+import { resolveAgentName } from '../../../core/providers/agentName';
 import type { ProviderHost } from '../../../core/providers/ProviderHost';
 import type { ChatMessage, PermissionMode } from '../../../core/types';
 import { appendBrowserContext } from '../../../utils/browser';
@@ -65,6 +66,7 @@ import type { GrokModelCatalogCoordinator } from '../runtime/GrokModelCatalogCoo
 import { buildGrokRuntimeEnv } from '../runtime/GrokRuntimeEnvironment';
 import { GrokSessionNotificationMirrorDeduplicator } from '../runtime/GrokSessionNotificationMirrorDeduplicator';
 import { getGrokProviderSettings } from '../settings';
+import { DEFAULT_GROK_PROVIDER_SETTINGS } from '../settings';
 import { parseGrokProviderState } from '../types';
 import type {
   GrokExecutionNativeConnection,
@@ -684,6 +686,10 @@ RewindableExecutionSession {
       mediaFolder: this.plugin.settings.mediaFolder,
       userName: this.plugin.settings.userName,
       vaultPath: this.config.vaultWorkingDirectory,
+      agentName: resolveAgentName(
+        getGrokProviderSettings(this.plugin.settings).agentName,
+        DEFAULT_GROK_PROVIDER_SETTINGS.agentName,
+      ),
     };
   }
 

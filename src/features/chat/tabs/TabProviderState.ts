@@ -17,7 +17,7 @@ import type {
   ProviderId,
   ProviderUIOption,
 } from '../../../core/providers/types';
-import type { ClaudianSettings, Conversation } from '../../../core/types';
+import type { Conversation,GrandemoniumSettings } from '../../../core/types';
 import type { FeatureHost } from '../../FeatureHost';
 import { toggleServiceTier } from '../actions/toggleServiceTier';
 import { getTabProviderId } from './providerResolution';
@@ -84,7 +84,7 @@ export function getTabSettingsSnapshot(
 export function getWritableTabSettingsSnapshot(
   tab: TabProviderContext,
   plugin: FeatureHost,
-  settings: ClaudianSettings = plugin.settings,
+  settings: GrandemoniumSettings = plugin.settings,
 ): TabProviderSettings {
   return getProviderSettingsSnapshotWithModel(
     settings,

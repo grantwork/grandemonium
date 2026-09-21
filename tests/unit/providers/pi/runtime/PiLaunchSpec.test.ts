@@ -5,6 +5,7 @@ const baseSettings: PiProviderSettings = {
   cliPath: '',
   cliPathsByHost: {},
   discoveredModels: [],
+  agentName: 'pi',
   enabled: true,
   environmentHash: '',
   environmentVariables: '',

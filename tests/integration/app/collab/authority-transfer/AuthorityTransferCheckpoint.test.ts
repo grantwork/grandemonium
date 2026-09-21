@@ -34,7 +34,7 @@ describe('AuthorityTransferCheckpoint', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-authority-transfer-checkpoint-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-transfer-checkpoint-'));
     source = await createDatabase(path.join(root, 'source-authority'));
     target = await createDatabase(path.join(root, 'target-authority'));
     await source.mutate(connection => {
@@ -258,7 +258,7 @@ describe('AuthorityTransferCheckpoint', () => {
     await git(runner, repositoryPath, ['commit', '-m', 'portable'], true);
     const oid = (await git(runner, repositoryPath, ['rev-parse', 'HEAD'])).trim();
     await git(runner, repositoryPath, ['update-ref', 'refs/heads/members/member-a', oid]);
-    await git(runner, repositoryPath, ['update-ref', 'refs/claudian/private/secret', oid]);
+    await git(runner, repositoryPath, ['update-ref', 'refs/grandemonium/private/secret', oid]);
     const refs = [
       { name: 'refs/heads/main', oid },
       { name: 'refs/heads/members/member-a', oid },
@@ -320,13 +320,13 @@ describe('AuthorityTransferCheckpoint', () => {
     await git(runner, repositoryPath, ['commit', '-m', 'private'], true);
     const privateOid = (await git(runner, repositoryPath, ['rev-parse', 'HEAD'])).trim();
     await git(runner, repositoryPath, [
-      'update-ref', 'refs/claudian/private/secret', privateOid,
+      'update-ref', 'refs/grandemonium/private/secret', privateOid,
     ]);
     await git(runner, repositoryPath, ['update-ref', 'refs/heads/main', mainOid]);
     await git(runner, repositoryPath, ['symbolic-ref', 'HEAD', 'refs/heads/main']);
     await git(runner, repositoryPath, ['branch', '-D', 'private']);
     await git(runner, repositoryPath, [
-      'bundle', 'create', bundlePath, 'refs/heads/main', 'refs/claudian/private/secret',
+      'bundle', 'create', bundlePath, 'refs/heads/main', 'refs/grandemonium/private/secret',
     ]);
     const bytes = await readFile(bundlePath);
     const artifact = {
@@ -348,7 +348,7 @@ describe('AuthorityTransferCheckpoint', () => {
     expect(headerEnd).toBeGreaterThan(0);
     const concealedHeader = bytes.subarray(0, headerEnd).toString('utf8')
       .split('\n')
-      .filter(line => !line.endsWith(' refs/claudian/private/secret'))
+      .filter(line => !line.endsWith(' refs/grandemonium/private/secret'))
       .join('\n');
     const concealed = Buffer.concat([
       Buffer.from(`${concealedHeader}\n\n`, 'utf8'),

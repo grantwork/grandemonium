@@ -7,7 +7,7 @@ import {
   type CollabTicketDetail,
 } from '@claudian-collab/protocol';
 
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function assertCompleteRequestComments(
   detail: CollabRequestDetail,

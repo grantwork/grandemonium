@@ -2,7 +2,7 @@ import { type CollabChangedFile } from '@claudian-collab/protocol';
 import { setIcon } from 'obsidian';
 
 import { type CollabOperationOptions, type CollabPublicationReview, type CollabPublicationReviewFileRequest, type CollabRequestReview, type CollabResult, type CollabReviewFileContent, type CollabReviewFileRequest, type CollabWorkingTreeReview, type CollabWorkingTreeReviewFileRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   type CollabDiffLayout,
   CollabDiffRenderer,
@@ -154,10 +154,10 @@ export class ReviewDiffSession {
   }
 
   createControls(host: HTMLElement): HTMLElement {
-    const controls = host.createDiv({ cls: 'claudian-collab-review-display-controls' });
+    const controls = host.createDiv({ cls: 'grandemonium-collab-review-display-controls' });
     const scope = controls.createEl('button', {
       attr: { 'data-collab-review-scope': this.scope, type: 'button' },
-      cls: 'claudian-collab-review-display-toggle',
+      cls: 'grandemonium-collab-review-display-toggle',
     });
     this.scopeButton = scope;
     this.syncScopeButton(scope);
@@ -166,7 +166,7 @@ export class ReviewDiffSession {
     });
     const layout = controls.createEl('button', {
       attr: { 'data-collab-review-layout': this.layout, type: 'button' },
-      cls: 'claudian-collab-review-display-toggle',
+      cls: 'grandemonium-collab-review-display-toggle',
     });
     this.layoutButton = layout;
     this.syncLayoutButton(layout);
@@ -366,10 +366,10 @@ export class ReviewDiffSession {
       }, { root: host, rootMargin: '600px 0px' });
     }
     for (const file of review.files) {
-      const section = host.createDiv({ cls: 'claudian-collab-review-file' });
+      const section = host.createDiv({ cls: 'grandemonium-collab-review-file' });
       section.dataset.collabReviewFile = file.path;
       section.createDiv({
-        cls: 'claudian-collab-review-file-placeholder',
+        cls: 'grandemonium-collab-review-file-placeholder',
         text: t('collab.review.loadingFile'),
       });
       this.continuousSections.set(file.path, section);
@@ -588,7 +588,7 @@ export class ReviewDiffSession {
     content: Exclude<CollabReviewFileContent, { kind: 'text' }>,
     onOpenFile?: () => void,
   ): string | null {
-    const title = host.createDiv({ cls: 'claudian-collab-review-file-title' });
+    const title = host.createDiv({ cls: 'grandemonium-collab-review-file-title' });
     title.createEl('h3', { text: content.file.path });
     if (onOpenFile) {
       const openFile = title.createEl('button', {
@@ -597,7 +597,7 @@ export class ReviewDiffSession {
           'data-collab-review-open-file': '',
           type: 'button',
         },
-        cls: 'claudian-collab-review-display-toggle claudian-collab-review-file-open',
+        cls: 'grandemonium-collab-review-display-toggle grandemonium-collab-review-file-open',
       });
       setIcon(openFile, 'external-link');
       openFile.addEventListener('click', onOpenFile);
@@ -608,7 +608,7 @@ export class ReviewDiffSession {
         : t('collab.review.binary'),
     });
     host.createDiv({
-      cls: 'claudian-collab-review-metadata',
+      cls: 'grandemonium-collab-review-metadata',
       text: t('collab.review.fileSize', {
         newSize: formatBytes(content.file.newBytes),
         oldSize: formatBytes(content.file.oldBytes),
@@ -618,7 +618,7 @@ export class ReviewDiffSession {
       const objectUrl = this.objectUrls.create(content.preview.bytes, content.preview.mimeType);
       host.createEl('img', {
         attr: { alt: content.file.path, src: objectUrl },
-        cls: 'claudian-collab-review-image',
+        cls: 'grandemonium-collab-review-image',
       });
       return objectUrl;
     }

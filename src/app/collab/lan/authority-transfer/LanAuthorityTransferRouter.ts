@@ -28,7 +28,7 @@ import {
   COLLAB_LAN_AUTHORITY_TRANSFER_BINDING_VERSION,
   matchCollabLanAuthorityTransferRoute,
 } from '@/app/collab/lan/authority-transfer/LanAuthorityTransferBinding';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const MEMBER_CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -389,7 +389,7 @@ function requireTransferCredential(
 ): void {
   const authorization = singleHeader(request.headers, 'authorization');
   const match = authorization
-    ? /^Claudian-Authority-Transfer ([A-Za-z0-9_-]{43})$/.exec(authorization)
+    ? /^Grandemonium-Authority-Transfer ([A-Za-z0-9_-]{43})$/.exec(authorization)
     : null;
   if (!match) {
     throw routeError('authentication-failed', 'authority-transfer-authentication-failed');
@@ -413,7 +413,7 @@ function requireLanClaimRequest(
 ): LanClaimTransferredMembershipRequest {
   const authorization = singleHeader(request.headers, 'authorization');
   const match = authorization
-    ? /^Claudian-Transfer-Claim ([A-Za-z0-9_-]+)$/.exec(authorization)
+    ? /^Grandemonium-Transfer-Claim ([A-Za-z0-9_-]+)$/.exec(authorization)
     : null;
   if (!match || operation !== 'claimTransferredMembership') {
     throw routeError('authentication-failed', 'authority-transfer-authentication-failed');

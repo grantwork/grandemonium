@@ -10,6 +10,7 @@ import { t } from '../../../i18n/i18n';
 import { renderEnvironmentSettingsSection } from '../../../shared/settings/EnvironmentSettingsSection';
 import { renderHostnameCliPathSetting } from '../../../shared/settings/HostnameCliPathSetting';
 import { renderNativeMcpSettingsSection } from '../../../shared/settings/NativeMcpSettingsSection';
+import { renderProviderAgentNameSetting } from '../../../shared/settings/ProviderAgentNameSetting';
 import { renderProviderEnablementSetting } from '../../../shared/settings/ProviderEnablementSetting';
 import {
   renderLastEnabledProviderWarning,
@@ -82,6 +83,18 @@ export const opencodeSettingsTabRenderer: ProviderSettingsTabRenderer = {
       },
     });
 
+    renderProviderAgentNameSetting({
+      container,
+      defaultAgentName: 'opencode',
+      getValue: () => getOpencodeProviderSettings(settingsBag).agentName,
+      name: 'Agent name',
+      onChange: async (agentName) => {
+        await context.plugin.mutateSettings((settings) => {
+          updateOpencodeProviderSettings(settings, { agentName });
+        });
+      },
+    });
+
     const lastProviderWarning = renderLastEnabledProviderWarning(container);
 
     const modelWarning = renderProviderModelEnablementWarning(container, context, {
@@ -137,13 +150,13 @@ export const opencodeSettingsTabRenderer: ProviderSettingsTabRenderer = {
     if (opencodeWorkspace?.agentStorage) {
       new Setting(container).setName('Subagents').setHeading();
 
-      const subagentsDesc = container.createDiv({ cls: 'claudian-sp-settings-desc' });
+      const subagentsDesc = container.createDiv({ cls: 'grandemonium-sp-settings-desc' });
       subagentsDesc.createEl('p', {
         cls: 'setting-item-description',
         text: 'Manage vault-level OpenCode subagents from .opencode/agent/ and legacy .opencode/agents/. New entries are saved as subagent-only files.',
       });
 
-      const subagentsContainer = container.createDiv({ cls: 'claudian-slash-commands-container' });
+      const subagentsContainer = container.createDiv({ cls: 'grandemonium-slash-commands-container' });
       new OpencodeAgentSettings(
         subagentsContainer,
         opencodeWorkspace.agentStorage,
@@ -157,7 +170,7 @@ export const opencodeSettingsTabRenderer: ProviderSettingsTabRenderer = {
     }
 
     renderNativeMcpSettingsSection(container, {
-      descriptionAfterCommand: ' and they will be available in Claudian. ',
+      descriptionAfterCommand: ' and they will be available in Grandemonium. ',
       descriptionBeforeCommand: 'OpenCode manages MCP servers through its own CLI. Configure them with ',
       documentationLabel: 'Learn more',
       documentationUrl: 'https://opencode.ai/docs/mcp-servers/',
@@ -212,7 +225,7 @@ function renderOpencodeModelPicker(
 
   renderProviderModelPicker({
     container,
-    emptyCatalogText: 'Start OpenCode once to load its model catalog. Claudian will then let you pick visible models.',
+    emptyCatalogText: 'Start OpenCode once to load its model catalog. Grandemonium will then let you pick visible models.',
     failedCatalogText: 'Could not load the OpenCode model catalog. Check the CLI path and login state, then try again.',
     getState,
     async loadCatalog() {

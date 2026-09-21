@@ -36,7 +36,7 @@ describe('Project exit foundation gate', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-project-exit-foundation-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-project-exit-foundation-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

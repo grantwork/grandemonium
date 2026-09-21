@@ -249,7 +249,7 @@ describe('ComposerDropdownController', () => {
       expect(getCachedVaultFiles).toHaveBeenCalledTimes(1);
       expect(getCachedVaultFolders).toHaveBeenCalledTimes(1);
       const labels = container
-        .querySelectorAll('.claudian-composer-dropdown-label')
+        .querySelectorAll('.grandemonium-composer-dropdown-label')
         .map((element: { textContent: string }) => element.textContent);
       expect(labels).toHaveLength(100);
       expect(labels[0]).toBe('Alpha.md');
@@ -412,7 +412,7 @@ describe('ComposerDropdownController', () => {
     await Promise.resolve();
 
     const labels = () => containerEl
-      .querySelectorAll('.claudian-composer-dropdown-label')
+      .querySelectorAll('.grandemonium-composer-dropdown-label')
       .map((el: { textContent: string }) => el.textContent);
     expect(labels()).toEqual(['Alice']);
     controller.handleKeydown(key('Escape'));

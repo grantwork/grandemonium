@@ -133,17 +133,17 @@ jest.mock('obsidian', () => {
   };
 });
 
-import { DEFAULT_CLAUDIAN_SETTINGS } from '@/app/settings/defaultSettings';
+import { DEFAULT_GRANDEMONIUM_SETTINGS } from '@/app/settings/defaultSettings';
 import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
 import { ProviderWorkspaceRegistry } from '@/core/providers/ProviderWorkspaceRegistry';
-import { ClaudianSettingTab } from '@/features/settings/ClaudianSettings';
+import { GrandemoniumSettingTab } from '@/features/settings/GrandemoniumSettings';
 import { t } from '@/i18n/i18n';
 
 function createTab(enableDualPane: boolean): {
-  tab: ClaudianSettingTab;
+  tab: GrandemoniumSettingTab;
   plugin: Record<string, any>;
 } {
-  const settings = { ...DEFAULT_CLAUDIAN_SETTINGS, enableDualPane };
+  const settings = { ...DEFAULT_GRANDEMONIUM_SETTINGS, enableDualPane };
   const plugin = {
     settings,
     mutateSettings: jest.fn(async (mutation: (value: typeof settings) => void) => {
@@ -177,7 +177,7 @@ function createTab(enableDualPane: boolean): {
   };
 
   return {
-    tab: new ClaudianSettingTab({} as any, plugin as any),
+    tab: new GrandemoniumSettingTab({} as any, plugin as any),
     plugin,
   };
 }
@@ -251,7 +251,7 @@ function findContainerByClass(root: MockContainer, className: string): MockConta
 }
 
 function renderSettingsTab(
-  tab: ClaudianSettingTab,
+  tab: GrandemoniumSettingTab,
   container = createContainer(),
 ): MockContainer {
   const [definition] = tab.getSettingDefinitions();
@@ -270,7 +270,7 @@ function renderSettingsTab(
   return container;
 }
 
-describe('ClaudianSettingTab display settings', () => {
+describe('GrandemoniumSettingTab display settings', () => {
   beforeEach(() => {
     mockRenderedSettingNames.length = 0;
     mockSettingDescriptionEls.clear();
@@ -285,15 +285,15 @@ describe('ClaudianSettingTab display settings', () => {
     const [definition] = tab.getSettingDefinitions();
 
     expect(definition).toEqual(expect.objectContaining({
-      name: 'Tandemonium',
+      name: 'Grandemonium',
       searchable: false,
     }));
-    expect(Object.hasOwn(ClaudianSettingTab.prototype, 'display')).toBe(false);
+    expect(Object.hasOwn(GrandemoniumSettingTab.prototype, 'display')).toBe(false);
 
     renderSettingsTab(tab, container);
 
     expect(container.empty).toHaveBeenCalledTimes(1);
-    expect(container.addClass).toHaveBeenCalledWith('claudian-settings');
+    expect(container.addClass).toHaveBeenCalledWith('grandemonium-settings');
     expect(findContainer(container, t('settings.tabs.general'))).not.toBeNull();
   });
 
@@ -401,12 +401,12 @@ describe('ClaudianSettingTab display settings', () => {
       expect(plugin.checkCollabGitInstallation).toHaveBeenCalledWith(false);
       expect(mockGitStatusElements[0]?.parent).toBe('name');
       expect(mockGitStatusElements[0]?.className)
-        .toContain('claudian-collab-git-path-status--available');
+        .toContain('grandemonium-collab-git-path-status--available');
 
       plugin.checkCollabGitInstallation.mockResolvedValueOnce('unavailable');
       await mockTextChanges.get(t('settings.collabGitPath.name'))?.('/missing/git');
       expect(mockGitStatusElements[0]?.className)
-        .toContain('claudian-collab-git-path-status--checking');
+        .toContain('grandemonium-collab-git-path-status--checking');
       expect(plugin.checkCollabGitInstallation).toHaveBeenCalledTimes(1);
 
       jest.advanceTimersByTime(300);
@@ -414,7 +414,7 @@ describe('ClaudianSettingTab display settings', () => {
       await Promise.resolve();
       expect(plugin.checkCollabGitInstallation).toHaveBeenLastCalledWith(true);
       expect(mockGitStatusElements[0]?.className)
-        .toContain('claudian-collab-git-path-status--unavailable');
+        .toContain('grandemonium-collab-git-path-status--unavailable');
     } finally {
       jest.useRealTimers();
     }
@@ -444,11 +444,11 @@ describe('ClaudianSettingTab display settings', () => {
         .toBeNull();
       expect(findContainer(container, t('settings.collabGitInstallation.prompt')))
         .not.toBeNull();
-      expect(findContainerByClass(container, 'claudian-code-wrapper')).not.toBeNull();
+      expect(findContainerByClass(container, 'grandemonium-code-wrapper')).not.toBeNull();
       expect(findContainerByClass(container, 'copy-code-button')).not.toBeNull();
       expect(findContainerByClass(
         container,
-        'claudian-collab-git-verification-row',
+        'grandemonium-collab-git-verification-row',
       )).toBeNull();
       expect(t('settings.collabGitInstallation.prompt')).toContain(
         'Report whether Git is installed',
@@ -481,14 +481,14 @@ describe('ClaudianSettingTab display settings', () => {
       expect(readMore).not.toBeNull();
       expect(findContainer(container, t('settings.collabReadMore'))).toBeNull();
       expect(t('settings.collabReadMore')).toBe(
-        'Read more about Claudian Collab Mode',
+        'Read more about Grandemonium Collab Mode',
       );
       expect(readMore?.attr).toEqual(expect.objectContaining({
-        href: 'https://github.com/grantwork/tandemonium#collab-mode',
+        href: 'https://github.com/grantwork/grandemonium#collab-mode',
         rel: 'noopener noreferrer',
         target: '_blank',
       }));
-      expect(readMore?.cls).toBe('claudian-collab-read-more-link');
+      expect(readMore?.cls).toBe('grandemonium-collab-read-more-link');
     } finally {
       jest.runOnlyPendingTimers();
       jest.useRealTimers();

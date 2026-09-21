@@ -119,7 +119,7 @@ export class ProjectManagementModal extends Modal {
     this.snapshot = null;
     this.status = null;
     this.setTitle(t('collab.projectManagement.title'));
-    this.modalEl.classList.add('claudian-collab-project-management-modal');
+    this.modalEl.classList.add('grandemonium-collab-project-management-modal');
     this.renderShell();
     this.featureSubscription = this.port.subscribe(state => {
       if (state.projects.find(project => project.id === this.options.project.id)?.lifecycle
@@ -159,19 +159,19 @@ export class ProjectManagementModal extends Modal {
     this.hostSection = null;
     this.contentEl.replaceChildren();
     this.accessContentEl = this.contentEl.createDiv({
-      cls: 'claudian-collab-project-management-access',
+      cls: 'grandemonium-collab-project-management-access',
     });
     const actions = this.contentEl.createDiv({
-      cls: 'claudian-collab-project-actions',
+      cls: 'grandemonium-collab-project-actions',
     });
     const primary = actions.createDiv({
-      cls: 'claudian-collab-project-actions-primary',
+      cls: 'grandemonium-collab-project-actions-primary',
     });
     if (
       this.hostProject.authorityKind === 'lan'
       && this.hostProject.hostInstallationStatus !== 'not-host'
     ) {
-      const host = primary.createDiv({ cls: 'claudian-collab-project-host-action' });
+      const host = primary.createDiv({ cls: 'grandemonium-collab-project-host-action' });
       this.hostSection = new LanHostSection(host, {
         confirmLegacyClaim: () => confirm(
           this.appInstance,
@@ -189,10 +189,10 @@ export class ProjectManagementModal extends Modal {
       });
     }
     this.invitationActionsEl = primary.createDiv({
-      cls: 'claudian-collab-project-invitation-action',
+      cls: 'grandemonium-collab-project-invitation-action',
     });
     this.lifecycleActionsEl = actions.createDiv({
-      cls: 'claudian-collab-project-actions-lifecycle',
+      cls: 'grandemonium-collab-project-actions-lifecycle',
     });
   }
 
@@ -272,14 +272,14 @@ export class ProjectManagementModal extends Modal {
     isManager: boolean,
   ): void {
     const section = this.requireAccessContent().createDiv({
-      cls: 'claudian-collab-access-members',
+      cls: 'grandemonium-collab-access-members',
     });
-    const summary = section.createDiv({ cls: 'claudian-collab-access-summary' });
+    const summary = section.createDiv({ cls: 'grandemonium-collab-access-summary' });
     summary.createEl('h3', {
       text: t('collab.access.memberCount', { count: this.members.length }),
     });
     summary.createSpan({
-      cls: 'claudian-collab-access-manager-count',
+      cls: 'grandemonium-collab-access-manager-count',
       text: t('collab.access.managerCount', {
         count: this.members.filter(member => (
           member.role === 'manager' && member.status === 'active'
@@ -290,7 +290,7 @@ export class ProjectManagementModal extends Modal {
       section.createDiv({ text: t('collab.access.noMembers') });
       return;
     }
-    const list = section.createEl('ul', { cls: 'claudian-collab-access-list' });
+    const list = section.createEl('ul', { cls: 'grandemonium-collab-access-list' });
     for (const member of this.members) {
       this.renderMember(list, member, current, isManager);
     }
@@ -304,15 +304,15 @@ export class ProjectManagementModal extends Modal {
   ): void {
     const item = list.createEl('li', {
       attr: { 'data-member-id': member.id },
-      cls: 'claudian-collab-access-member',
+      cls: 'grandemonium-collab-access-member',
     });
-    const heading = item.createDiv({ cls: 'claudian-collab-access-member-heading' });
+    const heading = item.createDiv({ cls: 'grandemonium-collab-access-member-heading' });
     heading.createSpan({
       attr: { title: member.displayName },
-      cls: 'claudian-collab-access-member-name',
+      cls: 'grandemonium-collab-access-member-name',
       text: member.displayName,
     });
-    const badges = heading.createSpan({ cls: 'claudian-collab-access-badges' });
+    const badges = heading.createSpan({ cls: 'grandemonium-collab-access-badges' });
     if (member.role === 'manager') {
       this.renderBadge(badges, t('collab.access.manager'), 'manager');
     }
@@ -332,7 +332,7 @@ export class ProjectManagementModal extends Modal {
     const lanSnapshot = this.lanSnapshot();
     if (!lanSnapshot) return;
 
-    const actions = item.createDiv({ cls: 'claudian-collab-access-actions' });
+    const actions = item.createDiv({ cls: 'grandemonium-collab-access-actions' });
     if (isManager && member.role !== 'manager') {
       const pendingPromotion = lanSnapshot.managerResponsibilityOffer;
       const matchingPromotion = pendingPromotion?.purpose === 'manager-promotion'
@@ -436,7 +436,7 @@ export class ProjectManagementModal extends Modal {
     });
     if (isHost) {
       item.createDiv({
-        cls: 'claudian-collab-access-note',
+        cls: 'grandemonium-collab-access-note',
         text: t('collab.access.hostRemovalBlocked'),
       });
     }
@@ -463,7 +463,7 @@ export class ProjectManagementModal extends Modal {
       managerOffer?.sourceManagerMemberId === member.id
       && (managerOffer.status === 'offered' || managerOffer.status === 'acknowledged')
     ) {
-      const actions = item.createDiv({ cls: 'claudian-collab-access-actions' });
+      const actions = item.createDiv({ cls: 'grandemonium-collab-access-actions' });
       this.createLifecycleButton(actions, 'cancel-manager-responsibility',
         managerOffer.purpose === 'manager-promotion'
           ? t('collab.access.cancelPromotion')
@@ -475,7 +475,7 @@ export class ProjectManagementModal extends Modal {
     }
     const hostTransfer = this.lanSnapshot()?.hostTransfer;
     if (member.id === this.hostMemberId && hostTransfer?.canCancel) {
-      const actions = item.createDiv({ cls: 'claudian-collab-access-actions' });
+      const actions = item.createDiv({ cls: 'grandemonium-collab-access-actions' });
       this.createLifecycleButton(actions, 'cancel-host-transfer',
         t('collab.access.cancelTransfer'), () => this.port.cancelHostTransfer({
           projectId: this.options.project.id,
@@ -483,7 +483,7 @@ export class ProjectManagementModal extends Modal {
         }, { signal: this.abortController.signal }));
     }
     if (hostTransfer?.targetMemberId !== member.id || hostTransfer.phase !== 'offered') return;
-    const actions = item.createDiv({ cls: 'claudian-collab-access-actions' });
+    const actions = item.createDiv({ cls: 'grandemonium-collab-access-actions' });
     if (hostTransfer.canAccept) {
       this.createLifecycleButton(actions, 'accept-host-transfer',
         t('collab.access.acceptHost'), () => this.port.acceptHostTransfer({
@@ -503,7 +503,7 @@ export class ProjectManagementModal extends Modal {
   private renderBadge(container: HTMLElement, text: string, role?: 'manager'): void {
     container.createSpan({
       attr: role ? { 'data-role': role } : undefined,
-      cls: 'claudian-collab-access-badge',
+      cls: 'grandemonium-collab-access-badge',
       text,
     });
   }
@@ -568,7 +568,7 @@ export class ProjectManagementModal extends Modal {
     container: HTMLElement,
     confirmation: Extract<AccessConfirmation, { readonly kind: 'leave' }>,
   ): void {
-    const choices = container.createDiv({ cls: 'claudian-collab-cleanup-choices' });
+    const choices = container.createDiv({ cls: 'grandemonium-collab-cleanup-choices' });
     for (const choice of ['keep-files', 'delete-files'] as const) {
       const label = choices.createEl('label');
       const input = label.createEl('input', {
@@ -605,7 +605,7 @@ export class ProjectManagementModal extends Modal {
       : undefined;
     if (leaveOffer?.status === 'acknowledged') {
       container.createDiv({
-        cls: 'claudian-collab-access-note',
+        cls: 'grandemonium-collab-access-note',
         text: t('collab.access.managerSuccessorAcknowledged'),
       });
       return;
@@ -613,7 +613,7 @@ export class ProjectManagementModal extends Modal {
     if (leaveOffer) {
       const target = this.members.find(member => member.id === leaveOffer.targetMemberId);
       container.createDiv({
-        cls: 'claudian-collab-access-note',
+        cls: 'grandemonium-collab-access-note',
         text: t('collab.access.waitingForManagerAcknowledgement', {
           name: target?.displayName ?? leaveOffer.targetMemberId,
         }),
@@ -622,10 +622,10 @@ export class ProjectManagementModal extends Modal {
     }
 
     const selection = container.createDiv({
-      cls: 'claudian-collab-manager-successor-selection',
+      cls: 'grandemonium-collab-manager-successor-selection',
     });
     selection.createDiv({ text: t('collab.access.chooseManagerSuccessor') });
-    const actions = selection.createDiv({ cls: 'claudian-collab-access-actions' });
+    const actions = selection.createDiv({ cls: 'grandemonium-collab-access-actions' });
     for (const candidate of this.members) {
       if (candidate.id === currentMemberId || candidate.status !== 'active') continue;
       const button = actions.createEl('button', {
@@ -726,7 +726,7 @@ export class ProjectManagementModal extends Modal {
   private renderConfirmation(confirmation: AccessConfirmation): void {
     const region = this.requireAccessContent().createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-access-confirmation',
+      cls: 'grandemonium-collab-access-confirmation',
     });
     region.createDiv({ text: this.confirmationQuestion(confirmation) });
     if (confirmation.kind === 'remove') {
@@ -742,7 +742,7 @@ export class ProjectManagementModal extends Modal {
     } else if (confirmation.kind === 'retire') {
       region.createDiv({ text: t('collab.access.retireWarning') });
     }
-    const actions = region.createDiv({ cls: 'claudian-collab-access-actions' });
+    const actions = region.createDiv({ cls: 'grandemonium-collab-access-actions' });
     const cancel = actions.createEl('button', {
       attr: { 'data-action': 'cancel-access-action', type: 'button' },
       text: t('common.cancel'),
@@ -971,7 +971,7 @@ export class ProjectManagementModal extends Modal {
         'aria-live': 'polite',
         ...(this.status.kind === 'error' ? { role: 'alert' } : {}),
       },
-      cls: `claudian-collab-access-status claudian-collab-access-status--${this.status.kind}`,
+      cls: `grandemonium-collab-access-status grandemonium-collab-access-status--${this.status.kind}`,
       text: this.status.text,
     });
   }
@@ -982,7 +982,7 @@ export class ProjectManagementModal extends Modal {
     accessContent.replaceChildren();
     accessContent.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-access-status',
+      cls: 'grandemonium-collab-access-status',
       text: t('collab.access.loading'),
     });
   }
@@ -993,7 +993,7 @@ export class ProjectManagementModal extends Modal {
     accessContent.replaceChildren();
     accessContent.createDiv({
       attr: { role: 'alert' },
-      cls: 'claudian-collab-access-status claudian-collab-access-status--error',
+      cls: 'grandemonium-collab-access-status grandemonium-collab-access-status--error',
       text: t('collab.access.loadFailed'),
     });
     const retry = accessContent.createEl('button', {

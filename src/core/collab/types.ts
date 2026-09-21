@@ -15,7 +15,7 @@ import type {
   CollabTicketSummary,
 } from '@claudian-collab/protocol';
 
-/** Claudian's local authority selection. This is not a shared wire contract. */
+/** Grandemonium's local authority selection. This is not a shared wire contract. */
 export type CollabAuthorityKind = 'lan' | 'cloud';
 
 export interface CollabProjectBase {

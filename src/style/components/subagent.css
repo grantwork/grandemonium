@@ -1,24 +1,24 @@
-.claudian-subagent-list {
+.grandemonium-subagent-list {
   margin: 8px 0;
 }
 
-.claudian-text-block+.claudian-subagent-list {
+.grandemonium-text-block+.grandemonium-subagent-list {
   margin-top: 8px;
 }
 
-.claudian-subagent-list+.claudian-text-block {
+.grandemonium-subagent-list+.grandemonium-text-block {
   margin-top: 8px;
 }
 
-.claudian-tool-call+.claudian-subagent-list {
+.grandemonium-tool-call+.grandemonium-subagent-list {
   margin-top: 8px;
 }
 
-.claudian-subagent-list+.claudian-tool-call {
+.grandemonium-subagent-list+.grandemonium-tool-call {
   margin-top: 8px;
 }
 
-.claudian-subagent-header {
+.grandemonium-subagent-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -27,19 +27,19 @@
   overflow: hidden;
 }
 
-.claudian-subagent-icon {
+.grandemonium-subagent-icon {
   display: flex;
   align-items: center;
   color: var(--interactive-accent);
   flex-shrink: 0;
 }
 
-.claudian-subagent-icon svg {
+.grandemonium-subagent-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-subagent-label {
+.grandemonium-subagent-label {
   flex: 1;
   font-family: var(--font-monospace);
   font-size: 13px;
@@ -47,41 +47,41 @@
   color: var(--text-normal);
 }
 
-.claudian-subagent-status {
+.grandemonium-subagent-status {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-.claudian-subagent-status svg {
+.grandemonium-subagent-status svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-subagent-status.status-running {
+.grandemonium-subagent-status.status-running {
   color: var(--text-accent);
 }
 
-.claudian-subagent-status.status-completed {
+.grandemonium-subagent-status.status-completed {
   color: var(--color-green);
 }
 
-.claudian-subagent-status.status-error {
+.grandemonium-subagent-status.status-error {
   color: var(--color-red);
 }
 
-.claudian-subagent-content {
+.grandemonium-subagent-content {
   padding: 4px 0;
   padding-inline-start: 16px;
   margin-inline-start: 7px;
   border-inline-start: 2px solid var(--background-modifier-border);
 }
 
-.claudian-subagent-section {
+.grandemonium-subagent-section {
   margin: 2px 0 6px;
 }
 
-.claudian-subagent-section-header {
+.grandemonium-subagent-section-header {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -93,21 +93,21 @@
   padding: 2px 0;
 }
 
-.claudian-subagent-section-header:hover {
+.grandemonium-subagent-section-header:hover {
   color: var(--text-normal);
 }
 
-.claudian-subagent-section-title {
+.grandemonium-subagent-section-title {
   flex: 1;
   min-width: 0;
 }
 
-.claudian-subagent-section-body {
+.grandemonium-subagent-section-body {
   padding-inline-start: 6px;
 }
 
-.claudian-subagent-prompt-text,
-.claudian-subagent-result-output {
+.grandemonium-subagent-prompt-text,
+.grandemonium-subagent-result-output {
   font-family: var(--font-monospace);
   font-size: 12px;
   line-height: 1.4;
@@ -116,22 +116,22 @@
   word-break: break-word;
 }
 
-.claudian-subagent-result-output {
+.grandemonium-subagent-result-output {
   max-height: 220px;
   overflow-y: auto;
 }
 
-.claudian-subagent-tools {
+.grandemonium-subagent-tools {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.claudian-subagent-tool-item {
+.grandemonium-subagent-tool-item {
   display: block;
 }
 
-.claudian-subagent-tool-header {
+.grandemonium-subagent-tool-header {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -140,23 +140,23 @@
   padding: 2px 0;
 }
 
-.claudian-subagent-tool-header:hover {
+.grandemonium-subagent-tool-header:hover {
   opacity: 0.85;
 }
 
-.claudian-subagent-tool-icon {
+.grandemonium-subagent-tool-icon {
   display: flex;
   align-items: center;
   color: var(--text-accent);
   flex-shrink: 0;
 }
 
-.claudian-subagent-tool-icon svg {
+.grandemonium-subagent-tool-icon svg {
   width: 13px;
   height: 13px;
 }
 
-.claudian-subagent-tool-name {
+.grandemonium-subagent-tool-name {
   font-family: var(--font-monospace);
   font-size: 12px;
   color: var(--text-normal);
@@ -164,7 +164,7 @@
   flex-shrink: 0;
 }
 
-.claudian-subagent-tool-summary {
+.grandemonium-subagent-tool-summary {
   font-family: var(--font-monospace);
   font-size: 12px;
   color: var(--text-muted);
@@ -175,35 +175,35 @@
   min-width: 0;
 }
 
-.claudian-subagent-tool-status {
+.grandemonium-subagent-tool-status {
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-.claudian-subagent-tool-status svg {
+.grandemonium-subagent-tool-status svg {
   width: 12px;
   height: 12px;
 }
 
-.claudian-subagent-tool-status.status-running {
+.grandemonium-subagent-tool-status.status-running {
   color: var(--text-accent);
 }
 
-.claudian-subagent-tool-status.status-completed {
+.grandemonium-subagent-tool-status.status-completed {
   color: var(--color-green);
 }
 
-.claudian-subagent-tool-status.status-error,
-.claudian-subagent-tool-status.status-blocked {
+.grandemonium-subagent-tool-status.status-error,
+.grandemonium-subagent-tool-status.status-blocked {
   color: var(--color-red);
 }
 
-.claudian-subagent-tool-content {
+.grandemonium-subagent-tool-content {
   padding: 2px 0 2px 16px;
 }
 
-.claudian-subagent-tool-empty {
+.grandemonium-subagent-tool-empty {
   color: var(--text-faint);
   font-style: italic;
   font-family: var(--font-monospace);
@@ -211,7 +211,7 @@
   padding: 2px 0;
 }
 
-.claudian-subagent-status-text {
+.grandemonium-subagent-status-text {
   font-size: 11px;
   font-family: var(--font-monospace);
   color: var(--text-muted);
@@ -219,30 +219,30 @@
   padding-inline-start: 8px;
 }
 
-.claudian-subagent-list.async .claudian-subagent-icon {
+.grandemonium-subagent-list.async .grandemonium-subagent-icon {
   color: var(--interactive-accent);
 }
 
-.claudian-subagent-list.async.pending .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.pending .grandemonium-subagent-status-text {
   color: var(--text-muted);
 }
 
-.claudian-subagent-list.async.running .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.running .grandemonium-subagent-status-text {
   color: var(--text-accent);
 }
 
-.claudian-subagent-list.async.awaiting .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.awaiting .grandemonium-subagent-status-text {
   color: var(--color-yellow);
 }
 
-.claudian-subagent-list.async.completed .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.completed .grandemonium-subagent-status-text {
   color: var(--color-green);
 }
 
-.claudian-subagent-list.async.error .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.error .grandemonium-subagent-status-text {
   color: var(--color-red);
 }
 
-.claudian-subagent-list.async.orphaned .claudian-subagent-status-text {
+.grandemonium-subagent-list.async.orphaned .grandemonium-subagent-status-text {
   color: var(--color-orange);
 }

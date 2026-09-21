@@ -2,7 +2,7 @@ import { type CollabProjectId } from '@claudian-collab/protocol';
 
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabProjectResource {
   dispose(): void;

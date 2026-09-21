@@ -1,12 +1,12 @@
 /* Code block wrapper - contains pre + button outside scroll area */
-.claudian-code-wrapper {
+.grandemonium-code-wrapper {
   position: relative;
   margin: 8px 0;
 }
 
 /* Code blocks in chat messages */
-.claudian-code-wrapper pre,
-.claudian-message-content pre {
+.grandemonium-code-wrapper pre,
+.grandemonium-message-content pre {
   background: rgba(0, 0, 0, 0.2);
   padding: 8px 12px;
   border-radius: 6px;
@@ -15,29 +15,29 @@
 }
 
 /* Light mode: use a lighter background so hljs comment colors stay readable */
-body.theme-light .claudian-code-wrapper pre,
-body.theme-light .claudian-message-content pre {
+body.theme-light .grandemonium-code-wrapper pre,
+body.theme-light .grandemonium-message-content pre {
   background: rgba(0, 0, 0, 0.08);
 }
 
 /* Code blocks without language - wrap content */
-.claudian-code-wrapper:not(.has-language) pre {
+.grandemonium-code-wrapper:not(.has-language) pre {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-x: hidden;
 }
 
 /* Unwrapped pre still needs margin */
-.claudian-message-content>pre {
+.grandemonium-message-content>pre {
   margin: 8px 0;
 }
 
-.claudian-message-content code {
+.grandemonium-message-content code {
   font-family: var(--font-monospace);
   font-size: 13px;
 }
 
-.claudian-container .claudian-message-content :not(pre) > code {
+.grandemonium-container .grandemonium-message-content :not(pre) > code {
   background-color: var(--code-background, var(--background-secondary));
   color: var(--code-normal, var(--text-normal));
   padding: 0.1em 0.35em;
@@ -47,7 +47,7 @@ body.theme-light .claudian-message-content pre {
 }
 
 /* Clickable language label - positioned outside scroll area */
-.claudian-code-wrapper .claudian-code-lang-label {
+.grandemonium-code-wrapper .grandemonium-code-lang-label {
   position: absolute;
   top: 6px;
   inset-inline-end: 6px;
@@ -62,18 +62,18 @@ body.theme-light .claudian-message-content pre {
   transition: color 0.15s ease, background 0.15s ease;
 }
 
-.claudian-code-wrapper .claudian-code-lang-label:hover {
+.grandemonium-code-wrapper .grandemonium-code-lang-label:hover {
   color: var(--text-normal);
   background: var(--background-modifier-hover);
 }
 
 /* Hide default copy button when language label exists */
-.claudian-code-wrapper.has-language .copy-code-button {
+.grandemonium-code-wrapper.has-language .copy-code-button {
   display: none;
 }
 
 /* Copy button - positioned outside scroll area */
-.claudian-code-wrapper .copy-code-button {
+.grandemonium-code-wrapper .copy-code-button {
   position: absolute;
   top: 6px;
   inset-inline-end: 6px;
@@ -90,17 +90,17 @@ body.theme-light .claudian-message-content pre {
 }
 
 /* If copy button uses an icon (svg) */
-.claudian-code-wrapper .copy-code-button svg {
+.grandemonium-code-wrapper .copy-code-button svg {
   width: 14px;
   height: 14px;
 }
 
 /* Show copy button on hover */
-.claudian-code-wrapper:not(.has-language):hover .copy-code-button {
+.grandemonium-code-wrapper:not(.has-language):hover .copy-code-button {
   opacity: 1;
 }
 
-.claudian-code-wrapper .copy-code-button:hover {
+.grandemonium-code-wrapper .copy-code-button:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }

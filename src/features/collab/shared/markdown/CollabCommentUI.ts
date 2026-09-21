@@ -1,4 +1,4 @@
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 import {
   MarkdownDraftEditor,
   type MarkdownDraftMemberSuggestion,
@@ -41,16 +41,16 @@ export function renderCollabComment(
   comment: CollabCommentPresentation,
   options: CollabCommentRenderOptions,
 ): void {
-  const metadata = item.createDiv({ cls: 'claudian-collab-comment-meta' });
+  const metadata = item.createDiv({ cls: 'grandemonium-collab-comment-meta' });
   metadata.createSpan({ text: comment.authorName });
   if (comment.context) {
-    metadata.createSpan({ cls: 'claudian-collab-comment-context', text: comment.context });
+    metadata.createSpan({ cls: 'grandemonium-collab-comment-context', text: comment.context });
   }
   metadata.createEl('time', {
     attr: { datetime: comment.createdAt },
     text: new Date(comment.createdAt).toLocaleString(),
   });
-  const body = item.createDiv({ cls: 'claudian-collab-comment-markdown' });
+  const body = item.createDiv({ cls: 'grandemonium-collab-comment-markdown' });
   void renderMarkdownWithTicketReferences({
     host: body,
     markdown: comment.body,
@@ -64,10 +64,10 @@ export class CollabCommentComposer {
   private readonly statusEl: HTMLElement;
 
   constructor(root: HTMLElement, private readonly options: CollabCommentComposerOptions) {
-    const composer = root.createDiv({ cls: 'claudian-collab-comment-composer' });
-    const header = composer.createDiv({ cls: 'claudian-collab-comment-composer-header' });
+    const composer = root.createDiv({ cls: 'grandemonium-collab-comment-composer' });
+    const header = composer.createDiv({ cls: 'grandemonium-collab-comment-composer-header' });
     header.createSpan({ text: options.label });
-    const modes = header.createDiv({ cls: 'claudian-collab-comment-modes' });
+    const modes = header.createDiv({ cls: 'grandemonium-collab-comment-modes' });
     const editorRoot = composer.createDiv({
       attr: {
         'aria-label': options.ariaLabel,
@@ -85,11 +85,11 @@ export class CollabCommentComposer {
     });
     this.statusEl = options.statusEl ?? composer.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-comment-status',
+      cls: 'grandemonium-collab-comment-status',
     });
     const submit = modes.createEl('button', {
       attr: { 'data-action': options.submitAction, type: 'button' },
-      cls: 'claudian-collab-comment-submit',
+      cls: 'grandemonium-collab-comment-submit',
       text: options.submitLabel,
     });
     submit.addEventListener('click', () => this.submit(submit));
@@ -107,7 +107,7 @@ export class CollabCommentComposer {
       this.statusEl.setText(t('collab.comments.required'));
       return;
     }
-    if (new TextEncoder().encode(body).byteLength > CLAUDIAN_COLLAB_LIMITS.maxCommentBytes) {
+    if (new TextEncoder().encode(body).byteLength > GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes) {
       this.editor.setInvalid(true);
       this.statusEl.setText(t('collab.comments.tooLarge'));
       return;

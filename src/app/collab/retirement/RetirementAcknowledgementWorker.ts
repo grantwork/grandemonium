@@ -8,7 +8,7 @@ import type {
   CollabProjectLifecycleAdmission,
 } from '@/app/collab/lifecycle/CollabProjectLifecycleAdmission';
 import type { RetirementRecord } from '@/app/collab/retirement/RetirementRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RetirementClientStore {
   removeRetirementAcknowledgement(projectId: CollabProjectId): Promise<boolean>;

@@ -64,18 +64,18 @@ describe('TicketListPanel', () => {
     panel.setActive(true);
     await nextTurn();
 
-    expect(root.querySelector('.claudian-collab-ticket-list-header h4')?.textContent)
+    expect(root.querySelector('.grandemonium-collab-ticket-list-header h4')?.textContent)
       .toBe('Tickets');
     expect(root.querySelectorAll('[data-ticket-status]')).toHaveLength(1);
     expect(root.querySelector('[data-ticket-status="open"]')?.textContent).toBe('Open');
     const openRow = root.querySelector('[data-ticket-id="ticket-open"]')!;
     expect([...openRow.children].map(child => child.className)).toEqual([
-      'claudian-collab-ticket-title',
-      'claudian-collab-ticket-number',
+      'grandemonium-collab-ticket-title',
+      'grandemonium-collab-ticket-number',
     ]);
-    expect(openRow.querySelector('.claudian-collab-ticket-title')?.textContent)
+    expect(openRow.querySelector('.grandemonium-collab-ticket-title')?.textContent)
       .toBe('Open ticket');
-    expect(openRow.querySelector('.claudian-collab-ticket-number')?.textContent)
+    expect(openRow.querySelector('.grandemonium-collab-ticket-number')?.textContent)
       .toBe('#17');
     expect(root.querySelector('[data-ticket-id="ticket-open"]')?.getAttribute('aria-current'))
       .toBe('true');

@@ -6,7 +6,7 @@ import {
 
 const baseRecord: JoinProjectRecord = {
   createdAt: '2026-08-08T00:00:00.000Z',
-  encodedInvitation: 'claudian-collab:v2:payload',
+  encodedInvitation: 'grandemonium-collab:v2:payload',
   endpoint: 'https://192.168.1.10:54545',
   hostCaCertificatePem: null,
   hostCaFingerprint: 'ab'.repeat(32),
@@ -24,7 +24,7 @@ const baseRecord: JoinProjectRecord = {
   projectsFolder: 'Shared/Collab Projects',
   schemaVersion: COLLAB_JOIN_PROJECT_SCHEMA_VERSION,
   slug: 'project-alpha',
-  stagingDirectoryName: '.claudian-join-join-alpha',
+  stagingDirectoryName: '.grandemonium-join-join-alpha',
   lastEventSequence: null,
   updatedAt: '2026-08-08T00:00:00.000Z',
 };

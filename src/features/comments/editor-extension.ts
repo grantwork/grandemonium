@@ -289,6 +289,19 @@ export function createEditorAnchorTracker(view: EditorView, plugin: EditorExtens
   return new Tracker(view);
 }
 
+/**
+ * The browser settles a drag selection after the pointer is released, so the
+ * CodeMirror state only carries the final range on the next tick. A plain click
+ * leaves a caret behind and is dropped here, before the document is read.
+ */
+function scheduleSelectionComment(view: EditorView, plugin: CommentsController): void {
+  window.setTimeout(() => {
+    const { from, to } = view.state.selection.main;
+    if (from >= to) return;
+    plugin.startSelectionComment(view.state.doc.toString(), from, to);
+  }, 0);
+}
+
 export function buildEditorExtension(plugin: CommentsController) {
   return ViewPlugin.fromClass(editorAnchorTrackerClass(plugin), {
     decorations: (v) => v.decorations,
@@ -299,6 +312,14 @@ export function buildEditorExtension(plugin: CommentsController) {
         if (!el) return false;
         const id = el.getAttribute("data-tc-id");
         if (id) void plugin.openSidebar(id);
+        return false;
+      },
+      mouseup(_e: MouseEvent, view: EditorView) {
+        scheduleSelectionComment(view, plugin);
+        return false;
+      },
+      touchend(_e: TouchEvent, view: EditorView) {
+        scheduleSelectionComment(view, plugin);
         return false;
       },
     },

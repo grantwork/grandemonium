@@ -37,7 +37,7 @@ describe('AuthorityTransferRuntimeRegistry', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-runtime',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-runtime',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-runtime',
       status: status(),
     });
     expect(current).toMatchObject({
@@ -67,7 +67,7 @@ describe('AuthorityTransferRuntimeRegistry', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-runtime',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-runtime',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-runtime',
       status: status(),
     });
     const { ownerInstallationKey: _, ...withoutOwner } = current;
@@ -77,7 +77,7 @@ describe('AuthorityTransferRuntimeRegistry', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-runtime',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-runtime',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-runtime',
       status: {
         ...status(),
         direction: 'cloud-to-lan',
@@ -107,7 +107,7 @@ describe('AuthorityTransferRuntimeRegistry', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-runtime',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-runtime',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-runtime',
       status: status(),
     });
 
@@ -129,7 +129,7 @@ describe('AuthorityTransferRuntimeRegistry', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-runtime',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-runtime',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-runtime',
       status: status(),
     });
 

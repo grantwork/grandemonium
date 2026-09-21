@@ -6,7 +6,7 @@ import type {
   RequestQueryGitResult,
 } from '@/app/collab/authority/RequestQueryService';
 import type { GitRepositoryService } from '@/app/collab/git/GitRepositoryService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function queryError(reason: string): CollabError {
   return new CollabError({

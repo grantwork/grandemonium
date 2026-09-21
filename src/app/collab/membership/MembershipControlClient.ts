@@ -30,7 +30,7 @@ import type {
 } from '@/app/collab/lan/LanCollabControlOperations';
 import type { CollabManagerResponsibilityOfferSummary } from '@/core/collab';
 import { type CollabInvitationView } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface MembershipControlTransport {
   requestWithMember<T>(

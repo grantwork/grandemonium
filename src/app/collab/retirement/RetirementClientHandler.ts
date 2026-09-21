@@ -23,7 +23,7 @@ import {
   type RetirementRecord,
 } from '@/app/collab/retirement/RetirementRecord';
 import type { CollabRetirementResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export type RetirementDeliverySource = 'event' | 'response' | 'terminal-fallback';
 

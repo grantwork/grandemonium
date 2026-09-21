@@ -18,7 +18,7 @@ import type {
   MembershipTerminationResponse,
 } from '@/app/collab/lan/LanCollabControlOperations';
 import { decodeLanCollabEnvelopeData } from '@/app/collab/lan/LanCollabEnvelope';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type UnknownRecord = Readonly<Record<string, unknown>>;
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -234,7 +234,7 @@ export function decodeInvitationResponse(
   const encodedInvitation = data.encodedInvitation;
   if (typeof encodedInvitation !== 'string') throw decodeError('encodedInvitation');
   const match = new RegExp(
-    `^claudian-collab:v${COLLAB_CONTROL_PROTOCOL_VERSION}:([A-Za-z0-9_-]+)$`,
+    `^grandemonium-collab:v${COLLAB_CONTROL_PROTOCOL_VERSION}:([A-Za-z0-9_-]+)$`,
   ).exec(encodedInvitation);
   if (!match) throw decodeError('encodedInvitation');
   let encoded: ReturnType<typeof decodeLanCollabInvitation>;

@@ -14,9 +14,9 @@ import { TEST_INSTALLATION_A } from '@test/helpers/installations';
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import type { CollabFeatureService } from '@/app/collab/CollabFeatureService';
 import { createCollabFeatureSubcomposition } from '@/app/collab/CollabFeatureSubcomposition';
+import { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { InvitationCodec } from '@/app/collab/lan/InvitationCodec';
 import { CollabProjectSetupService } from '@/app/collab/project/CollabProjectSetupService';
 import type { CollabAcceptOutcome, CollabResult } from '@/core/collab';
@@ -25,7 +25,7 @@ jest.setTimeout(120_000);
 
 describe('M6 publish conflict gate', () => {
   let SQL: SqlJsStatic;
-  const foundations: ClaudianCollabService[] = [];
+  const foundations: GrandemoniumCollabService[] = [];
   const features: CollabFeatureService[] = [];
   let root = '';
 
@@ -41,7 +41,7 @@ describe('M6 publish conflict gate', () => {
   });
 
   it('auto-syncs contribution-free work and exposes open-request conflicts', async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-m6-gate-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-m6-gate-'));
     const hostRoot = path.join(root, 'host-vault');
     const memberARoot = path.join(root, 'member-a-vault');
     const memberBRoot = path.join(root, 'member-b-vault');
@@ -211,8 +211,8 @@ describe('M6 publish conflict gate', () => {
     invitationCodec: InvitationCodec,
     hostPort?: number,
     ownsAuthority = false,
-  ): ClaudianCollabService {
-    const foundation = new ClaudianCollabService({
+  ): GrandemoniumCollabService {
+    const foundation = new GrandemoniumCollabService({
       installationKey: TEST_INSTALLATION_A,
       ...(ownsAuthority
         ? {
@@ -236,7 +236,7 @@ describe('M6 publish conflict gate', () => {
   }
 
   function createFeature(
-    foundation: ClaudianCollabService,
+    foundation: GrandemoniumCollabService,
     vaultRoot: string,
   ): CollabFeatureService {
     const feature = createCollabFeatureSubcomposition({

@@ -217,7 +217,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'proposal',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'collecting-readiness'),
     });
     persistence.advance = async (record: AuthorityTransferRecord) => {
@@ -270,7 +270,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'source-quiesced'),
     });
     const bodies = [new Readable({ read() {} }), new Readable({ read() {} })];
@@ -320,7 +320,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('cloud-to-lan', 'checkpoint-captured'),
     });
     const first = new Readable({ read() {} });
@@ -358,7 +358,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('cloud-to-lan', 'checkpoint-captured'),
     });
     const bodies: Readable[] = [];
@@ -422,7 +422,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: phase === 'checkpoint-validated'
         || phase === 'claims-retained'
         || phase === 'repository-published'
@@ -532,7 +532,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: phase === 'target-staged'
         || phase === 'claims-retained'
         || phase === 'cloud-relinquished'
@@ -615,7 +615,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', phase),
     });
     const targetPersistence = new MemoryPersistence();
@@ -624,7 +624,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('cloud-to-lan', phase),
     });
     const lifecycle = (direction: 'cloud-to-lan' | 'lan-to-cloud') => ({
@@ -674,7 +674,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'checkpoint-received'),
     });
     const statuses = [
@@ -740,7 +740,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'completed'),
     });
     const activateTerminal = jest.fn(async () => undefined);
@@ -771,7 +771,7 @@ describe('production authority-transfer direction coordinators', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: 'intent-production-transfer',
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('cloud-to-lan', 'completed'),
     });
     const activate = jest.fn(async () => 'target-activation-proof');

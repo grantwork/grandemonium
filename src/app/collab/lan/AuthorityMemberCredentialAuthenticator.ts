@@ -14,7 +14,7 @@ import {
 import type {
   AuthorityDatabaseConnection,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 

@@ -10,7 +10,7 @@ import type {
 } from '@/app/collab/lifecycle/CollabProjectLifecycleSubsystem';
 import type { CollabProjectLifecycleSubsystem } from '@/app/collab/lifecycle/CollabProjectLifecycleSubsystem';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferClaimantRecoveryHandler {
   resume(

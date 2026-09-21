@@ -30,7 +30,7 @@ describe('TicketService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-ticket-service-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-ticket-service-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

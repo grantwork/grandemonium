@@ -27,7 +27,7 @@ import {
   markCloudBootstrapTerminalCleanupCompleted,
   observeCloudBootstrapAttemptStatus,
 } from '@/app/collab/bootstrap/CloudBootstrapTransitionRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface DevelopmentBootstrapCloudPort {

@@ -7,9 +7,6 @@ import {
   CollabProjectWorkSessionRegistry,
   type CollabProjectWorkSessionSuspension,
 } from '@/app/collab/activity/CollabProjectWorkSession';
-import type {
-  CollabGitFoundation,
-} from '@/app/collab/ClaudianCollabService';
 import {
   CollabClientProjection,
   type CollabClientRetirementAdmission,
@@ -28,6 +25,9 @@ import { ConflictScratchStore } from '@/app/collab/conflicts/ConflictScratchStor
 import type {
   CollabLanDiscoveryPort,
 } from '@/app/collab/discovery/CollabLanDiscoveryService';
+import type {
+  CollabGitFoundation,
+} from '@/app/collab/GrandemoniumCollabService';
 import { CollabPublicationStateStore } from '@/app/collab/publish/CollabPublicationStateStore';
 import {
   COLLAB_REQUEST_DRAFT_SCHEMA_VERSION,
@@ -84,7 +84,7 @@ import { WorkingTreeReviewService } from '@/app/collab/review/WorkingTreeReviewS
 import type { CollabProjectSnapshot } from '@/core/collab';
 import type { CollabChangedFile } from '@/core/collab';
 import { type CollabAcceptOutcome, type CollabAcceptRequest, type CollabAddCommentRequest, type CollabAddTicketCommentRequest, type CollabChangeTicketStatusRequest, type CollabConfirmPublishRequest, type CollabConflictDescriptor, type CollabConflictFileContent, type CollabConflictFileRequest, type CollabConflictSession, type CollabCoordinationSnapshot, type CollabCreateTicketRequest, type CollabGitStatus, type CollabListTicketsRequest, type CollabLocalProjectSummary, type CollabOperationOptions, type CollabPersonalChangesInspection, type CollabPublicationReview, type CollabPublicationReviewFileRequest, type CollabPublishOutcome, type CollabPublishRequest, type CollabReconciliationOutcome, type CollabReconnectProjectRequest, type CollabRequestReview, type CollabResult, type CollabReviewFileContent, type CollabReviewFileRequest, type CollabTicketDetailProjection, type CollabTicketPageProjection, type CollabUpdateRequestMetadataRequest, type CollabUpdateTicketContentRequest, type CollabWorkingTreeReview, type CollabWorkingTreeReviewFileRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabPublicationFoundationPort {
   readonly local: {

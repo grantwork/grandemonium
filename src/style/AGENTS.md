@@ -21,7 +21,7 @@ Choose a folder by UI ownership, not by the screen where a selector happens to a
 
 - TypeScript owns semantic and lifecycle state. CSS may render classes and attributes but must not be treated as the source of truth for state transitions.
 - Feature-specific styling must not leak provider behavior into shared selectors. Provider variants should use explicit provider classes or data attributes supplied by UI config.
-- Keep Obsidian host-selector overrides narrow. Do not globally restyle host classes when a Claudian container can scope the rule.
+- Keep Obsidian host-selector overrides narrow. Do not globally restyle host classes when a Grandemonium container can scope the rule.
 - Root `styles.css` is generated output. Never edit it directly.
 
 ## Build Rules
@@ -32,15 +32,15 @@ Choose a folder by UI ownership, not by the screen where a selector happens to a
 
 ## Conventions
 
-- Claudian-owned classes use the `.claudian-` prefix.
+- Grandemonium-owned classes use the `.grandemonium-` prefix.
 - Shared Obsidian host selectors and generic state classes may remain unprefixed.
-- Prefer BEM-lite names: `.claudian-{block}`, `.claudian-{block}-{element}`, `.claudian-{block}--{modifier}`.
+- Prefer BEM-lite names: `.grandemonium-{block}`, `.grandemonium-{block}-{element}`, `.grandemonium-{block}--{modifier}`.
 - Use Obsidian CSS variables such as `--background-*`, `--text-*`, and `--interactive-*`.
 - Use `var(--font-monospace)` for code blocks.
 
 ## Specific Element Rules
 
-Every Claudian-owned instance of an element listed below must use its required base pattern. A departure is allowed only through an explicit semantic or surface modifier; selector order, nesting, and inherited Obsidian styles are not exceptions.
+Every Grandemonium-owned instance of an element listed below must use its required base pattern. A departure is allowed only through an explicit semantic or surface modifier; selector order, nesting, and inherited Obsidian styles are not exceptions.
 
 ### Buttons
 
@@ -48,7 +48,7 @@ Every Claudian-owned instance of an element listed below must use its required b
 - Hover and `focus-visible` use `color: var(--text-normal)` while retaining no border, transparent background, and no box shadow. Filled hover or focus surfaces require an explicit modifier.
 - Disabled buttons use `color: var(--text-faint)` and `cursor: default`, and must not retain hover, focus, or active emphasis.
 - Button SVGs inherit `currentColor`; their width and height are declared by the button's base selector. Different icon sizing requires an explicit modifier.
-- Apply the complete base pattern to the Claudian button class and its hover, focus, active, and disabled selectors so Obsidian cannot restore native button chrome in any state.
+- Apply the complete base pattern to the Grandemonium button class and its hover, focus, active, and disabled selectors so Obsidian cannot restore native button chrome in any state.
 
 ### Inputs and Textareas
 
@@ -63,5 +63,5 @@ Every Claudian-owned instance of an element listed below must use its required b
 
 - Obsidian uses `body.theme-dark` and `body.theme-light` for theme detection.
 - Modal z-index must be greater than `1000` to overlay Obsidian UI.
-- Keep persistent session-manager layout rules scoped under `.claudian-session-sidebar` or `.claudian-wide-session-layout`. The single-panel history menu shares item primitives but must retain its own sizing, tab-state labels, and actions.
+- Keep persistent session-manager layout rules scoped under `.grandemonium-session-sidebar` or `.grandemonium-wide-session-layout`. The single-panel history menu shares item primitives but must retain its own sizing, tab-state labels, and actions.
 - Session-manager pinned and session lists are independent scroll owners. Preserve `min-height: 0` through their flex ancestors so sticky headers and bounded sections do not clip or overlap content.

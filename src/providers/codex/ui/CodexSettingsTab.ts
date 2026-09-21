@@ -7,6 +7,7 @@ import { t } from '../../../i18n/i18n';
 import { renderEnvironmentSettingsSection } from '../../../shared/settings/EnvironmentSettingsSection';
 import { renderHostnameCliPathSetting } from '../../../shared/settings/HostnameCliPathSetting';
 import { renderNativeMcpSettingsSection } from '../../../shared/settings/NativeMcpSettingsSection';
+import { renderProviderAgentNameSetting } from '../../../shared/settings/ProviderAgentNameSetting';
 import { renderProviderEnablementSetting } from '../../../shared/settings/ProviderEnablementSetting';
 import {
   renderLastEnabledProviderWarning,
@@ -75,6 +76,18 @@ export const codexSettingsTabRenderer: ProviderSettingsTabRenderer = {
           lastProviderWarning.showFor();
         }
         modelWarning.context.notifyProviderModelOptionsChanged('codex');
+      },
+    });
+
+    renderProviderAgentNameSetting({
+      container,
+      defaultAgentName: 'gpt',
+      getValue: () => getCodexProviderSettings(settingsBag).agentName,
+      name: 'Agent name',
+      onChange: async (agentName) => {
+        await context.plugin.mutateSettings((settings) => {
+          updateCodexProviderSettings(settings, { agentName });
+        });
       },
     });
 
@@ -193,7 +206,7 @@ export const codexSettingsTabRenderer: ProviderSettingsTabRenderer = {
       cliPathControl.setPlaceholder(cliCopy.placeholder);
       cliPathControl.revalidate();
       if (wslDistroSettingEl) {
-        wslDistroSettingEl.toggleClass('claudian-hidden', installationMethod !== 'wsl');
+        wslDistroSettingEl.toggleClass('grandemonium-hidden', installationMethod !== 'wsl');
       }
       if (wslDistroInputEl) {
         wslDistroInputEl.disabled = installationMethod !== 'wsl';
@@ -220,7 +233,7 @@ export const codexSettingsTabRenderer: ProviderSettingsTabRenderer = {
             );
           });
 
-        text.inputEl.addClass('claudian-settings-cli-path-input');
+        text.inputEl.addClass('grandemonium-settings-cli-path-input');
         text.inputEl.disabled = installationMethod !== 'wsl';
         wslDistroInputEl = text.inputEl;
       });
@@ -310,13 +323,13 @@ export const codexSettingsTabRenderer: ProviderSettingsTabRenderer = {
 
     new Setting(container).setName(t('settings.codex.subagents.name')).setHeading();
 
-    const subagentDesc = container.createDiv({ cls: 'claudian-sp-settings-desc' });
+    const subagentDesc = container.createDiv({ cls: 'grandemonium-sp-settings-desc' });
     subagentDesc.createEl('p', {
       cls: 'setting-item-description',
       text: t('settings.codex.subagents.desc'),
     });
 
-    const subagentContainer = container.createDiv({ cls: 'claudian-slash-commands-container' });
+    const subagentContainer = container.createDiv({ cls: 'grandemonium-slash-commands-container' });
     new CodexSubagentSettings(subagentContainer, codexWorkspace.subagentStorage, context.plugin.app);
 
     // --- MCP Servers ---

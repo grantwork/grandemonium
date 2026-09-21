@@ -2,7 +2,7 @@ import { isIP } from 'node:net';
 
 import { type GitRepositoryService } from '@/app/collab/git/GitRepositoryService';
 import { cloudProjectGitRemoteUrl } from '@/app/collab/remote-authority/CloudAuthorityUrls';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabGitOriginContext {
   readonly projectId: string;
@@ -35,7 +35,7 @@ function isGeneratedLanHostRemoteUrl(remoteUrl: string, projectId: string): bool
 }
 
 function isRepairableLanHostRemoteUrl(remoteUrl: string, projectId: string): boolean {
-  return remoteUrl === `https://127.0.0.1:1/claudian-collab/host-stopped/${projectId}`
+  return remoteUrl === `https://127.0.0.1:1/grandemonium-collab/host-stopped/${projectId}`
     || isGeneratedLanHostRemoteUrl(remoteUrl, projectId);
 }
 
@@ -166,7 +166,7 @@ export async function rotateAuthorityTransferOrigin(
   if (urls.length !== 1) throw originError('collab-origin-transition-mismatch');
   if (urls[0] === transition.newRemoteUrl) return;
   const sourceWasFencedLanHost = sourceIsLan
-    && urls[0] === `https://127.0.0.1:1/claudian-collab/host-stopped/${transition.projectId}`;
+    && urls[0] === `https://127.0.0.1:1/grandemonium-collab/host-stopped/${transition.projectId}`;
   if (urls[0] !== transition.oldRemoteUrl && !sourceWasFencedLanHost) {
     throw originError('collab-origin-transition-mismatch');
   }

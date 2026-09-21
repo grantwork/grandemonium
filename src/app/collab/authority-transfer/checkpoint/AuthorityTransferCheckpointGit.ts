@@ -15,7 +15,7 @@ import {
 
 import { verifyAuthorityTransferCheckpointManifest } from '@/app/collab/authority-transfer/checkpoint/AuthorityTransferCheckpointManifest';
 import type { GitCommandRunner } from '@/app/collab/git/GitCommandRunner';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityTransferCheckpointGitInput {
   readonly bundlePath: string;

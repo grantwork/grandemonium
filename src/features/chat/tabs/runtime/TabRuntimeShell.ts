@@ -31,7 +31,7 @@ export function buildTabRuntimeShell(
   const { plugin, conversation } = options;
   const id = options.tabId ?? generateTabId();
   const contentEl = options.containerEl.createDiv({
-    cls: 'claudian-tab-content claudian-hidden',
+    cls: 'grandemonium-tab-content grandemonium-hidden',
   });
   options.registerCleanup('tab DOM root', () => contentEl.remove());
 
@@ -63,13 +63,18 @@ export function buildTabRuntimeShell(
   const restoredDraftModel = typeof options.draftModel === 'string'
     ? options.draftModel.trim()
     : '';
-  const newConversationModel = !isBound && !restoredDraftModel
+  // A caller asking for one provider owns the binding, so the settings-derived
+  // default must not answer for it. Without this, a provider whose models are
+  // still undiscovered would silently open as the default provider instead.
+  const requestedProviderId = isBound ? null : (options.providerId ?? null);
+  const newConversationModel = !isBound && !restoredDraftModel && !requestedProviderId
     ? resolveNewConversationModel(plugin.settings)
     : null;
   const draftModel = isBound
     ? null
     : (restoredDraftModel || newConversationModel?.model || null);
   const initialProviderId = conversation?.providerId
+    ?? requestedProviderId
     ?? newConversationModel?.providerId
     ?? (draftModel
       ? getEnabledProviderForModel(draftModel, plugin.settings)
@@ -155,15 +160,15 @@ export function buildTabRuntimeShell(
 }
 
 function buildTabDOM(contentEl: HTMLElement, options: TabRuntimeConstructionContext): TabDOMElements {
-  const messagesWrapperEl = contentEl.createDiv({ cls: 'claudian-messages-wrapper' });
-  const messagesEl = messagesWrapperEl.createDiv({ cls: 'claudian-messages' });
+  const messagesWrapperEl = contentEl.createDiv({ cls: 'grandemonium-messages-wrapper' });
+  const messagesEl = messagesWrapperEl.createDiv({ cls: 'grandemonium-messages' });
   const welcomeEl = createWelcomeElement(messagesEl);
-  const inputComposerEl = contentEl.createDiv({ cls: 'claudian-input-composer' });
-  const inputContainerEl = inputComposerEl.createDiv({ cls: 'claudian-input-container' });
-  const queueIndicatorEl = inputContainerEl.createDiv({ cls: 'claudian-input-queue-row' });
-  const navRowEl = inputContainerEl.createDiv({ cls: 'claudian-input-nav-row' });
-  const inputWrapper = inputContainerEl.createDiv({ cls: 'claudian-input-wrapper' });
-  const contextRowEl = inputWrapper.createDiv({ cls: 'claudian-context-row' });
+  const inputComposerEl = contentEl.createDiv({ cls: 'grandemonium-input-composer' });
+  const inputContainerEl = inputComposerEl.createDiv({ cls: 'grandemonium-input-container' });
+  const queueIndicatorEl = inputContainerEl.createDiv({ cls: 'grandemonium-input-queue-row' });
+  const navRowEl = inputContainerEl.createDiv({ cls: 'grandemonium-input-nav-row' });
+  const inputWrapper = inputContainerEl.createDiv({ cls: 'grandemonium-input-wrapper' });
+  const contextRowEl = inputWrapper.createDiv({ cls: 'grandemonium-context-row' });
   const composerEditor = new ComposerEditor(inputWrapper, options.plugin.app, options.component);
   options.registerCleanup('tab composer editor', () => composerEditor.destroy());
   const vault = options.plugin.app.vault;

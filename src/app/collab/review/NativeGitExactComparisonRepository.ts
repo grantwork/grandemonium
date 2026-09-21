@@ -8,8 +8,8 @@ import type {
   GitRepositoryService,
 } from '@/app/collab/git/GitRepositoryService';
 import { type CollabReviewFileContent, type CollabReviewFileRequest } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const TEXT_EXTENSIONS = new Set([
   '.canvas', '.css', '.csv', '.html', '.js', '.json', '.jsx', '.md',
@@ -100,7 +100,7 @@ function changedFile(change: GitChangedBlob): CollabChangedFile {
     binary,
     kind: change.kind,
     largeForReview: !binary && Math.max(oldBytes ?? 0, newBytes ?? 0)
-      > CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes,
+      > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes,
     ...(newBytes === undefined ? {} : { newBytes }),
     ...(oldBytes === undefined ? {} : { oldBytes }),
     path: change.path,
@@ -122,7 +122,7 @@ function exceedsLineLimit(value: string | null): boolean {
   let lines = 1;
   for (let index = 0; index < value.length; index += 1) {
     if (value.charCodeAt(index) === 10) lines += 1;
-    if (lines > CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines) return true;
+    if (lines > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines) return true;
   }
   return false;
 }
@@ -171,8 +171,8 @@ export function reviewFileContentFromBuffers(
   }
   if (
     file.largeForReview
-    || (oldContents?.byteLength ?? 0) > CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes
-    || (newContents?.byteLength ?? 0) > CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes
+    || (oldContents?.byteLength ?? 0) > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes
+    || (newContents?.byteLength ?? 0) > GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes
     || exceedsLineLimit(oldText)
     || exceedsLineLimit(newText)
   ) {
@@ -206,9 +206,9 @@ export class NativeGitExactComparisonRepository {
   ): Promise<readonly CollabChangedFile[]> {
     throwIfCancelled(signal);
     const changes = await session.listChangedBlobs(comparisonBaseOid, comparisonTargetOid);
-    if (changes.length > CLAUDIAN_COLLAB_LIMITS.maxChangedPaths) {
+    if (changes.length > GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths) {
       throw comparisonError('quota-exceeded', 'review-changed-path-limit', {
-        limit: CLAUDIAN_COLLAB_LIMITS.maxChangedPaths,
+        limit: GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths,
         quota: 'maxChangedPaths',
       });
     }

@@ -21,7 +21,7 @@ import {
   SqlJsProjectDatabase,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { TicketService } from '@/app/collab/authority/TicketService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 const ACCEPTED_AT = '2026-08-08T00:01:00.000Z';
@@ -42,7 +42,7 @@ describe('AcceptCoordinator', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-accept-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-accept-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {
@@ -76,8 +76,8 @@ describe('AcceptCoordinator', () => {
 
     expect(git.commitTree).toHaveBeenCalledWith({
       identity: {
-        email: 'collab@claudian.local',
-        name: 'Claudian Collab',
+        email: 'collab@grandemonium.local',
+        name: 'Grandemonium Collab',
       },
       message: 'Accept request request-one',
       parents: [MAIN, HEAD],

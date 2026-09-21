@@ -1,6 +1,6 @@
 import type { CollabChangeRequest, CollabComment, CollabCommentPage, CollabGitOid, CollabIsoTimestamp, CollabMemberId, CollabOperationId, CollabProjectId, CollabRelativePath, CollabRequestId, CollabResolvingTicketExpectation, CollabTicketAcceptedRelationPage, CollabTicketComment, CollabTicketCommentPage, CollabTicketDetail, CollabTicketId, CollabTicketPage, CollabTicketStatus, CollabTicketSummary } from '@claudian-collab/protocol';
 
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 import type { CollabProjectSelectionProjection } from './CollabProjectSelection';
 import type {

@@ -11,7 +11,7 @@ import type {
   SqlJsMutationResult,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
 import type { GitCommandRunner } from '@/app/collab/git/GitCommandRunner';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface AdmissionSettlementDatabase {
   read<T>(reader: (connection: AuthorityDatabaseConnection) => T): Promise<T>;

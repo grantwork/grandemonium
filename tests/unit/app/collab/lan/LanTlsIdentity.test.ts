@@ -7,7 +7,7 @@ import {
   fingerprintCertificatePem,
   LanTlsIdentity,
 } from '@/app/collab/lan/LanTlsIdentity';
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { parseInstallationKey } from '@/core/device/InstallationKey';
 
 jest.setTimeout(60_000);
@@ -19,7 +19,7 @@ describe('LanTlsIdentity', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-tls-identity-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-tls-identity-'));
   });
 
   afterEach(async () => {
@@ -39,12 +39,12 @@ describe('LanTlsIdentity', () => {
     expect(fingerprintCertificatePem(first.caCertificatePem)).toBe(first.caFingerprint);
     expect(new X509Certificate(first.caCertificatePem).ca).toBe(true);
     await expect(readFile(
-      path.join(vaultRoot, '.claudian', 'collab', '.gitignore'),
+      path.join(vaultRoot, '.grandemonium', 'collab', '.gitignore'),
       'utf8',
     )).resolves.toBe('/*\n');
     const identityStat = await stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -79,7 +79,7 @@ describe('LanTlsIdentity', () => {
     await identity.loadOrCreate();
     const identityPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -100,7 +100,7 @@ describe('LanTlsIdentity', () => {
   it('never selects or changes another installation copied Host CA', async () => {
     const aIdentityPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -120,7 +120,7 @@ describe('LanTlsIdentity', () => {
     await expect(readFile(aIdentityPath, 'utf8')).resolves.toBe(copiedA);
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_B,
@@ -132,7 +132,7 @@ describe('LanTlsIdentity', () => {
   it('validates and copies the legacy global CA before explicit marker claim', async () => {
     const aIdentityPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -143,12 +143,12 @@ describe('LanTlsIdentity', () => {
       installationKey: INSTALLATION_A,
     }).loadOrCreate();
     const persisted = await readFile(aIdentityPath, 'utf8');
-    const legacyPath = path.join(vaultRoot, '.claudian', 'collab', 'tls', 'host-ca.json');
+    const legacyPath = path.join(vaultRoot, '.grandemonium', 'collab', 'tls', 'host-ca.json');
     await mkdir(path.dirname(legacyPath), { recursive: true });
     await writeFile(legacyPath, persisted, { mode: 0o600 });
     await rm(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,

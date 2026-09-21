@@ -11,8 +11,8 @@ import {
 } from '@/app/collab/review/NativeGitExactComparisonRepository';
 import type { WorkingTreeReviewFilePort } from '@/app/collab/review/WorkingTreeReviewService';
 import { type CollabChangedFile, type CollabReviewFileContent, type CollabWorkingTreeReviewFileRequest } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function reviewError(
   code: 'path-outside-project' | 'unsupported-file-type' | 'working-tree-busy',
@@ -113,7 +113,7 @@ export class NativeGitWorkingTreeReviewRepository implements WorkingTreeReviewFi
     }
     if (
       request.file.newBytes !== undefined
-      && request.file.newBytes > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes
+      && request.file.newBytes > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes
     ) {
       const workingFile = await this.readStableWorkingFile(
         repositoryPath,
@@ -210,7 +210,7 @@ export class NativeGitWorkingTreeReviewRepository implements WorkingTreeReviewFi
       ) {
         throw reviewError('working-tree-busy', 'working-tree-review-file-changed');
       }
-      if (includeContents && before.size > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+      if (includeContents && before.size > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
         throw reviewError('working-tree-busy', 'working-tree-review-file-too-large');
       }
       const hash = createHash('sha256');

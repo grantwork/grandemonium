@@ -17,7 +17,7 @@ import type {
   AuthoritySqlValue,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { verifyAuthorityTransferCheckpointManifest } from '@/app/collab/authority-transfer/checkpoint/AuthorityTransferCheckpointManifest';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ExportAuthorityTransferCoordinationInput {
   readonly expectedMainOid: string;

@@ -41,7 +41,7 @@ export class ProjectInvitationModal extends Modal {
     this.operationPending = false;
     this.status = null;
     this.setTitle(t('collab.access.invitations'));
-    this.modalEl.classList.add('claudian-collab-project-invitation-modal');
+    this.modalEl.classList.add('grandemonium-collab-project-invitation-modal');
     this.render();
     void this.createInvitation();
   }
@@ -60,8 +60,8 @@ export class ProjectInvitationModal extends Modal {
       this.contentEl.createDiv({
         attr: { 'aria-live': 'polite' },
         cls: this.status?.kind === 'error'
-          ? 'claudian-collab-access-status claudian-collab-access-status--error'
-          : 'claudian-collab-access-status',
+          ? 'grandemonium-collab-access-status grandemonium-collab-access-status--error'
+          : 'grandemonium-collab-access-status',
         text: this.status?.text ?? t('collab.access.creatingInvitation'),
       });
       if (this.status?.kind === 'error') {
@@ -81,10 +81,10 @@ export class ProjectInvitationModal extends Modal {
         readonly: 'true',
         rows: '4',
       },
-      cls: 'claudian-collab-access-invitation',
+      cls: 'grandemonium-collab-access-invitation',
       text: this.invitation.encodedInvitation,
     });
-    const actions = this.contentEl.createDiv({ cls: 'claudian-collab-access-actions' });
+    const actions = this.contentEl.createDiv({ cls: 'grandemonium-collab-access-actions' });
     const copy = actions.createEl('button', {
       attr: { 'data-action': 'copy-invitation', type: 'button' },
       text: t('collab.access.copyInvitation'),
@@ -103,7 +103,7 @@ export class ProjectInvitationModal extends Modal {
           'aria-live': 'polite',
           ...(this.status.kind === 'error' ? { role: 'alert' } : {}),
         },
-        cls: `claudian-collab-access-status claudian-collab-access-status--${this.status.kind}`,
+        cls: `grandemonium-collab-access-status grandemonium-collab-access-status--${this.status.kind}`,
         text: this.status.text,
       });
     }

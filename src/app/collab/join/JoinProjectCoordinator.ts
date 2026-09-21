@@ -8,9 +8,6 @@ import path from 'node:path';
 
 import { collabMemberRef, type CollabOperationId, isCollabOpaqueId } from '@claudian-collab/protocol';
 
-import type {
-  CollabGitFoundation,
-} from '@/app/collab/ClaudianCollabService';
 import {
   removeCollabFileDurably,
   resolveCollabVaultPath,
@@ -31,6 +28,9 @@ import {
   type GitNetworkEnvironment,
   parseGitNulFields,
 } from '@/app/collab/git/GitCommandRunner';
+import type {
+  CollabGitFoundation,
+} from '@/app/collab/GrandemoniumCollabService';
 import {
   JoinControlClient,
 } from '@/app/collab/join/JoinControlClient';
@@ -52,8 +52,8 @@ import {
 } from '@/app/collab/publish/CollabPublicationStateRecord';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import { type CollabJoinProjectRequest, type CollabLocalProjectSummary, type CollabOperationOptions, type CollabResult, type CollabResumeSetupRequest, parseCollabProjectsFolder } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type LocalProjectsPort = Pick<
   CollabLocalProjectRepository,
@@ -337,7 +337,7 @@ export class JoinProjectCoordinator {
           projectsFolder,
           schemaVersion: COLLAB_JOIN_PROJECT_SCHEMA_VERSION,
           slug,
-          stagingDirectoryName: `.claudian-join-${joinAttemptId}`,
+          stagingDirectoryName: `.grandemonium-join-${joinAttemptId}`,
           updatedAt: timestamp,
         };
         await this.#saveRecord(record);
@@ -709,14 +709,14 @@ export class JoinProjectCoordinator {
         if (!fileStat.isFile()) {
           throw joinError('repository-invalid', 'joined-file-type-invalid');
         }
-        if (fileStat.size > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+        if (fileStat.size > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
           throw joinError('quota-exceeded', 'joined-blob-limit');
         }
         files.push(relativePath);
         totalBytes += fileStat.size;
         if (
-          files.length > CLAUDIAN_COLLAB_LIMITS.maxChangedPaths
-          || totalBytes > CLAUDIAN_COLLAB_LIMITS.maxCheckoutBytes
+          files.length > GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths
+          || totalBytes > GRANDEMONIUM_COLLAB_LIMITS.maxCheckoutBytes
         ) {
           throw joinError('quota-exceeded', 'joined-checkout-limit');
         }
@@ -965,7 +965,7 @@ export class JoinProjectCoordinator {
   }
 
    #temporaryCaRelativePath(record: JoinProjectRecord): string {
-    return `.claudian/collab/projects/${record.projectId}/join-ca.pem`;
+    return `.grandemonium/collab/projects/${record.projectId}/join-ca.pem`;
   }
 
    async #writeTemporaryCa(record: JoinProjectRecord): Promise<string> {
@@ -1000,7 +1000,7 @@ export class JoinProjectCoordinator {
    #stagingOwnership(
     record: JoinProjectRecord,
   ): CollabProjectsFolderChildOwnership {
-    if (record.stagingDirectoryName !== `.claudian-join-${record.joinAttemptId}`) {
+    if (record.stagingDirectoryName !== `.grandemonium-join-${record.joinAttemptId}`) {
       throw joinError('workspace-boundary-invalid', 'join-staging-name-invalid');
     }
     return {

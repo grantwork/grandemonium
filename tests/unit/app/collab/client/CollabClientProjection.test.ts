@@ -22,7 +22,7 @@ import {
 import { LanAuthorityAdapter } from '@/app/collab/remote-authority/LanAuthorityAdapter';
 import type { CloudAuthorityHttpResponse, CloudAuthorityHttpTransport } from '@/app/collab/remote-authority/NodeCloudAuthorityHttpTransport';
 import { type CollabCloudProjectSnapshot, type CollabLanProjectSnapshot, type CollabProjectSnapshot, isCollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 const HEAD = 'a'.repeat(40);

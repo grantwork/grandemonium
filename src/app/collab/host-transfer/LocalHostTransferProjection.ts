@@ -9,7 +9,7 @@ import type { HostTransferProjectionPort } from '@/app/collab/host-transfer/Host
 import type {
   LanAuthorityProjectionTransitionPort,
 } from '@/app/collab/LanAuthorityProjectionTransitionCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface LocalHostTransferProjectionOptions {
   readonly authorityProjectionTransitions: LanAuthorityProjectionTransitionPort;

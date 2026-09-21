@@ -6,7 +6,7 @@ import type {
   CollabManagerResponsibilityOfferSummary,
   CollabManagerResponsibilityPurpose,
 } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const NONTERMINAL_STATUSES = new Set(['offered', 'acknowledged']);
 

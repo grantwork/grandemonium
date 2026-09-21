@@ -126,8 +126,8 @@ export function decodeCollabProjectSetupRecord(value: unknown): CollabProjectSet
     120,
   );
   if (
-    cloneDirectoryName !== `.claudian-clone-${projectId}`
-    || seedDirectoryName !== `.claudian-seed-${projectId}`
+    cloneDirectoryName !== `.grandemonium-clone-${projectId}`
+    || seedDirectoryName !== `.grandemonium-seed-${projectId}`
   ) {
     throw new TypeError('Invalid Project setup operation identity');
   }

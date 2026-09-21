@@ -2,7 +2,7 @@ import {
   COLLAB_CONTROL_OPERATION_BINDINGS,
 } from '@/app/collab/lan/CollabControlOperationBindings';
 import type { LanCollabControlOperation } from '@/app/collab/lan/LanCollabControlOperations';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
@@ -17,7 +17,7 @@ export function requireOperationCredential(
       safeContext: { reason: 'public-operation-credential-requested' },
     });
   }
-  const scheme = authentication === 'invitation' ? 'Claudian-Invitation' : 'Bearer';
+  const scheme = authentication === 'invitation' ? 'Grandemonium-Invitation' : 'Bearer';
   const prefix = `${scheme} `;
   if (!authorization?.startsWith(prefix)) {
     throw new CollabError({

@@ -1,12 +1,12 @@
 # Attribution
 
-Tandemonium is a combination of two MIT-licensed Obsidian plugins, both used
+Grandemonium is a combination of two MIT-licensed Obsidian plugins, both used
 and modified under the terms of their original licences.
 
-## Claudian
+## Grandemonium
 
 Copyright (c) 2025 Yishen Tu
-<https://github.com/YishenTu/claudian>
+<https://github.com/YishenTu/grandemonium>
 
 Provides the coding-agent chat surface: the sidebar chat, provider runtimes for
 Claude Code, Codex, Grok, OpenCode and Pi, inline edit, and Collab mode. This is

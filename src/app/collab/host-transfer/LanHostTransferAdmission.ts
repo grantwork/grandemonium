@@ -1,7 +1,7 @@
 import { type CollabOperationId, type CollabProjectId } from '@claudian-collab/protocol';
 
 import type { HostTransferAdmissionPort } from '@/app/collab/host-transfer/HostTransferCoordinatorPorts';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface LanHostTransferAdmissionHostPort {
   closeProjectForHostTransfer(projectId: CollabProjectId): Promise<void>;

@@ -367,7 +367,7 @@ describe('OpenCode settings normalization', () => {
           selectedMode: 'compaction',
         },
       },
-    }).selectedMode).toBe('claudian-safe');
+    }).selectedMode).toBe('grandemonium-safe');
   });
 
   it('normalizes the legacy build alias back to the managed YOLO mode', () => {
@@ -378,7 +378,7 @@ describe('OpenCode settings normalization', () => {
           selectedMode: 'build',
         },
       },
-    }).selectedMode).toBe('claudian-yolo');
+    }).selectedMode).toBe('grandemonium-yolo');
   });
 
   it('preserves legacy cliPath when no host-scoped path exists', () => {

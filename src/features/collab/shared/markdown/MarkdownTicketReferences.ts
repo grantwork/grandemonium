@@ -58,7 +58,7 @@ function ticketMarkers(
 }
 
 function markerPrefix(salt: number): string {
-  return `\uE000claudian-ticket-${salt}-`;
+  return `\uE000grandemonium-ticket-${salt}-`;
 }
 
 function replaceTicketMarkers(
@@ -101,7 +101,7 @@ function createTicketReference(
 ): HTMLButtonElement {
   const win = domWindow(host);
   const reference = win.createEl('button');
-  reference.className = `claudian-collab-markdown-ticket-reference is-${token.kind}`;
+  reference.className = `grandemonium-collab-markdown-ticket-reference is-${token.kind}`;
   reference.dataset.ticketNumber = String(token.ticketNumber);
   reference.textContent = `#${token.ticketNumber}`;
   reference.type = 'button';

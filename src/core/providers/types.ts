@@ -50,9 +50,14 @@ export const DEFAULT_CHAT_PROVIDER_ID = 'claude' as const satisfies ProviderId;
  */
 export interface ProviderRegistration {
   displayName: string;
+  /** Identity this provider signs chat tabs and review comments with when unconfigured. */
+  defaultAgentName: string;
   blankTabOrder: number;
   isEnabled: (settings: Record<string, unknown>) => boolean;
   setEnabled?: (settings: Record<string, unknown>, enabled: boolean) => void;
+  /** Raw stored agent name; `ProviderRegistry.getAgentName` normalizes it. */
+  getAgentName: (settings: Record<string, unknown>) => unknown;
+  setAgentName: (settings: Record<string, unknown>, agentName: string) => void;
   capabilities: ProviderCapabilities;
   environmentKeyPatterns?: RegExp[];
   chatUIConfig: ProviderChatUIConfig;

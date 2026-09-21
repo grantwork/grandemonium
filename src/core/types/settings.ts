@@ -59,7 +59,7 @@ export const CHAT_VIEW_PLACEMENTS = [
   'main-tab',
 ] as const;
 
-/** Workspace location used when opening the Claudian chat view. */
+/** Workspace location used when opening the Grandemonium chat view. */
 export type ChatViewPlacement = typeof CHAT_VIEW_PLACEMENTS[number];
 
 export type ReadAloudProvider = 'system' | 'openai';
@@ -120,13 +120,13 @@ export interface StoredChatModelSelection {
 }
 
 /**
- * Application settings stored in .claudian/claudian-settings.json.
+ * Application settings stored in .grandemonium/grandemonium-settings.json.
  *
  * Provider-specific fields (model, thinkingBudget, effortLevel, serviceTier, etc.) use
  * `string` here.  The active provider casts internally when it needs
  * narrower types.
  */
-export interface ClaudianSettings {
+export interface GrandemoniumSettings {
   // User preferences
   userName: string;
 

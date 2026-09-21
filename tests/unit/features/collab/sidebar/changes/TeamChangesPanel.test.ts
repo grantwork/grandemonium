@@ -8,7 +8,7 @@ import type {
   CollabRequestReview,
   CollabResult,
 } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   TeamChangesPanel,
   type TeamChangesPanelPort,
@@ -303,12 +303,12 @@ describe('TeamChangesPanel', () => {
 
     expect(memberContainer.textContent).toContain('Team changes');
     expect(memberContainer.textContent).toContain('Maya');
-    expect(memberContainer.querySelector('.claudian-collab-team-comments')).toBeNull();
+    expect(memberContainer.querySelector('.grandemonium-collab-team-comments')).toBeNull();
     expect(memberContainer.textContent).not.toContain('comments');
     expect(memberContainer.textContent).toContain('You');
     expect(memberContainer.textContent).not.toContain('Alice (You)');
-    expect(memberContainer.querySelector('.claudian-collab-team-count')?.textContent).toBe('2');
-    expect(memberContainer.querySelector('.claudian-collab-team-request-chevron')).toBeNull();
+    expect(memberContainer.querySelector('.grandemonium-collab-team-count')?.textContent).toBe('2');
+    expect(memberContainer.querySelector('.grandemonium-collab-team-request-chevron')).toBeNull();
     expect(memberContainer.querySelector('[data-action="accept"]')).toBeNull();
     expect(managerContainer.innerHTML).toBe(memberContainer.innerHTML);
 
@@ -318,7 +318,7 @@ describe('TeamChangesPanel', () => {
     await flush();
     expect(memberContainer.querySelector('[data-request-id="request-mine"]')
       ?.getAttribute('aria-expanded')).toBe('true');
-    expect(memberContainer.querySelector('.claudian-collab-team-request-summary')).toBeNull();
+    expect(memberContainer.querySelector('.grandemonium-collab-team-request-summary')).toBeNull();
     expect(memberContainer.textContent).not.toContain('Ready to accept');
     expect(memberContainer.textContent).toContain('notes/request-mine.md');
     expect(onOpenFile).toHaveBeenLastCalledWith(
@@ -338,16 +338,16 @@ describe('TeamChangesPanel', () => {
     expect(memberContainer.textContent).not.toContain('notes/request-mine.md');
     expect(memberContainer.textContent).toContain('notes/request-team.md');
     const fileList = memberContainer.querySelector<HTMLElement>(
-      '.claudian-collab-file-list',
+      '.grandemonium-collab-file-list',
     )!;
     expect(fileList.tagName).toBe('DIV');
     expect(fileList.getAttribute('role')).toBe('group');
     expect(fileList.getAttribute('aria-label')).toBe('1 changed files');
     expect(fileList.querySelector('li')).toBeNull();
-    expect(fileList.querySelector(':scope > .claudian-collab-file-button'))
+    expect(fileList.querySelector(':scope > .grandemonium-collab-file-button'))
       .not.toBeNull();
-    expect(fileList.querySelector('.claudian-collab-file-kind')?.textContent).toBe('M');
-    expect(fileList.querySelector('.claudian-collab-file-kind')?.getAttribute('data-kind'))
+    expect(fileList.querySelector('.grandemonium-collab-file-kind')?.textContent).toBe('M');
+    expect(fileList.querySelector('.grandemonium-collab-file-kind')?.getAttribute('data-kind'))
       .toBe('modified');
     expect(onOpenFile).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -452,13 +452,13 @@ describe('TeamChangesPanel', () => {
     )!;
     expect([
       ...container.querySelectorAll<HTMLButtonElement>(
-        '.claudian-collab-file-list > .claudian-collab-file-button',
+        '.grandemonium-collab-file-list > .grandemonium-collab-file-button',
       ),
     ].map(button => button.dataset.path)).toEqual([
       'notes/resolved-a.md',
       'notes/resolved-b.md',
     ]);
-    expect(firstFile.closest('.claudian-collab-file-list')?.getAttribute('aria-label'))
+    expect(firstFile.closest('.grandemonium-collab-file-list')?.getAttribute('aria-label'))
       .toBe('2 changed files');
     const firstFileOpenCount = onOpenPublicationReview.mock.calls.length;
     firstFile.click();
@@ -545,7 +545,7 @@ describe('TeamChangesPanel', () => {
       project: project(),
     });
     await flush();
-    const root = container.querySelector<HTMLElement>('.claudian-collab-team')!;
+    const root = container.querySelector<HTMLElement>('.grandemonium-collab-team')!;
     const row = container.querySelector<HTMLButtonElement>('[data-request-id="request-team"]')!;
     root.scrollTop = 42;
     row.focus();
@@ -580,7 +580,7 @@ describe('TeamChangesPanel', () => {
     expect(container.textContent).toContain('Maya');
     panel.destroy();
     expect(test.subscription.dispose).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-team')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-team')).toBeNull();
   });
 });
 

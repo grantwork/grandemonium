@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { isCollabMemberId, isCollabProjectId } from '@claudian-collab/protocol';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DEFAULT_CLOSE_TIMEOUT_MS = 2_000;
 

@@ -56,7 +56,7 @@ export class ImageContextManager {
     this.callbacks = callbacks;
     const ownedTrayContainer = contextTray
       ? null
-      : (previewContainerEl ?? containerEl).createDiv({ cls: 'claudian-context-row' });
+      : (previewContainerEl ?? containerEl).createDiv({ cls: 'grandemonium-context-row' });
     this.contextTray = contextTray ?? new ComposerContextTray(ownedTrayContainer!);
     if (!contextTray) {
       this.ownedContextTray = this.contextTray;
@@ -123,12 +123,12 @@ export class ImageContextManager {
   }
 
   private setupDragAndDrop() {
-    const inputWrapper = this.containerEl.querySelector('.claudian-input-wrapper') as HTMLElement;
+    const inputWrapper = this.containerEl.querySelector('.grandemonium-input-wrapper') as HTMLElement;
     if (!inputWrapper) return;
     this.dropZoneEl = inputWrapper;
 
-    this.dropOverlay = inputWrapper.createDiv({ cls: 'claudian-drop-overlay' });
-    const dropContent = this.dropOverlay.createDiv({ cls: 'claudian-drop-content' });
+    this.dropOverlay = inputWrapper.createDiv({ cls: 'grandemonium-drop-overlay' });
+    const dropContent = this.dropOverlay.createDiv({ cls: 'grandemonium-drop-content' });
     const svg = dropContent.createSvg('svg');
     svg.setAttribute('viewBox', '0 0 24 24');
     svg.setAttribute('width', '32');
@@ -174,7 +174,7 @@ export class ImageContextManager {
     e.preventDefault();
     e.stopPropagation();
 
-    const inputWrapper = this.containerEl.querySelector('.claudian-input-wrapper');
+    const inputWrapper = this.containerEl.querySelector('.grandemonium-input-wrapper');
     if (!inputWrapper) {
       this.dropOverlay?.removeClass('visible');
       return;

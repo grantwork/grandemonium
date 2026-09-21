@@ -16,7 +16,7 @@ import type {
 } from '@/app/collab/publish/CollabPublicationService';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
 import { type CollabFeaturePort, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const OID_A = 'a'.repeat(40);
 const OID_B = 'b'.repeat(40);

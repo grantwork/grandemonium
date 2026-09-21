@@ -33,11 +33,13 @@ import {
 } from '@/providers/acp';
 import { getEnhancedPath } from '@/utils/env';
 
+import { resolveAgentName } from '../../../core/providers/agentName';
 import {
   type OpencodeManagedAgentConfig,
   prepareOpencodeLaunchArtifacts,
 } from '../runtime/OpencodeLaunchArtifacts';
 import { buildOpencodeRuntimeEnv } from '../runtime/OpencodeRuntimeEnvironment';
+import { DEFAULT_OPENCODE_PROVIDER_SETTINGS, getOpencodeProviderSettings } from '../settings';
 
 export type OpencodeExecutionProfile = 'managed' | 'passive' | 'readonly';
 
@@ -121,8 +123,8 @@ export function classifyOpencodeSessionLoadError(
 }
 
 const AUX_AGENT_IDS: Record<Exclude<OpencodeExecutionProfile, 'managed'>, string> = {
-  passive: 'claudian-execution-passive',
-  readonly: 'claudian-execution-readonly',
+  passive: 'grandemonium-execution-passive',
+  readonly: 'grandemonium-execution-readonly',
 };
 
 const READ_PERMISSION = Object.freeze({
@@ -253,7 +255,7 @@ export class DefaultOpencodeAcpSessionKernel
       this.assertNotDisposed();
       const connection = new AcpClientConnection({
         clientInfo: {
-          name: 'claudian',
+          name: 'grandemonium',
           version: this.options.plugin.manifest?.version ?? '0.0.0',
         },
         delegate: {
@@ -728,7 +730,7 @@ function buildAgentConfig(
   return profile === 'readonly'
     ? {
       definition: {
-        description: 'Claudian read-only execution agent.',
+        description: 'Grandemonium read-only execution agent.',
         mode: 'primary',
         permission: {
           '*': 'deny',
@@ -746,7 +748,7 @@ function buildAgentConfig(
     }
     : {
       definition: {
-        description: 'Claudian passive execution agent.',
+        description: 'Grandemonium passive execution agent.',
         mode: 'primary',
         permission: {
           '*': 'deny',
@@ -781,5 +783,9 @@ function getSystemPromptSettings(
     mediaFolder: plugin.settings.mediaFolder,
     userName: plugin.settings.userName,
     vaultPath,
+    agentName: resolveAgentName(
+      getOpencodeProviderSettings(plugin.settings).agentName,
+      DEFAULT_OPENCODE_PROVIDER_SETTINGS.agentName,
+    ),
   };
 }

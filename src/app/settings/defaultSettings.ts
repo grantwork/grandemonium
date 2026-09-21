@@ -1,10 +1,10 @@
 import { DEFAULT_COLLAB_PROJECTS_FOLDER } from '../../core/collab/CollabProjectsFolder';
 import { getDefaultHiddenProviderCommands } from '../../core/providers/commands/hiddenCommands';
 import { DEFAULT_REASONING_VALUE } from '../../core/providers/reasoning';
-import { type ClaudianSettings } from '../../core/types/settings';
+import { type GrandemoniumSettings } from '../../core/types/settings';
 import { getBuiltInProviderDefaultConfigs } from '../../providers/defaultProviderConfigs';
 
-export const DEFAULT_CLAUDIAN_SETTINGS: ClaudianSettings = {
+export const DEFAULT_GRANDEMONIUM_SETTINGS: GrandemoniumSettings = {
   userName: '',
 
   permissionMode: 'yolo',

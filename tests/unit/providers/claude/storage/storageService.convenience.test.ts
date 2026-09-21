@@ -69,7 +69,7 @@ describe('StorageService convenience methods', () => {
     },
   });
 
-  const claudianSettingsJson = JSON.stringify({
+  const grandemoniumSettingsJson = JSON.stringify({
     userName: 'Test',
     model: 'haiku',
     permissionMode: 'yolo',
@@ -171,69 +171,69 @@ describe('StorageService convenience methods', () => {
     });
   });
 
-  describe('updateClaudianSettings', () => {
-    it('updates partial claudian settings', async () => {
+  describe('updateGrandemoniumSettings', () => {
+    it('updates partial grandemonium settings', async () => {
       const { plugin, files } = createMockPlugin({
         initialFiles: {
-          '.claudian/claudian-settings.json': claudianSettingsJson,
+          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
         },
       });
       const storage = new StorageService(plugin);
       await storage.initialize();
 
-      await storage.updateClaudianSettings({ userName: 'NewUser' });
+      await storage.updateGrandemoniumSettings({ userName: 'NewUser' });
 
-      const saved = JSON.parse(files.get('.claudian/claudian-settings.json')!) as Record<string, unknown>;
+      const saved = JSON.parse(files.get('.grandemonium/grandemonium-settings.json')!) as Record<string, unknown>;
       expect(saved.userName).toBe('NewUser');
     });
   });
 
-  describe('saveClaudianSettings', () => {
-    it('saves full claudian settings', async () => {
+  describe('saveGrandemoniumSettings', () => {
+    it('saves full grandemonium settings', async () => {
       const { plugin, files } = createMockPlugin({
         initialFiles: {
-          '.claudian/claudian-settings.json': claudianSettingsJson,
+          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
         },
       });
       const storage = new StorageService(plugin);
       await storage.initialize();
 
-      const existing = await storage.loadClaudianSettings();
+      const existing = await storage.loadGrandemoniumSettings();
       existing.userName = 'FullSave';
-      await storage.saveClaudianSettings(existing);
+      await storage.saveGrandemoniumSettings(existing);
 
-      const saved = JSON.parse(files.get('.claudian/claudian-settings.json')!) as Record<string, unknown>;
+      const saved = JSON.parse(files.get('.grandemonium/grandemonium-settings.json')!) as Record<string, unknown>;
       expect(saved.userName).toBe('FullSave');
     });
   });
 
-  describe('loadClaudianSettings', () => {
-    it('loads claudian settings', async () => {
+  describe('loadGrandemoniumSettings', () => {
+    it('loads grandemonium settings', async () => {
       const { plugin } = createMockPlugin({
         initialFiles: {
-          '.claudian/claudian-settings.json': claudianSettingsJson,
+          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
         },
       });
       const storage = new StorageService(plugin);
       await storage.initialize();
 
-      const settings = await storage.loadClaudianSettings();
+      const settings = await storage.loadGrandemoniumSettings();
       expect(settings.userName).toBe('Test');
       expect(settings.model).toBe('haiku');
     });
 
-    it('migrates legacy settings into .claudian during initialization', async () => {
+    it('migrates legacy settings into .grandemonium during initialization', async () => {
       const { plugin, files } = createMockPlugin({
         initialFiles: {
-          '.claude/claudian-settings.json': claudianSettingsJson,
+          '.claude/grandemonium-settings.json': grandemoniumSettingsJson,
         },
       });
       const storage = new StorageService(plugin);
 
       await storage.initialize();
 
-      expect(files.get('.claudian/claudian-settings.json')).toBeDefined();
-      expect(files.has('.claude/claudian-settings.json')).toBe(false);
+      expect(files.get('.grandemonium/grandemonium-settings.json')).toBeDefined();
+      expect(files.has('.claude/grandemonium-settings.json')).toBe(false);
     });
   });
 

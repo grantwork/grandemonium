@@ -8,7 +8,7 @@ import {
 } from '@/app/collab/authority/AuthorityKeysetPage';
 import { RequestTicketRelationRepository } from '@/app/collab/authority/RequestTicketRelationRepository';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface TicketListCursor {
   readonly ticketNumber: number;

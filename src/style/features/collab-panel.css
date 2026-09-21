@@ -1,4 +1,4 @@
-.claudian-collab-panel {
+.grandemonium-collab-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -8,62 +8,62 @@
   overflow: auto;
 }
 
-.claudian-collab-panel--inactive {
+.grandemonium-collab-panel--inactive {
   pointer-events: none;
 }
 
-.claudian-collab-panel-header,
-.claudian-collab-project-toolbar,
-.claudian-collab-empty-actions {
+.grandemonium-collab-panel-header,
+.grandemonium-collab-project-toolbar,
+.grandemonium-collab-empty-actions {
   display: flex;
   gap: 8px;
   align-items: center;
   justify-content: space-between;
 }
 
-.claudian-collab-panel-header {
+.grandemonium-collab-panel-header {
   min-height: 32px;
   padding-inline: 4px;
 }
 
-.claudian-collab-empty-actions {
+.grandemonium-collab-empty-actions {
   flex-wrap: nowrap;
   justify-content: center;
 }
 
-.claudian-collab-empty-actions > button {
+.grandemonium-collab-empty-actions > button {
   flex: 1 1 0;
 }
 
-.claudian-collab-panel button.claudian-collab-empty-join {
+.grandemonium-collab-panel button.grandemonium-collab-empty-join {
   border: 0;
   background: var(--interactive-normal);
   box-shadow: none;
   color: var(--text-muted);
 }
 
-.claudian-collab-panel button.claudian-collab-empty-join:is(:hover, :focus-visible) {
+.grandemonium-collab-panel button.grandemonium-collab-empty-join:is(:hover, :focus-visible) {
   border: 0;
   background: var(--interactive-hover);
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-collab-panel button.claudian-collab-empty-join:active {
+.grandemonium-collab-panel button.grandemonium-collab-empty-join:active {
   border: 0;
   background: var(--background-modifier-active-hover, var(--interactive-hover));
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-collab-panel-header h3 {
+.grandemonium-collab-panel-header h3 {
   margin: 0;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
   font-weight: var(--font-semibold);
 }
 
-.claudian-collab-panel-header-action {
+.grandemonium-collab-panel-header-action {
   flex: 0 0 26px;
   width: 26px;
   height: 26px;
@@ -71,18 +71,18 @@
   color: var(--text-muted);
 }
 
-.claudian-collab-panel-header-action svg {
+.grandemonium-collab-panel-header-action svg {
   width: 15px;
   height: 15px;
 }
 
-.claudian-collab-project-toolbar {
+.grandemonium-collab-project-toolbar {
   flex-wrap: nowrap;
   padding: 2px 4px 8px;
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.claudian-collab-project-header-actions {
+.grandemonium-collab-project-header-actions {
   display: flex;
   flex: 0 0 auto;
   flex-wrap: nowrap;
@@ -90,7 +90,7 @@
   align-items: center;
 }
 
-.claudian-collab-project-management {
+.grandemonium-collab-project-management {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
@@ -100,18 +100,18 @@
   padding: 6px;
 }
 
-.claudian-collab-project-management-icon {
+.grandemonium-collab-project-management-icon {
   display: flex;
   flex: 0 0 auto;
 }
 
-.claudian-collab-project-management-icon svg {
+.grandemonium-collab-project-management-icon svg {
   width: 15px;
   height: 15px;
 }
 
-.claudian-collab-empty,
-.claudian-collab-panel-status {
+.grandemonium-collab-empty,
+.grandemonium-collab-panel-status {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -122,7 +122,7 @@
   text-align: center;
 }
 
-.claudian-collab-panel .claudian-collab-project-picker {
+.grandemonium-collab-panel .grandemonium-collab-project-picker {
   display: flex;
   flex: 1 1 0;
   align-items: center;
@@ -140,17 +140,17 @@
   white-space: nowrap;
 }
 
-.claudian-collab-project-picker:hover {
+.grandemonium-collab-project-picker:hover {
   background: var(--background-modifier-hover);
 }
 
-.claudian-collab-project-picker-label {
+.grandemonium-collab-project-picker-label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.claudian-collab-project-home {
+.grandemonium-collab-project-home {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -158,7 +158,7 @@
   min-height: 0;
 }
 
-.claudian-collab-retired-panel {
+.grandemonium-collab-retired-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -168,41 +168,41 @@
   color: var(--text-muted);
 }
 
-.claudian-collab-retired-panel h3 {
+.grandemonium-collab-retired-panel h3 {
   margin: 0;
   color: var(--text-normal);
 }
 
-.claudian-collab-retired-actions {
+.grandemonium-collab-retired-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 4px;
 }
 
-.claudian-collab-project-path {
+.grandemonium-collab-project-path {
   margin-top: 2px;
   color: var(--text-muted);
   font-family: var(--font-monospace);
   font-size: var(--font-ui-smaller);
 }
 
-.claudian-collab-project-recovery {
+.grandemonium-collab-project-recovery {
   padding: 10px 8px;
   border-radius: var(--radius-s);
   background: var(--background-secondary);
 }
 
-.claudian-collab-project-recovery {
+.grandemonium-collab-project-recovery {
   color: var(--text-warning);
 }
 
-.claudian-collab-host-actions {
+.grandemonium-collab-host-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.claudian-collab-panel-status--warning {
+.grandemonium-collab-panel-status--warning {
   color: var(--text-warning);
 }

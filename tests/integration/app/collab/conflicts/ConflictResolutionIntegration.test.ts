@@ -84,7 +84,7 @@ describe('ConflictResolution integration', () => {
     });
     const resultOid = await harness.git.resolveRef(
       harness.context.repositoryPath,
-      `refs/claudian/publications/${harness.descriptor.operationId}`,
+      `refs/grandemonium/publications/${harness.descriptor.operationId}`,
     );
     expect(resultOid).not.toBeNull();
     expect(await harness.git.resolveRef(
@@ -135,13 +135,13 @@ describe('ConflictResolution integration', () => {
     )).toBe(harness.descriptor.startingPersonalOid);
     expect(await harness.git.resolveRef(
       harness.context.repositoryPath,
-      `refs/claudian/publications/${harness.descriptor.operationId}`,
+      `refs/grandemonium/publications/${harness.descriptor.operationId}`,
     )).toBe(resultOid);
     await expect(harness.store.load(harness.descriptor.operationId)).resolves.toBeNull();
   });
 
   async function createHarness() {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-conflict-flow-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-conflict-flow-'));
     const repositoryPath = path.join(vaultRoot, 'workspace', 'project-a');
     const emptyConfigPath = path.join(vaultRoot, 'empty.gitconfig');
     await mkdir(repositoryPath, { recursive: true });

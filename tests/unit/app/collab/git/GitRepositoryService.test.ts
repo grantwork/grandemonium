@@ -12,11 +12,11 @@ import {
   parseGitRecursiveTree,
   parseGitWorkingTreeState,
 } from '@/app/collab/git/GitRepositoryService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 describe('GitRepositoryService cancellation', () => {
   it('passes inspection cancellation into the real Git command boundary', async () => {
-    const repositoryPath = await mkdtemp(path.join(tmpdir(), 'claudian-git-cancel-'));
+    const repositoryPath = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-cancel-'));
     let markStarted: (() => void) | undefined;
     const started = new Promise<void>(resolve => { markStarted = resolve; });
     const runner = {

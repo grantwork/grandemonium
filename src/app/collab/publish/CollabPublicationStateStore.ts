@@ -5,7 +5,7 @@ import {
   type CollabPublicationStateRecord,
   decodeCollabPublicationStateRecord,
 } from '@/app/collab/publish/CollabPublicationStateRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function stateError(projectId: CollabProjectId, reason: string): CollabError {
   return new CollabError({

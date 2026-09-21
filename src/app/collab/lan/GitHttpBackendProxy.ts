@@ -23,8 +23,8 @@ import {
   buildGitReceiveHookEnvironment,
   createProtectedReceiveHook,
 } from '@/app/collab/lan/git/GitReceiveHookPolicy';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   resolveWindowsCmdShimSpawnSpec,
   terminateSpawnedProcessTree,
@@ -132,7 +132,7 @@ function removeInheritedGitAndAuthState(environment: NodeJS.ProcessEnv): void {
     const normalized = key.toLocaleUpperCase('en-US');
     if (
       normalized.startsWith('GIT_')
-      || normalized.startsWith('CLAUDIAN_COLLAB_')
+      || normalized.startsWith('GRANDEMONIUM_COLLAB_')
       || normalized === 'AUTHORIZATION'
       || normalized === 'HTTP_AUTHORIZATION'
       || normalized === 'REMOTE_USER'
@@ -249,7 +249,7 @@ function responseForError(
   response.statusCode = statusCode;
   response.setHeader('Cache-Control', 'no-store');
   response.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  if (authenticate) response.setHeader('WWW-Authenticate', 'Basic realm="Claudian Collab"');
+  if (authenticate) response.setHeader('WWW-Authenticate', 'Basic realm="Grandemonium Collab"');
   response.end(`${message}\n`);
 }
 
@@ -273,9 +273,9 @@ export class GitHttpBackendProxy {
     this.#maxConcurrentChildrenPerMember = options.maxConcurrentChildrenPerMember
       ?? DEFAULT_MEMBER_CHILD_LIMIT;
     this.#maxHostRepositoryBytes = options.maxHostRepositoryBytes
-      ?? CLAUDIAN_COLLAB_LIMITS.hostRepositorySoftLimitBytes;
+      ?? GRANDEMONIUM_COLLAB_LIMITS.hostRepositorySoftLimitBytes;
     this.maxReceivedPackBytes = options.maxReceivedPackBytes
-      ?? CLAUDIAN_COLLAB_LIMITS.maxReceivedPackBytes;
+      ?? GRANDEMONIUM_COLLAB_LIMITS.maxReceivedPackBytes;
     this.#requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
     this.#terminationGraceMs = options.terminationGraceMs
       ?? DEFAULT_TERMINATION_GRACE_MS;
@@ -544,10 +544,10 @@ export class GitHttpBackendProxy {
       throw proxyError('path-invalid', 'git-protocol-header-invalid');
     }
     Object.assign(environment, {
-      CLAUDIAN_COLLAB_GIT_EXECUTABLE: hookGit.executable,
-      CLAUDIAN_COLLAB_MEMBER_ID: memberId,
-      CLAUDIAN_COLLAB_MEMBER_REF: collabMemberRef(memberId),
-      CLAUDIAN_COLLAB_PROJECT_ID: this.options.projectId,
+      GRANDEMONIUM_COLLAB_GIT_EXECUTABLE: hookGit.executable,
+      GRANDEMONIUM_COLLAB_MEMBER_ID: memberId,
+      GRANDEMONIUM_COLLAB_MEMBER_REF: collabMemberRef(memberId),
+      GRANDEMONIUM_COLLAB_PROJECT_ID: this.options.projectId,
       CONTENT_LENGTH: contentLength < 0 ? '' : String(contentLength),
       CONTENT_TYPE: singleHeader(request, 'content-type') ?? '',
       GATEWAY_INTERFACE: 'CGI/1.1',
@@ -566,7 +566,7 @@ export class GitHttpBackendProxy {
       REMOTE_USER: memberId,
       REQUEST_METHOD: request.method ?? '',
       SERVER_PROTOCOL: `HTTP/${request.httpVersion}`,
-      SERVER_SOFTWARE: 'Claudian',
+      SERVER_SOFTWARE: 'Grandemonium',
     });
     if (gitProtocol !== null) environment.GIT_PROTOCOL = gitProtocol;
     if (receiveMaxInputBytes !== null) {

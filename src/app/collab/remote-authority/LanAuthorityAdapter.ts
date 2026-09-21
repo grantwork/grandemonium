@@ -18,7 +18,7 @@ import type {
   CollabAuthoritySession,
 } from '@/app/collab/remote-authority/CollabAuthoritySession';
 import type { LanAuthorityTarget } from '@/app/collab/remote-authority/LanAuthorityTargetResolver';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const LAN_CAPABILITIES: ReadonlySet<CollabCloudCapability> = new Set([
   'accept',

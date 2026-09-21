@@ -118,17 +118,17 @@ describe('Former Host Cloud bootstrap fence', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-bootstrap-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-bootstrap-'));
     await mkdir(path.join(vaultRoot, 'workspace', PROJECT_ID), { recursive: true });
     await writeFile(
       path.join(vaultRoot, 'workspace', PROJECT_ID, 'unpublished.md'),
       'preserve me\n',
     );
-    await mkdir(path.join(vaultRoot, '.claudian', 'collab', 'projects', PROJECT_ID), {
+    await mkdir(path.join(vaultRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID), {
       recursive: true,
     });
     await writeFile(
-      path.join(vaultRoot, '.claudian', 'collab', 'projects', PROJECT_ID, 'membership.json'),
+      path.join(vaultRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID, 'membership.json'),
       JSON.stringify({ authority: 'lan', origin: 'https://192.168.1.20:54545' }),
     );
   });
@@ -139,7 +139,7 @@ describe('Former Host Cloud bootstrap fence', () => {
 
   it('keeps LAN stopped while completing local binding after a lost activation response', async () => {
     const transitionStore = new CloudBootstrapTransitionStore(vaultRoot, { isRecoveryOwner: () => true });
-    const hostStatePath = path.join(vaultRoot, '.claudian', 'collab', 'host-state.json');
+    const hostStatePath = path.join(vaultRoot, '.grandemonium', 'collab', 'host-state.json');
     await writeFile(hostStatePath, JSON.stringify({
       activeChildren: 1,
       autoStart: true,
@@ -261,7 +261,7 @@ describe('Former Host Cloud bootstrap fence', () => {
       'utf8',
     )).toBe('preserve me\n');
     expect(JSON.parse(await readFile(
-      path.join(vaultRoot, '.claudian', 'collab', 'projects', PROJECT_ID, 'membership.json'),
+      path.join(vaultRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID, 'membership.json'),
       'utf8',
     ))).toEqual({ authority: 'lan', origin: 'https://192.168.1.20:54545' });
     await expect(transitionStore.list()).resolves.toMatchObject({
@@ -288,7 +288,7 @@ describe('Former Host Cloud bootstrap fence', () => {
     await transitionStore.create(valid);
     const transitionDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'cloud-bootstrap-transitions',
     );
@@ -467,7 +467,7 @@ describe('Former Host Cloud bootstrap fence', () => {
   it('fails transition creation and update closed when directory sync is unavailable', async () => {
     const transitionDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'cloud-bootstrap-transitions',
     );
@@ -553,7 +553,7 @@ describe('Former Host Cloud bootstrap fence', () => {
     await expect(transitionStore.load(PROJECT_ID)).resolves.toEqual(next);
     await expect(readFile(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'cloud-bootstrap-transition-history',
       PROJECT_ID,

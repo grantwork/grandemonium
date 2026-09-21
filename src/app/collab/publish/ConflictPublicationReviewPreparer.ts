@@ -11,7 +11,7 @@ import type {
   PublishProjectContext,
 } from '@/app/collab/publish/PublishCoordinator';
 import { type CollabPublicationReview } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ConflictPublicationStatePort {
   load(projectId: string): Promise<CollabPublicationStateRecord>;

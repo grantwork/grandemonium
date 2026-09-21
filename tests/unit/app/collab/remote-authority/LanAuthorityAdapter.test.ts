@@ -21,7 +21,7 @@ function membership(): CollabLocalLanMembershipRecord {
       credential: 'c'.repeat(43),
       displayName: 'Alice',
       id: 'member-alice',
-      personalRef: 'refs/claudian/members/member-alice',
+      personalRef: 'refs/grandemonium/members/member-alice',
       role: 'manager',
     },
     project: {

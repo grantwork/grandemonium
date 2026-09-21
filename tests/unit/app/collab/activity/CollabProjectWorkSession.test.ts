@@ -2,7 +2,7 @@ import {
   CollabProjectWorkSession,
   CollabProjectWorkSessionRegistry,
 } from '@/app/collab/activity/CollabProjectWorkSession';
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 describe('CollabProjectWorkSession', () => {
   it('coalesces acquisition per Project and isolates different Projects', () => {

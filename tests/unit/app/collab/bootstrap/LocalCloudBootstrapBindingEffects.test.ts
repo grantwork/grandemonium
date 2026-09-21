@@ -138,7 +138,7 @@ describe('LocalCloudBootstrapBindingEffects', () => {
         dispose,
         events: { connect: jest.fn() },
         git: {
-          headers: [{ name: 'X-Claudian-Development-Actor', value: HOST_MEMBER_ID }],
+          headers: [{ name: 'X-Grandemonium-Development-Actor', value: HOST_MEMBER_ID }],
           remoteUrl: record.newAuthority.gitRemoteUrl,
         },
         supports: (capability: string) => [
@@ -206,7 +206,7 @@ describe('LocalCloudBootstrapBindingEffects', () => {
       record.newAuthority.gitRemoteUrl,
       expect.any(Array),
       {
-        headers: [{ name: 'X-Claudian-Development-Actor', value: HOST_MEMBER_ID }],
+        headers: [{ name: 'X-Grandemonium-Development-Actor', value: HOST_MEMBER_ID }],
       },
       undefined,
     );

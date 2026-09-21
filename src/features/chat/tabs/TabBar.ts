@@ -2,7 +2,19 @@ import { scheduleAnimationFrame } from '../../../utils/animationFrame';
 import type { TabBarItem, TabId } from './types';
 
 const EXPANDED_TITLE_MAX_LENGTH = 32;
+/** A collapsed badge sizes to its label, so the label itself bounds the width. */
+const BADGE_LABEL_MAX_LENGTH = 12;
 const TRUNCATED_TITLE_SUFFIX = '...';
+
+function truncateLabel(label: string, maxLength: number): string {
+  const chars = Array.from(label);
+  if (chars.length <= maxLength) {
+    return label;
+  }
+
+  const kept = chars.slice(0, maxLength - TRUNCATED_TITLE_SUFFIX.length).join('');
+  return `${kept}${TRUNCATED_TITLE_SUFFIX}`;
+}
 
 /** Callbacks for TabBar interactions. */
 export interface TabBarCallbacks {
@@ -39,7 +51,7 @@ export class TabBar {
 
   /** Builds the tab bar UI. */
   private build(): void {
-    this.containerEl.addClass('claudian-tab-badges');
+    this.containerEl.addClass('grandemonium-tab-badges');
     this.containerEl.addEventListener('scroll', this.handleScroll);
   }
 
@@ -73,25 +85,25 @@ export class TabBar {
   /** Renders a single tab badge. */
   private renderBadge(item: TabBarItem): void {
     // Determine state class (priority: active > action required > working > review > idle)
-    let stateClass = 'claudian-tab-badge-idle';
+    let stateClass = 'grandemonium-tab-badge-idle';
     if (item.isActive) {
-      stateClass = 'claudian-tab-badge-active';
+      stateClass = 'grandemonium-tab-badge-active';
     } else if (item.attention?.kind === 'action-required') {
-      stateClass = 'claudian-tab-badge-action-required';
+      stateClass = 'grandemonium-tab-badge-action-required';
     } else if (item.isWorking) {
-      stateClass = 'claudian-tab-badge-streaming';
+      stateClass = 'grandemonium-tab-badge-streaming';
     } else if (item.attention?.kind === 'review') {
       stateClass = item.attention.outcome === 'error'
-        ? 'claudian-tab-badge-review-error'
-        : 'claudian-tab-badge-review';
+        ? 'grandemonium-tab-badge-review-error'
+        : 'grandemonium-tab-badge-review';
     }
 
     const isTitleExpanded = this.expandedTitleTabIds.has(item.id);
     const badgeEl = this.containerEl.createDiv({
       cls: [
-        'claudian-tab-badge',
+        'grandemonium-tab-badge',
         stateClass,
-        isTitleExpanded ? 'claudian-tab-badge-expanded' : '',
+        isTitleExpanded ? 'grandemonium-tab-badge-expanded' : '',
       ].filter(Boolean).join(' '),
       text: this.getBadgeLabel(item),
     });
@@ -124,7 +136,7 @@ export class TabBar {
   /** Destroys the tab bar. */
   destroy(): void {
     this.containerEl.empty();
-    this.containerEl.removeClass('claudian-tab-badges');
+    this.containerEl.removeClass('grandemonium-tab-badges');
     this.containerEl.removeEventListener('scroll', this.handleScroll);
     this.expandedTitleTabIds.clear();
     this.lastKnownScrollLeft = 0;
@@ -170,14 +182,14 @@ export class TabBar {
 
     const isTitleExpanded = this.expandedTitleTabIds.has(item.id);
     badgeEl.textContent = this.getBadgeLabel(item);
-    badgeEl.toggleClass('claudian-tab-badge-expanded', isTitleExpanded);
+    badgeEl.toggleClass('grandemonium-tab-badge-expanded', isTitleExpanded);
     badgeEl.setAttribute('data-title-expanded', isTitleExpanded ? 'true' : 'false');
     this.callbacks.onTitleExpansionChanged?.(this.getExpandedTitleTabIds());
   }
 
   private getBadgeLabel(item: TabBarItem): string {
     if (!this.expandedTitleTabIds.has(item.id)) {
-      return String(item.index);
+      return truncateLabel(item.agentName, BADGE_LABEL_MAX_LENGTH);
     }
 
     return this.truncateExpandedTitle(item.title);
@@ -196,11 +208,6 @@ export class TabBar {
   }
 
   private truncateExpandedTitle(title: string): string {
-    const chars = Array.from(title);
-    if (chars.length <= EXPANDED_TITLE_MAX_LENGTH) {
-      return title;
-    }
-
-    return `${chars.slice(0, EXPANDED_TITLE_MAX_LENGTH - TRUNCATED_TITLE_SUFFIX.length).join('')}${TRUNCATED_TITLE_SUFFIX}`;
+    return truncateLabel(title, EXPANDED_TITLE_MAX_LENGTH);
   }
 }

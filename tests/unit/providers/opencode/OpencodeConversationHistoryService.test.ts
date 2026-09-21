@@ -12,7 +12,7 @@ describe('OpencodeConversationHistoryService', () => {
   let tmpRoot: string;
 
   beforeEach(() => {
-    tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'claudian-opencode-conversation-history-'));
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'grandemonium-opencode-conversation-history-'));
   });
 
   afterEach(() => {
@@ -28,7 +28,7 @@ describe('OpencodeConversationHistoryService', () => {
     const realSpawn = childProcess.spawn;
     const environmentMarkers: Array<string | undefined> = [];
     jest.spyOn(childProcess, 'spawn').mockImplementation((command, args, options) => {
-      environmentMarkers.push(options?.env?.CLAUDIAN_HISTORY_TEST);
+      environmentMarkers.push(options?.env?.GRANDEMONIUM_HISTORY_TEST);
       return realSpawn(command, args, options!);
     });
     jest.doMock('node:sqlite', () => ({}));
@@ -41,7 +41,7 @@ describe('OpencodeConversationHistoryService', () => {
           environment: {
             ...process.env,
             OPENCODE_DB: dbPath,
-            CLAUDIAN_HISTORY_TEST: 'configured',
+            GRANDEMONIUM_HISTORY_TEST: 'configured',
             PATH: path.dirname(process.execPath),
           },
         });

@@ -26,7 +26,7 @@ import type { CollabLocalProjectIndex } from '@/app/collab/CollabLocalProjectRep
 import { COLLAB_LOCAL_PROJECT_SCHEMA_VERSION } from '@/app/collab/CollabSchemaVersions';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
 import { type CollabPublishOutcome, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 
@@ -97,7 +97,7 @@ function membership(options: { readonly hostAutoStart?: boolean } = {}) {
 
 function pendingSetup() {
   return {
-    cloneDirectoryName: '.claudian-clone-project-alpha',
+    cloneDirectoryName: '.grandemonium-clone-project-alpha',
     createdAt: CREATED_AT,
     initialCommitOid: null,
     memberCredential: 'A'.repeat(43),
@@ -109,7 +109,7 @@ function pendingSetup() {
     projectId: 'project-alpha',
     projectsFolder: 'workspace',
     schemaVersion: 2,
-    seedDirectoryName: '.claudian-seed-project-alpha',
+    seedDirectoryName: '.grandemonium-seed-project-alpha',
     slug: 'alpha',
     updatedAt: CREATED_AT,
   };
@@ -136,7 +136,7 @@ function pendingJoin() {
     projectName: null,
     schemaVersion: 1,
     slug: 'alpha',
-    stagingDirectoryName: '.claudian-join-join-alpha',
+    stagingDirectoryName: '.grandemonium-join-join-alpha',
     updatedAt: CREATED_AT,
   };
 }
@@ -187,7 +187,7 @@ function membershipControl(): jest.Mocked<CollabMembershipPort> {
       status: 'cancelled',
     }),
     createInvitation: jest.fn().mockResolvedValue({
-      encodedInvitation: 'claudian-collab:v2:test',
+      encodedInvitation: 'grandemonium-collab:v2:test',
       expiresAt: '2026-08-08T01:00:00.000Z',
     }),
     createManagerResponsibilityOffer: jest.fn().mockResolvedValue(offer),
@@ -411,7 +411,7 @@ describe('CollabFeatureService', () => {
   let setup: jest.Mocked<CollabProjectSetupPort>;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-feature-service-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-feature-service-'));
     await mkdir(path.join(vaultRoot, 'workspace', 'alpha', '.git'), { recursive: true });
     pending = null;
     currentIndex = projectIndex();
@@ -948,7 +948,7 @@ describe('CollabFeatureService', () => {
       publication: publish,
     });
     const request = {
-      encodedInvitation: 'claudian-collab:v2:invitation',
+      encodedInvitation: 'grandemonium-collab:v2:invitation',
       projectId: 'project-alpha',
     };
 
@@ -999,7 +999,7 @@ describe('CollabFeatureService', () => {
     });
     await expect(service.createInvitation('project-alpha')).resolves.toMatchObject({
       status: 'success',
-      value: { encodedInvitation: 'claudian-collab:v2:test' },
+      value: { encodedInvitation: 'grandemonium-collab:v2:test' },
     });
     expect(access.createInvitation).toHaveBeenCalledWith('project-alpha', {});
     await expect(service.stopHost('project-alpha')).resolves.toMatchObject({

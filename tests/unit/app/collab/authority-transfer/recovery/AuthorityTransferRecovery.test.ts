@@ -37,7 +37,7 @@ import {
   type CollabProjectLifecycleDurableOwner,
   CollabProjectLifecycleSubsystem,
 } from '@/app/collab/lifecycle/CollabProjectLifecycleSubsystem';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-alpha';
 
@@ -106,7 +106,7 @@ describe('AuthorityTransferRecovery', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transfer-recovery-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transfer-recovery-'));
   });
 
   afterEach(async () => {
@@ -121,7 +121,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const resume = jest.fn().mockResolvedValue(undefined);
@@ -145,7 +145,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const repair = jest.spyOn(persistence, 'recoverInterruptedClaimCommitment');
@@ -178,7 +178,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const repair = jest.spyOn(persistence, 'recoverInterruptedClaimCommitment');
@@ -205,7 +205,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     });
     const { ownerInstallationKey: _ownerInstallationKey, ...withoutOwner } = current;
@@ -243,7 +243,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'proposal',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const prepare = jest.fn().mockResolvedValue(undefined);
@@ -269,7 +269,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     await repository.authorityTransferClaims.save(createAuthorityTransferClaimCustodyRecord({
@@ -298,7 +298,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('cancelled'),
     }));
     const resume = jest.fn(async record => persistence.completeTerminalCleanup({
@@ -329,7 +329,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: {
         ...status('cancelled'),
         batchRevision: batch.batchRevision,
@@ -371,7 +371,7 @@ describe('AuthorityTransferRecovery', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('source-quiesced'),
     }));
     const recovery = new AuthorityTransferRecovery(persistence, {
@@ -398,7 +398,7 @@ describe('AuthorityTransferRecovery', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('source-quiesced'),
     }));
     await repository.hostTransferRecovery.save(createHostTransferRecoveryRecord({
@@ -408,7 +408,7 @@ describe('AuthorityTransferRecovery', () => {
       projectId: PROJECT_ID,
       receiverCredential: 'A'.repeat(43),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-host',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-host',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\nQUJD\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.20:27001',
@@ -442,7 +442,7 @@ describe('AuthorityTransferRecovery', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const recovery = new AuthorityTransferRecovery(persistence, {
@@ -473,7 +473,7 @@ describe('AuthorityTransferRecovery', () => {
         lifecycleOwnership: 'owned',
         localRole: 'source',
         operationIntentId: `intent-${projectId}`,
-        stagingDirectoryName: `.claudian-authority-transfer-${transferId}`,
+        stagingDirectoryName: `.grandemonium-authority-transfer-${transferId}`,
         status: status('collecting-readiness', projectId, transferId),
       }));
     }
@@ -500,7 +500,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-beta',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-beta',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-beta',
       status: status('collecting-readiness', 'project-beta', 'transfer-beta'),
     }));
     const corruptPath = path.join(vaultRoot, repository.getProjectPaths(PROJECT_ID).authorityTransfer);
@@ -528,10 +528,10 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-beta',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-beta',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-beta',
       status: status('collecting-readiness', 'project-beta', 'transfer-beta'),
     }));
-    await mkdir(path.join(vaultRoot, '.claudian', 'collab', 'projects', 'invalid project'), {
+    await mkdir(path.join(vaultRoot, '.grandemonium', 'collab', 'projects', 'invalid project'), {
       recursive: true,
     });
     const resumed: string[] = [];
@@ -556,7 +556,7 @@ describe('AuthorityTransferRecovery', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('collecting-readiness'),
     }));
     const resume = jest.fn().mockResolvedValue(undefined);
@@ -586,7 +586,7 @@ describe('AuthorityTransferRecovery', () => {
       ownerInstallationKey: TEST_INSTALLATION_A,
       localRole: 'source',
       operationIntentId: 'intent-one',
-      stagingDirectoryName: '.claudian-authority-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-authority-transfer-transfer-one',
       status: status('source-quiesced'),
     });
     await persistence.advance(advanced, 'collecting-readiness');

@@ -27,20 +27,20 @@ describe('renderProviderModelEnablementWarning', () => {
     );
 
     expect(container.createDiv).toHaveBeenCalledWith({
-      cls: expect.stringContaining('claudian-setting-validation-warning'),
+      cls: expect.stringContaining('grandemonium-setting-validation-warning'),
       text: 'No Codex models are enabled. Go to Models below and enable at least one model.',
     });
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
 
     hasModels = true;
     warning.context.notifyProviderModelOptionsChanged('codex');
     expect(notifyProviderModelOptionsChanged).toHaveBeenCalledWith('codex');
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
 
     hasModels = false;
     enabled = false;
     warning.refresh();
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
   });
 });
 
@@ -66,19 +66,19 @@ describe('renderLastEnabledProviderWarning', () => {
         'aria-live': 'polite',
         role: 'status',
       },
-      cls: expect.stringContaining('claudian-setting-validation-warning'),
-      text: 'At least one provider must remain enabled for Tandemonium to work.',
+      cls: expect.stringContaining('grandemonium-setting-validation-warning'),
+      text: 'At least one provider must remain enabled for Grandemonium to work.',
     });
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
 
     warning.showFor();
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
 
     jest.advanceTimersByTime(9_999);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
 
     jest.advanceTimersByTime(1);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
   });
 
   it('restarts the timer on repeated attempts and supports immediate hiding', () => {
@@ -92,12 +92,12 @@ describe('renderLastEnabledProviderWarning', () => {
     jest.advanceTimersByTime(9_000);
     warning.showFor();
     jest.advanceTimersByTime(1_000);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
 
     warning.hide();
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
     jest.advanceTimersByTime(10_000);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
   });
 });
 

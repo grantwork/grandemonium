@@ -124,7 +124,7 @@ async function runGitHttpBackend(
       PATH: '/usr/bin:/bin',
       QUERY_STRING: new URL(request.url ?? '/', 'http://127.0.0.1').search.slice(1),
       REMOTE_ADDR: '127.0.0.1',
-      REMOTE_USER: String(request.headers['x-claudian-development-actor'] ?? ''),
+      REMOTE_USER: String(request.headers['x-grandemonium-development-actor'] ?? ''),
       REQUEST_METHOD: request.method ?? 'GET',
       SERVER_PROTOCOL: 'HTTP/1.1',
       ...(request.headers['content-length'] === undefined
@@ -199,7 +199,7 @@ async function startGateServer(repository: RepositoryFixture): Promise<GateServe
         ], capabilityLimits()));
         return;
       }
-      const actor = request.headers['x-claudian-development-actor'];
+      const actor = request.headers['x-grandemonium-development-actor'];
       if (
         typeof actor !== 'string'
         || !ACTORS.includes(actor as typeof ACTORS[number])
@@ -393,7 +393,7 @@ function unusedCandidates() {
 
 describe('Cloud Publish gate', () => {
   it('publishes two clients over real Git and canonical Cloud HTTP retry paths', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-publish-gate-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-publish-gate-'));
     const repository = await createRepository(root);
     const server = await startGateServer(repository);
     const sessions: CollabAuthoritySession[] = [];

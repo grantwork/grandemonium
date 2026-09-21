@@ -6,7 +6,7 @@ import {
   COLLAB_CONTROL_PROTOCOL_VERSION,
   COLLAB_INVITATION_TTL_MS,
 } from '@/app/collab/lan/LanCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const NOW = new Date('2026-08-08T00:00:00.000Z');
 const FINGERPRINT = 'ab'.repeat(32);
@@ -41,7 +41,7 @@ describe('InvitationCodec', () => {
     expect(Buffer.from(invitation.invitationSecret, 'base64url')).toHaveLength(32);
 
     const encoded = codec.encode(invitation);
-    expect(encoded).toMatch(/^claudian-collab:v9:[A-Za-z0-9_-]+$/);
+    expect(encoded).toMatch(/^grandemonium-collab:v9:[A-Za-z0-9_-]+$/);
     expect(codec.decode(encoded)).toEqual(invitation);
   });
 
@@ -141,10 +141,10 @@ describe('InvitationCodec', () => {
     };
     const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url');
 
-    expect(() => codec.decode(`claudian-collab:v9:${encodedPayload}`)).toThrow(
+    expect(() => codec.decode(`grandemonium-collab:v9:${encodedPayload}`)).toThrow(
       expect.objectContaining({ code: 'invitation-invalid' }),
     );
-    expect(() => codec.decode(`claudian-collab:v3:${encodedPayload}`)).toThrow(
+    expect(() => codec.decode(`grandemonium-collab:v3:${encodedPayload}`)).toThrow(
       expect.objectContaining({ code: 'protocol-version-unsupported' }),
     );
   });
@@ -161,7 +161,7 @@ describe('InvitationCodec', () => {
       protocolVersion: 7,
     };
     const encodedPayload = Buffer.from(JSON.stringify(legacyPayload)).toString('base64url');
-    const encodedInvitation = `claudian-collab:v7:${encodedPayload}`;
+    const encodedInvitation = `grandemonium-collab:v7:${encodedPayload}`;
 
     expect(() => codec.decode(encodedInvitation)).toThrow(expect.objectContaining({
       code: 'protocol-version-unsupported',
@@ -186,7 +186,7 @@ describe('InvitationCodec', () => {
     const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url');
 
     expect(() => codec.decodePendingJoinRecovery(
-      `claudian-collab:v7:${encodedPayload}`,
+      `grandemonium-collab:v7:${encodedPayload}`,
     )).toThrow(expect.objectContaining({ code: 'protocol-version-unsupported' }));
   });
 });

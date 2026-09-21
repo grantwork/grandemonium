@@ -3,7 +3,7 @@ import { type CollabMemberId, type CollabOperationId, type CollabProjectId, isCo
 import { ManagerSetRepository } from '@/app/collab/authority/ManagerSetRepository';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DIGEST_PATTERN = /^[0-9a-f]{64}$/;
 

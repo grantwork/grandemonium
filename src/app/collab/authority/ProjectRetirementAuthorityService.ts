@@ -8,7 +8,7 @@ import type { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDa
 import type { RetirementTombstoneRecord } from '@/app/collab/retirement/RetirementTombstoneRecord';
 import type { RetirementTombstoneRepository } from '@/app/collab/retirement/RetirementTombstoneRepository';
 import type { CollabRetirementResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1_000;

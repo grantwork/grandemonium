@@ -33,32 +33,32 @@ export class ReconnectProjectModal extends Modal {
     this.abortController = new AbortController();
     this.operationGeneration += 1;
     this.setTitle(t('collab.reconnectProject.title'));
-    this.modalEl.classList.add('claudian-collab-join-modal');
+    this.modalEl.classList.add('grandemonium-collab-join-modal');
     this.contentEl.replaceChildren();
 
     this.contentEl.createDiv({
-      cls: 'claudian-collab-join-description',
+      cls: 'grandemonium-collab-join-description',
       text: t('collab.reconnectProject.description', {
         name: this.options.project.name,
       }),
     });
-    const field = this.contentEl.createDiv({ cls: 'claudian-collab-join-field' });
+    const field = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-field' });
     field.createEl('label', {
-      attr: { for: 'claudian-collab-reconnect-invitation' },
+      attr: { for: 'grandemonium-collab-reconnect-invitation' },
       text: t('collab.reconnectProject.invitation'),
     });
     this.invitationInput = field.createEl('textarea', {
       attr: {
         'data-field': 'invitation',
-        id: 'claudian-collab-reconnect-invitation',
+        id: 'grandemonium-collab-reconnect-invitation',
         placeholder: t('collab.reconnectProject.invitationPlaceholder'),
         rows: '5',
       },
     });
     this.invitationInput.addEventListener('input', () => this.updateButton());
 
-    this.statusEl = this.contentEl.createDiv({ cls: 'claudian-collab-join-status' });
-    const actions = this.contentEl.createDiv({ cls: 'claudian-collab-join-actions' });
+    this.statusEl = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-status' });
+    const actions = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-actions' });
     const cancel = actions.createEl('button', {
       attr: { type: 'button' },
       text: t('common.cancel'),
@@ -106,7 +106,7 @@ export class ReconnectProjectModal extends Modal {
     this.statusEl.replaceChildren();
     this.statusEl.createDiv({
       attr: warning ? { role: 'alert' } : { role: 'status' },
-      cls: warning ? 'claudian-collab-join-warning' : undefined,
+      cls: warning ? 'grandemonium-collab-join-warning' : undefined,
       text,
     });
   }

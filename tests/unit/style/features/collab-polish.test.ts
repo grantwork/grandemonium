@@ -21,17 +21,17 @@ describe('Collab responsive and accessibility styles', () => {
 
     expect(css).toContain('overflow-wrap: anywhere;');
     expect(css).toContain(
-      '.claudian-collab-panel button:not(.claudian-collab-project-picker)',
+      '.grandemonium-collab-panel button:not(.grandemonium-collab-project-picker)',
     );
     const panelCss = readFileSync(
       path.resolve('src/style/features/collab-panel.css'),
       'utf8',
     );
     expect(panelCss).toMatch(
-      /\.claudian-collab-project-picker\s*{[^}]*white-space:\s*nowrap;/,
+      /\.grandemonium-collab-project-picker\s*{[^}]*white-space:\s*nowrap;/,
     );
     expect(css.replaceAll('\n', ' ')).toMatch(
-      /\.claudian-collab-panel-header,[^}]*flex-wrap:\s*wrap;/,
+      /\.grandemonium-collab-panel-header,[^}]*flex-wrap:\s*wrap;/,
     );
   });
 
@@ -53,16 +53,16 @@ describe('Collab responsive and accessibility styles', () => {
     );
 
     expect(panelCss).toMatch(
-      /\.claudian-collab-panel \.claudian-collab-project-picker\s*{[^}]*background:\s*transparent;/,
+      /\.grandemonium-collab-panel \.grandemonium-collab-project-picker\s*{[^}]*background:\s*transparent;/,
     );
     expect(panelCss).toMatch(
-      /\.claudian-collab-project-picker:hover\s*{[^}]*background:\s*var\(--background-modifier-hover\);/,
+      /\.grandemonium-collab-project-picker:hover\s*{[^}]*background:\s*var\(--background-modifier-hover\);/,
     );
     expect(requestsCss).toMatch(
-      /\.claudian-collab-panel \.claudian-collab-team-request\s*{[^}]*background:\s*transparent;/,
+      /\.grandemonium-collab-panel \.grandemonium-collab-team-request\s*{[^}]*background:\s*transparent;/,
     );
     expect(requestsCss).toMatch(
-      /\.claudian-collab-team-request:hover\s*{[^}]*background:\s*var\(--background-modifier-hover\);/,
+      /\.grandemonium-collab-team-request:hover\s*{[^}]*background:\s*var\(--background-modifier-hover\);/,
     );
   });
 
@@ -72,10 +72,10 @@ describe('Collab responsive and accessibility styles', () => {
       'utf8',
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-panel button\.claudian-collab-ticket-list-item:not\(\[aria-current="true"\]\)\s*{[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/,
+      /\.grandemonium-collab-panel button\.grandemonium-collab-ticket-list-item:not\(\[aria-current="true"\]\)\s*{[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-panel button\.claudian-collab-ticket-list-item\[aria-current="true"\][^{]*{[^}]*background:\s*var\(--background-modifier-hover\);/,
+      /\.grandemonium-collab-panel button\.grandemonium-collab-ticket-list-item\[aria-current="true"\][^{]*{[^}]*background:\s*var\(--background-modifier-hover\);/,
     );
   });
 
@@ -85,15 +85,15 @@ describe('Collab responsive and accessibility styles', () => {
       'utf8',
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-ticket-detail-header\s*{[^}]*flex-wrap:\s*nowrap;/,
+      /\.grandemonium-collab-ticket-detail-header\s*{[^}]*flex-wrap:\s*nowrap;/,
     );
     expect(ticketsCss).toMatch(
-      /button\.claudian-collab-ticket-edit\s*{[^}]*margin-inline-start:\s*auto;/,
+      /button\.grandemonium-collab-ticket-edit\s*{[^}]*margin-inline-start:\s*auto;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-ticket-number,[^}]*\.claudian-collab-ticket-detail-number\s*{[^}]*color:\s*var\(--text-muted\);[^}]*font-family:\s*var\(--font-monospace\);/,
+      /\.grandemonium-collab-ticket-number,[^}]*\.grandemonium-collab-ticket-detail-number\s*{[^}]*color:\s*var\(--text-muted\);[^}]*font-family:\s*var\(--font-monospace\);/,
     );
-    expect(ticketsCss).not.toContain('claudian-collab-ticket-assignee-field');
+    expect(ticketsCss).not.toContain('grandemonium-collab-ticket-assignee-field');
   });
 
   it('styles the shared Markdown editor as an Obsidian-native Collab surface', () => {
@@ -110,24 +110,24 @@ describe('Collab responsive and accessibility styles', () => {
     expect(markdownEditor).toBeGreaterThanOrEqual(0);
     expect(tickets).toBeGreaterThan(markdownEditor);
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft \.cm-editor\s*{[^}]*background:\s*transparent;[^}]*border:\s*1px solid var\(--background-modifier-border\);[^}]*box-shadow:\s*none;/,
+      /\.grandemonium-collab-markdown-draft \.cm-editor\s*{[^}]*background:\s*transparent;[^}]*border:\s*1px solid var\(--background-modifier-border\);[^}]*box-shadow:\s*none;/,
     );
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft \.cm-content\s*{[^}]*font-family:\s*var\(--font-monospace\);/,
+      /\.grandemonium-collab-markdown-draft \.cm-content\s*{[^}]*font-family:\s*var\(--font-monospace\);/,
     );
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft \.cm-content\s*{[^}]*caret-color:\s*var\(--text-normal\);/,
+      /\.grandemonium-collab-markdown-draft \.cm-content\s*{[^}]*caret-color:\s*var\(--text-normal\);/,
     );
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft \.cm-cursor\s*{[^}]*border-left-color:\s*var\(--text-normal\);/,
+      /\.grandemonium-collab-markdown-draft \.cm-cursor\s*{[^}]*border-left-color:\s*var\(--text-normal\);/,
     );
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft \.cm-editor\.cm-focused > \.cm-scroller > \.cm-selectionLayer \.cm-selectionBackground[^{]*{[^}]*background:\s*var\(--text-selection\);/,
+      /\.grandemonium-collab-markdown-draft \.cm-editor\.cm-focused > \.cm-scroller > \.cm-selectionLayer \.cm-selectionBackground[^{]*{[^}]*background:\s*var\(--text-selection\);/,
     );
     expect(css).not.toContain('!important');
     expect(css).not.toContain('::selection');
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft-preview\s*{[^}]*background:\s*transparent;[^}]*border:\s*1px solid var\(--background-modifier-border\);/,
+      /\.grandemonium-collab-markdown-draft-preview\s*{[^}]*background:\s*transparent;[^}]*border:\s*1px solid var\(--background-modifier-border\);/,
     );
     const ticketsCss = readFileSync(
       path.resolve('src/style/features/collab-tickets.css'),
@@ -142,81 +142,81 @@ describe('Collab responsive and accessibility styles', () => {
       'utf8',
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-header > \.claudian-collab-request-description\s*{[^}]*grid-column:\s*1 \/ -1;[^}]*width:\s*100%;/,
+      /\.grandemonium-collab-review-header > \.grandemonium-collab-request-description\s*{[^}]*grid-column:\s*1 \/ -1;[^}]*width:\s*100%;/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-header\s*{[^}]*border-block-end:\s*1px solid var\(--background-modifier-border\);/,
+      /\.grandemonium-collab-review-header\s*{[^}]*border-block-end:\s*1px solid var\(--background-modifier-border\);/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-tabs\s*{[^}]*grid-column:\s*1 \/ -1;/,
+      /\.grandemonium-collab-review-tabs\s*{[^}]*grid-column:\s*1 \/ -1;/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-header\.has-primary-action h2\s*{[^}]*grid-column:\s*1;[^}]*grid-row:\s*1;/,
+      /\.grandemonium-collab-review-header\.has-primary-action h2\s*{[^}]*grid-column:\s*1;[^}]*grid-row:\s*1;/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-header\.has-primary-action button\.claudian-collab-review-accept\s*{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/,
+      /\.grandemonium-collab-review-header\.has-primary-action button\.grandemonium-collab-review-accept\s*{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-header\.is-request > \.claudian-collab-review-tabs\s*{[^}]*grid-row:\s*2;/,
+      /\.grandemonium-collab-review-header\.is-request > \.grandemonium-collab-review-tabs\s*{[^}]*grid-row:\s*2;/,
     );
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review \.claudian-collab-review-tabs > button\s*{[^}]*border-bottom:\s*0;/,
+      /\.grandemonium-collab-review \.grandemonium-collab-review-tabs > button\s*{[^}]*border-bottom:\s*0;/,
     );
     expect(reviewCss).not.toMatch(
-      /\.claudian-collab-review \.claudian-collab-review-tabs > button\.is-active\s*{[^}]*border-bottom-color:/,
+      /\.grandemonium-collab-review \.grandemonium-collab-review-tabs > button\.is-active\s*{[^}]*border-bottom-color:/,
     );
     expect(reviewCss).toMatch(
-      /button\.claudian-collab-review-display-toggle\[hidden\]\s*{[^}]*display:\s*none;/,
+      /button\.grandemonium-collab-review-display-toggle\[hidden\]\s*{[^}]*display:\s*none;/,
     );
     expect(reviewCss).toMatch(
-      /\.view-content\.claudian-collab-review button\.claudian-collab-review-display-toggle\s*{[^}]*color:\s*var\(--text-muted\);[^}]*background:\s*transparent;/,
+      /\.view-content\.grandemonium-collab-review button\.grandemonium-collab-review-display-toggle\s*{[^}]*color:\s*var\(--text-muted\);[^}]*background:\s*transparent;/,
     );
     expect(reviewCss).not.toContain('!important');
     expect(reviewCss).toMatch(
-      /\.claudian-collab-review-overview\s*{[^}]*padding:\s*var\(--size-4-2\) 0;/,
+      /\.grandemonium-collab-review-overview\s*{[^}]*padding:\s*var\(--size-4-2\) 0;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-request-description-modes\s*{[^}]*margin-inline-start:\s*auto;/,
+      /\.grandemonium-collab-request-description-modes\s*{[^}]*margin-inline-start:\s*auto;/,
     );
     expect(css).toMatch(
-      /\.claudian-collab-markdown-draft-modes\[hidden\]\s*{[^}]*display:\s*none;/,
+      /\.grandemonium-collab-markdown-draft-modes\[hidden\]\s*{[^}]*display:\s*none;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-request-description > \[data-collab-description="true"\]\s*{[^}]*width:\s*100%;/,
+      /\.grandemonium-collab-request-description > \[data-collab-description="true"\]\s*{[^}]*width:\s*100%;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-request-description\.is-request:not\(\.is-editing\)[^{]*\.claudian-collab-markdown-draft-preview\s*{[^}]*border:\s*0;[^}]*min-height:\s*0;[^}]*padding:\s*0;/,
+      /\.grandemonium-collab-request-description\.is-request:not\(\.is-editing\)[^{]*\.grandemonium-collab-markdown-draft-preview\s*{[^}]*border:\s*0;[^}]*min-height:\s*0;[^}]*padding:\s*0;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-review \.claudian-collab-markdown-suggestions button\.claudian-collab-markdown-suggestion\s*{[^}]*background:\s*transparent;/,
+      /\.grandemonium-collab-review \.grandemonium-collab-markdown-suggestions button\.grandemonium-collab-markdown-suggestion\s*{[^}]*background:\s*transparent;/,
     );
     expect(ticketsCss).toMatch(
-      /button\.claudian-collab-markdown-suggestion\[aria-selected="true"\][^{]*{[^}]*background:\s*var\(--background-modifier-hover\);/,
+      /button\.grandemonium-collab-markdown-suggestion\[aria-selected="true"\][^{]*{[^}]*background:\s*var\(--background-modifier-hover\);/,
     );
     expect(commentsCss).toMatch(
-      /button\.claudian-collab-comment-submit\s*{[^}]*background:\s*var\(--interactive-normal\);[^}]*border:\s*1px solid var\(--background-modifier-border\);/,
+      /button\.grandemonium-collab-comment-submit\s*{[^}]*background:\s*var\(--interactive-normal\);[^}]*border:\s*1px solid var\(--background-modifier-border\);/,
     );
     expect(commentsCss).toMatch(
-      /\.claudian-collab-request-comment\s*{[^}]*background:\s*var\(--background-primary\);/,
+      /\.grandemonium-collab-request-comment\s*{[^}]*background:\s*var\(--background-primary\);/,
     );
     expect(commentsCss).not.toMatch(
-      /\.claudian-collab-request-comments:not\(\.has-entries\)\s*{[^}]*border-top:\s*0;/,
+      /\.grandemonium-collab-request-comments:not\(\.has-entries\)\s*{[^}]*border-top:\s*0;/,
     );
     expect(commentsCss).toMatch(
-      /\.claudian-collab-request-comments:not\(\.has-entries\) > \.claudian-collab-comment-composer\s*{[^}]*border-top:\s*0;/,
+      /\.grandemonium-collab-request-comments:not\(\.has-entries\) > \.grandemonium-collab-comment-composer\s*{[^}]*border-top:\s*0;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-ticket-activity-item\.is-comment\s*{[^}]*background:\s*var\(--background-primary\);/,
+      /\.grandemonium-collab-ticket-activity-item\.is-comment\s*{[^}]*background:\s*var\(--background-primary\);/,
     );
     expect(ticketsCss).not.toMatch(
-      /\.claudian-collab-ticket-activity:not\(\.has-entries\)\s*{[^}]*border-top:\s*0;/,
+      /\.grandemonium-collab-ticket-activity:not\(\.has-entries\)\s*{[^}]*border-top:\s*0;/,
     );
     expect(ticketsCss).toMatch(
-      /\.claudian-collab-ticket-activity:not\(\.has-entries\) > \.claudian-collab-comment-composer\s*{[^}]*border-top:\s*0;/,
+      /\.grandemonium-collab-ticket-activity:not\(\.has-entries\) > \.grandemonium-collab-comment-composer\s*{[^}]*border-top:\s*0;/,
     );
     expect(css).toMatch(
-      /button\.claudian-collab-markdown-ticket-reference\s*{[^}]*background:\s*transparent;[^}]*color:\s*var\(--text-accent\);/,
+      /button\.grandemonium-collab-markdown-ticket-reference\s*{[^}]*background:\s*transparent;[^}]*color:\s*var\(--text-accent\);/,
     );
-    expect(css).toContain('.claudian-collab-markdown-draft-preview[hidden]');
+    expect(css).toContain('.grandemonium-collab-markdown-draft-preview[hidden]');
   });
 });

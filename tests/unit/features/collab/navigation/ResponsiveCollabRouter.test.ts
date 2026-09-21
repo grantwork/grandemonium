@@ -16,7 +16,7 @@ function target(selectable: boolean): ResponsiveCollabTarget & {
 }
 
 describe('ResponsiveCollabRouter', () => {
-  it('selects and reveals the first compatible existing Claudian target', async () => {
+  it('selects and reveals the first compatible existing Grandemonium target', async () => {
     const narrow = target(false);
     const compatible = target(true);
     const unused = target(true);

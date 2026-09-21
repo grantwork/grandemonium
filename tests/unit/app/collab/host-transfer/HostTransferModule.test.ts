@@ -14,7 +14,7 @@ import { createHostTransferRecoveryRecord } from '@/app/collab/host-transfer/Hos
 import { decodeHostTransferRecoveryRecord } from '@/app/collab/host-transfer/HostTransferRecoveryRecord';
 import { LanHostCoordinator } from '@/app/collab/lan/LanHostCoordinator';
 import { LanAuthorityProjectionTransitionCoordinator } from '@/app/collab/LanAuthorityProjectionTransitionCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const membership = {
   authority: {
@@ -136,7 +136,7 @@ describe('HostTransferModule', () => {
       projectId: 'project-a',
       receiverCredential: Buffer.alloc(32, 2).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\nQUJD\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.11:27001',
@@ -169,7 +169,7 @@ describe('HostTransferModule', () => {
       projectId: 'project-a',
       receiverCredential: Buffer.alloc(32, 2).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\nQUJD\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.11:27001',
@@ -199,7 +199,7 @@ describe('HostTransferModule', () => {
       projectId: 'project-a',
       receiverCredential: Buffer.alloc(32, 2).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\nQUJD\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.11:27001',
@@ -247,7 +247,7 @@ describe('HostTransferModule', () => {
   });
 
   it('cannot bypass the durable Host start guard during outgoing recovery', async () => {
-    const vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transfer-host-guard-'));
+    const vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transfer-host-guard-'));
     const openProject = jest.fn();
     const lanHost = new LanHostCoordinator({
       assertHostInstallationOwned: async () => undefined,

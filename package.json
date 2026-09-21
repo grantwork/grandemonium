@@ -1,7 +1,7 @@
 {
-  "name": "tandemonium",
+  "name": "grandemonium",
   "version": "2.2.7",
-  "description": "Tandemonium - coding agents and review comments embedded in Obsidian",
+  "description": "Grandemonium - coding agents and review comments embedded in Obsidian",
   "main": "main.js",
   "engines": {
     "node": ">=24 <25"

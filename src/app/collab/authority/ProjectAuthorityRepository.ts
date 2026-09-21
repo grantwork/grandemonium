@@ -4,7 +4,7 @@ import type {
   AuthorityDatabaseConnection,
   AuthoritySqlRow,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ProjectAuthorityInitializeInput {
   readonly createdAt: string;

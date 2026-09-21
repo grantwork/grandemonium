@@ -491,7 +491,7 @@ describe('ClaudeSettingsTab', () => {
     await toggle.onChangeCallback?.(false);
 
     expect(warningCallIndex).toBeGreaterThanOrEqual(0);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
     expect(plugin.settings.providerConfigs.claude.enabled).toBe(true);
     expect(plugin.runProviderExecutionTransition).not.toHaveBeenCalled();
     expect(coordinator.applyProviderEnablement).not.toHaveBeenCalled();

@@ -22,7 +22,7 @@ export {
   type SessionMetadata,
   type StreamChunk,
   type UsageInfo,
-  VIEW_TYPE_CLAUDIAN,
+  VIEW_TYPE_GRANDEMONIUM,
 } from './chat';
 export { type ProviderId } from './provider';
 
@@ -30,9 +30,9 @@ export { type ProviderId } from './provider';
 export {
   type ApprovalDecision,
   type AuxiliaryContinuityReset,
-  type ClaudianSettings,
   type EnvironmentScope,
   type EnvSnippet,
+  type GrandemoniumSettings,
   type HostnameCliPaths,
   type InstructionRefineResult,
   type KeyboardNavigationSettings,

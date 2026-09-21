@@ -24,7 +24,7 @@ import {
   decodeLanCollabLifecycleOperationResponse,
 } from '@/app/collab/lan/LanCollabLifecycleCodecs';
 import { decodeLanCollabProjectSnapshot } from '@/app/collab/lan/LanCollabProjectSnapshotCodec';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type LanCodecMap = {
   readonly [Operation in LanCollabControlOperation]: CollabControlOperationCodec<

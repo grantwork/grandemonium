@@ -16,9 +16,9 @@ import {
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import type { CollabFeatureService } from '@/app/collab/CollabFeatureService';
 import { createCollabFeatureSubcomposition } from '@/app/collab/CollabFeatureSubcomposition';
+import { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { InvitationCodec } from '@/app/collab/lan/InvitationCodec';
 import { CollabProjectSetupService } from '@/app/collab/project/CollabProjectSetupService';
 import { type CollabCoordinationSnapshot, type CollabResult, isCollabLanProjectSnapshot } from '@/core/collab';
@@ -46,7 +46,7 @@ function unwrap<T>(result: CollabResult<T>, label: string): T {
 
 describe('M5 review and Accept gate', () => {
   let SQL: SqlJsStatic;
-  const foundations: ClaudianCollabService[] = [];
+  const foundations: GrandemoniumCollabService[] = [];
   const features: CollabFeatureService[] = [];
   let root: string;
 
@@ -61,7 +61,7 @@ describe('M5 review and Accept gate', () => {
   });
 
   it('binds Tickets to the latest Publish and guards a remote Manager Accept across three Vaults', async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-m5-gate-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-m5-gate-'));
     const hostRoot = path.join(root, 'host-vault');
     const memberARoot = path.join(root, 'member-a-vault');
     const memberBRoot = path.join(root, 'member-b-vault');
@@ -384,7 +384,7 @@ describe('M5 review and Accept gate', () => {
     const hostGit = await host.requireGitFoundation();
     const bareRepository = path.join(
       hostRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       projectId,
@@ -413,8 +413,8 @@ describe('M5 review and Accept gate', () => {
     invitationCodec: InvitationCodec,
     hostPort?: number,
     ownsAuthority = false,
-  ): ClaudianCollabService {
-    const foundation = new ClaudianCollabService({
+  ): GrandemoniumCollabService {
+    const foundation = new GrandemoniumCollabService({
       ...(ownsAuthority
         ? {
           createAuthorityDatabase: (authorityDirectory: string) => (
@@ -438,7 +438,7 @@ describe('M5 review and Accept gate', () => {
   }
 
   function createFeature(
-    foundation: ClaudianCollabService,
+    foundation: GrandemoniumCollabService,
     vaultRoot: string,
   ): CollabFeatureService {
     const feature = createCollabFeatureSubcomposition({

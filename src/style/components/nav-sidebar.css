@@ -1,5 +1,5 @@
 /* Navigation Sidebar */
-.claudian-nav-sidebar {
+.grandemonium-nav-sidebar {
     position: absolute;
     right: 2px;
     top: 50%;
@@ -13,16 +13,16 @@
     transition: opacity 0.2s ease;
 }
 
-.claudian-nav-sidebar.visible {
+.grandemonium-nav-sidebar.visible {
     opacity: 0.15;
     pointer-events: auto;
 }
 
-.claudian-nav-sidebar.visible:hover {
+.grandemonium-nav-sidebar.visible:hover {
     opacity: 1;
 }
 
-.claudian-nav-btn {
+.grandemonium-nav-btn {
     width: 32px;
     height: 32px;
     border-radius: 16px;
@@ -37,18 +37,18 @@
     transition: all 0.2s ease;
 }
 
-.claudian-nav-btn:hover {
+.grandemonium-nav-btn:hover {
     background: var(--background-secondary);
     color: var(--text-normal);
     transform: scale(1.05);
 }
 
-.claudian-nav-btn svg {
+.grandemonium-nav-btn svg {
     width: 18px;
     height: 18px;
 }
 
-.claudian-nav-toc-popover {
+.grandemonium-nav-toc-popover {
     position: absolute;
     right: 42px;
     top: 50%;
@@ -67,18 +67,18 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-body.theme-dark .claudian-nav-toc-popover {
+body.theme-dark .grandemonium-nav-toc-popover {
     background-color: #1e1e1e;
 }
 
-.claudian-nav-toc-title {
+.grandemonium-nav-toc-title {
     padding: 4px 6px 8px;
     color: var(--text-muted);
     font-size: var(--font-ui-smaller);
     font-weight: 600;
 }
 
-.claudian-nav-toc-list {
+.grandemonium-nav-toc-list {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -86,7 +86,7 @@ body.theme-dark .claudian-nav-toc-popover {
     min-height: 0;
 }
 
-.claudian-nav-toc-item {
+.grandemonium-nav-toc-item {
     box-sizing: border-box;
     min-height: calc(1.35em + 12px);
     max-width: 100%;
@@ -101,13 +101,13 @@ body.theme-dark .claudian-nav-toc-popover {
     white-space: nowrap;
 }
 
-.claudian-nav-toc-item:hover,
-.claudian-nav-toc-item:focus {
+.grandemonium-nav-toc-item:hover,
+.grandemonium-nav-toc-item:focus {
     background: var(--background-secondary);
     outline: none;
 }
 
-.claudian-nav-toc-empty {
+.grandemonium-nav-toc-empty {
     padding: 8px;
     color: var(--text-muted);
     font-size: var(--font-ui-small);
@@ -115,10 +115,10 @@ body.theme-dark .claudian-nav-toc-popover {
 }
 
 /* Specific button spacing/grouping if needed */
-.claudian-nav-btn-top {
+.grandemonium-nav-btn-top {
     margin-bottom: 4px;
 }
 
-.claudian-nav-btn-bottom {
+.grandemonium-nav-btn-bottom {
     margin-top: 4px;
 }

@@ -17,9 +17,9 @@ import { TEST_INSTALLATION_A } from '@test/helpers/installations';
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import {
-  ClaudianCollabService,
   CollabProjectSetupService,
   createCollabFeatureSubcomposition,
+  GrandemoniumCollabService,
 } from '@/app/collab';
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
 import { AuthorityTransferLocalConvergence } from '@/app/collab/authority-transfer/AuthorityTransferLocalConvergence';
@@ -89,8 +89,8 @@ describe('production authority-transfer effects', () => {
   });
 
   beforeEach(async () => {
-    sourceRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transfer-source-'));
-    targetRoot = await mkdtemp(path.join(tmpdir(), 'claudian-transfer-target-'));
+    sourceRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transfer-source-'));
+    targetRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-transfer-target-'));
   });
 
   afterEach(async () => {
@@ -125,7 +125,7 @@ describe('production authority-transfer effects', () => {
       lifecycleOwnership: 'proposal',
       localRole: 'source',
       operationIntentId: OPERATION_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'collecting-readiness', 'https://cloud.example.test/'),
     });
 
@@ -186,7 +186,7 @@ describe('production authority-transfer effects', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'collecting-readiness', 'https://cloud.example.test/'),
     });
     const noopSession = {
@@ -243,7 +243,7 @@ describe('production authority-transfer effects', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId: OPERATION_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('lan-to-cloud', 'source-quiesced', 'https://cloud.example.test/'),
     }));
     const recoveredManifestChunks: Buffer[] = [];
@@ -411,7 +411,7 @@ describe('production authority-transfer effects', () => {
       lifecycleOwnership: 'owned',
       localRole: 'target',
       operationIntentId: OPERATION_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status('cloud-to-lan', 'collecting-readiness', prepared.targetUrl),
     });
     const targetStaging = await targetFoundation.local.workspace.reserveProjectsFolderChild(
@@ -464,11 +464,11 @@ describe('production authority-transfer effects', () => {
     expect(targetAuthority).toBeNull();
     await expect(access(path.join(
       targetRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
-      '.claudian-authority.json',
+      '.grandemonium-authority.json',
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     const relinquishmentProof = {
       batchRevision: staged.claimBatch.batchRevision,
@@ -511,11 +511,11 @@ describe('production authority-transfer effects', () => {
     targetAuthority = await targetFoundation.inspectAuthority(PROJECT_ID);
     expect(JSON.parse(await readFile(path.join(
       targetRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
-      '.claudian-authority.json',
+      '.grandemonium-authority.json',
     ), 'utf8'))).toEqual({
       ownerInstallationKey: TEST_INSTALLATION_A,
       projectId: PROJECT_ID,
@@ -632,8 +632,8 @@ describe('production authority-transfer effects', () => {
     await targetFoundation.close();
   });
 
-  function foundation(vaultRoot: string): ClaudianCollabService {
-    return new ClaudianCollabService({
+  function foundation(vaultRoot: string): GrandemoniumCollabService {
+    return new GrandemoniumCollabService({
       createAuthorityDatabase: authorityDirectory => (
         new SqlJsProjectDatabase(authorityDirectory, { loadSqlJs: async () => SQL })
       ),

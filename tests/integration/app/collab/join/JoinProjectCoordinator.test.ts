@@ -10,10 +10,10 @@ import path from 'node:path';
 
 import { COLLAB_MAIN_REF, collabMemberRef } from '@claudian-collab/protocol';
 
-import type { CollabGitFoundation } from '@/app/collab/ClaudianCollabService';
 import { CollabLocalProjectRepository } from '@/app/collab/CollabLocalProjectRepository';
 import { CollabPathPolicy } from '@/app/collab/CollabPathPolicy';
 import { CollabWorkspaceService } from '@/app/collab/CollabWorkspaceService';
+import type { CollabGitFoundation } from '@/app/collab/GrandemoniumCollabService';
 import {
   JoinProjectCoordinator,
   type JoinProjectFoundationPort,
@@ -30,7 +30,7 @@ import {
   type LanCollabInvitation,
 } from '@/app/collab/lan/InvitationCodec';
 import { COLLAB_CONTROL_PROTOCOL_VERSION } from '@/app/collab/lan/LanCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const NOW = new Date('2026-08-08T00:00:00.000Z');
 const OID = 'a'.repeat(40);
@@ -112,7 +112,7 @@ describe('JoinProjectCoordinator', () => {
       harness.root,
       'Shared',
       'Collab Projects',
-      '.claudian-join-join-alpha',
+      '.grandemonium-join-join-alpha',
     ))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(harness.projects.loadProjectDocument(
       'project-alpha',
@@ -222,7 +222,7 @@ describe('JoinProjectCoordinator', () => {
       harness.root,
       'Shared',
       'First Projects',
-      '.claudian-join-join-alpha',
+      '.grandemonium-join-join-alpha',
     ))).rejects.toMatchObject({ code: 'ENOENT' });
 
     harness.setCloneFailure(false);
@@ -252,7 +252,7 @@ describe('JoinProjectCoordinator', () => {
     const stagingPath = path.join(
       harness.root,
       projectsFolder,
-      '.claudian-join-join-alpha',
+      '.grandemonium-join-join-alpha',
     );
     await mkdir(stagingPath, { recursive: true });
     await writeFile(path.join(stagingPath, 'keep.md'), 'user content\n');
@@ -274,7 +274,7 @@ describe('JoinProjectCoordinator', () => {
     await expect(stat(path.join(
       harness.root,
       'workspace',
-      '.claudian-join-join-alpha',
+      '.grandemonium-join-join-alpha',
     ))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
@@ -380,7 +380,7 @@ describe('JoinProjectCoordinator', () => {
     readonly getProjectsFolder?: () => string;
     readonly onBootstrap?: (projectId: string, signal?: AbortSignal) => Promise<void>;
   } = {}): Promise<TestHarness> {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-join-coordinator-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-join-coordinator-'));
     roots.push(root);
     const projects = new CollabLocalProjectRepository(root, { now: () => NOW });
     const workspace = new CollabWorkspaceService(root);
@@ -501,7 +501,7 @@ describe('JoinProjectCoordinator', () => {
           projectsFolder: 'workspace',
           schemaVersion: 2,
           slug: 'project-alpha',
-          stagingDirectoryName: '.claudian-join-join-alpha',
+          stagingDirectoryName: '.grandemonium-join-join-alpha',
           updatedAt: NOW.toISOString(),
         };
         await projects.saveProjectDocument(
@@ -689,5 +689,5 @@ function encodeLegacyInvitation(
   invitation: Omit<LanCollabInvitation, 'protocolVersion'> & { protocolVersion: 7 },
 ): string {
   const payload = Buffer.from(JSON.stringify(invitation), 'utf8').toString('base64url');
-  return `claudian-collab:v7:${payload}`;
+  return `grandemonium-collab:v7:${payload}`;
 }

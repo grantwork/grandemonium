@@ -7,7 +7,7 @@ import { TextDecoder } from 'node:util';
 
 import crossSpawn from 'cross-spawn';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   resolveWindowsCmdShimSpawnSpec,
   terminateSpawnedProcessTree,

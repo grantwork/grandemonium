@@ -281,7 +281,7 @@ describe('LanAuthorityTransferRouter', () => {
     const missing = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${HOST_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${HOST_CREDENTIAL}`,
     );
     const missingBody = await responseJson(missing);
 
@@ -294,7 +294,7 @@ describe('LanAuthorityTransferRouter', () => {
     const source = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${HOST_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${HOST_CREDENTIAL}`,
     );
 
     registration = {
@@ -309,12 +309,12 @@ describe('LanAuthorityTransferRouter', () => {
     const target = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${HOST_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${HOST_CREDENTIAL}`,
     );
     const noncanonicalTarget = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${NONCANONICAL_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${NONCANONICAL_CREDENTIAL}`,
     );
 
     expect([
@@ -391,7 +391,7 @@ describe('LanAuthorityTransferRouter', () => {
     const accepted = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${TRANSFER_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${TRANSFER_CREDENTIAL}`,
     );
     expect(accepted.status).toBe(200);
     expect(service.acceptCloudToLanTransferTarget).toHaveBeenCalledWith(request);
@@ -399,7 +399,7 @@ describe('LanAuthorityTransferRouter', () => {
     const wrongCredential = await post(
       'acceptCloudToLanTransferTarget',
       request,
-      `Claudian-Authority-Transfer ${HOST_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${HOST_CREDENTIAL}`,
     );
     expect(wrongCredential.status).toBe(401);
 
@@ -411,7 +411,7 @@ describe('LanAuthorityTransferRouter', () => {
         projectId: PROJECT_ID,
         targetUrl: 'https://cloud.example.test',
       } satisfies RequestLanToCloudTransferRequest,
-      `Claudian-Authority-Transfer ${TRANSFER_CREDENTIAL}`,
+      `Grandemonium-Authority-Transfer ${TRANSFER_CREDENTIAL}`,
     );
     expect(sourceOnly.status).toBe(404);
   });
@@ -469,13 +469,13 @@ describe('LanAuthorityTransferRouter', () => {
     const claimed = await post(
       'claimTransferredMembership',
       request,
-      `Claudian-Transfer-Claim ${CLAIM}`,
+      `Grandemonium-Transfer-Claim ${CLAIM}`,
     );
     expect(claimed.status).toBe(200);
     const replayed = await post(
       'claimTransferredMembership',
       request,
-      `Claudian-Transfer-Claim ${CLAIM}`,
+      `Grandemonium-Transfer-Claim ${CLAIM}`,
     );
     expect(replayed.status).toBe(200);
     expect(await responseJson(replayed)).toEqual(await responseJson(claimed));
@@ -484,7 +484,7 @@ describe('LanAuthorityTransferRouter', () => {
     const mismatchedClaim = await post(
       'claimTransferredMembership',
       request,
-      `Claudian-Transfer-Claim ${Buffer.alloc(32, 6).toString('base64url')}`,
+      `Grandemonium-Transfer-Claim ${Buffer.alloc(32, 6).toString('base64url')}`,
     );
     expect(mismatchedClaim.status).toBe(401);
     expect(active.claimTransferredMembership).toHaveBeenCalledTimes(2);
@@ -497,7 +497,7 @@ describe('LanAuthorityTransferRouter', () => {
         projectId: PROJECT_ID,
         transferId: 'transfer-alpha',
       },
-      `Claudian-Transfer-Claim ${CLAIM}`,
+      `Grandemonium-Transfer-Claim ${CLAIM}`,
     );
     expect(hashless.status).toBe(401);
     expect(active.claimTransferredMembership).toHaveBeenCalledTimes(2);

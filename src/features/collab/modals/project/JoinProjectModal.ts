@@ -33,32 +33,32 @@ export class JoinProjectModal extends Modal {
     this.abortController = new AbortController();
     this.operationGeneration += 1;
     this.setTitle(t('collab.joinProject.title'));
-    this.modalEl.classList.add('claudian-collab-join-modal');
+    this.modalEl.classList.add('grandemonium-collab-join-modal');
     this.contentEl.replaceChildren();
 
-    const invitationField = this.contentEl.createDiv({ cls: 'claudian-collab-join-field' });
+    const invitationField = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-field' });
     invitationField.createEl('label', {
-      attr: { for: 'claudian-collab-join-invitation' },
+      attr: { for: 'grandemonium-collab-join-invitation' },
       text: t('collab.joinProject.invitation'),
     });
     this.invitationInput = invitationField.createEl('textarea', {
       attr: {
         'data-field': 'invitation',
-        id: 'claudian-collab-join-invitation',
+        id: 'grandemonium-collab-join-invitation',
         placeholder: t('collab.joinProject.invitationPlaceholder'),
         rows: '5',
       },
     });
 
-    const memberField = this.contentEl.createDiv({ cls: 'claudian-collab-join-field' });
+    const memberField = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-field' });
     memberField.createEl('label', {
-      attr: { for: 'claudian-collab-join-member-name' },
+      attr: { for: 'grandemonium-collab-join-member-name' },
       text: t('collab.joinProject.memberName'),
     });
     this.memberNameInput = memberField.createEl('input', {
       attr: {
         'data-field': 'member-name',
-        id: 'claudian-collab-join-member-name',
+        id: 'grandemonium-collab-join-member-name',
         placeholder: t('collab.joinProject.memberNamePlaceholder'),
         type: 'text',
       },
@@ -66,8 +66,8 @@ export class JoinProjectModal extends Modal {
     this.invitationInput.addEventListener('input', () => this.updateJoinButton());
     this.memberNameInput.addEventListener('input', () => this.updateJoinButton());
 
-    this.statusEl = this.contentEl.createDiv({ cls: 'claudian-collab-join-status' });
-    const actions = this.contentEl.createDiv({ cls: 'claudian-collab-join-actions' });
+    this.statusEl = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-status' });
+    const actions = this.contentEl.createDiv({ cls: 'grandemonium-collab-join-actions' });
     const cancel = actions.createEl('button', {
       attr: { type: 'button' },
       text: t('common.cancel'),
@@ -118,7 +118,7 @@ export class JoinProjectModal extends Modal {
     if (!this.statusEl) return;
     this.statusEl.replaceChildren();
     this.statusEl.createDiv({
-      cls: 'claudian-collab-join-warning',
+      cls: 'grandemonium-collab-join-warning',
       text: t('collab.joinProject.resumeRequired'),
     });
     const resume = this.statusEl.createEl('button', {
@@ -155,7 +155,7 @@ export class JoinProjectModal extends Modal {
     this.statusEl.replaceChildren();
     if (!text) return;
     this.statusEl.createDiv({
-      cls: warning ? 'claudian-collab-join-warning' : undefined,
+      cls: warning ? 'grandemonium-collab-join-warning' : undefined,
       text,
     });
   }

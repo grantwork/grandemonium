@@ -4,7 +4,7 @@ import type {
   CollabReviewProjectContext,
   CollabReviewProjectPort,
 } from '@/app/collab/review/CollabReviewService';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function projectError(reason: string): CollabError {
   return new CollabError({

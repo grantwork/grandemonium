@@ -1,7 +1,7 @@
 import type { CollabFileChangeKind, CollabReviewCondition, CollabRole, CollabTicketCommitRelationKind } from '@claudian-collab/protocol';
 
 import type { CollabAuthorityKind, CollabAuthoritySyncStatus, CollabConflictKind, CollabConnectionStatus, CollabHostStatus, CollabLocalCleanupStatus, CollabPersonalAction, CollabProjectHealth, CollabProjectLifecycle, CollabReviewComparisonKind } from '@/core/collab';
-import type { CollabErrorCode } from '@/core/collab/ClaudianCollabError';
+import type { CollabErrorCode } from '@/core/collab/GrandemoniumCollabError';
 
 export const AGENT_RUNTIME_PROTOCOL_VERSION = 5 as const;
 
@@ -285,7 +285,7 @@ export type AgentRuntimeConflictFileContent =
 export interface AgentRuntimeOperationsListResult {
   readonly access: 'read-write';
   readonly operations: readonly AgentRuntimeOperationSummary[];
-  readonly name: 'claudian-agent-runtime';
+  readonly name: 'grandemonium-agent-runtime';
   readonly protocolVersion: typeof AGENT_RUNTIME_PROTOCOL_VERSION;
 }
 

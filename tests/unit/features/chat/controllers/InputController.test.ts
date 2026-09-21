@@ -142,7 +142,7 @@ function createFixture(overrides: Record<string, unknown> = {}) {
     renderer: {
       addMessage: jest.fn().mockImplementation(() => {
         const el = createMockEl();
-        el.createDiv({ cls: 'claudian-message-content' });
+        el.createDiv({ cls: 'grandemonium-message-content' });
         return el;
       }),
       appendInterruptIndicator: jest.fn(),
@@ -270,7 +270,7 @@ describe('InputController approval details', () => {
       {},
       'A long command description',
     );
-    const descriptionEl = parentEl.querySelector('.claudian-ask-approval-desc');
+    const descriptionEl = parentEl.querySelector('.grandemonium-ask-approval-desc');
 
     expect(descriptionEl?.getAttribute('tabindex')).toBe('0');
     expect(descriptionEl?.getAttribute('role')).toBe('region');
@@ -413,7 +413,6 @@ describe('InputController coordinator execution', () => {
     const second = fixture.coordinator.execute.mock.calls[1][0] as ChatTurnSubmission;
     expect(first).toMatchObject({
       canonicalText: 'first',
-      context: { linkedContent: { path: 'Projects' } },
       rawDisplayText: 'first',
       userTurnOrdinal: 1,
       toolPolicy: { kind: 'provider-default' },
@@ -539,7 +538,6 @@ describe('InputController coordinator execution', () => {
       context: {
         browserSelection: browserContext,
         canvasSelection: canvasContext,
-        editorSelection: editorContext,
       },
       rawDisplayText: 'B',
       userTurnOrdinal: 2,
@@ -551,35 +549,6 @@ describe('InputController coordinator execution', () => {
     ]);
     expect(submission.images).toEqual([image]);
     expect(submission.images[0]).toBe(image);
-  });
-
-  it('keeps context feature-owned in the normalized submission', async () => {
-    const linkedContentController = {
-      getSnapshot: () => ({ mode: 'locked', path: 'note.md' }),
-    };
-    const fixture = createFixture({
-      getLinkedContentController: () => linkedContentController,
-    });
-
-    await fixture.controller.sendMessage({
-      content: 'use context',
-      editorContextOverride: {
-        mode: 'selection',
-        notePath: 'note.md',
-        selectedText: 'selection',
-        startLine: 1,
-      },
-    });
-
-    expect(fixture.coordinator.execute).toHaveBeenCalledWith(expect.objectContaining({
-      canonicalText: 'use context',
-      configuration: expect.objectContaining({
-        model: 'claude-model',
-      }),
-      context: expect.objectContaining({
-        linkedContent: { path: 'note.md' },
-      }),
-    }));
   });
 
   it('restores composer input and rolls back the local turn on definite pre-handoff failure', async () => {
@@ -724,7 +693,7 @@ describe('InputController coordinator execution', () => {
       expect(assistantMessage.durationFlavorWord).toBeUndefined();
 
       const assistantMsgEl = jest.mocked(fixture.deps.renderer.addMessage).mock.results.at(-1)?.value;
-      expect(assistantMsgEl?.querySelector('.claudian-response-footer')).toBeNull();
+      expect(assistantMsgEl?.querySelector('.grandemonium-response-footer')).toBeNull();
     } finally {
       nowSpy.mockRestore();
     }
@@ -767,7 +736,7 @@ describe('InputController coordinator execution', () => {
       expect(assistantMessage.durationFlavorWord).toBeUndefined();
 
       const assistantMsgEl = jest.mocked(fixture.deps.renderer.addMessage).mock.results.at(-1)?.value;
-      expect(assistantMsgEl?.querySelector('.claudian-response-footer')).toBeNull();
+      expect(assistantMsgEl?.querySelector('.grandemonium-response-footer')).toBeNull();
     } finally {
       nowSpy.mockRestore();
     }
@@ -793,7 +762,7 @@ describe('InputController coordinator execution', () => {
       expect(assistantMessage.durationFlavorWord).toBeUndefined();
 
       const assistantMsgEl = jest.mocked(fixture.deps.renderer.addMessage).mock.results.at(-1)?.value;
-      expect(assistantMsgEl?.querySelector('.claudian-response-footer')).toBeNull();
+      expect(assistantMsgEl?.querySelector('.grandemonium-response-footer')).toBeNull();
     } finally {
       nowSpy.mockRestore();
     }
@@ -1633,7 +1602,7 @@ describe('InputController coordinator execution', () => {
     expect(fixture.deps.renderer.removeMessage).not.toHaveBeenCalled();
     expect(fixture.deps.conversationController.save).not.toHaveBeenCalled();
     expect(Notice).toHaveBeenCalledWith(
-      'The provider session no longer exists. Claudian preserved the recoverable history; send again to rebuild the session.',
+      'The provider session no longer exists. Grandemonium preserved the recoverable history; send again to rebuild the session.',
     );
   });
 
@@ -1652,7 +1621,7 @@ describe('InputController coordinator execution', () => {
     expect(fixture.deps.renderer.removeMessage).not.toHaveBeenCalled();
     expect(fixture.deps.conversationController.save).not.toHaveBeenCalled();
     expect(Notice).toHaveBeenCalledWith(
-      'The provider session no longer exists. Its Claudian record was removed; send again to start a new session.',
+      'The provider session no longer exists. Its Grandemonium record was removed; send again to start a new session.',
     );
   });
 
@@ -1903,9 +1872,6 @@ describe('InputController coordinator execution', () => {
     expect(linkedContentController.commitSubmission).toHaveBeenCalledWith(token);
     expect(linkedContentController.rollbackSubmission).not.toHaveBeenCalled();
     expect(fixture.coordinator.execute).toHaveBeenCalledWith(expect.objectContaining({
-      context: expect.objectContaining({
-        linkedContent: { path: 'Projects/Plan.md' },
-      }),
       userTurnOrdinal: 1,
     }));
   });
@@ -1975,11 +1941,9 @@ describe('InputController coordinator execution', () => {
     );
     expect(submissions).toHaveLength(2);
     expect(submissions[0]).toMatchObject({
-      context: { linkedContent: { path: 'Projects/Plan.md' } },
       userTurnOrdinal: 1,
     });
     expect(submissions[1]).toMatchObject({
-      context: { linkedContent: { path: 'Projects/Plan.md' } },
       userTurnOrdinal: 1,
     });
     expect(fixture.plugin.createConversation).toHaveBeenCalledTimes(1);
@@ -2011,7 +1975,6 @@ describe('InputController coordinator execution', () => {
     });
 
     expect(fixture.coordinator.execute).toHaveBeenCalledWith(expect.objectContaining({
-      context: { linkedContent: { path: 'Projects/Plan.md' } },
       rawDisplayText: 'Promoted queued turn',
       userTurnOrdinal: 1,
     }));
@@ -2052,7 +2015,6 @@ describe('InputController coordinator execution', () => {
       linkedContentPath: 'Projects/Old',
     }));
     expect(fixture.coordinator.execute).toHaveBeenCalledWith(expect.objectContaining({
-      context: { linkedContent: { path: 'Projects/Old' } },
       userTurnOrdinal: 1,
     }));
     expect(linkedContentController.getSnapshot()).toMatchObject({

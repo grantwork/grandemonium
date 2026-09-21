@@ -20,7 +20,7 @@ import type {
   CollabProjectLifecycleAdmission,
 } from '@/app/collab/lifecycle/CollabProjectLifecycleAdmission';
 import { type CollabCoordinationSnapshot, type CollabCreateHostTransferRequest, type CollabHostTransferIntentRequest, type CollabLanProjectSnapshot, type CollabOperationOptions, isCollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type IncomingCoordinator = Pick<IncomingHostTransferCoordinator, 'accept' | 'close' | 'resume'>;
 

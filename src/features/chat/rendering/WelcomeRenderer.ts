@@ -1,4 +1,4 @@
-const WELCOME_BRAND_NAME = 'Tandemonium';
+const WELCOME_BRAND_NAME = 'Grandemonium';
 
 export function renderWelcomeContent(
   welcomeEl: HTMLElement,
@@ -6,25 +6,25 @@ export function renderWelcomeContent(
 ): void {
   welcomeEl.empty();
   welcomeEl.createDiv({
-    cls: 'claudian-welcome-brand claudian-welcome-text',
+    cls: 'grandemonium-welcome-brand grandemonium-welcome-text',
     text: WELCOME_BRAND_NAME,
   });
 
   if (greeting) {
     welcomeEl.createDiv({
-      cls: 'claudian-welcome-greeting claudian-welcome-text',
+      cls: 'grandemonium-welcome-greeting grandemonium-welcome-text',
       text: greeting,
     });
   }
 
-  welcomeEl.createDiv({ cls: 'claudian-welcome-linked-content' });
+  welcomeEl.createDiv({ cls: 'grandemonium-welcome-linked-content' });
 }
 
 export function createWelcomeElement(
   parentEl: HTMLElement,
   greeting?: string,
 ): HTMLElement {
-  const welcomeEl = parentEl.createDiv({ cls: 'claudian-welcome' });
+  const welcomeEl = parentEl.createDiv({ cls: 'grandemonium-welcome' });
   renderWelcomeContent(welcomeEl, greeting);
   return welcomeEl;
 }

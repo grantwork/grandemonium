@@ -10,10 +10,10 @@ import { type CollabIsoTimestamp, type CollabMemberId, type CollabOperationId, t
 import type { LanTlsHostCaSigner } from '@/app/collab/lan/LanTlsIdentity';
 import { fingerprintCertificatePem } from '@/app/collab/lan/LanTlsIdentity';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const TRANSITION_DOMAIN = 'claudian-collab-host-transition-v1\n';
-const ACTIVATION_DOMAIN = 'claudian-collab-host-activation-v1\n';
+const TRANSITION_DOMAIN = 'grandemonium-collab-host-transition-v1\n';
+const ACTIVATION_DOMAIN = 'grandemonium-collab-host-activation-v1\n';
 const FINGERPRINT_PATTERN = /^[0-9a-f]{64}$/;
 const SIGNATURE_PATTERN = /^[A-Za-z0-9_-]{64,2048}$/;
 

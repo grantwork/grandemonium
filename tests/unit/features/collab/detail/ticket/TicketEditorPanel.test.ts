@@ -6,7 +6,7 @@ import { type CollabTicketDetail } from '@claudian-collab/protocol';
 import { EditorView } from '@codemirror/view';
 
 import { type CollabCoordinationSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   TicketEditorPanel,
   type TicketEditorPanelOptions,
@@ -70,7 +70,7 @@ describe('TicketEditorPanel', () => {
       title: 'Fix publish retry',
     });
     expect(onCreated).toHaveBeenCalledWith(detail.ticket.id);
-    expect(root.closest('.claudian-collab-ticket-list')).toBeNull();
+    expect(root.closest('.grandemonium-collab-ticket-list')).toBeNull();
   });
 
   it('starts in Markdown display mode and exposes editing only to Manager or author', async () => {
@@ -91,11 +91,11 @@ describe('TicketEditorPanel', () => {
     });
 
     await panel.open();
-    const header = root.querySelector('.claudian-collab-ticket-detail-header')!;
+    const header = root.querySelector('.grandemonium-collab-ticket-detail-header')!;
     expect(header.querySelector('h2')?.textContent).toBe('Fix publish retry#17');
-    expect(header.querySelector('.claudian-collab-ticket-detail-title')?.textContent)
+    expect(header.querySelector('.grandemonium-collab-ticket-detail-title')?.textContent)
       .toBe('Fix publish retry');
-    expect(header.querySelector('.claudian-collab-ticket-detail-number')?.textContent)
+    expect(header.querySelector('.grandemonium-collab-ticket-detail-number')?.textContent)
       .toBe('#17');
     expect(header.querySelector('[data-action="toggle-ticket-status"]')?.textContent)
       .toBe('Open');
@@ -113,12 +113,12 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(body)).toBe(detail.body);
     expect(body.querySelector('textarea')).toBeNull();
     const bodyHeader = body.parentElement?.querySelector<HTMLElement>(
-      ':scope > .claudian-collab-ticket-field-header',
+      ':scope > .grandemonium-collab-ticket-field-header',
     );
     expect(bodyHeader?.querySelector(':scope > span')?.textContent).toBe('Description');
-    expect(bodyHeader?.querySelector('.claudian-collab-markdown-draft-modes'))
+    expect(bodyHeader?.querySelector('.grandemonium-collab-markdown-draft-modes'))
       .not.toBeNull();
-    expect(body.querySelector(':scope > .claudian-collab-markdown-draft-modes')).toBeNull();
+    expect(body.querySelector(':scope > .grandemonium-collab-markdown-draft-modes')).toBeNull();
     title.value = 'Updated title';
     setMarkdownValue(body, 'Updated **body**');
     root.querySelector<HTMLButtonElement>('[data-action="save-ticket"]')?.click();
@@ -181,12 +181,12 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(root.querySelector<HTMLElement>('[data-field="ticket-body"]')!))
       .toBe('Local body');
     expect(root.querySelector<HTMLElement>(
-      '[data-field="ticket-body"] .claudian-collab-markdown-draft-editor',
+      '[data-field="ticket-body"] .grandemonium-collab-markdown-draft-editor',
     )?.hidden).toBe(true);
     expect(markdownValue(root.querySelector<HTMLElement>('[data-field="ticket-comment"]')!))
       .toBe('Local comment');
     expect(root.querySelector<HTMLElement>(
-      '[data-field="ticket-comment"] .claudian-collab-markdown-draft-editor',
+      '[data-field="ticket-comment"] .grandemonium-collab-markdown-draft-editor',
     )?.hidden).toBe(true);
 
     root.querySelector<HTMLButtonElement>('[data-action="save-ticket"]')!.click();
@@ -238,7 +238,7 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(refreshedBody)).toBe('Newest body');
     expect(markdownEditor(refreshedBody).state.selection.main.anchor).toBe(4);
     expect(refreshedBody.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-editor',
+      '.grandemonium-collab-markdown-draft-editor',
     )?.hidden)
       .toBe(true);
     expect(document.activeElement).toBe(
@@ -283,7 +283,7 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(retainedComment)).toBe('Comment changed during content edit');
     expect(markdownEditor(retainedComment).state.selection.main.anchor).toBe(7);
     expect(retainedComment.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-editor',
+      '.grandemonium-collab-markdown-draft-editor',
     )?.hidden).toBe(true);
   });
 
@@ -372,7 +372,7 @@ describe('TicketEditorPanel', () => {
 
     expect(root.querySelector<HTMLButtonElement>('[data-action="save-ticket"]')?.disabled)
       .toBe(false);
-    expect(root.querySelector('.claudian-collab-ticket-editor-status')?.textContent)
+    expect(root.querySelector('.grandemonium-collab-ticket-editor-status')?.textContent)
       .toBe('The Ticket could not be saved.');
   });
 
@@ -434,7 +434,7 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(retainedBody)).toBe('Newer local body');
     expect(markdownEditor(retainedBody).state.selection.main.anchor).toBe(5);
     expect(retainedBody.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-editor',
+      '.grandemonium-collab-markdown-draft-editor',
     )?.hidden)
       .toBe(true);
     expect(document.activeElement).toBe(
@@ -615,7 +615,7 @@ describe('TicketEditorPanel', () => {
     expect(markdownValue(retainedComment)).toBe('Newer comment');
     expect(markdownEditor(retainedComment).state.selection.main.anchor).toBe(6);
     expect(retainedComment.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-editor',
+      '.grandemonium-collab-markdown-draft-editor',
     )?.hidden)
       .toBe(true);
 
@@ -1116,9 +1116,9 @@ describe('TicketEditorPanel', () => {
       'comment',
     ]);
     expect(root.textContent).not.toContain('Accepted changes');
-    expect(root.querySelector('.claudian-collab-ticket-activity > h3')?.textContent)
+    expect(root.querySelector('.grandemonium-collab-ticket-activity > h3')?.textContent)
       .toBe('Activity (3)');
-    expect(root.querySelector('.claudian-collab-ticket-activity')?.classList)
+    expect(root.querySelector('.grandemonium-collab-ticket-activity')?.classList)
       .toContain('has-entries');
   });
 
@@ -1141,9 +1141,9 @@ describe('TicketEditorPanel', () => {
 
     await panel.open();
 
-    expect(root.querySelector('.claudian-collab-ticket-activity > h3')).toBeNull();
-    expect(root.querySelector('.claudian-collab-ticket-timeline')).toBeNull();
-    expect(root.querySelector('.claudian-collab-ticket-activity')?.classList)
+    expect(root.querySelector('.grandemonium-collab-ticket-activity > h3')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-ticket-timeline')).toBeNull();
+    expect(root.querySelector('.grandemonium-collab-ticket-activity')?.classList)
       .not.toContain('has-entries');
     expect(root.querySelector('[data-field="ticket-comment"]')).not.toBeNull();
   });
@@ -1167,9 +1167,9 @@ describe('TicketEditorPanel', () => {
     root.querySelector<HTMLButtonElement>('[data-action="preview-ticket-comment"]')?.click();
 
     const preview = draft.querySelector<HTMLElement>(
-      '.claudian-collab-markdown-draft-preview',
+      '.grandemonium-collab-markdown-draft-preview',
     )!;
-    expect(draft.querySelector<HTMLElement>('.claudian-collab-markdown-draft-editor')?.hidden)
+    expect(draft.querySelector<HTMLElement>('.grandemonium-collab-markdown-draft-editor')?.hidden)
       .toBe(true);
     expect(preview.hidden).toBe(false);
     expect(renderMarkdown).toHaveBeenLastCalledWith(
@@ -1178,7 +1178,7 @@ describe('TicketEditorPanel', () => {
     );
 
     root.querySelector<HTMLButtonElement>('[data-action="edit-ticket-comment"]')?.click();
-    expect(draft.querySelector<HTMLElement>('.claudian-collab-markdown-draft-editor')?.hidden)
+    expect(draft.querySelector<HTMLElement>('.grandemonium-collab-markdown-draft-editor')?.hidden)
       .toBe(false);
     expect(preview.hidden).toBe(true);
     expect(markdownValue(draft)).toBe('Preview **this** comment');
@@ -1186,7 +1186,7 @@ describe('TicketEditorPanel', () => {
       '[data-action="submit-ticket-comment"]',
     );
     expect(commentButton?.parentElement).toBe(root.querySelector(
-      '.claudian-collab-comment-modes',
+      '.grandemonium-collab-comment-modes',
     ));
   });
 
@@ -1219,7 +1219,7 @@ describe('TicketEditorPanel', () => {
     await panel.open();
     await nextTurn();
     const sentReferences = root.querySelectorAll<HTMLButtonElement>(
-      '.claudian-collab-markdown-ticket-reference',
+      '.grandemonium-collab-markdown-ticket-reference',
     );
     expect(sentReferences).toHaveLength(2);
     sentReferences[0]?.click();
@@ -1230,7 +1230,7 @@ describe('TicketEditorPanel', () => {
     root.querySelector<HTMLButtonElement>('[data-action="preview-ticket-comment"]')?.click();
     await nextTurn();
     draft.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-ticket-reference',
+      '.grandemonium-collab-markdown-ticket-reference',
     )?.click();
     expect(onOpenTicket).toHaveBeenLastCalledWith(17);
   });
@@ -1254,14 +1254,14 @@ describe('TicketEditorPanel', () => {
     const commentView = markdownEditor(comment);
     commentView.dispatch({ selection: { anchor: commentView.state.doc.length } });
     comment.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     )?.click();
 
     expect(markdownValue(comment)).toBe('Related #17 ');
 
     root.querySelector<HTMLButtonElement>('[data-action="edit-ticket"]')?.click();
     expect(root.querySelector(
-      '[data-field="ticket-body"] .claudian-collab-markdown-suggestions',
+      '[data-field="ticket-body"] .grandemonium-collab-markdown-suggestions',
     )).not.toBeNull();
   });
 
@@ -1303,7 +1303,7 @@ describe('TicketEditorPanel', () => {
     const commentView = markdownEditor(comment);
     commentView.dispatch({ selection: { anchor: commentView.state.doc.length } });
     const suggestion = comment.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-suggestion',
+      '.grandemonium-collab-markdown-suggestion',
     );
     expect(suggestion?.textContent).toBe('Bob Builder');
     suggestion?.click();
@@ -1314,7 +1314,7 @@ describe('TicketEditorPanel', () => {
     setMarkdownValue(body, 'Owner @bo');
     const bodyView = markdownEditor(body);
     bodyView.dispatch({ selection: { anchor: bodyView.state.doc.length } });
-    expect(body.querySelector('.claudian-collab-markdown-suggestion')?.textContent)
+    expect(body.querySelector('.grandemonium-collab-markdown-suggestion')?.textContent)
       .toBe('Bob Builder');
   });
 
@@ -1357,7 +1357,7 @@ describe('TicketEditorPanel', () => {
     const view = markdownEditor(comment);
     view.dispatch({ selection: { anchor: view.state.doc.length } });
 
-    expect(comment.querySelector('.claudian-collab-markdown-suggestion')).toBeNull();
+    expect(comment.querySelector('.grandemonium-collab-markdown-suggestion')).toBeNull();
   });
 
   it('renders cached Ticket detail read-only even when coordination is still online', async () => {
@@ -1432,7 +1432,7 @@ describe('TicketEditorPanel', () => {
 
     await panel.open();
 
-    const header = root.querySelector('.claudian-collab-ticket-detail-header')!;
+    const header = root.querySelector('.grandemonium-collab-ticket-detail-header')!;
     expect(header.textContent).toContain('Open');
     expect(header.querySelector('[data-field="ticket-assignee"]')).toBeNull();
     expect(root.querySelector('[data-action="edit-ticket"]')).toBeNull();

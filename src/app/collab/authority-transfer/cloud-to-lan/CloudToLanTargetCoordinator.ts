@@ -31,7 +31,7 @@ import type {
   CollabAuthorityLifecyclePort,
 } from '@/app/collab/remote-authority/CollabAuthorityLifecyclePort';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface CloudToLanDownloadedArtifact {
@@ -137,7 +137,7 @@ export class CloudToLanTargetCoordinator {
       localRole: 'target',
       operationIntentId,
       ownerInstallationKey: this.options.installationKey,
-      stagingDirectoryName: `.claudian-authority-transfer-${proposed.transferId}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${proposed.transferId}`,
       status: proposed,
     });
     await this.options.persistence.create(record);

@@ -38,7 +38,7 @@ describe('CollabLifecycleJournalStore', () => {
   let store: CollabLifecycleJournalStore;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-lifecycle-journals-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-lifecycle-journals-'));
     store = new CollabLifecycleJournalStore(root);
   });
 
@@ -54,7 +54,7 @@ describe('CollabLifecycleJournalStore', () => {
     await expect(store.pendingLeaves.load('project-alpha')).resolves.toEqual(pendingLeave());
     await expect(store.pendingLeaves.list()).resolves.toEqual([pendingLeave()]);
     await expect(readFile(
-      path.join(root, '.claudian', 'collab', 'pending-leaves', 'project-alpha.json'),
+      path.join(root, '.grandemonium', 'collab', 'pending-leaves', 'project-alpha.json'),
       'utf8',
     )).resolves.toContain('memberCredential');
     await expect(store.pendingLeaves.remove('project-alpha')).resolves.toBe(true);

@@ -227,7 +227,7 @@ export async function probeGitRuntime(
   executablePath: string,
   platform: NodeJS.Platform = process.platform,
 ): Promise<GitRuntimeProbeResult> {
-  const probeDirectory = await mkdtemp(path.join(tmpdir(), 'claudian-git-probe-'));
+  const probeDirectory = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-probe-'));
   const runner = new GitCommandRunner({
     emptyConfigPath: nullGitConfigPath(platform),
     executablePath,

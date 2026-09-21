@@ -1,7 +1,7 @@
 import { type CollabChangedFile } from '@claudian-collab/protocol';
 
 import { type CollabFeatureState, type CollabLocalProjectSummary, type CollabProjectInspection, type CollabPublicationReview, type CollabResult, type CollabWorkingTreeReview } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { renderCollabChangedFileList } from '@/features/collab/shared/CollabChangedFileList';
 import { t } from '@/i18n/i18n';
 import {
@@ -91,7 +91,7 @@ export class PersonalChangesPanel {
     private readonly options: PersonalChangesPanelOptions,
   ) {
     this.project = options.project;
-    this.rootEl = containerEl.createDiv({ cls: 'claudian-collab-publish' });
+    this.rootEl = containerEl.createDiv({ cls: 'grandemonium-collab-publish' });
     this.subscription = options.port.subscribe(state => {
       if (this.destroyed || state.selectedProjectId !== this.project.id) return;
       if (!this.active) {
@@ -324,7 +324,7 @@ export class PersonalChangesPanel {
     if (this.destroyed) return;
     const focus = this.captureFocus();
     this.rootEl.replaceChildren();
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-publish-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-publish-header' });
     const canOpenWorkingTree = this.viewState.unpublishedReview !== undefined
       && this.viewState.kind !== 'clean'
       && this.viewState.kind !== 'conflict'
@@ -338,7 +338,7 @@ export class PersonalChangesPanel {
           'data-action': 'review-personal',
           type: 'button',
         },
-        cls: 'claudian-collab-publish-title',
+        cls: 'grandemonium-collab-publish-title',
         text: t('collab.publish.title'),
       });
       title.disabled = !this.options.onOpenWorkingTreeReview;
@@ -346,12 +346,12 @@ export class PersonalChangesPanel {
     } else {
       header.createEl('h4', { text: t('collab.publish.title') });
     }
-    const actions = header.createDiv({ cls: 'claudian-collab-publish-actions' });
+    const actions = header.createDiv({ cls: 'grandemonium-collab-publish-actions' });
     if (this.viewState.kind === 'conflict' && this.viewState.conflictOperationId) {
       const operationId = this.viewState.conflictOperationId;
       const resolve = actions.createEl('button', {
         attr: { 'data-action': 'open-conflict', type: 'button' },
-        cls: 'claudian-collab-publish-navigation',
+        cls: 'grandemonium-collab-publish-navigation',
         text: t('collab.conflict.title'),
       });
       resolve.disabled = !this.options.onOpenConflict;
@@ -361,7 +361,7 @@ export class PersonalChangesPanel {
     } else if (this.viewState.kind === 'review' && this.viewState.publicationReview) {
       const review = actions.createEl('button', {
         attr: { 'data-action': 'open-publication-review', type: 'button' },
-        cls: 'claudian-collab-publish-navigation',
+        cls: 'grandemonium-collab-publish-navigation',
         text: t('collab.review.title'),
       });
       review.disabled = !this.options.onOpenPublicationReview;
@@ -375,7 +375,7 @@ export class PersonalChangesPanel {
     if (this.shouldRenderStatus()) {
       this.rootEl.createDiv({
         attr: { 'aria-live': 'polite' },
-        cls: `claudian-collab-publish-status claudian-collab-publish-status--${this.viewState.kind}`,
+        cls: `grandemonium-collab-publish-status grandemonium-collab-publish-status--${this.viewState.kind}`,
         text: this.statusText(),
       });
     }

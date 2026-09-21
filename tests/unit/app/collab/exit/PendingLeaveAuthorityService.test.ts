@@ -5,7 +5,7 @@ import {
 import type { PendingLeaveRecord } from '@/app/collab/exit/PendingLeaveRecord';
 import type { MembershipTerminationResponse } from '@/app/collab/lan/LanCollabControlOperations';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 describe('PendingLeaveAuthorityService', () => {
   it('prepares exact Leave preconditions from an active snapshot', async () => {

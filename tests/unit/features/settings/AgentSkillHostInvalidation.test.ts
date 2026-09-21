@@ -1,6 +1,6 @@
 import { ProviderWorkspaceRegistry } from '@/core/providers/ProviderWorkspaceRegistry';
-import { ClaudianSettingTab } from '@/features/settings/ClaudianSettings';
-import ClaudianPlugin from '@/main';
+import { GrandemoniumSettingTab } from '@/features/settings/GrandemoniumSettings';
+import GrandemoniumPlugin from '@/main';
 
 describe('agent skill host invalidation', () => {
   afterEach(() => {
@@ -21,7 +21,7 @@ describe('agent skill host invalidation', () => {
       getAllViews: jest.fn().mockReturnValue([{ invalidateProviderResources }]),
     };
 
-    const pending = ClaudianPlugin.prototype.notifyAgentSkillsChanged.call(plugin as any);
+    const pending = GrandemoniumPlugin.prototype.notifyAgentSkillsChanged.call(plugin as any);
 
     expect(plugin.agentSkillResourceGeneration).toBe(1);
     expect(invalidateProviderResources).toHaveBeenCalledWith(
@@ -42,7 +42,7 @@ describe('agent skill host invalidation', () => {
       notifyAgentSkillsChanged: jest.fn(),
     };
 
-    const tab = new ClaudianSettingTab({} as any, plugin as any);
+    const tab = new GrandemoniumSettingTab({} as any, plugin as any);
 
     expect(getAdapter).toHaveBeenCalledTimes(1);
     expect((tab as any).agentSkillCoordinator).toBeDefined();

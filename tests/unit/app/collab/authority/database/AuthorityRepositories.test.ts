@@ -32,7 +32,7 @@ describe('Collab authority schema and base repositories', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-authority-repositories-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-authority-repositories-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

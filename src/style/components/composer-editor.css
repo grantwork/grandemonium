@@ -1,5 +1,5 @@
 /* The wrapper owns composer chrome; CodeMirror owns document layout and scrolling. */
-.claudian-input-wrapper .claudian-composer-editor {
+.grandemonium-input-wrapper .grandemonium-composer-editor {
   width: 100%;
   min-width: 0;
   min-height: 60px;
@@ -15,12 +15,12 @@
   white-space: pre-wrap;
 }
 
-.claudian-composer-editor:focus,
-.claudian-composer-editor .cm-editor.cm-focused {
+.grandemonium-composer-editor:focus,
+.grandemonium-composer-editor .cm-editor.cm-focused {
   outline: none;
 }
 
-.claudian-composer-editor:empty::before {
+.grandemonium-composer-editor:empty::before {
   display: block;
   padding: 8px 10px 10px;
   content: attr(data-placeholder);
@@ -28,36 +28,36 @@
   opacity: 0.6;
 }
 
-.claudian-composer-editor .cm-editor {
+.grandemonium-composer-editor .cm-editor {
   background: transparent;
 }
 
-.claudian-composer-editor .cm-scroller {
-  max-height: var(--claudian-textarea-max-height, none);
+.grandemonium-composer-editor .cm-scroller {
+  max-height: var(--grandemonium-textarea-max-height, none);
   overflow: auto;
   font-family: inherit;
 }
 
-.claudian-composer-editor .cm-content {
+.grandemonium-composer-editor .cm-content {
   padding: 8px 0 10px;
   min-height: 60px;
   caret-color: var(--text-normal);
 }
 
-.claudian-composer-editor .cm-line {
+.grandemonium-composer-editor .cm-line {
   padding: 0 10px;
 }
 
-.claudian-composer-editor .cm-placeholder {
+.grandemonium-composer-editor .cm-placeholder {
   color: var(--text-muted);
   opacity: 0.6;
 }
 
-.claudian-composer-editor .cm-cursor {
+.grandemonium-composer-editor .cm-cursor {
   border-left-color: var(--text-normal);
 }
 
-.claudian-composer-wikilink > p {
+.grandemonium-composer-wikilink > p {
   display: inline;
   margin: 0;
 }

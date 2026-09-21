@@ -16,7 +16,7 @@ import { PinnedCollabHttpClient } from '@/app/collab/lan/CollabHttpClient';
 import { hostTransferProvisionalPath } from '@/app/collab/lan/HostTransferProvisionalRouter';
 import { lanCollabControlOperationCodec } from '@/app/collab/lan/LanCollabControlOperationCodecs';
 import { fingerprintCertificatePem } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { toError } from '@/utils/error';
 
 const RESPONSE_LIMIT = 64 * 1024;
@@ -80,7 +80,7 @@ async function requestReceiver(input: {
       ca: input.targetCaCertificatePem,
       headers: {
         accept: 'application/json',
-        authorization: `Claudian-Receiver ${input.receiverCredential}`,
+        authorization: `Grandemonium-Receiver ${input.receiverCredential}`,
         ...(input.contentLength === undefined ? {} : {
           'content-length': String(input.contentLength),
         }),
@@ -210,7 +210,7 @@ export class HostTransferTargetTransport implements HostTransferTargetTransportP
       endpoint: input.endpoint,
       headers: {
         'content-type': 'application/octet-stream',
-        'x-claudian-manifest-length': String(manifestBytes.byteLength),
+        'x-grandemonium-manifest-length': String(manifestBytes.byteLength),
       },
       path: hostTransferProvisionalPath(input.transferId, 'stage'),
       receiverCredential: input.receiverCredential,

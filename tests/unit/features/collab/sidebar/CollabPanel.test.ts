@@ -3,7 +3,7 @@
 import { type App, Menu } from 'obsidian';
 
 import { type CollabFeatureState, type CollabLocalProjectSummary } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const mockOpenCreate = jest.fn();
 const mockOpenJoin = jest.fn();
@@ -266,7 +266,7 @@ function createPort(initialState: CollabFeatureState) {
     createInvitation: jest.fn().mockResolvedValue({
       status: 'success',
       value: {
-        encodedInvitation: 'claudian-collab:v2:test',
+        encodedInvitation: 'grandemonium-collab:v2:test',
         expiresAt: '2026-08-08T01:00:00.000Z',
       },
     }),
@@ -410,10 +410,10 @@ describe('CollabPanel', () => {
 
     expect(resolveGit).toHaveBeenCalledWith(false);
     expect(port.initialize).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-panel-header')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel-header')).toBeNull();
 
     panel.setActive(true);
-    expect(container.querySelector('.claudian-collab-panel-header')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel-header')).not.toBeNull();
   });
 
   it('keeps preloaded initialization alive across visibility changes', async () => {
@@ -440,12 +440,12 @@ describe('CollabPanel', () => {
 
     expect(resolveGit).toHaveBeenCalledTimes(1);
     expect(port.initialize).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-panel-header')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel-header')).toBeNull();
 
     panel.setActive(true);
     await flush();
     expect(resolveGit).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-panel-header')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel-header')).not.toBeNull();
   });
 
   it('initializes lazily and renders Create and Join in the empty state', async () => {
@@ -471,17 +471,17 @@ describe('CollabPanel', () => {
 
     expect(resolveGit).toHaveBeenCalledWith(false);
     expect(port.initialize).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-panel-header')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel-header')).not.toBeNull();
     expect(container.querySelector('[data-action="add-project"]')).toBeNull();
     expect(container.querySelector('[data-action="create-project"]')).toBeNull();
     expect(container.textContent).toContain('Create');
     expect(container.textContent).toContain('Join');
-    const emptyActions = container.querySelector('.claudian-collab-empty-actions')!;
+    const emptyActions = container.querySelector('.grandemonium-collab-empty-actions')!;
     expect([...emptyActions.querySelectorAll('button')].map(button => (
       button.getAttribute('data-action')
     ))).toEqual(['empty-create', 'join-project']);
     expect(container.querySelector('[data-action="join-project"]')?.classList.contains(
-      'claudian-collab-empty-join',
+      'grandemonium-collab-empty-join',
     )).toBe(true);
     expect(container.querySelector<HTMLButtonElement>('[data-action="join-project"]')?.disabled)
       .toBe(false);
@@ -541,7 +541,7 @@ describe('CollabPanel', () => {
     panel.setActive(true);
     await flush();
     expect(container.querySelector('[data-action="start-host"]')).toBeNull();
-    expect(container.querySelector('.claudian-collab-host-section')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-host-section')).toBeNull();
     expect(container.querySelector('[data-action="create-invitation"]')).toBeNull();
     const manage = container.querySelector<HTMLButtonElement>(
       '[data-action="manage-project"]',
@@ -596,15 +596,15 @@ describe('CollabPanel', () => {
     panel.setActive(true);
     await flush();
 
-    expect(container.querySelector('.claudian-collab-host-section')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-host-section')).toBeNull();
     const management = container.querySelector<HTMLButtonElement>(
-      '.claudian-collab-project-management',
+      '.grandemonium-collab-project-management',
     );
     expect(management?.parentElement).toBe(
-      container.querySelector('.claudian-collab-project-header-actions'),
+      container.querySelector('.grandemonium-collab-project-header-actions'),
     );
     expect(management?.getAttribute('aria-label')).toBe('Project management');
-    expect(management?.querySelector('.claudian-collab-project-management-icon')).not.toBeNull();
+    expect(management?.querySelector('.grandemonium-collab-project-management-icon')).not.toBeNull();
     expect(management?.textContent).toBe('');
     management?.click();
     await flush();
@@ -700,8 +700,8 @@ describe('CollabPanel', () => {
     await flush();
 
     expect(container.textContent).toContain('Alpha');
-    expect(container.querySelector('.claudian-collab-panel-header')).toBeNull();
-    const headerActions = container.querySelector('.claudian-collab-project-header-actions')!;
+    expect(container.querySelector('.grandemonium-collab-panel-header')).toBeNull();
+    const headerActions = container.querySelector('.grandemonium-collab-project-header-actions')!;
     expect([...headerActions.querySelectorAll('button')].map(button => (
       button.getAttribute('data-action')
     ))).toEqual(['add-project', 'manage-project']);
@@ -716,13 +716,13 @@ describe('CollabPanel', () => {
     addMenu.items[1]?.clickHandler?.();
     expect(mockOpenCreate).toHaveBeenCalledTimes(1);
     expect(mockOpenJoin).toHaveBeenCalledTimes(1);
-    expect(container.querySelector('.claudian-collab-project-toolbar')?.getAttribute('title'))
+    expect(container.querySelector('.grandemonium-collab-project-toolbar')?.getAttribute('title'))
       .toBe('workspace/alpha');
     expect(container.querySelector('details')).toBeNull();
     expect(container.querySelector('[data-action="open-project"]')).toBeNull();
     expect(container.textContent).not.toContain('LAN Host');
     expect(container.textContent).not.toContain('Host stopped · Manager');
-    expect(container.querySelector('.claudian-collab-project-bottom')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-project-bottom')).toBeNull();
     const resume = container.querySelector<HTMLButtonElement>('[data-action="resume-setup"]')!;
     expect(resume).not.toBeNull();
     resume.click();
@@ -762,7 +762,7 @@ describe('CollabPanel', () => {
     expect(picker.tagName).toBe('BUTTON');
     expect(picker.getAttribute('aria-haspopup')).toBe('menu');
     expect(picker.textContent).toContain('Alpha');
-    expect(picker.querySelector('.claudian-collab-project-picker-icon')).toBeNull();
+    expect(picker.querySelector('.grandemonium-collab-project-picker-icon')).toBeNull();
     expect(container.querySelector('select')).toBeNull();
 
     picker.click();
@@ -806,8 +806,8 @@ describe('CollabPanel', () => {
     panel.setActive(true);
     await flush();
 
-    expect(container.querySelector('.claudian-collab-publish')).not.toBeNull();
-    expect(container.querySelector('.claudian-collab-team')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-publish')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-team')).not.toBeNull();
     expect(container.textContent).toContain('My changes');
     expect(container.textContent).toContain('Team changes');
     expect(container.textContent).toContain('Maya');
@@ -827,8 +827,8 @@ describe('CollabPanel', () => {
     container.querySelector<HTMLButtonElement>('[data-request-id="request-maya"]')?.click();
     await flush();
 
-    expect(container.querySelector('.claudian-collab-review-sidebar')).toBeNull();
-    expect(container.querySelector('.claudian-collab-project-home')).not.toBeNull();
+    expect(container.querySelector('.grandemonium-collab-review-sidebar')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-project-home')).not.toBeNull();
     expect(container.querySelector('[data-request-id="request-maya"]')
       ?.getAttribute('aria-expanded')).toBe('true');
     expect(container.textContent).toContain('Maya');
@@ -1036,9 +1036,9 @@ describe('CollabPanel', () => {
 
     expect(container.textContent).toContain('Retired');
     expect(container.textContent).toContain('Collaboration ended');
-    expect(container.querySelector('.claudian-collab-personal-home')).toBeNull();
-    expect(container.querySelector('.claudian-collab-team-home')).toBeNull();
-    expect(container.querySelector('.claudian-collab-ticket-home')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-personal-home')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-team-home')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-ticket-home')).toBeNull();
     expect(container.querySelector('[data-action="manage-project"]')).toBeNull();
     expect(container.querySelector('[data-action="keep-retired-files"]')).not.toBeNull();
     expect(container.querySelector('[data-action="delete-retired-files"]')).not.toBeNull();
@@ -1135,7 +1135,7 @@ describe('CollabPanel', () => {
 
     panel.setActive(true);
     await flush();
-    const root = container.querySelector<HTMLElement>('.claudian-collab-panel')!;
+    const root = container.querySelector<HTMLElement>('.grandemonium-collab-panel')!;
     const projectPicker = root.querySelector<HTMLButtonElement>('[data-field="project-picker"]')!;
     root.scrollTop = 123;
     projectPicker.focus();
@@ -1351,7 +1351,7 @@ describe('CollabPanel', () => {
     await flush();
 
     expect(port.initialize).not.toHaveBeenCalled();
-    expect(container.querySelector('.claudian-collab-panel')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-panel')).toBeNull();
     const subscription = port.subscribe.mock.results[0]?.value as { dispose: jest.Mock };
     expect(subscription.dispose).toHaveBeenCalledTimes(1);
     expect(port.subscribe.mock.results).toHaveLength(1);

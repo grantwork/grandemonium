@@ -413,7 +413,7 @@ async function waitForEvents(
   }
 }
 
-const descriptorPath = process.env.CLAUDIAN_CLOUD_LOCAL_GATE_DESCRIPTOR;
+const descriptorPath = process.env.GRANDEMONIUM_CLOUD_LOCAL_GATE_DESCRIPTOR;
 const describeWithServer = descriptorPath === undefined ? describe.skip : describe;
 
 describeWithServer('Cloud localhost client milestone gate', () => {
@@ -421,7 +421,7 @@ describeWithServer('Cloud localhost client milestone gate', () => {
     if (descriptorPath === undefined) throw new Error('Missing Cloud gate descriptor');
     const descriptor = JSON.parse(await readFile(descriptorPath, 'utf8')) as GateDescriptor;
     const projectId = descriptor.manifest.comparison.projectId;
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-local-gate-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-local-gate-'));
     const sessions: CollabAuthoritySession[] = [];
     const eventConnections: { dispose(): void }[] = [];
     try {
@@ -609,7 +609,7 @@ describeWithServer('Cloud localhost client milestone gate', () => {
 
       const retiredAuthority = path.join(
         alice.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'retired-lan-authorities',
         projectId,
@@ -618,7 +618,7 @@ describeWithServer('Cloud localhost client milestone gate', () => {
       );
       await expect(stat(path.join(
         alice.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'authorities',
         projectId,

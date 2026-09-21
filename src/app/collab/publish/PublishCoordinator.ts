@@ -9,8 +9,8 @@ import {
 } from '@/app/collab/publish/CollabPublicationStateRecord';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import { type CollabConfirmPublishRequest, type CollabConflictDescriptor, type CollabOperationPhase, type CollabPublicationReview, type CollabPublishOutcome, type CollabPublishRequest, type CollabResult } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError, type CollabRecoveryAction } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError, type CollabRecoveryAction } from '@/core/collab/GrandemoniumCollabError';
 
 const PUBLISH_COMMIT_MESSAGE = 'Update project files';
 
@@ -297,7 +297,7 @@ export function normalizeCollabPublishDescription(value: string): string {
     throw new CollabError({ code: 'description-required' });
   }
   if (new TextEncoder().encode(description).byteLength
-    > CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes) {
+    > GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes) {
     throw new CollabError({ code: 'quota-exceeded' });
   }
   return description;

@@ -24,7 +24,7 @@ describe('OpencodePaths', () => {
 
   it('uses the home data directory on Windows even when AppData paths are available', () => {
     Object.defineProperty(process, 'platform', { value: 'win32' });
-    const home = path.join(os.tmpdir(), 'claudian-opencode-home');
+    const home = path.join(os.tmpdir(), 'grandemonium-opencode-home');
     const env = {
       APPDATA: path.join(home, 'AppData', 'Roaming'),
       HOME: home,
@@ -38,11 +38,11 @@ describe('OpencodePaths', () => {
 
   it('preserves XDG_DATA_HOME and OPENCODE_DB precedence on Windows', () => {
     Object.defineProperty(process, 'platform', { value: 'win32' });
-    const xdgDataHome = path.join(os.tmpdir(), 'claudian-opencode-xdg');
-    const absoluteDatabasePath = path.join(os.tmpdir(), 'claudian-opencode-custom.db');
+    const xdgDataHome = path.join(os.tmpdir(), 'grandemonium-opencode-xdg');
+    const absoluteDatabasePath = path.join(os.tmpdir(), 'grandemonium-opencode-custom.db');
     const env = {
-      APPDATA: path.join(os.tmpdir(), 'claudian-opencode-appdata'),
-      HOME: path.join(os.tmpdir(), 'claudian-opencode-home'),
+      APPDATA: path.join(os.tmpdir(), 'grandemonium-opencode-appdata'),
+      HOME: path.join(os.tmpdir(), 'grandemonium-opencode-home'),
       XDG_DATA_HOME: xdgDataHome,
     } as NodeJS.ProcessEnv;
 
@@ -58,7 +58,7 @@ describe('OpencodePaths', () => {
   });
 
   it('falls back to the existing resolved database when persisted metadata points at a missing path', () => {
-    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'claudian-opencode-paths-'));
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'grandemonium-opencode-paths-'));
     const xdgDataHome = path.join(tmpRoot, 'xdg-data');
     const dbDir = path.join(xdgDataHome, 'opencode');
     const dbPath = path.join(dbDir, 'opencode.db');

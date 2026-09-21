@@ -4,9 +4,9 @@ import {
   COLLAB_LOCAL_ERROR_CODES,
   CollabError,
   collabErrorGroup,
-} from '@/core/collab/ClaudianCollabError';
+} from '@/core/collab/GrandemoniumCollabError';
 
-describe('ClaudianCollabError', () => {
+describe('GrandemoniumCollabError', () => {
   it('owns application-only error vocabulary outside the wire package', () => {
     expect(COLLAB_LOCAL_ERROR_CODES).toContain('invitation-expired');
     expect(COLLAB_LOCAL_ERROR_CODES).toContain('tls-ca-mismatch');

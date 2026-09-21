@@ -36,19 +36,19 @@ export function renderEnvironmentSettingsSection(
 
   let envTextarea: HTMLTextAreaElement | null = null;
   const reviewEl = container.createDiv({
-    cls: 'claudian-env-review-warning claudian-setting-validation claudian-setting-validation-warning claudian-hidden',
+    cls: 'grandemonium-env-review-warning grandemonium-setting-validation grandemonium-setting-validation-warning grandemonium-hidden',
   });
 
   const updateReviewWarning = () => {
     const reviewKeys = getEnvironmentReviewKeysForScope(envTextarea?.value ?? '', scope);
     if (reviewKeys.length === 0) {
-      reviewEl.toggleClass('claudian-hidden', true);
+      reviewEl.toggleClass('grandemonium-hidden', true);
       reviewEl.empty();
       return;
     }
 
     reviewEl.setText(`Review environment ownership for: ${reviewKeys.join(', ')}`);
-    reviewEl.toggleClass('claudian-hidden', false);
+    reviewEl.toggleClass('grandemonium-hidden', false);
   };
 
   new Setting(container)
@@ -60,7 +60,7 @@ export function renderEnvironmentSettingsSection(
         .setValue(plugin.getEnvironmentVariablesForScope(scope));
       text.inputEl.rows = 6;
       text.inputEl.cols = 50;
-      text.inputEl.addClass('claudian-settings-env-textarea');
+      text.inputEl.addClass('grandemonium-settings-env-textarea');
       text.inputEl.dataset.envScope = scope;
       text.inputEl.addEventListener('input', () => updateReviewWarning());
       text.inputEl.addEventListener('blur', () => {
@@ -75,10 +75,10 @@ export function renderEnvironmentSettingsSection(
 
   updateReviewWarning();
 
-  const contextLimitsContainer = container.createDiv({ cls: 'claudian-context-limits-container' });
+  const contextLimitsContainer = container.createDiv({ cls: 'grandemonium-context-limits-container' });
   renderCustomContextLimits?.(contextLimitsContainer);
 
-  const envSnippetsContainer = container.createDiv({ cls: 'claudian-env-snippets-container' });
+  const envSnippetsContainer = container.createDiv({ cls: 'grandemonium-env-snippets-container' });
   new EnvSnippetManager(envSnippetsContainer, plugin, scope, () => {
     renderCustomContextLimits?.(contextLimitsContainer);
   });

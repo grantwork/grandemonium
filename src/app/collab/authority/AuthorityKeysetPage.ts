@@ -1,6 +1,6 @@
 import { COLLAB_LIMITS } from '@claudian-collab/protocol';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 /**
  * Stable opaque pagination for authority reads. Cursors are keysets over the

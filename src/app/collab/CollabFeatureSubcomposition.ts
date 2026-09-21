@@ -41,7 +41,6 @@ import {
 import {
   LocalDevelopmentBootstrapSource,
 } from '@/app/collab/bootstrap/LocalDevelopmentBootstrapSource';
-import type { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import {
   CollabFeatureService,
   type CollabLocalExitPort,
@@ -69,6 +68,7 @@ import {
   rotateAuthorityTransferOrigin,
   rotateCloudBootstrapOrigin,
 } from '@/app/collab/git/CollabGitOriginPolicy';
+import type { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { CollabLifecycleJournalStore } from '@/app/collab/lifecycle/CollabLifecycleJournalStore';
 import {
   createCollabProjectLifecycleDurableOwners,
@@ -89,11 +89,11 @@ import { RetirementAcknowledgementWorker } from '@/app/collab/retirement/Retirem
 import { RetirementClientHandler } from '@/app/collab/retirement/RetirementClientHandler';
 import { RetirementLocalRecovery } from '@/app/collab/retirement/RetirementLocalRecovery';
 import { type CollabFinalizeRetiredProjectRequest, type CollabLeaveProjectRequest, type CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabFeatureSubcompositionOptions {
   readonly cloudAuthority?: Pick<CloudAuthorityAdapter, 'create' | 'createLifecycle'>;
-  readonly foundation: ClaudianCollabService;
+  readonly foundation: GrandemoniumCollabService;
   readonly projectSetup: CollabProjectSetupService;
   readonly vaultRoot: string;
 }

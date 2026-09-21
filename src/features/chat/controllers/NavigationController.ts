@@ -50,7 +50,7 @@ export class NavigationController {
 
     // Make messages panel focusable (focus style handled in CSS)
     messagesEl.setAttribute('tabindex', '0');
-    messagesEl.addClass('claudian-messages-focusable');
+    messagesEl.addClass('grandemonium-messages-focusable');
 
     // Attach event listeners
     messagesEl.addEventListener('keydown', this.boundMessagesKeydown);
@@ -77,7 +77,7 @@ export class NavigationController {
     // Element cleanup - may already be destroyed during view teardown
     const messagesEl = this.deps.getMessagesEl();
     messagesEl?.removeEventListener('keydown', this.boundMessagesKeydown);
-    messagesEl?.removeClass('claudian-messages-focusable');
+    messagesEl?.removeClass('grandemonium-messages-focusable');
 
     const inputEl = this.deps.getInputEl();
     inputEl?.removeEventListener('keydown', this.boundInputKeydown, { capture: true });
@@ -89,7 +89,7 @@ export class NavigationController {
 
   private handleMessagesKeydown(e: KeyboardEvent): void {
     const eventTarget = e.target as HTMLElement | null;
-    if (eventTarget?.classList?.contains('claudian-linked-content-picker-search')) return;
+    if (eventTarget?.classList?.contains('grandemonium-linked-content-picker-search')) return;
 
     // Ignore if any modifier is held - allow system shortcuts (Ctrl+W, Cmd+W, etc.)
     if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;

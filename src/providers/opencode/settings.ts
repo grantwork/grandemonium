@@ -32,6 +32,7 @@ export interface PersistedOpencodeProviderSettings {
   cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   enabled: boolean;
+  agentName: string;
   environmentHash: string;
   environmentVariables: string;
   modelAliases: Record<string, string>;
@@ -52,6 +53,7 @@ export const DEFAULT_OPENCODE_PROVIDER_SETTINGS: Readonly<PersistedOpencodeProvi
   cliPath: '',
   cliPathsByHost: {},
   enabled: false,
+  agentName: 'opencode',
   environmentHash: '',
   environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
   modelAliases: {},
@@ -164,6 +166,7 @@ export function getOpencodeProviderSettings(
     cliPathsByHost,
     discoveredModels,
     enabled: readStoredBoolean(config.enabled, DEFAULT_OPENCODE_PROVIDER_SETTINGS.enabled),
+    agentName: readStoredString(config.agentName, DEFAULT_OPENCODE_PROVIDER_SETTINGS.agentName),
     environmentHash: readStoredString(
       config.environmentHash,
       DEFAULT_OPENCODE_PROVIDER_SETTINGS.environmentHash,

@@ -18,43 +18,43 @@ describe('Collab changed-file styles', () => {
     const publishCss = readFeatureStyle('collab-publish.css');
     const requestsCss = readFeatureStyle('collab-requests.css');
 
-    expect(publishCss).toContain('.claudian-collab-file-list');
-    expect(publishCss).toContain('.claudian-collab-file-list--list');
-    expect(publishCss).toContain('.claudian-collab-file-list--flat');
-    expect(publishCss).toContain('button.claudian-collab-file-button');
-    expect(publishCss).toContain('.claudian-collab-file-kind[data-kind="added"]');
-    expect(publishCss).toContain('.claudian-collab-file-kind[data-kind="deleted"]');
-    expect(publishCss).toContain('.claudian-collab-file-path');
+    expect(publishCss).toContain('.grandemonium-collab-file-list');
+    expect(publishCss).toContain('.grandemonium-collab-file-list--list');
+    expect(publishCss).toContain('.grandemonium-collab-file-list--flat');
+    expect(publishCss).toContain('button.grandemonium-collab-file-button');
+    expect(publishCss).toContain('.grandemonium-collab-file-kind[data-kind="added"]');
+    expect(publishCss).toContain('.grandemonium-collab-file-kind[data-kind="deleted"]');
+    expect(publishCss).toContain('.grandemonium-collab-file-path');
     expect(publishCss).toMatch(
-      /button\.claudian-collab-file-button:is\(:hover, :focus-visible\)\s*\{[^}]*background:\s*var\(--background-modifier-hover\)/,
+      /button\.grandemonium-collab-file-button:is\(:hover, :focus-visible\)\s*\{[^}]*background:\s*var\(--background-modifier-hover\)/,
     );
 
     const changedFileCss = publishCss + requestsCss;
-    expect(changedFileCss).not.toContain('claudian-collab-publish-files');
-    expect(changedFileCss).not.toContain('claudian-collab-publish-file-');
-    expect(changedFileCss).not.toContain('claudian-collab-team-request-files');
-    expect(changedFileCss).not.toContain('claudian-collab-team-request-file');
+    expect(changedFileCss).not.toContain('grandemonium-collab-publish-files');
+    expect(changedFileCss).not.toContain('grandemonium-collab-publish-file-');
+    expect(changedFileCss).not.toContain('grandemonium-collab-team-request-files');
+    expect(changedFileCss).not.toContain('grandemonium-collab-team-request-file');
   });
 
   it('removes only the verified static orphans and retains status modifiers', () => {
     const css = FEATURE_STYLES.map(readFeatureStyle).join('\n');
 
     for (const orphan of [
-      'claudian-collab-access-invites',
-      'claudian-collab-host-controls',
-      'claudian-collab-invitation',
-      'claudian-collab-project-details',
-      'claudian-collab-publish-sync-action',
-      'claudian-collab-publish-update',
-      'claudian-collab-request-comments-empty',
+      'grandemonium-collab-access-invites',
+      'grandemonium-collab-host-controls',
+      'grandemonium-collab-invitation',
+      'grandemonium-collab-project-details',
+      'grandemonium-collab-publish-sync-action',
+      'grandemonium-collab-publish-update',
+      'grandemonium-collab-request-comments-empty',
     ]) {
       expect(css).not.toContain(orphan);
     }
 
-    expect(css).toContain('.claudian-collab-publish-status--conflict');
-    expect(css).toContain('.claudian-collab-publish-status--error');
-    expect(css).toContain('.claudian-collab-publish-status--offline');
-    expect(css).toContain('.claudian-collab-publish-status--awaiting-request');
-    expect(css).toContain('.claudian-collab-publish-status--cancelled');
+    expect(css).toContain('.grandemonium-collab-publish-status--conflict');
+    expect(css).toContain('.grandemonium-collab-publish-status--error');
+    expect(css).toContain('.grandemonium-collab-publish-status--offline');
+    expect(css).toContain('.grandemonium-collab-publish-status--awaiting-request');
+    expect(css).toContain('.grandemonium-collab-publish-status--cancelled');
   });
 });

@@ -7,8 +7,8 @@ import type {
   CollabLanProjectSnapshot,
   CollabManagerResponsibilityOfferSummary,
 } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type UnknownRecord = Readonly<Record<string, unknown>>;
 
@@ -106,7 +106,7 @@ function requestTicketRelation(value: unknown): CollabRequestTicketRelation {
     ticketId: string(source, 'ticketId', 128, isCollabOpaqueId),
     ticketNumber: positiveInteger(source, 'ticketNumber'),
     ticketRevision: positiveInteger(source, 'ticketRevision'),
-    ticketTitle: string(source, 'ticketTitle', CLAUDIAN_COLLAB_LIMITS.maxTicketTitleUtf16),
+    ticketTitle: string(source, 'ticketTitle', GRANDEMONIUM_COLLAB_LIMITS.maxTicketTitleUtf16),
   };
 }
 
@@ -141,7 +141,7 @@ function changeRequest(value: unknown): CollabChangeRequest {
   if (
     (status !== 'open' && status !== 'merged' && status !== 'discarded')
     || !Array.isArray(source.ticketRelations)
-    || source.ticketRelations.length > CLAUDIAN_COLLAB_LIMITS.maxRequestTicketRelations
+    || source.ticketRelations.length > GRANDEMONIUM_COLLAB_LIMITS.maxRequestTicketRelations
   ) throw decodeError('request.status');
   const mergedOid = source.mergedOid === undefined
     ? undefined
@@ -153,7 +153,7 @@ function changeRequest(value: unknown): CollabChangeRequest {
       COLLAB_LIMITS.maxRequestComments,
     ),
     createdAt: timestamp(source, 'createdAt'),
-    description: text(source, 'description', CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes),
+    description: text(source, 'description', GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes),
     firstBaseOid: string(source, 'firstBaseOid', 64, isCollabGitOid),
     id: string(source, 'id', 128, isCollabOpaqueId),
     latestHeadOid: string(source, 'latestHeadOid', 64, isCollabGitOid),
@@ -196,7 +196,7 @@ function ticketSummary(value: unknown): CollabTicketSummary {
     number: positiveInteger(source, 'number'),
     revision: positiveInteger(source, 'revision'),
     status,
-    title: string(source, 'title', CLAUDIAN_COLLAB_LIMITS.maxTicketTitleUtf16),
+    title: string(source, 'title', GRANDEMONIUM_COLLAB_LIMITS.maxTicketTitleUtf16),
     updatedAt: timestamp(source, 'updatedAt'),
   };
 }
@@ -239,7 +239,7 @@ export function decodeLanCollabProjectSnapshot(value: unknown): CollabLanProject
     !Array.isArray(data.members)
     || !Array.isArray(data.openRequests)
     || !Array.isArray(data.ticketHighlights)
-    || data.ticketHighlights.length > CLAUDIAN_COLLAB_LIMITS.maxTicketHighlights
+    || data.ticketHighlights.length > GRANDEMONIUM_COLLAB_LIMITS.maxTicketHighlights
   ) throw decodeError('snapshot');
   const currentMember = member(data.currentMember);
   const members = data.members.map(member);

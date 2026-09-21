@@ -34,7 +34,7 @@ describe('HostTransferAuthorityService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-host-authority-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-host-authority-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

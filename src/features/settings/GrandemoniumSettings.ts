@@ -31,8 +31,8 @@ import { AgentSkillManagementCoordinator } from './AgentSkillManagementCoordinat
 import { buildNavMappingText, parseNavMappings } from './keyboardNavigation';
 
 type SettingsTabId = 'general' | 'comments' | 'collab' | 'providers';
-const CLAUDIAN_COLLAB_READ_MORE_URL =
-  'https://github.com/grantwork/tandemonium#collab-mode';
+const GRANDEMONIUM_COLLAB_READ_MORE_URL =
+  'https://github.com/grantwork/grandemonium#collab-mode';
 type ObsidianHotkey = { modifiers: string[]; key: string };
 type ObsidianHotkeyManager = {
   customKeys?: Record<string, ObsidianHotkey[] | undefined>;
@@ -57,7 +57,7 @@ function renderCollabGitInstallationHelp(
   container: HTMLElement,
 ): void {
   const details = container.createEl('details', {
-    cls: 'claudian-collab-git-installation-help',
+    cls: 'grandemonium-collab-git-installation-help',
   });
   details.createEl('summary', {
     text: t('settings.collabGitInstallation.summary'),
@@ -106,7 +106,7 @@ function openHotkeySettings(app: App): void {
       return;
     }
 
-    searchEl.value = 'Tandemonium';
+    searchEl.value = 'Grandemonium';
     tab.updateHotkeyVisibility?.();
   }, 100);
 }
@@ -131,18 +131,18 @@ function addHotkeySettingRow(
   translationPrefix: string,
 ): void {
   const hotkey = getHotkeyForCommand(app, commandId);
-  const item = containerEl.createDiv({ cls: 'claudian-hotkey-item' });
+  const item = containerEl.createDiv({ cls: 'grandemonium-hotkey-item' });
   item.createSpan({
-    cls: 'claudian-hotkey-name',
+    cls: 'grandemonium-hotkey-name',
     text: t(`${translationPrefix}.name` as TranslationKey),
   });
   if (hotkey) {
-    item.createSpan({ cls: 'claudian-hotkey-badge', text: hotkey });
+    item.createSpan({ cls: 'grandemonium-hotkey-badge', text: hotkey });
   }
   item.addEventListener('click', () => openHotkeySettings(app));
 }
 
-export class ClaudianSettingTab extends PluginSettingTab {
+export class GrandemoniumSettingTab extends PluginSettingTab {
   plugin: FeatureHost;
   private activeTab: SettingsTabId = 'general';
   private activeProviderTab: ProviderId | null = null;
@@ -161,7 +161,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
 
   getSettingDefinitions(): SettingDefinitionItem[] {
     return [{
-      name: 'Tandemonium',
+      name: 'Grandemonium',
       searchable: false,
       render: setting => this.renderSettings(setting.settingEl),
     }];
@@ -171,7 +171,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
     const renderGeneration = ++this.renderGeneration;
     this.agentSkillCoordinator.resetSubscriptions();
     containerEl.empty();
-    containerEl.addClass('claudian-settings');
+    containerEl.addClass('grandemonium-settings');
     this.refreshTitleModelOptions = null;
 
     setLocale(this.plugin.settings.locale as Locale);
@@ -185,18 +185,18 @@ export class ClaudianSettingTab extends PluginSettingTab {
       this.activeProviderTab = preferredProvider;
     }
 
-    const tabBar = containerEl.createDiv({ cls: 'claudian-settings-tabs' });
+    const tabBar = containerEl.createDiv({ cls: 'grandemonium-settings-tabs' });
     const tabButtons = new Map<SettingsTabId, HTMLButtonElement>();
     const tabContents = new Map<SettingsTabId, HTMLDivElement>();
     const providersContent = containerEl.createDiv({
-      cls: `claudian-settings-tab-content${this.activeTab === 'providers' ? ' claudian-settings-tab-content--active' : ''}`,
+      cls: `grandemonium-settings-tab-content${this.activeTab === 'providers' ? ' grandemonium-settings-tab-content--active' : ''}`,
     });
     tabContents.set('providers', providersContent);
     const providerTabBar = providersContent.createDiv({
-      cls: 'claudian-settings-provider-tabs',
+      cls: 'grandemonium-settings-provider-tabs',
     });
     const providerContentHost = providersContent.createDiv({
-      cls: 'claudian-settings-provider-content-host',
+      cls: 'grandemonium-settings-provider-content-host',
     });
     const providerButtons = new Map<ProviderId, HTMLButtonElement>();
     const providerContents = new Map<ProviderId, HTMLDivElement>();
@@ -210,7 +210,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
       renderedProviderIds.add(providerId);
       providerContent.empty();
       providerContent.createDiv({
-        cls: 'claudian-settings-provider-loading',
+        cls: 'grandemonium-settings-provider-loading',
         text: `Loading ${ProviderRegistry.getProviderDisplayName(providerId)} settings...`,
       });
 
@@ -251,7 +251,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
         providerContent.empty();
         const message = error instanceof Error ? error.message : 'Unknown error';
         providerContent.createDiv({
-          cls: 'claudian-setting-validation claudian-setting-validation-error',
+          cls: 'grandemonium-setting-validation grandemonium-setting-validation-error',
           text: `Could not load provider settings: ${message}`,
         });
       }
@@ -260,14 +260,14 @@ export class ClaudianSettingTab extends PluginSettingTab {
     for (const id of tabIds) {
       const label = t(`settings.tabs.${id}`);
       const button = tabBar.createEl('button', {
-        cls: `claudian-settings-tab${id === this.activeTab ? ' claudian-settings-tab--active' : ''}`,
+        cls: `grandemonium-settings-tab${id === this.activeTab ? ' grandemonium-settings-tab--active' : ''}`,
         text: label,
       });
       button.addEventListener('click', () => {
         this.activeTab = id;
         for (const tabId of tabIds) {
-          tabButtons.get(tabId)?.toggleClass('claudian-settings-tab--active', tabId === id);
-          tabContents.get(tabId)?.toggleClass('claudian-settings-tab-content--active', tabId === id);
+          tabButtons.get(tabId)?.toggleClass('grandemonium-settings-tab--active', tabId === id);
+          tabContents.get(tabId)?.toggleClass('grandemonium-settings-tab-content--active', tabId === id);
         }
         if (id === 'providers' && this.activeProviderTab) {
           void renderProviderTab(this.activeProviderTab);
@@ -284,7 +284,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
 
     for (const id of tabIds.filter(id => id !== 'providers')) {
       const content = containerEl.createDiv({
-        cls: `claudian-settings-tab-content${id === this.activeTab ? ' claudian-settings-tab-content--active' : ''}`,
+        cls: `grandemonium-settings-tab-content${id === this.activeTab ? ' grandemonium-settings-tab-content--active' : ''}`,
       });
       tabContents.set(id, content);
     }
@@ -305,22 +305,22 @@ export class ClaudianSettingTab extends PluginSettingTab {
 
     for (const providerId of providerTabs) {
       const content = providerContentHost.createDiv({
-        cls: `claudian-settings-provider-content${providerId === this.activeProviderTab ? ' claudian-settings-provider-content--active' : ''}`,
+        cls: `grandemonium-settings-provider-content${providerId === this.activeProviderTab ? ' grandemonium-settings-provider-content--active' : ''}`,
       });
       providerContents.set(providerId, content);
       const button = providerTabBar.createEl('button', {
-        cls: `claudian-settings-provider-tab${providerId === this.activeProviderTab ? ' claudian-settings-provider-tab--active' : ''}`,
+        cls: `grandemonium-settings-provider-tab${providerId === this.activeProviderTab ? ' grandemonium-settings-provider-tab--active' : ''}`,
         text: ProviderRegistry.getProviderDisplayName(providerId),
       });
       button.addEventListener('click', () => {
         this.activeProviderTab = providerId;
         for (const candidate of providerTabs) {
           providerButtons.get(candidate)?.toggleClass(
-            'claudian-settings-provider-tab--active',
+            'grandemonium-settings-provider-tab--active',
             candidate === providerId,
           );
           providerContents.get(candidate)?.toggleClass(
-            'claudian-settings-provider-content--active',
+            'grandemonium-settings-provider-content--active',
             candidate === providerId,
           );
         }
@@ -627,7 +627,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
               settings.mediaFolder = value.trim();
             });
           });
-        text.inputEl.addClass('claudian-settings-media-input');
+        text.inputEl.addClass('grandemonium-settings-media-input');
         text.inputEl.addEventListener('blur', () => {
           void this.restartServiceForPromptChange();
         });
@@ -709,12 +709,12 @@ export class ClaudianSettingTab extends PluginSettingTab {
 
     new Setting(container).setName(t('settings.hotkeys')).setHeading();
 
-    const hotkeyGrid = container.createDiv({ cls: 'claudian-hotkey-grid' });
-    addHotkeySettingRow(hotkeyGrid, this.app, 'claudian:inline-edit', 'settings.inlineEditHotkey');
-    addHotkeySettingRow(hotkeyGrid, this.app, 'claudian:open-view', 'settings.openChatHotkey');
-    addHotkeySettingRow(hotkeyGrid, this.app, 'claudian:new-session', 'settings.newSessionHotkey');
-    addHotkeySettingRow(hotkeyGrid, this.app, 'claudian:new-tab', 'settings.newTabHotkey');
-    addHotkeySettingRow(hotkeyGrid, this.app, 'claudian:close-current-tab', 'settings.closeTabHotkey');
+    const hotkeyGrid = container.createDiv({ cls: 'grandemonium-hotkey-grid' });
+    addHotkeySettingRow(hotkeyGrid, this.app, 'grandemonium:inline-edit', 'settings.inlineEditHotkey');
+    addHotkeySettingRow(hotkeyGrid, this.app, 'grandemonium:open-view', 'settings.openChatHotkey');
+    addHotkeySettingRow(hotkeyGrid, this.app, 'grandemonium:new-session', 'settings.newSessionHotkey');
+    addHotkeySettingRow(hotkeyGrid, this.app, 'grandemonium:new-tab', 'settings.newTabHotkey');
+    addHotkeySettingRow(hotkeyGrid, this.app, 'grandemonium:close-current-tab', 'settings.closeTabHotkey');
 
     // --- Environment ---
 
@@ -778,17 +778,17 @@ export class ClaudianSettingTab extends PluginSettingTab {
     collabEnabledSetting.descEl.createEl('br');
     collabEnabledSetting.descEl.createEl('a', {
       attr: {
-        href: CLAUDIAN_COLLAB_READ_MORE_URL,
+        href: GRANDEMONIUM_COLLAB_READ_MORE_URL,
         rel: 'noopener noreferrer',
         target: '_blank',
       },
-      cls: 'claudian-collab-read-more-link',
+      cls: 'grandemonium-collab-read-more-link',
       text: t('settings.collabReadMore'),
     });
 
     let folderInput: { setValue(value: string): unknown } | null = null;
     const validation = container.createDiv({
-      cls: 'claudian-setting-validation claudian-setting-validation-error claudian-hidden',
+      cls: 'grandemonium-setting-validation grandemonium-setting-validation-error grandemonium-hidden',
     });
     new Setting(container)
       .setName(t('settings.collabProjectsFolder.name'))
@@ -800,7 +800,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.collabProjectsFolder)
           .onChange(async value => {
             const result = await this.plugin.setCollabProjectsFolder(value);
-            validation.toggleClass('claudian-hidden', result.ok);
+            validation.toggleClass('grandemonium-hidden', result.ok);
             validation.setText(result.ok ? '' : result.message);
             if (result.ok && result.value !== value) folderInput?.setValue(result.value);
           });
@@ -822,7 +822,7 @@ export class ClaudianSettingTab extends PluginSettingTab {
       });
 
     const statusEl = gitPathSetting.nameEl.createSpan({
-      cls: 'claudian-collab-git-path-status claudian-collab-git-path-status--checking',
+      cls: 'grandemonium-collab-git-path-status grandemonium-collab-git-path-status--checking',
     });
     statusEl.setAttribute('role', 'status');
 
@@ -831,8 +831,8 @@ export class ClaudianSettingTab extends PluginSettingTab {
     ): void => {
       const label = t(`settings.collabGitStatus.${status}`);
       statusEl.className = [
-        'claudian-collab-git-path-status',
-        `claudian-collab-git-path-status--${status}`,
+        'grandemonium-collab-git-path-status',
+        `grandemonium-collab-git-path-status--${status}`,
       ].join(' ');
       statusEl.setAttribute('aria-label', label);
       statusEl.title = label;
@@ -877,6 +877,14 @@ export class ClaudianSettingTab extends PluginSettingTab {
   private notifyProviderModelOptionsChanged(providerId: ProviderId): void {
     this.plugin.notifyProviderChatOptionsChanged(providerId);
     this.refreshTitleModelOptions?.();
+    this.refreshProviderTabs();
+  }
+
+  /** Enabling an AI gives it a tab straight away, without a reload. */
+  private refreshProviderTabs(): void {
+    for (const view of this.plugin.getAllViews()) {
+      view.refreshProviderTabs();
+    }
   }
 
   private refreshDualPaneLayouts(): void {
@@ -926,30 +934,30 @@ export class ClaudianSettingTab extends PluginSettingTab {
       return;
     }
 
-    const headerEl = container.createDiv({ cls: 'claudian-context-limits-header' });
+    const headerEl = container.createDiv({ cls: 'grandemonium-context-limits-header' });
     headerEl.createSpan({
       text: t('settings.customModelOverrides.name'),
-      cls: 'claudian-context-limits-label',
+      cls: 'grandemonium-context-limits-label',
     });
 
-    const descEl = container.createDiv({ cls: 'claudian-context-limits-desc' });
+    const descEl = container.createDiv({ cls: 'grandemonium-context-limits-desc' });
     descEl.setText(t('settings.customModelOverrides.desc'));
 
-    const listEl = container.createDiv({ cls: 'claudian-context-limits-list' });
+    const listEl = container.createDiv({ cls: 'grandemonium-context-limits-list' });
 
     for (const modelId of uniqueModelIds) {
       const currentValue = this.plugin.settings.customContextLimits?.[modelId];
       const currentAlias = this.plugin.settings.customModelAliases?.[modelId] ?? '';
 
-      const itemEl = listEl.createDiv({ cls: 'claudian-context-limits-item' });
-      const nameEl = itemEl.createDiv({ cls: 'claudian-context-limits-model' });
+      const itemEl = listEl.createDiv({ cls: 'grandemonium-context-limits-item' });
+      const nameEl = itemEl.createDiv({ cls: 'grandemonium-context-limits-model' });
       nameEl.setText(modelId);
 
-      const inputWrapper = itemEl.createDiv({ cls: 'claudian-context-limits-input-wrapper' });
+      const inputWrapper = itemEl.createDiv({ cls: 'grandemonium-context-limits-input-wrapper' });
       const aliasInputEl = inputWrapper.createEl('input', {
         type: 'text',
         placeholder: t('settings.customModelAliases.placeholder'),
-        cls: 'claudian-context-alias-input',
+        cls: 'grandemonium-context-alias-input',
         value: currentAlias,
       });
       aliasInputEl.setAttribute('aria-label', `Alias for ${modelId}`);
@@ -958,12 +966,12 @@ export class ClaudianSettingTab extends PluginSettingTab {
       const inputEl = inputWrapper.createEl('input', {
         type: 'text',
         placeholder: '200k',
-        cls: 'claudian-context-limits-input',
+        cls: 'grandemonium-context-limits-input',
         value: currentValue ? formatContextLimit(currentValue) : '',
       });
       inputEl.setAttribute('aria-label', `Context window for ${modelId}`);
 
-      const validationEl = inputWrapper.createDiv({ cls: 'claudian-context-limit-validation claudian-hidden' });
+      const validationEl = inputWrapper.createDiv({ cls: 'grandemonium-context-limit-validation grandemonium-hidden' });
 
       const saveAlias = async (): Promise<void> => {
         const existing = this.plugin.settings.customModelAliases[modelId] ?? '';
@@ -988,19 +996,19 @@ export class ClaudianSettingTab extends PluginSettingTab {
         const trimmed = inputEl.value.trim();
 
         if (!trimmed) {
-          validationEl.toggleClass('claudian-hidden', true);
-          inputEl.classList.remove('claudian-input-error');
+          validationEl.toggleClass('grandemonium-hidden', true);
+          inputEl.classList.remove('grandemonium-input-error');
         } else {
           const parsed = parseContextLimit(trimmed);
           if (parsed === null) {
             validationEl.setText(t('settings.customContextLimits.invalid'));
-            validationEl.toggleClass('claudian-hidden', false);
-            inputEl.classList.add('claudian-input-error');
+            validationEl.toggleClass('grandemonium-hidden', false);
+            inputEl.classList.add('grandemonium-input-error');
             return;
           }
 
-          validationEl.toggleClass('claudian-hidden', true);
-          inputEl.classList.remove('claudian-input-error');
+          validationEl.toggleClass('grandemonium-hidden', true);
+          inputEl.classList.remove('grandemonium-input-error');
         }
         await this.plugin.mutateSettings((settings) => {
           settings.customContextLimits ??= {};

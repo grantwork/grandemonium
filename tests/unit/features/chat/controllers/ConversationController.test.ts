@@ -161,9 +161,9 @@ describe('ConversationController', () => {
         await controller.createNew();
 
         const welcomeEl = deps.getWelcomeEl()!;
-        expect(welcomeEl.querySelector('.claudian-welcome-brand')?.textContent)
-          .toBe('Tandemonium');
-        expect(welcomeEl.querySelector('.claudian-welcome-greeting')).not.toBeNull();
+        expect(welcomeEl.querySelector('.grandemonium-welcome-brand')?.textContent)
+          .toBe('Grandemonium');
+        expect(welcomeEl.querySelector('.grandemonium-welcome-greeting')).not.toBeNull();
       });
 
       it('should reset to entry point state (null conversationId) instead of creating conversation', async () => {
@@ -313,7 +313,7 @@ describe('ConversationController', () => {
       controllerWithMount.initializeWelcome();
 
       expect(setWelcomeEl).toHaveBeenCalledWith(welcomeEl);
-      expect(welcomeEl.querySelector('.claudian-welcome-linked-content')).not.toBeNull();
+      expect(welcomeEl.querySelector('.grandemonium-welcome-linked-content')).not.toBeNull();
     });
 
     it('does not reset the Linked content draft during a welcome rerender', () => {
@@ -339,8 +339,8 @@ describe('ConversationController', () => {
 
       controller.initializeWelcome();
       const initialCallCount = createDivSpy.mock.calls.length;
-      expect(welcomeEl.querySelector('.claudian-welcome-brand')).not.toBeNull();
-      expect(welcomeEl.querySelector('.claudian-welcome-greeting')).not.toBeNull();
+      expect(welcomeEl.querySelector('.grandemonium-welcome-brand')).not.toBeNull();
+      expect(welcomeEl.querySelector('.grandemonium-welcome-greeting')).not.toBeNull();
 
       controller.initializeWelcome();
       expect(createDivSpy).toHaveBeenCalledTimes(initialCallCount);
@@ -607,7 +607,7 @@ describe('ConversationController', () => {
 
         expect(dropdown.children.length).toBe(2);
         const list = dropdown.children[1];
-        expect(list.hasClass('claudian-history-list')).toBe(true);
+        expect(list.hasClass('grandemonium-history-list')).toBe(true);
         expect(list.children.length).toBe(2);
       });
 
@@ -617,7 +617,7 @@ describe('ConversationController', () => {
         controller.updateHistoryDropdown();
 
         const list = dropdown.children[1];
-        expect(list.children[0].hasClass('claudian-history-empty')).toBe(true);
+        expect(list.children[0].hasClass('grandemonium-history-empty')).toBe(true);
       });
 
       it('should sort conversations by lastActivityAt descending', () => {
@@ -630,7 +630,7 @@ describe('ConversationController', () => {
         controller.updateHistoryDropdown();
 
         const list = dropdown.children[1];
-        const firstTitle = list.children[0].querySelector('.claudian-history-item-title');
+        const firstTitle = list.children[0].querySelector('.grandemonium-history-item-title');
         expect(firstTitle?.textContent).toBe('New');
       });
 
@@ -655,7 +655,7 @@ describe('ConversationController', () => {
           onSelectConversation: jest.fn(),
         });
 
-        const titles = container.querySelectorAll('.claudian-history-item-title');
+        const titles = container.querySelectorAll('.grandemonium-history-item-title');
         expect(titles.map((title: { textContent: string }) => title.textContent)).toEqual([
           'Response newer',
           'Metadata newer',
@@ -687,7 +687,7 @@ describe('ConversationController', () => {
 
         const list = dropdown.children[1];
         const item = list.children[0];
-        const loadingEl = item.querySelector('.claudian-action-loading');
+        const loadingEl = item.querySelector('.grandemonium-action-loading');
         expect(loadingEl).toBeTruthy();
       });
 
@@ -700,7 +700,7 @@ describe('ConversationController', () => {
 
         const list = dropdown.children[1];
         const item = list.children[0];
-        const actions = item.querySelector('.claudian-history-item-actions');
+        const actions = item.querySelector('.grandemonium-history-item-actions');
         expect(actions).toBeTruthy();
         // regenerate button + rename button + delete button = 3 children
         expect(actions!.children.length).toBe(3);
@@ -717,7 +717,7 @@ describe('ConversationController', () => {
 
         const list = dropdown.children[1];
         const item = list.children[0];
-        const content = item.querySelector('.claudian-history-item-content');
+        const content = item.querySelector('.grandemonium-history-item-content');
         const listeners = content?._eventListeners?.get('click');
         expect(listeners).toBeUndefined();
       });
@@ -735,7 +735,7 @@ describe('ConversationController', () => {
         const list = dropdown.children[1];
         // conv-2 is the non-current one (sorted second by lastActivityAt)
         const otherItem = list.children[1];
-        const content = otherItem.querySelector('.claudian-history-item-content');
+        const content = otherItem.querySelector('.grandemonium-history-item-content');
         const listeners = content?._eventListeners?.get('click');
         expect(listeners).toBeDefined();
         expect(listeners!.length).toBe(1);
@@ -752,7 +752,7 @@ describe('ConversationController', () => {
 
         const list = dropdown.children[1];
         const item = list.children[0];
-        const deleteBtn = item.querySelector('.claudian-delete-btn');
+        const deleteBtn = item.querySelector('.grandemonium-delete-btn');
         expect(deleteBtn).toBeTruthy();
 
         const clickHandlers = deleteBtn!._eventListeners?.get('click');
@@ -801,16 +801,16 @@ describe('ConversationController', () => {
           sort: 'last-updated',
         });
 
-        const pinnedSection = container.querySelector('.claudian-history-section--pinned')!;
-        const sessionsSection = container.querySelector('.claudian-history-section--sessions')!;
-        expect(pinnedSection.querySelector('.claudian-history-section-label')?.textContent)
+        const pinnedSection = container.querySelector('.grandemonium-history-section--pinned')!;
+        const sessionsSection = container.querySelector('.grandemonium-history-section--sessions')!;
+        expect(pinnedSection.querySelector('.grandemonium-history-section-label')?.textContent)
           .toBe('Pinned');
-        expect(sessionsSection.querySelector('.claudian-history-section-label')?.textContent)
+        expect(sessionsSection.querySelector('.grandemonium-history-section-label')?.textContent)
           .toBe('Sessions');
-        expect(pinnedSection.querySelectorAll('.claudian-history-item-title')
+        expect(pinnedSection.querySelectorAll('.grandemonium-history-item-title')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['Pinned new', 'Pinned old']);
-        expect(sessionsSection.querySelectorAll('.claudian-history-item-title')
+        expect(sessionsSection.querySelectorAll('.grandemonium-history-item-title')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['Normal']);
       });
@@ -862,25 +862,25 @@ describe('ConversationController', () => {
           ]),
         });
 
-        const pinnedSection = container.querySelector('.claudian-history-section--pinned')!;
-        const pinnedHeaders = pinnedSection.querySelectorAll('.claudian-session-group-header');
+        const pinnedSection = container.querySelector('.grandemonium-history-section--pinned')!;
+        const pinnedHeaders = pinnedSection.querySelectorAll('.grandemonium-session-group-header');
         expect(pinnedHeaders.map((header: any) => header.getAttribute('data-content-path'))).toEqual([
           'Projects/Plan.md',
           'Projects/Empty.md',
         ]);
-        expect(pinnedSection.querySelectorAll('.claudian-session-group-body')[0]
-          .querySelectorAll('.claudian-history-item-title')
+        expect(pinnedSection.querySelectorAll('.grandemonium-session-group-body')[0]
+          .querySelectorAll('.grandemonium-history-item-title')
           .map((item: any) => item.textContent))
           .toEqual(['Note regular', 'Note pinned session']);
-        expect(pinnedSection.querySelectorAll('.claudian-history-item-title')
+        expect(pinnedSection.querySelectorAll('.grandemonium-history-item-title')
           .map((item: any) => item.textContent))
           .toEqual(['Note regular', 'Note pinned session', 'Standalone pinned']);
 
-        const sessionsSection = container.querySelector('.claudian-history-section--sessions')!;
-        expect(sessionsSection.querySelectorAll('.claudian-history-item-title')
+        const sessionsSection = container.querySelector('.grandemonium-history-section--sessions')!;
+        expect(sessionsSection.querySelectorAll('.grandemonium-history-item-title')
           .map((item: any) => item.textContent))
           .toEqual(['Regular']);
-        expect(container.querySelectorAll('.claudian-history-item').filter((item: any) => (
+        expect(container.querySelectorAll('.grandemonium-history-item').filter((item: any) => (
           item.getAttribute('data-conversation-id') === 'note-pinned-session'
         ))).toHaveLength(1);
       });
@@ -914,7 +914,7 @@ describe('ConversationController', () => {
           onSetLinkedContentPinned,
         });
 
-        const groupHeaders = container.querySelectorAll('.claudian-session-group-header');
+        const groupHeaders = container.querySelectorAll('.grandemonium-session-group-header');
         const pinnedHeader = groupHeaders.find((header: any) => (
           header.getAttribute('data-content-path') === 'Projects/Plan.md'
         ))!;
@@ -991,7 +991,7 @@ describe('ConversationController', () => {
           onSetConversationsArchived,
         });
 
-        const groupHeaders = container.querySelectorAll('.claudian-session-group-header');
+        const groupHeaders = container.querySelectorAll('.grandemonium-session-group-header');
         const planHeader = groupHeaders.find((header: any) => (
           header.getAttribute('data-content-path') === 'Projects/Plan.md'
         ))!;
@@ -1033,7 +1033,7 @@ describe('ConversationController', () => {
           onSetLinkedContentPinned: jest.fn().mockResolvedValue(undefined),
           onSetConversationsArchived,
         });
-        const busyHeader = busyContainer.querySelector('.claudian-session-group-header')!;
+        const busyHeader = busyContainer.querySelector('.grandemonium-session-group-header')!;
         busyHeader.dispatchEvent({
           type: 'contextmenu',
           preventDefault: jest.fn(),
@@ -1074,7 +1074,7 @@ describe('ConversationController', () => {
           getModelLabel: () => 'GPT-5.1 Codex',
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
+        const item = container.querySelector('.grandemonium-history-item')!;
         item.getBoundingClientRect = jest.fn().mockReturnValue({
           top: 120,
           left: 20,
@@ -1091,21 +1091,21 @@ describe('ConversationController', () => {
           configurable: true,
           value: body,
         });
-        const content = item.querySelector('.claudian-history-item-content')!;
+        const content = item.querySelector('.grandemonium-history-item-content')!;
         expect(item.getAttribute('tabindex')).toBeNull();
         expect(item.getAttribute('role')).toBeNull();
         expect(content.getAttribute('tabindex')).toBe('0');
         expect(content.getAttribute('role')).toBe('button');
-        expect(item.querySelector('.claudian-history-item-date')).toBeNull();
+        expect(item.querySelector('.grandemonium-history-item-date')).toBeNull();
 
         item.dispatchEvent({ type: 'mouseenter' });
 
-        const popover = body.querySelector('.claudian-session-metadata-popover')!;
+        const popover = body.querySelector('.grandemonium-session-metadata-popover')!;
         expect(popover.getAttribute('role')).toBe('tooltip');
-        expect(popover.querySelectorAll('.claudian-session-metadata-label')
+        expect(popover.querySelectorAll('.grandemonium-session-metadata-label')
           .map((label: { textContent: string }) => label.textContent))
           .toEqual(['Created', 'Last active']);
-        expect(popover.querySelectorAll('.claudian-session-metadata-value')
+        expect(popover.querySelectorAll('.grandemonium-session-metadata-value')
           .map((value: { textContent: string }) => value.textContent))
           .toEqual([
             'Architecture',
@@ -1113,11 +1113,11 @@ describe('ConversationController', () => {
             'Aug 3, 2026',
             'Aug 5, 2026, 14:28',
           ]);
-        expect(popover.querySelector('.claudian-session-metadata-provider-icon'))
+        expect(popover.querySelector('.grandemonium-session-metadata-provider-icon'))
           .not.toBeNull();
         expect(popover.style.top).toBe('120px');
         const contentValue = popover.querySelector(
-          '.claudian-session-metadata-value--content',
+          '.grandemonium-session-metadata-value--content',
         )!;
         expect(contentValue.getAttribute('title')).toBe('Projects/Architecture.md');
 
@@ -1126,10 +1126,10 @@ describe('ConversationController', () => {
           key: 'Escape',
           stopPropagation: jest.fn(),
         });
-        expect(popover.hasClass('claudian-hidden')).toBe(true);
+        expect(popover.hasClass('grandemonium-hidden')).toBe(true);
 
         content.dispatchEvent({ type: 'focusin' });
-        expect(body.querySelectorAll('.claudian-session-metadata-popover'))
+        expect(body.querySelectorAll('.grandemonium-session-metadata-popover'))
           .toHaveLength(2);
       });
 
@@ -1149,8 +1149,8 @@ describe('ConversationController', () => {
           showMetadataPopover: true,
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
-        const content = item.querySelector('.claudian-history-item-content')!;
+        const item = container.querySelector('.grandemonium-history-item')!;
+        const content = item.querySelector('.grandemonium-history-item-content')!;
         const preventDefault = jest.fn();
         const stopPropagation = jest.fn();
         expect(item.getAttribute('role')).toBeNull();
@@ -1191,7 +1191,7 @@ describe('ConversationController', () => {
           getModelLabel: () => 'GPT-5.1 Codex',
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
+        const item = container.querySelector('.grandemonium-history-item')!;
         const body = createMockEl();
         Object.defineProperty(item.ownerDocument, 'body', {
           configurable: true,
@@ -1200,9 +1200,9 @@ describe('ConversationController', () => {
 
         item.dispatchEvent({ type: 'mouseenter' });
 
-        const popover = body.querySelector('.claudian-session-metadata-popover')!;
-        expect(popover.querySelectorAll('.claudian-session-metadata-row')).toHaveLength(3);
-        expect(popover.querySelectorAll('.claudian-session-metadata-value')
+        const popover = body.querySelector('.grandemonium-session-metadata-popover')!;
+        expect(popover.querySelectorAll('.grandemonium-session-metadata-row')).toHaveLength(3);
+        expect(popover.querySelectorAll('.grandemonium-session-metadata-value')
           .map((value: { textContent: string }) => value.textContent))
           .toEqual(['GPT-5.1 Codex', 'Aug 3, 2026', 'Aug 5, 2026, 14:28']);
       });
@@ -1218,8 +1218,8 @@ describe('ConversationController', () => {
           showPinnedSection: true,
         });
 
-        expect(container.querySelector('.claudian-history-section--pinned')).toBeNull();
-        expect(container.querySelector('.claudian-history-section--sessions')).not.toBeNull();
+        expect(container.querySelector('.grandemonium-history-section--pinned')).toBeNull();
+        expect(container.querySelector('.grandemonium-history-section--sessions')).not.toBeNull();
       });
 
       it('pulses completed reviews and hides actions for every attention state', () => {
@@ -1255,27 +1255,27 @@ describe('ConversationController', () => {
           showPinnedSection: true,
         });
 
-        expect(container.querySelector('.claudian-history-section--attention')).toBeNull();
-        expect(container.querySelectorAll('.claudian-history-item')).toHaveLength(4);
-        const attentionItems = container.querySelectorAll('.claudian-history-item--attention');
+        expect(container.querySelector('.grandemonium-history-section--attention')).toBeNull();
+        expect(container.querySelectorAll('.grandemonium-history-item')).toHaveLength(4);
+        const attentionItems = container.querySelectorAll('.grandemonium-history-item--attention');
         expect(attentionItems).toHaveLength(2);
-        expect(container.querySelector('.claudian-session-attention-indicator')).toBeNull();
-        const attendedItems = container.querySelectorAll('.claudian-history-item').filter(
+        expect(container.querySelector('.grandemonium-session-attention-indicator')).toBeNull();
+        const attendedItems = container.querySelectorAll('.grandemonium-history-item').filter(
           (item: HTMLElement) => item.getAttribute('data-conversation-id') !== 'normal',
         );
         for (const item of attendedItems) {
-          expect(item.querySelector('.claudian-pin-btn')).toBeNull();
-          expect(item.querySelector('.claudian-archive-btn')).toBeNull();
+          expect(item.querySelector('.grandemonium-pin-btn')).toBeNull();
+          expect(item.querySelector('.grandemonium-archive-btn')).toBeNull();
         }
         const actionItem = attendedItems.find(
           (item: HTMLElement) => item.getAttribute('data-conversation-id') === 'action',
         )!;
-        expect(actionItem.hasClass('claudian-history-item--attention')).toBe(false);
-        const normalItem = container.querySelectorAll('.claudian-history-item').find(
+        expect(actionItem.hasClass('grandemonium-history-item--attention')).toBe(false);
+        const normalItem = container.querySelectorAll('.grandemonium-history-item').find(
           (item: HTMLElement) => item.getAttribute('data-conversation-id') === 'normal',
         )!;
-        expect(normalItem.querySelector('.claudian-pin-btn')).not.toBeNull();
-        expect(normalItem.querySelector('.claudian-archive-btn')).not.toBeNull();
+        expect(normalItem.querySelector('.grandemonium-pin-btn')).not.toBeNull();
+        expect(normalItem.querySelector('.grandemonium-archive-btn')).not.toBeNull();
       });
 
       it('does not mark archived rows for attention presentation', () => {
@@ -1296,7 +1296,7 @@ describe('ConversationController', () => {
           showAttentionState: false,
         });
 
-        expect(container.querySelector('.claudian-history-item--attention')).toBeNull();
+        expect(container.querySelector('.grandemonium-history-item--attention')).toBeNull();
       });
 
       it('renders active session management actions without archived sessions', () => {
@@ -1315,13 +1315,13 @@ describe('ConversationController', () => {
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
 
-        expect(container.querySelectorAll('.claudian-history-item-title')
+        expect(container.querySelectorAll('.grandemonium-history-item-title')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['Active']);
-        expect(container.querySelector('.claudian-pin-btn')).not.toBeNull();
-        expect(container.querySelector('.claudian-archive-btn')).not.toBeNull();
-        expect(container.querySelector('.claudian-delete-btn')).toBeNull();
-        expect(container.querySelectorAll('.claudian-action-btn').some(
+        expect(container.querySelector('.grandemonium-pin-btn')).not.toBeNull();
+        expect(container.querySelector('.grandemonium-archive-btn')).not.toBeNull();
+        expect(container.querySelector('.grandemonium-delete-btn')).toBeNull();
+        expect(container.querySelectorAll('.grandemonium-action-btn').some(
           (button: { getAttribute(name: string): string | null | undefined }) => (
             button.getAttribute('aria-label') === 'Rename'
           ),
@@ -1366,7 +1366,7 @@ describe('ConversationController', () => {
           searchQuery: 'ROADMAP',
         });
 
-        expect(container.querySelectorAll('.claudian-history-item-title')
+        expect(container.querySelectorAll('.grandemonium-history-item-title')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['Roadmap review', 'Planning notes']);
       });
@@ -1384,7 +1384,7 @@ describe('ConversationController', () => {
           searchQuery: 'missing',
         });
 
-        expect(container.querySelector('.claudian-history-empty')?.textContent)
+        expect(container.querySelector('.grandemonium-history-empty')?.textContent)
           .toBe('No matching sessions');
       });
 
@@ -1403,15 +1403,15 @@ describe('ConversationController', () => {
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
 
-        expect(container.querySelector('.claudian-history-section-label')?.textContent)
+        expect(container.querySelector('.grandemonium-history-section-label')?.textContent)
           .toBe('Archived');
-        expect(container.querySelectorAll('.claudian-history-item-title')
+        expect(container.querySelectorAll('.grandemonium-history-item-title')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['Archived']);
-        expect(container.querySelector('.claudian-restore-btn')).not.toBeNull();
-        expect(container.querySelector('.claudian-delete-btn')).not.toBeNull();
-        expect(container.querySelector('.claudian-pin-btn')).toBeNull();
-        expect(container.querySelector('.claudian-archive-btn')).toBeNull();
+        expect(container.querySelector('.grandemonium-restore-btn')).not.toBeNull();
+        expect(container.querySelector('.grandemonium-delete-btn')).not.toBeNull();
+        expect(container.querySelector('.grandemonium-pin-btn')).toBeNull();
+        expect(container.querySelector('.grandemonium-archive-btn')).toBeNull();
       });
 
       it('disables archive actions for running sessions', () => {
@@ -1430,7 +1430,7 @@ describe('ConversationController', () => {
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
 
-        const archiveButton = container.querySelector('.claudian-archive-btn')!;
+        const archiveButton = container.querySelector('.grandemonium-archive-btn')!;
         expect(archiveButton.getAttribute('disabled')).not.toBeNull();
         expect(archiveButton.getAttribute('aria-label'))
           .toBe('Cannot archive a running session');
@@ -1468,7 +1468,7 @@ describe('ConversationController', () => {
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
 
-        expect(container.querySelectorAll('.claudian-session-group-label')
+        expect(container.querySelectorAll('.grandemonium-session-group-label')
           .map((el: { textContent: string }) => el.textContent))
           .toEqual(['B', 'A']);
       });
@@ -1511,20 +1511,20 @@ describe('ConversationController', () => {
         });
 
         const labels = container
-          .querySelectorAll('.claudian-session-group-label')
+          .querySelectorAll('.grandemonium-session-group-label')
           .map((label: { textContent: string }) => label.textContent);
         expect(labels).toEqual(['Plan', 'Plan', 'Unlinked']);
         expect(labels).not.toContain('Untitled 2');
-        const groupHeaders = container.querySelectorAll('.claudian-session-group-header');
+        const groupHeaders = container.querySelectorAll('.grandemonium-session-group-header');
         expect(groupHeaders[0].getAttribute('title')).toBe('Projects/A/Plan.md');
         expect(groupHeaders[1].getAttribute('title')).toBe('Projects/B/Plan.md');
-        const groupIcons = container.querySelectorAll('.claudian-session-group-icon');
+        const groupIcons = container.querySelectorAll('.grandemonium-session-group-icon');
         expect(groupIcons).toHaveLength(3);
         expect(setIcon).toHaveBeenCalledWith(groupIcons[0], 'link');
         expect(setIcon).toHaveBeenCalledWith(groupIcons[1], 'link');
         expect(setIcon).toHaveBeenCalledWith(groupIcons[2], 'inbox');
         const linkedContentActions = container.querySelectorAll(
-          '.claudian-session-group-new-action',
+          '.grandemonium-session-group-new-action',
         );
         expect(linkedContentActions).toHaveLength(2);
         expect(linkedContentActions[0].tagName).toBe('SPAN');
@@ -1547,18 +1547,18 @@ describe('ConversationController', () => {
         ]);
         expect(groupHeaders[0].getAttribute('role')).toBe('button');
         expect(groupHeaders[0].getAttribute('aria-expanded')).toBe('true');
-        const groupBodies = container.querySelectorAll('.claudian-session-group-body');
+        const groupBodies = container.querySelectorAll('.grandemonium-session-group-body');
         expect(groupBodies).toHaveLength(3);
 
         groupHeaders[0].click();
 
         expect(groupHeaders[0].getAttribute('aria-expanded')).toBe('false');
-        expect(groupBodies[0].hasClass('claudian-session-group-body--collapsed')).toBe(true);
+        expect(groupBodies[0].hasClass('grandemonium-session-group-body--collapsed')).toBe(true);
         expect(onGroupCollapseChange).toHaveBeenCalledWith(
           'content:Projects/A/Plan.md',
           true,
         );
-        expect(container.querySelectorAll('.claudian-history-item')).toHaveLength(3);
+        expect(container.querySelectorAll('.grandemonium-history-item')).toHaveLength(3);
       });
 
       it('keeps missing groups visible without offering a new linked chat', () => {
@@ -1579,9 +1579,9 @@ describe('ConversationController', () => {
           onStartLinkedContentConversation: jest.fn(),
         });
 
-        expect(container.querySelector('.claudian-session-group-status')?.textContent)
+        expect(container.querySelector('.grandemonium-session-group-status')?.textContent)
           .toBe('Missing');
-        expect(container.querySelector('.claudian-session-group-new-action')).toBeNull();
+        expect(container.querySelector('.grandemonium-session-group-new-action')).toBeNull();
       });
 
       it('shows metadata for an existing directory with a provisional Note name', () => {
@@ -1605,7 +1605,7 @@ describe('ConversationController', () => {
           showMetadataPopover: true,
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
+        const item = container.querySelector('.grandemonium-history-item')!;
         const body = createMockEl();
         Object.defineProperty(item.ownerDocument, 'body', {
           configurable: true,
@@ -1613,7 +1613,7 @@ describe('ConversationController', () => {
         });
         item.dispatchEvent({ type: 'mouseenter' });
 
-        expect(body.querySelector('.claudian-session-metadata-value--content')?.textContent)
+        expect(body.querySelector('.grandemonium-session-metadata-value--content')?.textContent)
           .toBe('Untitled');
       });
 
@@ -1630,7 +1630,7 @@ describe('ConversationController', () => {
           onRerender,
         });
 
-        const deleteBtn = container.querySelector('.claudian-delete-btn');
+        const deleteBtn = container.querySelector('.grandemonium-delete-btn');
         const clickHandlers = deleteBtn?._eventListeners?.get('click');
         expect(clickHandlers).toBeDefined();
 
@@ -1658,14 +1658,14 @@ describe('ConversationController', () => {
         });
 
         let list = container.children[1];
-        expect(list.querySelectorAll('.claudian-history-item')).toHaveLength(25);
-        const loadMore = list.querySelector('.claudian-history-load-more');
+        expect(list.querySelectorAll('.grandemonium-history-item')).toHaveLength(25);
+        const loadMore = list.querySelector('.grandemonium-history-load-more');
         expect(loadMore).not.toBeNull();
 
         loadMore!.click();
         list = container.children[1];
-        expect(list.querySelectorAll('.claudian-history-item')).toHaveLength(50);
-        expect(list.querySelector('.claudian-history-load-more')).not.toBeNull();
+        expect(list.querySelectorAll('.grandemonium-history-item')).toHaveLength(50);
+        expect(list.querySelector('.grandemonium-history-load-more')).not.toBeNull();
       });
 
       it('keeps pagination bounded across pinned and regular dual-mode sessions', () => {
@@ -1694,19 +1694,19 @@ describe('ConversationController', () => {
         };
         controller.renderHistoryDropdown(container, options);
 
-        let list = container.querySelector('.claudian-history-list')!;
-        expect(list.querySelectorAll('.claudian-history-item')).toHaveLength(25);
-        expect(list.querySelector('.claudian-history-load-more')).not.toBeNull();
+        let list = container.querySelector('.grandemonium-history-list')!;
+        expect(list.querySelectorAll('.grandemonium-history-item')).toHaveLength(25);
+        expect(list.querySelector('.grandemonium-history-load-more')).not.toBeNull();
 
-        list.querySelector('.claudian-history-load-more')!.click();
+        list.querySelector('.grandemonium-history-load-more')!.click();
         expect(onRerender).toHaveBeenCalledTimes(1);
         expect(list.dataset.visibleCount).toBe('50');
-        expect(list.querySelectorAll('.claudian-history-item')).toHaveLength(25);
+        expect(list.querySelectorAll('.grandemonium-history-item')).toHaveLength(25);
 
         controller.renderHistoryDropdown(container, options);
-        list = container.querySelector('.claudian-history-list')!;
-        expect(list.querySelectorAll('.claudian-history-item')).toHaveLength(40);
-        expect(list.querySelector('.claudian-history-load-more')).toBeNull();
+        list = container.querySelector('.grandemonium-history-list')!;
+        expect(list.querySelectorAll('.grandemonium-history-item')).toHaveLength(40);
+        expect(list.querySelector('.grandemonium-history-load-more')).toBeNull();
       });
 
       it('preserves grouped-list position and loaded count across an external rerender', () => {
@@ -1729,14 +1729,14 @@ describe('ConversationController', () => {
         };
 
         controller.renderHistoryDropdown(container, options);
-        container.querySelector('.claudian-history-load-more')?.click();
-        const previousList = container.querySelector('.claudian-history-list')!;
+        container.querySelector('.grandemonium-history-load-more')?.click();
+        const previousList = container.querySelector('.grandemonium-history-list')!;
         previousList.scrollTop = 320;
 
         controller.renderHistoryDropdown(container, options);
 
-        const rerenderedList = container.querySelector('.claudian-history-list')!;
-        expect(rerenderedList.querySelectorAll('.claudian-history-item')).toHaveLength(50);
+        const rerenderedList = container.querySelector('.grandemonium-history-list')!;
+        expect(rerenderedList.querySelectorAll('.grandemonium-history-item')).toHaveLength(50);
         expect(rerenderedList.scrollTop).toBe(320);
       });
 
@@ -1758,14 +1758,14 @@ describe('ConversationController', () => {
         };
 
         controller.renderHistoryDropdown(container, options);
-        container.querySelector('.claudian-history-load-more')?.click();
-        const previousList = container.querySelector('.claudian-history-list')!;
+        container.querySelector('.grandemonium-history-load-more')?.click();
+        const previousList = container.querySelector('.grandemonium-history-list')!;
         previousList.scrollTop = 320;
 
         controller.renderHistoryDropdown(container, options);
 
-        const rerenderedList = container.querySelector('.claudian-history-list')!;
-        expect(rerenderedList.querySelectorAll('.claudian-history-item')).toHaveLength(50);
+        const rerenderedList = container.querySelector('.grandemonium-history-list')!;
+        expect(rerenderedList.querySelectorAll('.grandemonium-history-item')).toHaveLength(50);
         expect(rerenderedList.scrollTop).toBe(320);
       });
 
@@ -1786,18 +1786,18 @@ describe('ConversationController', () => {
         };
 
         controller.renderHistoryDropdown(container, options);
-        container.querySelector('.claudian-history-load-more')?.click();
+        container.querySelector('.grandemonium-history-load-more')?.click();
         controller.renderHistoryDropdown(container, options);
-        expect(container.querySelectorAll('.claudian-history-item')).toHaveLength(50);
+        expect(container.querySelectorAll('.grandemonium-history-item')).toHaveLength(50);
 
         controller.renderHistoryDropdown(container, {
           ...options,
           searchQuery: 'missing',
         });
-        expect(container.querySelector('.claudian-history-list')?.dataset.visibleCount).toBe('50');
+        expect(container.querySelector('.grandemonium-history-list')?.dataset.visibleCount).toBe('50');
 
         controller.renderHistoryDropdown(container, options);
-        expect(container.querySelectorAll('.claudian-history-item')).toHaveLength(50);
+        expect(container.querySelectorAll('.grandemonium-history-item')).toHaveLength(50);
       });
 
       it('preserves dual-mode pinned and session scroll positions across a rerender', () => {
@@ -1818,19 +1818,19 @@ describe('ConversationController', () => {
         };
 
         controller.renderHistoryDropdown(container, options);
-        const pinnedItems = container.querySelector('.claudian-history-section--pinned')!
-          .querySelector('.claudian-history-section-items')!;
-        const sessionItems = container.querySelector('.claudian-session-list-items')!;
+        const pinnedItems = container.querySelector('.grandemonium-history-section--pinned')!
+          .querySelector('.grandemonium-history-section-items')!;
+        const sessionItems = container.querySelector('.grandemonium-session-list-items')!;
         pinnedItems.scrollTop = 24;
         sessionItems.scrollTop = 320;
 
         controller.renderHistoryDropdown(container, options);
 
         expect(
-          container.querySelector('.claudian-history-section--pinned')!
-            .querySelector('.claudian-history-section-items')!.scrollTop,
+          container.querySelector('.grandemonium-history-section--pinned')!
+            .querySelector('.grandemonium-history-section-items')!.scrollTop,
         ).toBe(24);
-        expect(container.querySelector('.claudian-session-list-items')!.scrollTop).toBe(320);
+        expect(container.querySelector('.grandemonium-session-list-items')!.scrollTop).toBe(320);
       });
 
       it('preserves list position when archiving removes the final active session', () => {
@@ -1850,12 +1850,12 @@ describe('ConversationController', () => {
         };
 
         controller.renderHistoryDropdown(container, options);
-        container.querySelector('.claudian-history-list')!.scrollTop = 120;
+        container.querySelector('.grandemonium-history-list')!.scrollTop = 120;
         conversation.isArchived = true;
 
         controller.renderHistoryDropdown(container, options);
 
-        expect(container.querySelector('.claudian-history-list')!.scrollTop).toBe(120);
+        expect(container.querySelector('.grandemonium-history-list')!.scrollTop).toBe(120);
       });
 
       it('installs surface controls before restoring preserved list position', () => {
@@ -1874,7 +1874,7 @@ describe('ConversationController', () => {
           preserveListState: true,
           onBeforeRestoreListState: (listContainer) => {
             order.push('decorate');
-            const list = listContainer.querySelector('.claudian-history-list')!;
+            const list = listContainer.querySelector('.grandemonium-history-list')!;
             list.insertBefore(createMockEl(), list.firstChild);
           },
         });
@@ -1888,7 +1888,7 @@ describe('ConversationController', () => {
         (sessionScope) => {
           const container = createMockEl();
           const onBeforeRestoreListState = jest.fn((listContainer: HTMLElement) => {
-            const list = listContainer.querySelector('.claudian-history-list')!;
+            const list = listContainer.querySelector('.grandemonium-history-list')!;
             list.insertBefore(createMockEl(), list.firstChild);
           });
           (deps.plugin.getConversationList as jest.Mock).mockReturnValue([]);
@@ -1900,9 +1900,9 @@ describe('ConversationController', () => {
             onBeforeRestoreListState,
           });
 
-          const list = container.querySelector('.claudian-history-list')!;
+          const list = container.querySelector('.grandemonium-history-list')!;
           expect(onBeforeRestoreListState).toHaveBeenCalledWith(container);
-          const emptyState = list.querySelector('.claudian-history-empty');
+          const emptyState = list.querySelector('.grandemonium-history-empty');
           expect(list.children[0]).not.toBe(emptyState);
           expect(emptyState).not.toBeNull();
         },
@@ -1943,13 +1943,13 @@ describe('ConversationController', () => {
           },
         });
 
-        const labels = container.querySelectorAll('.claudian-session-group-label');
+        const labels = container.querySelectorAll('.grandemonium-session-group-label');
         expect(labels.map((label: { textContent: string }) => label.textContent))
           .toEqual(['A', 'B']);
-        expect(container.querySelectorAll('.claudian-history-item')).toHaveLength(1);
-        expect(container.querySelector('.claudian-history-load-more')).toBeNull();
+        expect(container.querySelectorAll('.grandemonium-history-item')).toHaveLength(1);
+        expect(container.querySelector('.grandemonium-history-load-more')).toBeNull();
 
-        container.querySelectorAll('.claudian-session-group-header')[0].click();
+        container.querySelectorAll('.grandemonium-session-group-header')[0].click();
         expect(onRerender).toHaveBeenCalledTimes(1);
       });
 
@@ -1983,7 +1983,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const openItem = list.children[1];
-        const openItemDate = openItem.querySelector('.claudian-history-item-date');
+        const openItemDate = openItem.querySelector('.grandemonium-history-item-date');
 
         expect(openItem.hasClass('open')).toBe(true);
         expect(openItem.hasClass('active')).toBe(false);
@@ -2011,7 +2011,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const currentItem = list.children[0];
-        const currentItemDate = currentItem.querySelector('.claudian-history-item-date');
+        const currentItemDate = currentItem.querySelector('.grandemonium-history-item-date');
 
         expect(currentItem.getAttribute('data-tab-index')).toBe('1');
         expect(currentItem.getAttribute('data-tab-location')).toBe('current-view');
@@ -2036,7 +2036,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const openItem = list.children[1];
-        const openItemDate = openItem.querySelector('.claudian-history-item-date');
+        const openItemDate = openItem.querySelector('.grandemonium-history-item-date');
 
         expect(openItem.getAttribute('data-tab-index')).toBe('2');
         expect(openItem.getAttribute('data-tab-location')).toBe('current-view');
@@ -2064,12 +2064,12 @@ describe('ConversationController', () => {
         });
 
         const list = container.children[1];
-        expect(list.children[0].querySelector('.claudian-history-item-date')?.textContent)
+        expect(list.children[0].querySelector('.grandemonium-history-item-date')?.textContent)
           .toBe('Date 2000');
-        expect(list.children[1].querySelector('.claudian-history-item-date')?.textContent)
+        expect(list.children[1].querySelector('.grandemonium-history-item-date')?.textContent)
           .toBe('Date 1000');
         const runningIndicators = list.querySelectorAll(
-          '.claudian-session-running-indicator',
+          '.grandemonium-session-running-indicator',
         );
         expect(runningIndicators).toHaveLength(1);
         expect(setIcon).toHaveBeenCalledWith(runningIndicators[0], 'loader-2');
@@ -2102,45 +2102,45 @@ describe('ConversationController', () => {
           }),
         });
 
-        const items = container.querySelectorAll('.claudian-history-item');
+        const items = container.querySelectorAll('.grandemonium-history-item');
         const findItem = (id: string) => items.find(
           (item: HTMLElement) => item.getAttribute('data-conversation-id') === id,
         )!;
         const waitingItem = findItem('waiting');
         const waitingBadge = waitingItem.querySelector(
-          '.claudian-session-status-indicator--action-required',
+          '.grandemonium-session-status-indicator--action-required',
         )!;
         const workingItem = findItem('working');
         const errorItem = findItem('error');
         const errorBadge = errorItem.querySelector(
-          '.claudian-session-status-indicator--error',
+          '.grandemonium-session-status-indicator--error',
         )!;
 
         expect(waitingBadge).not.toBeNull();
-        expect(waitingBadge.hasClass('claudian-session-status-indicator')).toBe(true);
+        expect(waitingBadge.hasClass('grandemonium-session-status-indicator')).toBe(true);
         expect(waitingBadge.getAttribute('aria-label')).toBe('Needs your input');
-        expect(waitingItem.querySelector('.claudian-session-running-indicator')).toBeNull();
+        expect(waitingItem.querySelector('.grandemonium-session-running-indicator')).toBeNull();
         expect(waitingItem.hasClass('running')).toBe(false);
         expect(waitingItem.getAttribute('data-running')).toBe('true');
         expect(setIcon).toHaveBeenCalledWith(
-          waitingItem.querySelector('.claudian-history-item-icon'),
+          waitingItem.querySelector('.grandemonium-history-item-icon'),
           'message-square',
         );
-        expect(waitingItem.hasClass('claudian-history-item--attention')).toBe(false);
+        expect(waitingItem.hasClass('grandemonium-history-item--attention')).toBe(false);
         expect(setIcon).toHaveBeenCalledWith(waitingBadge, 'alert-circle');
 
-        expect(workingItem.querySelector('.claudian-session-running-indicator')).not.toBeNull();
-        expect(workingItem.querySelector('.claudian-session-status-indicator')).toBeNull();
+        expect(workingItem.querySelector('.grandemonium-session-running-indicator')).not.toBeNull();
+        expect(workingItem.querySelector('.grandemonium-session-status-indicator')).toBeNull();
 
         expect(errorBadge).not.toBeNull();
-        expect(errorBadge.hasClass('claudian-session-status-indicator')).toBe(true);
+        expect(errorBadge.hasClass('grandemonium-session-status-indicator')).toBe(true);
         expect(errorBadge.getAttribute('aria-label')).toBe('Stopped with an error');
-        expect(errorItem.hasClass('claudian-history-item--attention')).toBe(false);
+        expect(errorItem.hasClass('grandemonium-history-item--attention')).toBe(false);
         expect(setIcon).toHaveBeenCalledWith(errorBadge, 'x-circle');
 
-        expect(findItem('review').hasClass('claudian-history-item--attention')).toBe(true);
-        expect(findItem('review').querySelector('.claudian-session-status-indicator')).toBeNull();
-        expect(findItem('idle').querySelector('.claudian-session-status-indicator')).toBeNull();
+        expect(findItem('review').hasClass('grandemonium-history-item--attention')).toBe(true);
+        expect(findItem('review').querySelector('.grandemonium-session-status-indicator')).toBeNull();
+        expect(findItem('idle').querySelector('.grandemonium-session-status-indicator')).toBeNull();
       });
 
       it('displays the timestamp selected by the session sort mode', () => {
@@ -2163,7 +2163,7 @@ describe('ConversationController', () => {
           showOpenStateLabels: false,
         });
 
-        expect(container.querySelector('.claudian-history-item-date')?.textContent)
+        expect(container.querySelector('.grandemonium-history-item-date')?.textContent)
           .toBe('Date 2000');
 
         controller.renderHistoryDropdown(container, {
@@ -2172,7 +2172,7 @@ describe('ConversationController', () => {
           showOpenStateLabels: false,
         });
 
-        expect(container.querySelector('.claudian-history-item-date')?.textContent)
+        expect(container.querySelector('.grandemonium-history-item-date')?.textContent)
           .toBe('Date 1000');
       });
 
@@ -2205,19 +2205,19 @@ describe('ConversationController', () => {
           }),
         });
 
-        const header = container.querySelector('.claudian-session-group-header')!;
+        const header = container.querySelector('.grandemonium-session-group-header')!;
         const headerIndicator = header.querySelector(
-          '.claudian-session-group-running-indicator',
+          '.grandemonium-session-group-running-indicator',
         )!;
         expect(headerIndicator).not.toBeNull();
         expect(headerIndicator.hasClass(
-          'claudian-session-group-running-indicator--visible',
+          'grandemonium-session-group-running-indicator--visible',
         )).toBe(false);
 
         header.click();
 
         expect(headerIndicator.hasClass(
-          'claudian-session-group-running-indicator--visible',
+          'grandemonium-session-group-running-indicator--visible',
         )).toBe(true);
         expect(setIcon).toHaveBeenCalledWith(headerIndicator, 'loader-2');
       });
@@ -2255,18 +2255,18 @@ describe('ConversationController', () => {
           }),
         });
 
-        const header = container.querySelector('.claudian-session-group-header')!;
+        const header = container.querySelector('.grandemonium-session-group-header')!;
         const badge = header.querySelector(
-          '.claudian-session-group-status-indicator',
+          '.grandemonium-session-group-status-indicator',
         )!;
         expect(badge).not.toBeNull();
-        expect(badge.hasClass('claudian-session-status-indicator--action-required')).toBe(true);
-        expect(badge.hasClass('claudian-session-group-status-indicator--visible')).toBe(false);
-        expect(header.querySelector('.claudian-session-group-running-indicator')).toBeNull();
+        expect(badge.hasClass('grandemonium-session-status-indicator--action-required')).toBe(true);
+        expect(badge.hasClass('grandemonium-session-group-status-indicator--visible')).toBe(false);
+        expect(header.querySelector('.grandemonium-session-group-running-indicator')).toBeNull();
 
         header.click();
 
-        expect(badge.hasClass('claudian-session-group-status-indicator--visible')).toBe(true);
+        expect(badge.hasClass('grandemonium-session-group-status-indicator--visible')).toBe(true);
         expect(badge.getAttribute('aria-label')).toBe('Needs your input');
         expect(setIcon).toHaveBeenCalledWith(badge, 'alert-circle');
       });
@@ -2296,14 +2296,14 @@ describe('ConversationController', () => {
           }),
         });
 
-        const header = container.querySelector('.claudian-session-group-header')!;
+        const header = container.querySelector('.grandemonium-session-group-header')!;
         const badge = header.querySelector(
-          '.claudian-session-group-status-indicator',
+          '.grandemonium-session-group-status-indicator',
         )!;
         header.click();
 
-        expect(badge.hasClass('claudian-session-status-indicator--error')).toBe(true);
-        expect(badge.hasClass('claudian-session-group-status-indicator--visible')).toBe(true);
+        expect(badge.hasClass('grandemonium-session-status-indicator--error')).toBe(true);
+        expect(badge.hasClass('grandemonium-session-group-status-indicator--visible')).toBe(true);
         expect(badge.getAttribute('aria-label')).toBe('Stopped with an error');
         expect(setIcon).toHaveBeenCalledWith(badge, 'x-circle');
       });
@@ -2340,13 +2340,13 @@ describe('ConversationController', () => {
           }),
         });
 
-        const header = container.querySelector('.claudian-session-group-header')!;
-        expect(header.hasClass('claudian-session-group-header--attention')).toBe(false);
-        expect(header.querySelector('.claudian-session-group-attention-indicator')).toBeNull();
+        const header = container.querySelector('.grandemonium-session-group-header')!;
+        expect(header.hasClass('grandemonium-session-group-header--attention')).toBe(false);
+        expect(header.querySelector('.grandemonium-session-group-attention-indicator')).toBeNull();
 
         header.click();
 
-        expect(header.hasClass('claudian-session-group-header--attention')).toBe(true);
+        expect(header.hasClass('grandemonium-session-group-header--attention')).toBe(true);
       });
 
       it('should display running status for the current conversation', () => {
@@ -2367,7 +2367,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const currentItem = list.children[0];
-        const currentItemDate = currentItem.querySelector('.claudian-history-item-date');
+        const currentItemDate = currentItem.querySelector('.grandemonium-history-item-date');
 
         expect(currentItem.hasClass('active')).toBe(true);
         expect(currentItem.hasClass('running')).toBe(true);
@@ -2393,7 +2393,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const runningItem = list.children[1];
-        const runningItemDate = runningItem.querySelector('.claudian-history-item-date');
+        const runningItemDate = runningItem.querySelector('.grandemonium-history-item-date');
 
         expect(runningItem.hasClass('open')).toBe(true);
         expect(runningItem.hasClass('running')).toBe(true);
@@ -2428,8 +2428,8 @@ describe('ConversationController', () => {
         const list = container.children[1];
         const openOtherPaneItem = list.children[1];
         const runningOtherPaneItem = list.children[2];
-        const runningOtherPaneDate = runningOtherPaneItem.querySelector('.claudian-history-item-date');
-        const openOtherPaneDate = openOtherPaneItem.querySelector('.claudian-history-item-date');
+        const runningOtherPaneDate = runningOtherPaneItem.querySelector('.grandemonium-history-item-date');
+        const openOtherPaneDate = openOtherPaneItem.querySelector('.grandemonium-history-item-date');
 
         expect(runningOtherPaneItem.getAttribute('data-tab-location')).toBe('other-view');
         expect(runningOtherPaneItem.getAttribute('data-tab-index')).toBeNull();
@@ -2456,7 +2456,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const closedItem = list.children[1];
-        const openInNewTabBtn = closedItem.querySelector('.claudian-open-new-tab-btn');
+        const openInNewTabBtn = closedItem.querySelector('.grandemonium-open-new-tab-btn');
         const clickHandlers = openInNewTabBtn?._eventListeners?.get('click');
 
         expect(openInNewTabBtn).toBeTruthy();
@@ -2486,7 +2486,7 @@ describe('ConversationController', () => {
         const list = container.children[1];
         const openItem = list.children[1];
 
-        expect(openItem.querySelector('.claudian-open-new-tab-btn')).toBeNull();
+        expect(openItem.querySelector('.grandemonium-open-new-tab-btn')).toBeNull();
       });
 
       it('should open a conversation in a new tab on modifier click when supported', async () => {
@@ -2508,7 +2508,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const otherItem = list.children[1];
-        const content = otherItem.querySelector('.claudian-history-item-content');
+        const content = otherItem.querySelector('.grandemonium-history-item-content');
         const clickHandlers = content?._eventListeners?.get('click');
         expect(clickHandlers).toBeDefined();
 
@@ -2544,7 +2544,7 @@ describe('ConversationController', () => {
 
         const list = container.children[1];
         const otherItem = list.children[1];
-        const content = otherItem.querySelector('.claudian-history-item-content');
+        const content = otherItem.querySelector('.grandemonium-history-item-content');
         const auxClickHandlers = content?._eventListeners?.get('auxclick');
         expect(auxClickHandlers).toBeDefined();
 
@@ -2672,7 +2672,7 @@ describe('ConversationController', () => {
           showOpenStateLabels: false,
         });
 
-        container.querySelector('.claudian-history-item')!.dispatchEvent({
+        container.querySelector('.grandemonium-history-item')!.dispatchEvent({
           type: 'contextmenu',
           stopPropagation: jest.fn(),
           preventDefault: jest.fn(),
@@ -2710,7 +2710,7 @@ describe('ConversationController', () => {
           showOpenStateActions: false,
         });
 
-        const items = container.querySelectorAll('.claudian-history-item');
+        const items = container.querySelectorAll('.grandemonium-history-item');
         const legacyItem = items.find((item: HTMLElement) => (
           item.getAttribute('data-conversation-id') === 'legacy'
         ))!;
@@ -2718,12 +2718,12 @@ describe('ConversationController', () => {
           item.getAttribute('data-conversation-id') === 'device'
         ))!;
         const assignButton = legacyItem.querySelector(
-          '.claudian-assign-device-btn',
+          '.grandemonium-assign-device-btn',
         )!;
         expect(assignButton).not.toBeNull();
-        expect(deviceItem.querySelector('.claudian-assign-device-btn')).toBeNull();
+        expect(deviceItem.querySelector('.grandemonium-assign-device-btn')).toBeNull();
         expect(
-          legacyItem.querySelector('.claudian-history-item-actions')!.children
+          legacyItem.querySelector('.grandemonium-history-item-actions')!.children
             .map((button: HTMLElement) => button.getAttribute('aria-label')),
         ).toEqual(['Assign to this device', 'Pin', 'Archive']);
 
@@ -2764,8 +2764,8 @@ describe('ConversationController', () => {
           showOpenStateActions: false,
         });
 
-        const normalItem = container.querySelector('.claudian-history-section--sessions')!
-          .querySelector('.claudian-history-item')!;
+        const normalItem = container.querySelector('.grandemonium-history-section--sessions')!
+          .querySelector('.grandemonium-history-item')!;
         normalItem.dispatchEvent({
           type: 'contextmenu',
           stopPropagation: jest.fn(),
@@ -2779,8 +2779,8 @@ describe('ConversationController', () => {
         await Promise.resolve();
         expect(onSetConversationPinned).toHaveBeenCalledWith('normal', true);
 
-        const pinnedItem = container.querySelector('.claudian-history-section--pinned')!
-          .querySelector('.claudian-history-item')!;
+        const pinnedItem = container.querySelector('.grandemonium-history-section--pinned')!
+          .querySelector('.grandemonium-history-item')!;
         pinnedItem.dispatchEvent({
           type: 'contextmenu',
           stopPropagation: jest.fn(),
@@ -2810,9 +2810,9 @@ describe('ConversationController', () => {
           showOpenStateActions: false,
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
-        expect(item.querySelector('.claudian-pin-btn')).toBeNull();
-        expect(item.querySelector('.claudian-archive-btn')).not.toBeNull();
+        const item = container.querySelector('.grandemonium-history-item')!;
+        expect(item.querySelector('.grandemonium-pin-btn')).toBeNull();
+        expect(item.querySelector('.grandemonium-archive-btn')).not.toBeNull();
 
         item.dispatchEvent({
           type: 'contextmenu',
@@ -2843,7 +2843,7 @@ describe('ConversationController', () => {
           onSetConversationPinned: jest.fn().mockResolvedValue(undefined),
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
-        activeContainer.querySelector('.claudian-history-item')!.dispatchEvent({
+        activeContainer.querySelector('.grandemonium-history-item')!.dispatchEvent({
           type: 'contextmenu',
           stopPropagation: jest.fn(),
           preventDefault: jest.fn(),
@@ -2869,7 +2869,7 @@ describe('ConversationController', () => {
           showOpenStateActions: false,
           onSetConversationArchived: jest.fn().mockResolvedValue(undefined),
         });
-        archivedContainer.querySelector('.claudian-history-item')!.dispatchEvent({
+        archivedContainer.querySelector('.grandemonium-history-item')!.dispatchEvent({
           type: 'contextmenu',
           stopPropagation: jest.fn(),
           preventDefault: jest.fn(),
@@ -2900,8 +2900,8 @@ describe('ConversationController', () => {
           showOpenStateActions: true,
         });
 
-        const item = container.querySelector('.claudian-history-item')!;
-        const title = item.querySelector('.claudian-history-item-title')!;
+        const item = container.querySelector('.grandemonium-history-item')!;
+        const title = item.querySelector('.grandemonium-history-item-title')!;
         title.replaceWith = jest.fn();
         item.dispatchEvent({
           type: 'contextmenu',
@@ -2917,14 +2917,14 @@ describe('ConversationController', () => {
         menu.items.find(menuItem => menuItem.title === 'Rename')?.clickHandler?.();
 
         expect(title.replaceWith).not.toHaveBeenCalled();
-        expect(item.querySelector('.claudian-rename-input')).toBeNull();
+        expect(item.querySelector('.grandemonium-rename-input')).toBeNull();
         expect(onRequestInlineRename).toHaveBeenCalledWith({
           beginRename: expect.any(Function),
           conversationId: 'active',
         });
 
         onRequestInlineRename.mock.calls[0][0].beginRename(item);
-        const input = item.querySelector('.claudian-rename-input')!;
+        const input = item.querySelector('.grandemonium-rename-input')!;
         expect(title.replaceWith).toHaveBeenCalledWith(input);
         input.value = 'Renamed title';
         input.blur();
@@ -2960,7 +2960,7 @@ describe('ConversationController', () => {
 
       const list = dropdown.children[1];
       const otherItem = list.children[1];
-      const content = otherItem.querySelector('.claudian-history-item-content');
+      const content = otherItem.querySelector('.grandemonium-history-item-content');
       const clickHandlers = content?._eventListeners?.get('click');
       expect(clickHandlers).toBeDefined();
 
@@ -2989,7 +2989,7 @@ describe('ConversationController', () => {
 
       const list = dropdown.children[1];
       const item = list.children[0];
-      const actions = item.querySelector('.claudian-history-item-actions');
+      const actions = item.querySelector('.grandemonium-history-item-actions');
       // First child is the regenerate button
       const regenerateBtn = actions!.children[0];
       const clickHandlers = regenerateBtn._eventListeners?.get('click');
@@ -3017,7 +3017,7 @@ describe('ConversationController', () => {
 
       const list = dropdown.children[1];
       const item = list.children[0];
-      const actions = item.querySelector('.claudian-history-item-actions');
+      const actions = item.querySelector('.grandemonium-history-item-actions');
       expect(actions).toBeTruthy();
       // For non-failed items: rename is children[0], delete is children[1]
       const rBtn = actions!.children[0];
@@ -3032,7 +3032,7 @@ describe('ConversationController', () => {
       (mockInput as any).focus = jest.fn();
       (mockInput as any).select = jest.fn();
 
-      const titleEl = item.querySelector('.claudian-history-item-title');
+      const titleEl = item.querySelector('.grandemonium-history-item-title');
       if (titleEl) {
         (titleEl as any).replaceWith = jest.fn();
       }
@@ -3044,7 +3044,7 @@ describe('ConversationController', () => {
         clickHandlers![0]({ stopPropagation: jest.fn() });
 
         expect(item.createEl).toHaveBeenCalledWith('input', {
-          cls: 'claudian-rename-input',
+          cls: 'grandemonium-rename-input',
           attr: { type: 'text', value: 'Test Title' },
         });
         expect(titleEl!.replaceWith).toHaveBeenCalledWith(mockInput);
@@ -3067,11 +3067,11 @@ describe('ConversationController', () => {
         sort: 'created',
       });
 
-      const item = container.querySelector('.claudian-history-item')!;
-      const title = item.querySelector('.claudian-history-item-title')!;
+      const item = container.querySelector('.grandemonium-history-item')!;
+      const title = item.querySelector('.grandemonium-history-item-title')!;
       title.replaceWith = jest.fn();
-      item.querySelector('.claudian-history-item-actions')!.children[0].click();
-      const input = item.querySelector('.claudian-rename-input')!;
+      item.querySelector('.grandemonium-history-item-actions')!.children[0].click();
+      const input = item.querySelector('.grandemonium-rename-input')!;
       input.value = 'New title';
       input.blur();
       await Promise.resolve();
@@ -3093,11 +3093,11 @@ describe('ConversationController', () => {
         onRerender,
       });
 
-      const item = container.querySelector('.claudian-history-item')!;
-      const title = item.querySelector('.claudian-history-item-title')!;
+      const item = container.querySelector('.grandemonium-history-item')!;
+      const title = item.querySelector('.grandemonium-history-item-title')!;
       title.replaceWith = jest.fn();
-      item.querySelector('.claudian-history-item-actions')!.children[0].click();
-      const input = item.querySelector('.claudian-rename-input')!;
+      item.querySelector('.grandemonium-history-item-actions')!.children[0].click();
+      const input = item.querySelector('.grandemonium-rename-input')!;
       input.value = '  Original title  ';
       input.blur();
       await Promise.resolve();
@@ -3118,11 +3118,11 @@ describe('ConversationController', () => {
         onRerender,
       });
 
-      const item = container.querySelector('.claudian-history-item')!;
-      const title = item.querySelector('.claudian-history-item-title')!;
+      const item = container.querySelector('.grandemonium-history-item')!;
+      const title = item.querySelector('.grandemonium-history-item-title')!;
       title.replaceWith = jest.fn();
-      item.querySelector('.claudian-history-item-actions')!.children[0].click();
-      const input = item.querySelector('.claudian-rename-input')!;
+      item.querySelector('.grandemonium-history-item-actions')!.children[0].click();
+      const input = item.querySelector('.grandemonium-rename-input')!;
       input.value = 'Unsaved title';
 
       expect(controller.cancelInlineRename()).toBe(true);
@@ -3145,11 +3145,11 @@ describe('ConversationController', () => {
       ]);
 
       controller.renderHistoryDropdown(container, options);
-      const item = container.querySelector('.claudian-history-item')!;
-      const title = item.querySelector('.claudian-history-item-title')!;
+      const item = container.querySelector('.grandemonium-history-item')!;
+      const title = item.querySelector('.grandemonium-history-item-title')!;
       title.replaceWith = jest.fn();
-      item.querySelector('.claudian-history-item-actions')!.children[0].click();
-      const input = item.querySelector('.claudian-rename-input')!;
+      item.querySelector('.grandemonium-history-item-actions')!.children[0].click();
+      const input = item.querySelector('.grandemonium-rename-input')!;
       input.value = 'Detached draft';
 
       controller.renderHistoryDropdown(container, options);
@@ -3169,7 +3169,7 @@ describe('ConversationController', () => {
 
       const list = dropdown.children[1];
       const item = list.children[0];
-      const deleteBtn = item.querySelector('.claudian-delete-btn');
+      const deleteBtn = item.querySelector('.grandemonium-delete-btn');
       expect(deleteBtn).toBeTruthy();
 
       const clickHandlers = deleteBtn!._eventListeners?.get('click');
@@ -3192,7 +3192,7 @@ describe('ConversationController', () => {
 
       const list = dropdown.children[1];
       const otherItem = list.children[1]; // conv-2
-      const deleteBtn = otherItem.querySelector('.claudian-delete-btn');
+      const deleteBtn = otherItem.querySelector('.grandemonium-delete-btn');
       const clickHandlers = deleteBtn!._eventListeners?.get('click');
 
       await clickHandlers![0]({ stopPropagation: jest.fn() });

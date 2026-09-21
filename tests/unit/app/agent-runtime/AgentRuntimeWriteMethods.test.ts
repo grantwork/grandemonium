@@ -3,7 +3,7 @@ import type { CollabChangeRequest, CollabComment, CollabTicketComment, CollabTic
 import { AgentRuntimeGateway } from '@/app/agent-runtime/AgentRuntimeGateway';
 import type { CollabAgentPort } from '@/app/agent-runtime/AgentRuntimeMethodRegistry';
 import type { CollabConflictDescriptor, CollabPublicationReview, CollabRequestReview } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-a';
 const TICKET_ID = 'ticket-a';

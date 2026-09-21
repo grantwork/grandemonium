@@ -20,7 +20,7 @@ describe('HostTransferPackage', () => {
   let operationDirectory: string;
 
   beforeEach(async () => {
-    operationDirectory = await mkdtemp(path.join(tmpdir(), 'claudian-host-package-'));
+    operationDirectory = await mkdtemp(path.join(tmpdir(), 'grandemonium-host-package-'));
   });
 
   afterEach(async () => {

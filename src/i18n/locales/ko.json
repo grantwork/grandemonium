@@ -138,7 +138,7 @@
       "addProject": "프로젝트 추가",
       "createProject": "만들기",
       "projectPicker": "프로젝트 선택",
-      "emptyDescription": "로컬 프로젝트를 만들거나 다른 Claudian 사용자의 프로젝트에 참여하세요.",
+      "emptyDescription": "로컬 프로젝트를 만들거나 다른 Grandemonium 사용자의 프로젝트에 참여하세요.",
       "joinProject": "참여",
       "reconnectProject": "프로젝트 다시 연결...",
       "joinUnavailable": "LAN 협업에서 사용할 수 있습니다.",
@@ -413,7 +413,7 @@
     }
   },
   "settings": {
-    "title": "Claudian 설정",
+    "title": "Grandemonium 설정",
     "tabs": {
       "general": "일반",
       "comments": "댓글",
@@ -430,7 +430,7 @@
     "models": "모델",
     "experimental": "실험적 기능",
     "userName": {
-      "name": "Claudian이 당신을 어떻게 불러야 합니까?",
+      "name": "Grandemonium이 당신을 어떻게 불러야 합니까?",
       "desc": "개인화된 인사에 사용할 이름 (비워두면 일반 인사)"
     },
     "excludedTags": {
@@ -489,13 +489,13 @@
     },
     "hiddenSlashCommands": {
       "name": "숨겨진 명령어와 스킬",
-      "desc": "드롭다운에서 특정 명령어와 스킬을 숨깁니다. Claudian과 관련 없는 Claude Code 항목을 숨기는 데 유용합니다. 앞의 슬래시 없이 이름을 한 줄에 하나씩 입력하세요.",
+      "desc": "드롭다운에서 특정 명령어와 스킬을 숨깁니다. Grandemonium과 관련 없는 Claude Code 항목을 숨기는 데 유용합니다. 앞의 슬래시 없이 이름을 한 줄에 하나씩 입력하세요.",
       "placeholder": "commit\nbuild\ntest"
     },
     "mcpServers": {
       "name": "MCP 서버",
       "descBeforeCommand": "Claude Code는 자체 CLI로 MCP 서버를 관리합니다. ",
-      "descAfterCommand": " 명령으로 구성하면 Claudian에서 사용할 수 있습니다. ",
+      "descAfterCommand": " 명령으로 구성하면 Grandemonium에서 사용할 수 있습니다. ",
       "learnMore": "자세히 알아보기"
     },
     "plugins": {
@@ -604,8 +604,8 @@
     },
     "collabGitInstallation": {
       "summary": "Git 설정 도움말",
-      "requirement": "Claudian Collab은 이 컴퓨터에 설치된 Native Git 2.38 이상을 사용합니다.",
-      "verify": "Claudian에게 설치를 확인하고 검증하도록 요청하세요:",
+      "requirement": "Grandemonium Collab은 이 컴퓨터에 설치된 Native Git 2.38 이상을 사용합니다.",
+      "verify": "Grandemonium에게 설치를 확인하고 검증하도록 요청하세요:",
       "prompt": "이 컴퓨터의 Git 설치를 확인해 주세요.\n1. Git 설치 여부, 실행 파일 경로, 버전을 알려 주세요.\n2. Git이 설치되어 있지 않으면 이 기기에 설치하는 방법을 안내해 주세요.\n3. 아무것도 설치하거나 변경하지 마세요."
     },
     "collabGitStatus": {
@@ -613,7 +613,7 @@
       "available": "Git 실행 파일을 감지했습니다",
       "unavailable": "Git 실행 파일을 찾을 수 없습니다"
     },
-    "collabReadMore": "Claudian Collab 모드 자세히 알아보기",
+    "collabReadMore": "Grandemonium Collab 모드 자세히 알아보기",
     "collabGitPath": {
       "name": "Native Git 경로",
       "desc": "Collab에서 사용할 Native Git의 절대 경로(선택 사항). 비워 두면 자동으로 감지합니다.",
@@ -625,7 +625,7 @@
     },
     "collabProjectsFolder": {
       "name": "프로젝트 폴더",
-      "desc": "향후 Collab 프로젝트용 Vault 상대 경로입니다. 미리 만들 필요 없이 다음 만들기 또는 참여 시 Claudian이 생성하거나 소유권을 설정합니다. 기존 프로젝트 위치는 변경되지 않습니다.",
+      "desc": "향후 Collab 프로젝트용 Vault 상대 경로입니다. 미리 만들 필요 없이 다음 만들기 또는 참여 시 Grandemonium이 생성하거나 소유권을 설정합니다. 기존 프로젝트 위치는 변경되지 않습니다.",
       "placeholder": "workspace"
     },
     "enableDualPane": {
@@ -674,7 +674,7 @@
       "desc": "Write 및 Edit diff가 처음 표시될 때 펼친 상태로 보여줍니다."
     },
     "chatViewPlacement": {
-      "name": "Claudian 열 위치",
+      "name": "Grandemonium 열 위치",
       "desc": "채팅 패널이 생성될 때 열릴 위치를 선택합니다",
       "rightSidebar": "오른쪽 사이드바",
       "leftSidebar": "왼쪽 사이드바",
@@ -697,13 +697,13 @@
     "providerEnablement": {
       "name": "{provider} 활성화",
       "desc": "활성화된 {provider} 모델을 새 대화에서 사용할 수 있게 합니다. 비활성화해도 기존 세션은 유지됩니다.",
-      "lastProviderWarning": "Claudian을 사용하려면 하나 이상의 제공자를 활성화해야 합니다.",
+      "lastProviderWarning": "Grandemonium을 사용하려면 하나 이상의 제공자를 활성화해야 합니다.",
       "noModelsWarning": "활성화된 {provider} 모델이 없습니다. 아래 모델 섹션에서 하나 이상의 모델을 활성화하세요."
     },
     "codex": {
       "installationMethod": {
         "name": "설치 방식",
-        "desc": "Windows에서 Claudian이 Codex를 실행하는 방식입니다. 네이티브 Windows는 Windows 실행 파일 경로를 사용하고, WSL은 선택한 배포판 안에서 Linux CLI를 실행합니다.",
+        "desc": "Windows에서 Grandemonium이 Codex를 실행하는 방식입니다. 네이티브 Windows는 Windows 실행 파일 경로를 사용하고, WSL은 선택한 배포판 안에서 Linux CLI를 실행합니다.",
         "nativeWindows": "네이티브 Windows",
         "wsl": "WSL"
       },
@@ -754,7 +754,7 @@
       },
       "mcp": {
         "descBeforeCommand": "Codex는 자체 CLI로 MCP 서버를 관리합니다. ",
-        "descAfterCommand": " 명령으로 구성하면 Claudian에서 사용할 수 있습니다. ",
+        "descAfterCommand": " 명령으로 구성하면 Grandemonium에서 사용할 수 있습니다. ",
         "learnMore": "자세히 알아보기"
       },
       "environment": {

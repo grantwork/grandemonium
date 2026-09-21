@@ -1,4 +1,3 @@
-import type { CollabGitFoundation } from '@/app/collab/ClaudianCollabService';
 import type {
   CollabLocalLanMembershipRecord,
   CollabLocalProjectRepository,
@@ -6,6 +5,7 @@ import type {
 import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
 import type { CollabWorkspaceService } from '@/app/collab/CollabWorkspaceService';
 import { rotateTrustedCollabOrigin } from '@/app/collab/git/CollabGitOriginPolicy';
+import type { CollabGitFoundation } from '@/app/collab/GrandemoniumCollabService';
 import type { HostInstallationBindingService } from '@/app/collab/host-installation/HostInstallationBindingService';
 import { HostTrustTransitionService } from '@/app/collab/host-transfer/HostTrustTransitionService';
 import type { HostTransitionProofClientPort } from '@/app/collab/HostTransitionCandidateResolver';
@@ -28,7 +28,7 @@ import { MembershipControlClient } from '@/app/collab/membership/MembershipContr
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
 import { type CollabLocalProjectSummary, type CollabOperationOptions, type CollabReconnectProjectRequest, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type ReconnectProjectsPort = Pick<
   CollabLocalProjectRepository,

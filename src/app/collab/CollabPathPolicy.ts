@@ -1,9 +1,9 @@
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { isWindowsReservedName } from '@/core/collab/WindowsPortablePath';
 
 const RESERVED_ROOTS = new Set([
-  '.claudian',
+  '.grandemonium',
   '.git',
   'workspace',
 ]);
@@ -66,14 +66,14 @@ function pathError(
 }
 
 function quotaError(
-  quota: keyof typeof CLAUDIAN_COLLAB_LIMITS,
+  quota: keyof typeof GRANDEMONIUM_COLLAB_LIMITS,
   actual: number,
 ): CollabError {
   return new CollabError({
     code: 'quota-exceeded',
     safeContext: {
       actual,
-      limit: CLAUDIAN_COLLAB_LIMITS[quota],
+      limit: GRANDEMONIUM_COLLAB_LIMITS[quota],
       quota,
     },
     recoveryActions: ['open-diagnostics'],
@@ -123,7 +123,7 @@ export class CollabPathPolicy {
       };
     }
 
-    if (repositoryPath.length > CLAUDIAN_COLLAB_LIMITS.maxRepositoryPathUtf16) {
+    if (repositoryPath.length > GRANDEMONIUM_COLLAB_LIMITS.maxRepositoryPathUtf16) {
       return {
         ok: false,
         error: pathError('path-not-portable', 'repository-path-too-long', repositoryPath),
@@ -138,7 +138,7 @@ export class CollabPathPolicy {
           error: pathError('path-invalid', 'invalid-path-segment', repositoryPath),
         };
       }
-      if (segment.length > CLAUDIAN_COLLAB_LIMITS.maxPathSegmentUtf16) {
+      if (segment.length > GRANDEMONIUM_COLLAB_LIMITS.maxPathSegmentUtf16) {
         return {
           ok: false,
           error: pathError('path-not-portable', 'path-segment-too-long', repositoryPath),
@@ -199,7 +199,7 @@ export class CollabPathPolicy {
         ));
         continue;
       }
-      if (candidate.size > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+      if (candidate.size > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
         rejectedByIndex.set(index, quotaError('maxBlobBytes', candidate.size));
         continue;
       }
@@ -245,7 +245,7 @@ export class CollabPathPolicy {
     }
 
     const totalBytes = accepted.reduce((total, candidate) => total + candidate.size, 0);
-    const aggregateError = totalBytes > CLAUDIAN_COLLAB_LIMITS.maxCheckoutBytes
+    const aggregateError = totalBytes > GRANDEMONIUM_COLLAB_LIMITS.maxCheckoutBytes
       ? quotaError('maxCheckoutBytes', totalBytes)
       : undefined;
     return {
@@ -275,17 +275,17 @@ export class CollabPathPolicy {
 
   classifyTextDiff(bytes: number, lines: number): 'text' | 'opaque' {
     if (!hasValidMeasuredSize(bytes) || !hasValidMeasuredSize(lines)) return 'opaque';
-    return bytes <= CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes
-      && lines <= CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines
+    return bytes <= GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes
+      && lines <= GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines
       ? 'text'
       : 'opaque';
   }
 
   private validateQuota(
     actual: number,
-    quota: keyof typeof CLAUDIAN_COLLAB_LIMITS,
+    quota: keyof typeof GRANDEMONIUM_COLLAB_LIMITS,
   ): CollabError | null {
-    if (!hasValidMeasuredSize(actual) || actual > CLAUDIAN_COLLAB_LIMITS[quota]) {
+    if (!hasValidMeasuredSize(actual) || actual > GRANDEMONIUM_COLLAB_LIMITS[quota]) {
       return quotaError(quota, actual);
     }
     return null;

@@ -17,7 +17,7 @@ import type {
   CollabAuthoritySessionFactory,
 } from '@/app/collab/remote-authority/CollabAuthoritySessionFactory';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabAuthorityMembershipStore {
   loadMembership(projectId: CollabProjectId): Promise<CollabLocalMembershipRecord | null>;

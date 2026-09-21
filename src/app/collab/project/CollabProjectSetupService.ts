@@ -10,16 +10,16 @@ import { COLLAB_MAIN_REF, collabMemberRef, type CollabProjectId, isCollabMemberI
 
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
 import type { SqlJsMutationResult } from '@/app/collab/authority/SqlJsProjectDatabase';
-import type {
-  CollabAuthorityFoundation,
-  CollabGitFoundation,
-  CollabLocalFoundation,
-} from '@/app/collab/ClaudianCollabService';
 import { resolveCollabVaultPath } from '@/app/collab/CollabFilesystemBoundary';
 import { COLLAB_LOCAL_PROJECT_SCHEMA_VERSION } from '@/app/collab/CollabSchemaVersions';
 import type {
   CollabProjectsFolderChildOwnership,
 } from '@/app/collab/CollabWorkspaceService';
+import type {
+  CollabAuthorityFoundation,
+  CollabGitFoundation,
+  CollabLocalFoundation,
+} from '@/app/collab/GrandemoniumCollabService';
 import { decodeCollabPendingProjectOperation } from '@/app/collab/PendingProjectOperation';
 import {
   COLLAB_PROJECT_SETUP_SCHEMA_VERSION,
@@ -30,14 +30,14 @@ import {
 } from '@/app/collab/publish/CollabPublicationStateRecord';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import { type CollabCreateProjectRequest, type CollabLocalProjectSummary, type CollabOperationOptions, type CollabResult, type CollabResumeSetupRequest, parseCollabProjectsFolder } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { type InstallationKey, isInstallationKey } from '@/core/device/InstallationKey';
 
 const RECEIVE_DISABLED_HOOK = `#!/bin/sh
-echo "Claudian Collab hosting is not active." >&2
+echo "Grandemonium Collab hosting is not active." >&2
 exit 1
 `;
-const SETUP_CHILD_PATTERN = /^\.claudian-(?:clone|seed)-[A-Za-z0-9_-]{1,64}$/;
+const SETUP_CHILD_PATTERN = /^\.grandemonium-(?:clone|seed)-[A-Za-z0-9_-]{1,64}$/;
 
 interface CollabProjectAuthorityDatabase {
   read<T>(reader: (connection: AuthorityDatabaseConnection) => T): Promise<T>;
@@ -230,7 +230,7 @@ export class CollabProjectSetupService {
       const slug = await this.#claimSlug(projectsFolder, name);
       const timestamp = this.now().toISOString();
       record = {
-        cloneDirectoryName: `.claudian-clone-${projectId}`,
+        cloneDirectoryName: `.grandemonium-clone-${projectId}`,
         createdAt: timestamp,
         initialCommitOid: null,
         memberCredential: credential,
@@ -243,7 +243,7 @@ export class CollabProjectSetupService {
         projectId,
         projectsFolder,
         schemaVersion: COLLAB_PROJECT_SETUP_SCHEMA_VERSION,
-        seedDirectoryName: `.claudian-seed-${projectId}`,
+        seedDirectoryName: `.grandemonium-seed-${projectId}`,
         slug,
         updatedAt: timestamp,
       };

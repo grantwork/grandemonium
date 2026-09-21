@@ -53,7 +53,7 @@ describe('LocalProjectCleanupCoordinator', () => {
   });
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-cleanup-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-cleanup-'));
     workspace = new CollabWorkspaceService(vaultRoot);
     await workspace.claimProjectsFolder('workspace');
     await mkdir(path.join(vaultRoot, 'workspace', 'project-alpha', '.git'), { recursive: true });
@@ -90,7 +90,7 @@ describe('LocalProjectCleanupCoordinator', () => {
       .resolves.toBe('visible\n');
     await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.git')))
       .rejects.toMatchObject({ code: 'ENOENT' });
-    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json')))
+    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json')))
       .rejects.toMatchObject({ code: 'ENOENT' });
     expect(git.assertLocalRepositoryIdentity).toHaveBeenCalledWith(
       path.join(vaultRoot, 'workspace', 'project-alpha'),
@@ -118,7 +118,7 @@ describe('LocalProjectCleanupCoordinator', () => {
     git.assertLocalRepositoryIdentity.mockRejectedValueOnce(new Error('identity mismatch'));
 
     await expect(subject.cleanup(intent())).rejects.toThrow('identity mismatch');
-    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json')))
+    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json')))
       .rejects.toMatchObject({ code: 'ENOENT' });
     await expect(readFile(path.join(vaultRoot, 'workspace', 'project-alpha', 'note.md'), 'utf8'))
       .resolves.toBe('visible\n');
@@ -143,7 +143,7 @@ describe('LocalProjectCleanupCoordinator', () => {
     await writeFile(outsideMarker, 'outside\n');
     await symlink(
       outsideMarker,
-      path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json'),
+      path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json'),
     );
 
     await expect(subject.cleanup(intent())).rejects.toMatchObject({
@@ -258,7 +258,7 @@ describe('LocalProjectCleanupCoordinator', () => {
       markerRetained: true,
       status: 'complete',
     });
-    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json')))
+    await expect(lstat(path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json')))
       .resolves.toBeDefined();
 
     await expect(subject.finalizeRetiredChoice({
@@ -304,7 +304,7 @@ describe('LocalProjectCleanupCoordinator', () => {
 
   it('rejects a tampered or symlinked Retired marker', async () => {
     await subject.cleanup(intent({ purpose: 'retire' }));
-    const markerPath = path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json');
+    const markerPath = path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json');
     const marker = JSON.parse(await readFile(markerPath, 'utf8')) as Record<string, unknown>;
     await writeFile(markerPath, JSON.stringify({ ...marker, nonce: 'b'.repeat(43) }));
 
@@ -321,7 +321,7 @@ describe('LocalProjectCleanupCoordinator', () => {
 
   it('rejects a missing or symlinked Retired marker without deleting files', async () => {
     await subject.cleanup(intent({ purpose: 'retire' }));
-    const markerPath = path.join(vaultRoot, 'workspace', 'project-alpha', '.claudian-collab-detached.json');
+    const markerPath = path.join(vaultRoot, 'workspace', 'project-alpha', '.grandemonium-collab-detached.json');
     const copiedMarkerPath = path.join(vaultRoot, 'copied-marker.json');
     await writeFile(copiedMarkerPath, JSON.stringify({
       cleanupOperationId: 'other-operation',

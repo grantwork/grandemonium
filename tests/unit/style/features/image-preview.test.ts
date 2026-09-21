@@ -13,7 +13,7 @@ describe('Image preview button styles', () => {
 
   it('keeps the native thumbnail button on the existing image surface in every state', () => {
     const baseRule = contextCss.match(
-      /button\.claudian-message-image,\s*button\.claudian-message-image:active\s*{[^}]*}/,
+      /button\.grandemonium-message-image,\s*button\.grandemonium-message-image:active\s*{[^}]*}/,
     )?.[0];
     expect(baseRule).toContain('padding: 0;');
     expect(baseRule).toContain('border: 1px solid var(--background-modifier-border);');
@@ -22,7 +22,7 @@ describe('Image preview button styles', () => {
     expect(baseRule).toContain('box-shadow: none;');
 
     const interactionRule = contextCss.match(
-      /button\.claudian-message-image:hover,\s*button\.claudian-message-image:focus-visible\s*{[^}]*}/,
+      /button\.grandemonium-message-image:hover,\s*button\.grandemonium-message-image:focus-visible\s*{[^}]*}/,
     )?.[0];
     expect(interactionRule).toContain('border: 1px solid var(--background-modifier-border);');
     expect(interactionRule).toContain('background: var(--background-secondary);');
@@ -32,7 +32,7 @@ describe('Image preview button styles', () => {
 
   it('keeps the native close button on the existing circular surface in every state', () => {
     const baseRule = modalCss.match(
-      /button\.claudian-image-modal-close,\s*button\.claudian-image-modal-close:focus,\s*button\.claudian-image-modal-close:active\s*{[^}]*}/,
+      /button\.grandemonium-image-modal-close,\s*button\.grandemonium-image-modal-close:focus,\s*button\.grandemonium-image-modal-close:active\s*{[^}]*}/,
     )?.[0];
     expect(baseRule).toContain('padding: 0;');
     expect(baseRule).toContain('border: 0;');
@@ -41,7 +41,7 @@ describe('Image preview button styles', () => {
     expect(baseRule).toContain('box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);');
 
     const hoverRule = modalCss.match(
-      /button\.claudian-image-modal-close:hover\s*{[^}]*}/,
+      /button\.grandemonium-image-modal-close:hover\s*{[^}]*}/,
     )?.[0];
     expect(hoverRule).toContain('border: 0;');
     expect(hoverRule).toContain('background: var(--background-modifier-error);');

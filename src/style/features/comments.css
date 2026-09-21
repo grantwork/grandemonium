@@ -63,7 +63,41 @@
 }
 
 .tc-entry {
-  margin: 6px 0;
+  margin: 0;
+  padding: 8px 0;
+}
+
+/* Replies stack in one card, so each after the first is fenced off rather than
+   relying on the author name alone to separate them. */
+.tc-entry + .tc-entry {
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.tc-entry:first-child {
+  padding-top: 0;
+}
+
+.tc-entry:last-child {
+  padding-bottom: 0;
+}
+
+/* An AI reply is tinted and rail-marked so it reads apart from the user's own
+   text, which otherwise shares its colour and weight. */
+.tc-entry-agent {
+  margin: 0 -8px;
+  padding-inline: 8px;
+  /* The rail carries the author's own colour, so a reply is identifiable by
+     its stripe alone. Falls back to the accent when author colours are off. */
+  border-left: 2px solid var(--tc-author-color-light, var(--interactive-accent));
+  background: var(--background-secondary);
+}
+
+.theme-dark .tc-entry-agent {
+  border-left-color: var(--tc-author-color-dark, var(--interactive-accent));
+}
+
+.tc-entry-agent .tc-text {
+  color: var(--text-muted);
 }
 
 .tc-meta {
@@ -75,7 +109,7 @@
 }
 
 .tc-author {
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-normal);
 }
 

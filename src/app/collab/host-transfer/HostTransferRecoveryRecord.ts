@@ -88,7 +88,7 @@ export function decodeHostTransferRecoveryRecord(value: unknown): HostTransferRe
   if (typeof targetTerminalResponseReceived !== 'boolean') {
     throw new TypeError('Invalid target terminal response state');
   }
-  const stagingDirectoryName = nullable(record, 'stagingDirectoryName', 160, /^\.claudian-host-transfer-[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/);
+  const stagingDirectoryName = nullable(record, 'stagingDirectoryName', 160, /^\.grandemonium-host-transfer-[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/);
   const manifestDigest = nullable(record, 'manifestDigest', 64, DIGEST);
   const activationCertificate = nullable(record, 'activationCertificate', 64 * 1024);
   const terminalBeforeCutover = phase === 'cancelled' || phase === 'declined' || phase === 'expired';
@@ -119,11 +119,11 @@ export function decodeHostTransferRecoveryRecord(value: unknown): HostTransferRe
     || (direction === 'incoming'
       && (accepted || retainedIncomingProvisional)
       && !incomingTerminalReceipt
-      && stagingDirectoryName !== `.claudian-host-transfer-${transferId}`)
+      && stagingDirectoryName !== `.grandemonium-host-transfer-${transferId}`)
     || (direction === 'incoming'
       && incomingTerminalReceipt
       && stagingDirectoryName !== null
-      && stagingDirectoryName !== `.claudian-host-transfer-${transferId}`)
+      && stagingDirectoryName !== `.grandemonium-host-transfer-${transferId}`)
     || (!incomingTerminalReceipt && receiverCredentialHash !== null)
     || (direction === 'outgoing' && stagingDirectoryName !== null)
     || (direction === 'incoming' && targetTerminalResponseReceived)

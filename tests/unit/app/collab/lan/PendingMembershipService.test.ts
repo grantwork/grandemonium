@@ -39,7 +39,7 @@ describe('PendingMembershipService', () => {
     credentials = [Buffer.alloc(32, 2), Buffer.alloc(32, 3), Buffer.alloc(32, 4)];
     ids = { invitation: 0, member: 0 };
     expiredMembers = [];
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-pending-membership-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-pending-membership-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

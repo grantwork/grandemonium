@@ -14,7 +14,7 @@ import {
 } from '@/app/collab/membership/MembershipControlClient';
 import { ProjectControlClient } from '@/app/collab/publish/ProjectControlClient';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CONTROL_TIMEOUT_MS = 10_000;
 

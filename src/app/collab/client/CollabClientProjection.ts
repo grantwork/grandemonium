@@ -23,7 +23,7 @@ import type {
 } from '@/core/collab';
 import { isCollabLanProjectSnapshot } from '@/core/collab';
 import { type CollabCoordinationSnapshot, type CollabListTicketsRequest, type CollabOperationOptions, type CollabTicketDetailProjection, type CollabTicketPageProjection } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CACHE_SCHEMA_VERSION = 4 as const;
 const OBSOLETE_CACHE_SCHEMA_VERSIONS = new Set<unknown>([2, 3]);

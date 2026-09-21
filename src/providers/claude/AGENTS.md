@@ -15,7 +15,7 @@
 | `runtime/` | Persistent SDK query, restart decisions, message-channel behavior, CLI spawning, and native prompt construction |
 | `history/` | Read-only native transcript discovery, branch projection, historical model recovery, rewind, and subagent replay |
 | `app/`, `commands/`, `agents/`, `plugins/` | Workspace-scoped discovery and provider-native catalogs |
-| `storage/` | Only the documented Claudian-managed portions of Claude-compatible settings, command, skill, agent, and plugin files |
+| `storage/` | Only the documented Grandemonium-managed portions of Claude-compatible settings, command, skill, agent, and plugin files |
 | `types/` | Typed interpretation and sanitization of Claude-owned provider state |
 
 The execution session owns the live provider snapshot. History services reconstruct replay state but must not become a second live-session authority.
@@ -31,8 +31,8 @@ The execution session owns the live provider snapshot. History services reconstr
 
 ## Storage Rules
 
-- `CCSettingsStorage.save()` must merge with existing `.claude/settings.json`; Claudian only owns permissions and plugin enablement.
-- Claude Code owns MCP configuration, authentication, health checks, and connection lifecycle through its native CLI and settings scopes. At application storage initialization, the composition root invokes the Claude-owned legacy cleanup to delete `.claude/mcp.json`; no other Claudian code may read, write, inject, or migrate that path.
+- `CCSettingsStorage.save()` must merge with existing `.claude/settings.json`; Grandemonium only owns permissions and plugin enablement.
+- Claude Code owns MCP configuration, authentication, health checks, and connection lifecycle through its native CLI and settings scopes. At application storage initialization, the composition root invokes the Claude-owned legacy cleanup to delete `.claude/mcp.json`; no other Grandemonium code may read, write, inject, or migrate that path.
 - Plugin enabled state is dual-written to `.claude/settings.json` and `PluginManager.plugins[].enabled`. Keep both in sync.
 - Native transcripts are read from `{CLAUDE_CONFIG_DIR:-~/.claude}/projects/{vault}/`; resolve the config dir through `resolveClaudeConfigDir`, never hardcode `~/.claude`.
 - Historical selected-model recovery returns a provider-qualified model only from a valid active-branch checkpoint. For multi-segment conversations, the checkpoint-bearing or latest authoritative segment must resolve; do not silently fall back to an older segment's model or make the recovery locator resumable.
@@ -50,4 +50,4 @@ The execution session owns the live provider snapshot. History services reconstr
 ## Invariants
 
 - Restarting or recovering a query must preserve the intended conversation binding and must not duplicate visible output.
-- Provider snapshots are the only path from live SDK state into persisted Claudian resume state.
+- Provider snapshots are the only path from live SDK state into persisted Grandemonium resume state.

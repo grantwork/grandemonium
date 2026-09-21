@@ -1,4 +1,4 @@
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { toError } from '@/utils/error';
 
 export type HostedProjectAdmissionMode =

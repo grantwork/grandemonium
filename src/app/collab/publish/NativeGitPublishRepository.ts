@@ -29,7 +29,7 @@ import {
   type PublishRepositorySnapshot,
   publishSnapshotFingerprint,
 } from '@/app/collab/publish/PublishCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const ORIGIN = 'origin';
 

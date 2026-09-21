@@ -30,13 +30,13 @@ reject() {
   exit 1
 }
 
-[ -n "\${CLAUDIAN_COLLAB_MEMBER_REF:-}" ] || reject
-[ -n "\${CLAUDIAN_COLLAB_GIT_EXECUTABLE:-}" ] || reject
+[ -n "\${GRANDEMONIUM_COLLAB_MEMBER_REF:-}" ] || reject
+[ -n "\${GRANDEMONIUM_COLLAB_GIT_EXECUTABLE:-}" ] || reject
 
 update_count=0
 while read -r old_oid new_oid ref_name; do
   update_count=$((update_count + 1))
-  [ "$ref_name" = "$CLAUDIAN_COLLAB_MEMBER_REF" ] || reject
+  [ "$ref_name" = "$GRANDEMONIUM_COLLAB_MEMBER_REF" ] || reject
   case "$old_oid$new_oid" in
     *[!0-9a-f]*) reject ;;
   esac
@@ -50,7 +50,7 @@ while read -r old_oid new_oid ref_name; do
   case "$old_oid" in
     0000000000000000000000000000000000000000|0000000000000000000000000000000000000000000000000000000000000000) reject ;;
   esac
-  "$CLAUDIAN_COLLAB_GIT_EXECUTABLE" merge-base --is-ancestor "$old_oid" "$new_oid" || reject
+  "$GRANDEMONIUM_COLLAB_GIT_EXECUTABLE" merge-base --is-ancestor "$old_oid" "$new_oid" || reject
 done
 
 [ "$update_count" -eq 1 ] || reject

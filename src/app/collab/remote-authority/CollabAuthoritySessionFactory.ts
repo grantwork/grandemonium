@@ -3,7 +3,7 @@ import type {
   CollabAuthorityAdapter,
   CollabAuthoritySession,
 } from '@/app/collab/remote-authority/CollabAuthoritySession';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function deepFreeze<T>(value: T): T {
   if (typeof value !== 'object' || value === null || Object.isFrozen(value)) return value;

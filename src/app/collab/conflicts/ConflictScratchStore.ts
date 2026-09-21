@@ -19,7 +19,7 @@ import {
   type ConflictResolutionRecord,
   decodeConflictResolutionRecord,
 } from '@/app/collab/conflicts/ConflictResolutionRecord';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 type ConflictPathOwner = Pick<
   CollabLocalProjectRepository,

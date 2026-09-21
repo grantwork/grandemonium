@@ -1,23 +1,23 @@
-.claudian-agent-skills-header {
+.grandemonium-agent-skills-header {
   gap: 12px;
 }
 
-.claudian-agent-skills-help {
+.grandemonium-agent-skills-help {
   flex: 1;
   min-width: 0;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
 }
 
-.claudian-agent-skills-help p {
+.grandemonium-agent-skills-help p {
   margin: 0;
 }
 
-.claudian-agent-skills-header .claudian-sp-header-actions {
+.grandemonium-agent-skills-header .grandemonium-sp-header-actions {
   flex-shrink: 0;
 }
 
-.claudian-agent-skill-instructions {
+.grandemonium-agent-skill-instructions {
   box-sizing: border-box;
   width: 100%;
   min-height: 220px;
@@ -26,14 +26,14 @@
   font-family: var(--font-monospace);
 }
 
-.claudian-agent-skill-modal-actions {
+.grandemonium-agent-skill-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
 }
 
-.claudian-agent-skills-diagnostics {
+.grandemonium-agent-skills-diagnostics {
   margin-top: 12px;
   padding: 12px;
   border: 1px solid var(--background-modifier-error);
@@ -41,13 +41,13 @@
   background: var(--background-modifier-error-hover);
 }
 
-.claudian-agent-skills-diagnostics-title {
+.grandemonium-agent-skills-diagnostics-title {
   margin-bottom: 8px;
   color: var(--text-error);
   font-weight: var(--font-semibold);
 }
 
-.claudian-agent-skills-diagnostic {
+.grandemonium-agent-skills-diagnostic {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -56,11 +56,11 @@
   font-size: var(--font-ui-small);
 }
 
-.claudian-agent-skills-error {
+.grandemonium-agent-skills-error {
   padding: 12px;
   color: var(--text-error);
 }
 
-.claudian-agent-skill-delete-description {
+.grandemonium-agent-skill-delete-description {
   color: var(--text-warning);
 }

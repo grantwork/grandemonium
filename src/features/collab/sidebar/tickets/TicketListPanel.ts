@@ -81,7 +81,7 @@ export class TicketListPanel {
     try {
       this.renderShell(this.options.project.connectionStatus !== 'connected');
       this.rootEl.createDiv({
-        cls: 'claudian-collab-ticket-list-status',
+        cls: 'grandemonium-collab-ticket-list-status',
         text: t('collab.tickets.loading'),
       });
       const result = await this.options.port.listTickets({
@@ -100,14 +100,14 @@ export class TicketListPanel {
         ? snapshotResult.value.source === 'cache' || snapshotResult.value.stale
         : this.options.project.connectionStatus !== 'connected');
       this.renderShell(readOnly);
-      const content = this.rootEl.createDiv({ cls: 'claudian-collab-ticket-list-content' });
+      const content = this.rootEl.createDiv({ cls: 'grandemonium-collab-ticket-list-content' });
       if (result.status !== 'success') {
         const knownEmpty = this.hasFreshEmptyOpenSnapshot(snapshotResult);
         if (knownEmpty) {
           content.setText(t('collab.tickets.empty'));
           return;
         }
-        content.classList.add('claudian-collab-ticket-list-status');
+        content.classList.add('grandemonium-collab-ticket-list-status');
         if (readOnly) {
           content.setText(t('collab.tickets.offlineCacheUnavailable'));
         } else {
@@ -118,12 +118,12 @@ export class TicketListPanel {
       }
       if (result.value.page.tickets.length === 0) {
         content.createDiv({
-          cls: 'claudian-collab-ticket-list-status',
+          cls: 'grandemonium-collab-ticket-list-status',
           text: t('collab.tickets.empty'),
         });
         return;
       }
-      const items = content.createDiv({ cls: 'claudian-collab-ticket-list' });
+      const items = content.createDiv({ cls: 'grandemonium-collab-ticket-list' });
       this.appendRows(items, result.value.page.tickets);
       if (result.value.page.nextCursor) {
         this.renderLoadMore(items, result.value.page.nextCursor, revision);
@@ -154,14 +154,14 @@ export class TicketListPanel {
           'data-ticket-id': ticket.id,
           type: 'button',
         },
-        cls: 'claudian-collab-ticket-list-item',
+        cls: 'grandemonium-collab-ticket-list-item',
       });
       button.createSpan({
-        cls: 'claudian-collab-ticket-title',
+        cls: 'grandemonium-collab-ticket-title',
         text: ticket.title,
       });
       button.createSpan({
-        cls: 'claudian-collab-ticket-number',
+        cls: 'grandemonium-collab-ticket-number',
         text: `#${ticket.number}`,
       });
       button.addEventListener('click', () => {
@@ -200,7 +200,7 @@ export class TicketListPanel {
   ): void {
     const button = this.rootEl.createEl('button', {
       attr: { 'data-action': 'load-more-tickets', type: 'button' },
-      cls: 'claudian-collab-ticket-load-more',
+      cls: 'grandemonium-collab-ticket-load-more',
       text: t('collab.tickets.loadMore'),
     });
     button.addEventListener('click', () => {
@@ -229,7 +229,7 @@ export class TicketListPanel {
         this.rootEl.querySelector('[data-state="ticket-page-error"]')?.remove();
         this.rootEl.createDiv({
           attr: { 'data-state': 'ticket-page-error' },
-          cls: `claudian-collab-ticket-list-status${this.readOnly ? '' : ' is-error'}`,
+          cls: `grandemonium-collab-ticket-list-status${this.readOnly ? '' : ' is-error'}`,
           text: this.readOnly
             ? t('collab.tickets.offlineCacheUnavailable')
             : t('collab.tickets.loadFailed'),
@@ -258,15 +258,15 @@ export class TicketListPanel {
   private renderShell(readOnly = false): void {
     this.readOnly = readOnly;
     this.rootEl.replaceChildren();
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-ticket-list-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-ticket-list-header' });
     header.createEl('h4', { text: t('collab.tickets.sectionTitle') });
-    const actions = header.createDiv({ cls: 'claudian-collab-ticket-list-actions' });
+    const actions = header.createDiv({ cls: 'grandemonium-collab-ticket-list-actions' });
     const filter = actions.createEl('button', {
       attr: {
         'data-ticket-status': this.status,
         type: 'button',
       },
-      cls: 'claudian-collab-ticket-filter',
+      cls: 'grandemonium-collab-ticket-filter',
       text: this.status === 'open'
         ? t('collab.tickets.open')
         : t('collab.tickets.closed'),
@@ -282,7 +282,7 @@ export class TicketListPanel {
         title: t('collab.tickets.add'),
         type: 'button',
       },
-      cls: 'clickable-icon claudian-collab-ticket-add',
+      cls: 'clickable-icon grandemonium-collab-ticket-add',
     });
     add.disabled = readOnly;
     setIcon(add, 'plus');
@@ -290,7 +290,7 @@ export class TicketListPanel {
     if (readOnly) {
       this.rootEl.createDiv({
         attr: { 'data-state': 'ticket-offline-read-only' },
-        cls: 'claudian-collab-ticket-connection-state',
+        cls: 'grandemonium-collab-ticket-connection-state',
         text: t('collab.tickets.offlineReadOnly'),
       });
     }
@@ -303,10 +303,10 @@ export class TicketListPanel {
     if (add) add.disabled = true;
     const state = this.rootEl.createDiv({
       attr: { 'data-state': 'ticket-offline-read-only' },
-      cls: 'claudian-collab-ticket-connection-state',
+      cls: 'grandemonium-collab-ticket-connection-state',
       text: t('collab.tickets.offlineReadOnly'),
     });
-    this.rootEl.querySelector('.claudian-collab-ticket-list-header')?.after(state);
+    this.rootEl.querySelector('.grandemonium-collab-ticket-list-header')?.after(state);
   }
 
   private cancel(): void {

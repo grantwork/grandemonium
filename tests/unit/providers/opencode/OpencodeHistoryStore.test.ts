@@ -26,7 +26,7 @@ describe('mapOpencodeMessages', () => {
     ].join('\n'));
   });
 
-  it('maps stored OpenCode messages into Claudian chat messages', () => {
+  it('maps stored OpenCode messages into Grandemonium chat messages', () => {
     const messages = mapOpencodeMessages([
       {
         info: {
@@ -422,7 +422,7 @@ describe('loadOpencodeSessionMessages', () => {
   let tmpRoot: string;
 
   beforeEach(() => {
-    tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'claudian-opencode-history-'));
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'grandemonium-opencode-history-'));
   });
 
   afterEach(() => {

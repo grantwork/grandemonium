@@ -7,7 +7,7 @@ const {
 
 const localeFilter = /[\\/]src[\\/]i18n[\\/]locales[\\/][^\\/]+\.json$/;
 const sqlWasmFilter = /[\\/]node_modules[\\/]sql\.js[\\/]dist[\\/]sql-wasm\.wasm$/;
-const localeCatalogSpecifier = 'claudian:compressed-locale-catalog';
+const localeCatalogSpecifier = 'grandemonium:compressed-locale-catalog';
 const localeCatalogNamespace = 'compressed-locale-catalog';
 
 function compress(contents, mode) {
@@ -29,7 +29,7 @@ function createCompressedStaticAssetsPlugin({ root = process.cwd() } = {}) {
   return {
     name: 'compressed-static-assets',
     setup(build) {
-      build.onResolve({ filter: /^claudian:compressed-locale-catalog$/ }, () => ({
+      build.onResolve({ filter: /^grandemonium:compressed-locale-catalog$/ }, () => ({
         namespace: localeCatalogNamespace,
         path: 'non-english',
       }));

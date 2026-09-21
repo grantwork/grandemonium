@@ -34,14 +34,14 @@ describe('renderCollabChangedFileList', () => {
     });
 
     expect(list.tagName).toBe('UL');
-    expect(list.classList).toContain('claudian-collab-file-list');
-    expect(list.classList).toContain('claudian-collab-file-list--list');
+    expect(list.classList).toContain('grandemonium-collab-file-list');
+    expect(list.classList).toContain('grandemonium-collab-file-list--list');
     expect(list.getAttribute('aria-label')).toBe('2 changed files');
     expect(list.children).toHaveLength(2);
     expect([...list.children].every(child => child.tagName === 'LI')).toBe(true);
 
     const buttons = list.querySelectorAll<HTMLButtonElement>(
-      ':scope > li > .claudian-collab-file-button',
+      ':scope > li > .grandemonium-collab-file-button',
     );
     expect([...buttons].map(button => button.dataset.path)).toEqual([
       'notes/first.md',
@@ -49,10 +49,10 @@ describe('renderCollabChangedFileList', () => {
     ]);
     expect(buttons[0].getAttribute('aria-pressed')).toBe('true');
     expect(buttons[1].getAttribute('aria-pressed')).toBe('false');
-    expect(buttons[0].querySelector('.claudian-collab-file-kind')?.textContent).toBe('D');
-    expect(buttons[0].querySelector('.claudian-collab-file-kind')?.getAttribute('data-kind'))
+    expect(buttons[0].querySelector('.grandemonium-collab-file-kind')?.textContent).toBe('D');
+    expect(buttons[0].querySelector('.grandemonium-collab-file-kind')?.getAttribute('data-kind'))
       .toBe('deleted');
-    expect(buttons[1].querySelector('.claudian-collab-file-kind')?.textContent).toBe('A');
+    expect(buttons[1].querySelector('.grandemonium-collab-file-kind')?.textContent).toBe('A');
 
     buttons[1].click();
 
@@ -79,11 +79,11 @@ describe('renderCollabChangedFileList', () => {
     });
 
     expect(list.tagName).toBe('DIV');
-    expect(list.classList).toContain('claudian-collab-file-list--flat');
+    expect(list.classList).toContain('grandemonium-collab-file-list--flat');
     expect(list.getAttribute('aria-label')).toBe('2 changed files');
     expect(list.querySelector('li')).toBeNull();
     const buttons = list.querySelectorAll<HTMLButtonElement>(
-      ':scope > .claudian-collab-file-button',
+      ':scope > .grandemonium-collab-file-button',
     );
     expect(buttons).toHaveLength(2);
 
@@ -118,7 +118,7 @@ describe('renderCollabChangedFileList', () => {
       semantics: 'flat',
     });
 
-    expect([...list.querySelectorAll<HTMLElement>('.claudian-collab-file-kind')]
+    expect([...list.querySelectorAll<HTMLElement>('.grandemonium-collab-file-kind')]
       .map(element => [element.dataset.kind, element.textContent]))
       .toEqual([
         ['added', 'A'],

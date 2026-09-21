@@ -55,14 +55,14 @@ describe('ConversationController session metadata popover', () => {
       showMetadataPopover: true,
     });
 
-    const item = container.querySelector<HTMLElement>('.claudian-history-item')!;
+    const item = container.querySelector<HTMLElement>('.grandemonium-history-item')!;
     item.dispatchEvent(new MouseEvent('mouseenter'));
 
     const popover = document.body.querySelector<HTMLElement>(
-      '.claudian-session-metadata-popover',
+      '.grandemonium-session-metadata-popover',
     )!;
     const linkedContent = popover.querySelector<HTMLElement>(
-      '.claudian-session-metadata-value--content',
+      '.grandemonium-session-metadata-value--content',
     )!;
 
     linkedContent.dispatchEvent(new Event('scroll'));

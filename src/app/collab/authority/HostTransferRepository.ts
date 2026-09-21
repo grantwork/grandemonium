@@ -7,7 +7,7 @@ import {
 } from '@/app/collab/host-transfer/HostTransferPhaseMachine';
 import type { HostTransferActivationCertificate } from '@/app/collab/host-transfer/HostTrustTransitionService';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DIGEST_PATTERN = /^[0-9a-f]{64}$/;
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;

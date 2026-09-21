@@ -2,11 +2,11 @@ import type { ProviderExecutionTransitionScope } from '../../core/execution';
 import type { ProviderHost } from '../../core/providers/ProviderHost';
 import type { ProviderCliResolutionContext, ProviderId } from '../../core/providers/types';
 import type { EnvironmentScope } from '../../core/types/settings';
-import type ClaudianPlugin from '../../main';
+import type GrandemoniumPlugin from '../../main';
 
 /** Delegates provider-facing capabilities to the application composition root. */
-export class ClaudianProviderHost implements ProviderHost {
-  constructor(private readonly plugin: ClaudianPlugin) {}
+export class GrandemoniumProviderHost implements ProviderHost {
+  constructor(private readonly plugin: GrandemoniumPlugin) {}
 
   get app() {
     return this.plugin.app;

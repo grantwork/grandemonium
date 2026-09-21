@@ -1,5 +1,5 @@
 /**
- * Claudian - Session Utilities
+ * Grandemonium - Session Utilities
  *
  * Session recovery and history reconstruction.
  */

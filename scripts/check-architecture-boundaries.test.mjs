@@ -274,11 +274,11 @@ const allowedProviderAppImports = new Set([
   ),
   resolvedImportKey(
     path.join(providersRoot, 'claude', 'storage', 'StorageService.ts'),
-    path.join(appRoot, 'settings', 'ClaudianSettingsStorage'),
+    path.join(appRoot, 'settings', 'GrandemoniumSettingsStorage'),
   ),
   resolvedImportKey(
-    path.join(providersRoot, 'claude', 'storage', 'ClaudianSettingsStorage.ts'),
-    path.join(appRoot, 'settings', 'ClaudianSettingsStorage'),
+    path.join(providersRoot, 'claude', 'storage', 'GrandemoniumSettingsStorage.ts'),
+    path.join(appRoot, 'settings', 'GrandemoniumSettingsStorage'),
   ),
 ]);
 
@@ -473,9 +473,9 @@ test('chat consumes Collab only through the FeatureHost surface seam', () => {
 
   assert.deepEqual(violations, []);
   assert.ok(
-    listSourceImports(path.join(chatRoot, 'ClaudianView.ts'))
+    listSourceImports(path.join(chatRoot, 'GrandemoniumView.ts'))
       .some(sourceImport => normalizeModuleTarget(resolveSourceImport(
-        path.join(chatRoot, 'ClaudianView.ts'),
+        path.join(chatRoot, 'GrandemoniumView.ts'),
         sourceImport.specifier,
       ) ?? '') === normalizeModuleTarget(path.join(featuresRoot, 'FeatureHost'))),
   );
@@ -483,7 +483,7 @@ test('chat consumes Collab only through the FeatureHost surface seam', () => {
 
 test('the retired Vault file-tree surface stays outside the plugin', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  const viewSource = fs.readFileSync(path.join(featuresRoot, 'chat', 'ClaudianView.ts'), 'utf8');
+  const viewSource = fs.readFileSync(path.join(featuresRoot, 'chat', 'GrandemoniumView.ts'), 'utf8');
   const settingsTypeSource = fs.readFileSync(path.join(sourceRoot, 'core', 'types', 'settings.ts'), 'utf8');
   const treeRoot = path.join(featuresRoot, 'chat', 'ui', 'vault-file-tree');
 
@@ -541,7 +541,7 @@ test('ordinary main evaluation cannot reach Collab runtime foundations', () => {
 test('persisted settings changes use the coordinator boundary', () => {
   const matches = findMatches([sourceRoot], /\.saveSettings\(\)/).filter(file => ![
     'src/main.ts',
-    'src/app/providers/ClaudianProviderHost.ts',
+    'src/app/providers/GrandemoniumProviderHost.ts',
   ].includes(file));
   assert.deepEqual(matches, []);
 });
@@ -658,7 +658,7 @@ test('only TabRuntimeFactory can register runtime resource ownership', () => {
   ].sort());
 });
 
-test('Claudian consumes the standalone Collab protocol only from the exact registry package', async () => {
+test('Grandemonium consumes the standalone Collab protocol only from the exact registry package', async () => {
   const root = process.cwd();
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const lockfile = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
@@ -674,7 +674,7 @@ test('Claudian consumes the standalone Collab protocol only from the exact regis
   assert.equal(manifest.dependencies?.[protocolPackageName], '3.3.2');
   assert.equal(manifest.dependencies?.['@lezer/markdown'], '1.7.2');
   assert.equal(protocolManifest.dependencies?.['@lezer/markdown'], '1.7.2');
-  assert.equal(manifest.dependencies?.['@claudian/collab-protocol'], undefined);
+  assert.equal(manifest.dependencies?.['@grandemonium/collab-protocol'], undefined);
   assert.equal(manifest.workspaces, undefined);
   assert.equal(lockfile.packages?.['']?.dependencies?.[protocolPackageName], '3.3.2');
   assert.equal(lockfile.packages?.[protocolInstallPath]?.version, '3.3.2');
@@ -714,7 +714,7 @@ test('Claudian consumes the standalone Collab protocol only from the exact regis
     for (const file of listTypeScriptFiles(sourceRoot)) {
       for (const sourceImport of listSourceImports(file)) {
         if (
-          sourceImport.specifier === '@claudian/collab-protocol'
+          sourceImport.specifier === '@grandemonium/collab-protocol'
           || sourceImport.specifier.startsWith(`${protocolPackageName}/`)
           || sourceImport.specifier.includes('packages/collab-protocol')
         ) {
@@ -842,7 +842,7 @@ test('Collab application barrel exposes only composition values', () => {
     }
   }
   assert.deepEqual(runtimeExports.sort(), [
-    'ClaudianCollabService',
+    'GrandemoniumCollabService',
     'CollabFeatureService',
     'CollabProjectSetupService',
     'createCollabFeatureSubcomposition',
@@ -1103,7 +1103,7 @@ test('Bun lock parsing accepts the repository JSONC shape without weakening JSON
 });
 
 test('production artifact entry rejects dependency drift before emitting main.js', () => {
-  const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'claudian-build-parity-'));
+  const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'grandemonium-build-parity-'));
   try {
     fs.writeFileSync(path.join(fixtureRoot, 'package.json'), JSON.stringify({
       dependencies: {

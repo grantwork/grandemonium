@@ -3,7 +3,7 @@ import { TextDecoder } from 'node:util';
 import { type CollabMemberStatus, isCollabMemberId } from '@claudian-collab/protocol';
 
 import type { CollabGitService } from '@/app/collab/lan/git/GitHttpRoute';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/;

@@ -103,7 +103,7 @@ describe('LocalAgentRuntimeHttpServer', () => {
       id: 'operations-1',
       result: {
         access: 'read-write',
-        name: 'claudian-agent-runtime',
+        name: 'grandemonium-agent-runtime',
         protocolVersion: 5,
       },
     });

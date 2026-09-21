@@ -31,7 +31,7 @@ import {
 import type { LeaveProjectInput } from '@/app/collab/membership/MembershipControlClient';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
 import { type CollabLocalCleanupStatus } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const NOW = '2026-08-13T00:00:00.000Z';
 const CREDENTIAL = 'c'.repeat(43);
@@ -46,7 +46,7 @@ describe('pending Leave commit-then-lost-response recovery', () => {
   });
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-pending-leave-recovery-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-pending-leave-recovery-'));
     const authorityDirectory = path.join(vaultRoot, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {
@@ -495,7 +495,7 @@ async function writeLegacyPendingLeave(
   memberId: string,
   localRole: 'manager' | 'member',
 ): Promise<void> {
-  const directory = path.join(vaultRoot, '.claudian', 'collab', 'pending-leaves');
+  const directory = path.join(vaultRoot, '.grandemonium', 'collab', 'pending-leaves');
   await mkdir(directory, { recursive: true });
   await writeFile(path.join(directory, 'project-alpha.json'), JSON.stringify({
     authorityReplay: {
@@ -531,7 +531,7 @@ async function readPendingLeaveJson(
 ): Promise<Readonly<Record<string, unknown>>> {
   return JSON.parse(await readFile(path.join(
     vaultRoot,
-    '.claudian',
+    '.grandemonium',
     'collab',
     'pending-leaves',
     'project-alpha.json',

@@ -7,8 +7,8 @@ export interface OpencodeMode {
 }
 
 export const OPENCODE_BUILD_MODE_ID = 'build';
-export const OPENCODE_YOLO_MODE_ID = 'claudian-yolo';
-export const OPENCODE_SAFE_MODE_ID = 'claudian-safe';
+export const OPENCODE_YOLO_MODE_ID = 'grandemonium-yolo';
+export const OPENCODE_SAFE_MODE_ID = 'grandemonium-safe';
 
 export const OPENCODE_FALLBACK_MODES: ReadonlyArray<OpencodeMode> = Object.freeze([
   {

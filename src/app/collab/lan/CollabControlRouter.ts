@@ -35,7 +35,7 @@ import type {
   CollabTerminalProjectService,
 } from '@/app/collab/lan/routes/RouteTypes';
 import { handleTicketRoute } from '@/app/collab/lan/routes/TicketRoutes';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const MAX_CONTROL_URL_LENGTH = 2_048;
@@ -112,7 +112,7 @@ function parseProjectUrl(rawUrl: string | undefined): {
   }
   let url: URL;
   try {
-    url = new URL(rawUrl, 'https://claudian.invalid');
+    url = new URL(rawUrl, 'https://grandemonium.invalid');
   } catch {
     throw routerError('protocol-payload-invalid', 'control-url-invalid');
   }

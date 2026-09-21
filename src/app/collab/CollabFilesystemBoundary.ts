@@ -12,7 +12,7 @@ import {
 } from 'node:fs/promises';
 import path from 'node:path';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const WINDOWS_ABSOLUTE_PATH = /^[A-Za-z]:[\\/]/;
 

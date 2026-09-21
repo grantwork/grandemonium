@@ -7,6 +7,7 @@ import type {
   ProviderInteractionPort,
 } from '../execution';
 import { resolveTitleGenerationLocale } from '../prompt/titleGeneration';
+import { resolveAgentName } from './agentName';
 import { decodeProviderModelSelectionId } from './modelSelection';
 import type { ProviderHost } from './ProviderHost';
 import { ProviderWorkspaceRegistry } from './ProviderWorkspaceRegistry';
@@ -211,6 +212,20 @@ export class ProviderRegistry {
 
   static getProviderDisplayName(providerId: ProviderId): string {
     return this.getProviderRegistration(providerId).displayName;
+  }
+
+  /** The provider's workspace identity: its chat tab label and comment author. */
+  static getAgentName(providerId: ProviderId, settings: Record<string, unknown>): string {
+    const registration = this.getProviderRegistration(providerId);
+    return resolveAgentName(registration.getAgentName(settings), registration.defaultAgentName);
+  }
+
+  static setAgentName(
+    providerId: ProviderId,
+    settings: Record<string, unknown>,
+    agentName: string,
+  ): void {
+    this.getProviderRegistration(providerId).setAgentName(settings, agentName);
   }
 
   static isEnabled(providerId: ProviderId, settings: Record<string, unknown>): boolean {

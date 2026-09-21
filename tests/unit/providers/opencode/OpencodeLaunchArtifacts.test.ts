@@ -13,12 +13,12 @@ import {
 
 describe('buildOpencodeManagedConfig', () => {
   it('pins OpenCode build, YOLO, and safe prompts to the managed prompt file', () => {
-    expect(buildOpencodeManagedConfig({}, '/vault/.claudian/opencode/system.md', 'Yishen')).toEqual({
+    expect(buildOpencodeManagedConfig({}, '/vault/.grandemonium/opencode/system.md', 'Yishen')).toEqual({
       $schema: 'https://opencode.ai/config.json',
       agent: {
         plan: { disable: true },
         build: {
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
         [OPENCODE_YOLO_MODE_ID]: {
           mode: 'primary',
@@ -26,7 +26,7 @@ describe('buildOpencodeManagedConfig', () => {
             plan_enter: 'deny',
             question: 'allow',
           },
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
         [OPENCODE_SAFE_MODE_ID]: {
           mode: 'primary',
@@ -36,7 +36,7 @@ describe('buildOpencodeManagedConfig', () => {
             plan_enter: 'deny',
             question: 'allow',
           },
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
       },
       username: 'Yishen',
@@ -46,7 +46,7 @@ describe('buildOpencodeManagedConfig', () => {
   it('can create a dedicated aux agent and default it for the process', () => {
     expect(buildOpencodeManagedConfig(
       {},
-      '/vault/.claudian/opencode/auxiliary/system.md',
+      '/vault/.grandemonium/opencode/auxiliary/system.md',
       undefined,
       [{
         definition: {
@@ -56,29 +56,29 @@ describe('buildOpencodeManagedConfig', () => {
             read: 'allow',
           },
         },
-        id: 'claudian-aux-readonly',
+        id: 'grandemonium-aux-readonly',
       }],
-      'claudian-aux-readonly',
+      'grandemonium-aux-readonly',
     )).toEqual({
       $schema: 'https://opencode.ai/config.json',
       agent: {
         plan: { disable: true },
-        'claudian-aux-readonly': {
+        'grandemonium-aux-readonly': {
           mode: 'primary',
           permission: {
             '*': 'deny',
             read: 'allow',
           },
-          prompt: '{file:/vault/.claudian/opencode/auxiliary/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/auxiliary/system.md}',
         },
       },
-      default_agent: 'claudian-aux-readonly',
+      default_agent: 'grandemonium-aux-readonly',
     });
   });
 
   it.each([
     undefined,
-    [{ id: 'claudian-aux-readonly', definition: { permission: { '*': 'deny' } } }],
+    [{ id: 'grandemonium-aux-readonly', definition: { permission: { '*': 'deny' } } }],
   ])('disables the native plan agent while preserving user agent configuration', (managedAgents) => {
     const baseConfig = {
       agent: {
@@ -90,7 +90,7 @@ describe('buildOpencodeManagedConfig', () => {
 
     const config = buildOpencodeManagedConfig(
       baseConfig,
-      '/vault/.claudian/opencode/system.md',
+      '/vault/.grandemonium/opencode/system.md',
       undefined,
       managedAgents,
     );
@@ -121,7 +121,7 @@ describe('buildOpencodeManagedConfig', () => {
         },
       },
       username: 'Existing',
-    }, '/vault/.claudian/opencode/system.md')).toEqual({
+    }, '/vault/.grandemonium/opencode/system.md')).toEqual({
       $schema: 'https://opencode.ai/config.json',
       agent: {
         plan: { disable: true },
@@ -131,7 +131,7 @@ describe('buildOpencodeManagedConfig', () => {
             bash: 'ask',
             edit: 'ask',
           },
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
         [OPENCODE_YOLO_MODE_ID]: {
           mode: 'primary',
@@ -139,7 +139,7 @@ describe('buildOpencodeManagedConfig', () => {
             plan_enter: 'deny',
             question: 'allow',
           },
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
         [OPENCODE_SAFE_MODE_ID]: {
           mode: 'primary',
@@ -149,7 +149,7 @@ describe('buildOpencodeManagedConfig', () => {
             plan_enter: 'deny',
             question: 'allow',
           },
-          prompt: '{file:/vault/.claudian/opencode/system.md}',
+          prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
       },
       default_agent: 'build',
@@ -165,7 +165,7 @@ describe('buildOpencodeManagedConfig', () => {
 
 describe('prepareOpencodeLaunchArtifacts', () => {
   it('layers the managed prompt config on top of OPENCODE_CONFIG', async () => {
-    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-opencode-artifacts-'));
+    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-opencode-artifacts-'));
     const baseConfigPath = path.join(tmpRoot, 'opencode.base.json');
     await fs.writeFile(baseConfigPath, JSON.stringify({
       agent: {
@@ -195,8 +195,8 @@ describe('prepareOpencodeLaunchArtifacts', () => {
       workspaceRoot: tmpRoot,
     });
 
-    expect(result.configPath).toBe(path.join(tmpRoot, '.claudian', 'opencode', 'config.json'));
-    expect(result.systemPromptPath).toBe(path.join(tmpRoot, '.claudian', 'opencode', 'system.md'));
+    expect(result.configPath).toBe(path.join(tmpRoot, '.grandemonium', 'opencode', 'config.json'));
+    expect(result.systemPromptPath).toBe(path.join(tmpRoot, '.grandemonium', 'opencode', 'system.md'));
     expect(result.configContent).toContain(`"prompt": "{file:${result.systemPromptPath}}"`);
     const generatedConfig = JSON.parse(await fs.readFile(result.configPath, 'utf8'));
     expect(generatedConfig).toMatchObject({
@@ -235,7 +235,7 @@ describe('prepareOpencodeLaunchArtifacts', () => {
   });
 
   it('keeps the launch key stable when the resolved default database is later passed as OPENCODE_DB', async () => {
-    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-opencode-artifacts-'));
+    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-opencode-artifacts-'));
     const baseParams = {
       settings: {
         customPrompt: '',
@@ -265,7 +265,7 @@ describe('prepareOpencodeLaunchArtifacts', () => {
   });
 
   it('includes provider-default dynamic sections in the managed prompt and launch key', async () => {
-    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-opencode-artifacts-'));
+    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-opencode-artifacts-'));
     const baseParams = {
       runtimeEnv: { HOME: tmpRoot } as NodeJS.ProcessEnv,
       settings: {
@@ -291,7 +291,7 @@ describe('prepareOpencodeLaunchArtifacts', () => {
   });
 
   it('creates the resolved OpenCode database directory before launch', async () => {
-    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-opencode-artifacts-'));
+    const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-opencode-artifacts-'));
     const xdgDataHome = path.join(tmpRoot, 'xdg-data');
     const databaseDir = path.join(xdgDataHome, 'opencode');
 

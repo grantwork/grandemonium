@@ -20,10 +20,10 @@ import {
   writeCollabFileAtomically,
 } from '@/app/collab/CollabFilesystemBoundary';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const TRANSITION_DIRECTORY = '.claudian/collab/cloud-bootstrap-transitions';
-const TRANSITION_HISTORY_DIRECTORY = '.claudian/collab/cloud-bootstrap-transition-history';
+const TRANSITION_DIRECTORY = '.grandemonium/collab/cloud-bootstrap-transitions';
+const TRANSITION_HISTORY_DIRECTORY = '.grandemonium/collab/cloud-bootstrap-transition-history';
 const MAX_TRANSITION_BYTES = 128 * 1024;
 
 export interface CloudBootstrapTransitionStoreOptions {
@@ -302,7 +302,7 @@ export class CloudBootstrapTransitionStore implements CloudBootstrapTransitionSt
 
   private async syncTransitionStorage(): Promise<void> {
     await syncCollabVaultDirectoryDurably(this.vaultRoot, TRANSITION_DIRECTORY);
-    await syncCollabVaultDirectoryDurably(this.vaultRoot, '.claudian/collab');
+    await syncCollabVaultDirectoryDurably(this.vaultRoot, '.grandemonium/collab');
   }
 
   private async loadUnlocked(

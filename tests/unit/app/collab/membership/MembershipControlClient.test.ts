@@ -281,7 +281,7 @@ describe('MembershipControlClient', () => {
       projectId: 'project-a',
       protocolVersion: COLLAB_CONTROL_PROTOCOL_VERSION,
     };
-    const encodedInvitation = `claudian-collab:v${COLLAB_CONTROL_PROTOCOL_VERSION}:${Buffer.from(
+    const encodedInvitation = `grandemonium-collab:v${COLLAB_CONTROL_PROTOCOL_VERSION}:${Buffer.from(
       JSON.stringify(invitation),
       'utf8',
     ).toString('base64url')}`;
@@ -370,7 +370,7 @@ describe('MembershipControlClient', () => {
     };
 
     expect(() => decodeCreateInvitationResponse(envelope({
-      encodedInvitation: 'claudian-collab:v2:invalid',
+      encodedInvitation: 'grandemonium-collab:v2:invalid',
       invitation,
     }), { projectId: 'project-a' })).toThrow(expect.objectContaining({
       code: 'protocol-payload-invalid',

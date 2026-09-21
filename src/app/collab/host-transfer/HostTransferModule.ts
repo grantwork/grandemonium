@@ -38,7 +38,7 @@ import type {
   CollabProjectLifecycleAdmission,
 } from '@/app/collab/lifecycle/CollabProjectLifecycleAdmission';
 import { type CollabCoordinationSnapshot, type CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface HostTransferModuleGitFoundation {

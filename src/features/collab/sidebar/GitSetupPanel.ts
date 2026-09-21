@@ -84,20 +84,20 @@ export class GitSetupPanel {
 
   render(): void {
     this.containerEl.replaceChildren();
-    this.containerEl.classList.add('claudian-collab-git-setup');
+    this.containerEl.classList.add('grandemonium-collab-git-setup');
     const heading = this.containerEl.createEl('h3', {
       text: t('collab.gitSetup.title'),
     });
-    heading.classList.add('claudian-collab-git-title');
+    heading.classList.add('grandemonium-collab-git-title');
 
-    const status = this.containerEl.createDiv({ cls: 'claudian-collab-git-status' });
+    const status = this.containerEl.createDiv({ cls: 'grandemonium-collab-git-status' });
     if (this.resolution.status === 'available') {
-      status.classList.add('claudian-collab-git-status--ready');
+      status.classList.add('grandemonium-collab-git-status--ready');
       status.textContent = t('collab.gitSetup.ready', {
         version: this.resolution.version,
       });
     } else {
-      status.classList.add('claudian-collab-git-status--blocked');
+      status.classList.add('grandemonium-collab-git-status--blocked');
       status.textContent = this.resolution.status === 'incompatible'
         ? t('collab.gitSetup.incompatible')
         : t('collab.gitSetup.missing');
@@ -106,14 +106,14 @@ export class GitSetupPanel {
         && this.resolution.missingCapabilities.length > 0
       ) {
         status.createDiv({
-          cls: 'claudian-collab-git-capabilities',
+          cls: 'grandemonium-collab-git-capabilities',
           text: this.resolution.missingCapabilities.join(', '),
         });
       }
       this.renderInstallSupport();
     }
 
-    const actions = this.containerEl.createDiv({ cls: 'claudian-collab-git-actions' });
+    const actions = this.containerEl.createDiv({ cls: 'grandemonium-collab-git-actions' });
     const rescanButton = actions.createEl('button', {
       attr: { 'data-action': 'rescan', type: 'button' },
       text: t('collab.gitSetup.rescan'),
@@ -122,17 +122,17 @@ export class GitSetupPanel {
       void this.rescan(rescanButton);
     });
 
-    const pathRow = this.containerEl.createDiv({ cls: 'claudian-collab-git-path-row' });
+    const pathRow = this.containerEl.createDiv({ cls: 'grandemonium-collab-git-path-row' });
     pathRow.createEl('label', {
-      attr: { for: 'claudian-collab-git-path' },
+      attr: { for: 'grandemonium-collab-git-path' },
       text: t('collab.gitSetup.manualPath'),
     });
     const pathInput = pathRow.createEl('input', {
       attr: {
-        id: 'claudian-collab-git-path',
+        id: 'grandemonium-collab-git-path',
         type: 'text',
       },
-      cls: 'claudian-collab-git-path',
+      cls: 'grandemonium-collab-git-path',
       value: this.options.configuredPath,
     });
     pathInput.value = this.options.configuredPath;
@@ -147,22 +147,22 @@ export class GitSetupPanel {
 
   private renderInstallSupport(): void {
     const support = getGitInstallSupport(this.platform);
-    const supportEl = this.containerEl.createDiv({ cls: 'claudian-collab-git-support' });
+    const supportEl = this.containerEl.createDiv({ cls: 'grandemonium-collab-git-support' });
     supportEl.createEl('a', {
       attr: {
         href: support.guideUrl,
         rel: 'noopener noreferrer',
         target: '_blank',
       },
-      cls: 'claudian-collab-git-guide',
+      cls: 'grandemonium-collab-git-guide',
       text: t('collab.gitSetup.officialGuide'),
     });
     supportEl.createDiv({
-      cls: 'claudian-collab-git-prompt-label',
+      cls: 'grandemonium-collab-git-prompt-label',
       text: t('collab.gitSetup.agentPrompt'),
     });
     const prompt = supportEl.createEl('textarea', {
-      cls: 'claudian-collab-git-prompt',
+      cls: 'grandemonium-collab-git-prompt',
     });
     prompt.readOnly = true;
     prompt.rows = 4;

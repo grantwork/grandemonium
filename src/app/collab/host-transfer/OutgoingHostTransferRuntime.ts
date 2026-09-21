@@ -6,7 +6,7 @@ import type {
 import type {
   OutgoingHostTransferCoordinator,
 } from '@/app/collab/host-transfer/OutgoingHostTransferCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { toError } from '@/utils/error';
 
 export class OutgoingHostTransferRuntime {

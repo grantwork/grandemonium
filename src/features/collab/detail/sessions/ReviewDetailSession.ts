@@ -8,7 +8,7 @@ import {
 } from 'obsidian';
 
 import { type CollabAcceptRequest, type CollabConflictDescriptor, type CollabCoordinationSnapshot, type CollabPublicationReview, type CollabRequestReview, type CollabResult, type CollabWorkingTreeReview } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type {
   CollabConflictDetailViewState,
   CollabDetailViewPort,
@@ -177,7 +177,7 @@ export class ReviewDetailSession {
           const ownsRequest = this.coordination?.snapshot.currentMember.id
             === this.review.detail.request.memberId;
           if (
-            !this.rootEl.querySelector('.claudian-collab-request-description.is-editing')
+            !this.rootEl.querySelector('.grandemonium-collab-request-description.is-editing')
             && (!ownsRequest || this.publishDescription === null)
           ) {
             this.descriptionEditor?.setValue(this.review.detail.request.description);
@@ -310,7 +310,7 @@ export class ReviewDetailSession {
       coordination?.snapshot.members.map(member => [member.id, member.displayName]) ?? [],
     );
     this.memberNames = memberNames;
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-review-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-review-header' });
     if (isRequestReview(review)) header.classList.add('is-request');
     header.createEl('h2', {
       text: !isRequestReview(review)
@@ -327,7 +327,7 @@ export class ReviewDetailSession {
       header.classList.add('has-primary-action');
       const confirm = header.createEl('button', {
         attr: { 'data-collab-action': 'confirm-publish', type: 'button' },
-        cls: 'claudian-collab-review-accept',
+        cls: 'grandemonium-collab-review-accept',
         text: t('collab.publish.action'),
       });
       this.requireDescription(confirm);
@@ -338,7 +338,7 @@ export class ReviewDetailSession {
       header.classList.add('has-primary-action');
       const publish = header.createEl('button', {
         attr: { 'data-collab-action': 'publish-working-tree', type: 'button' },
-        cls: 'claudian-collab-review-accept',
+        cls: 'grandemonium-collab-review-accept',
         text: t('collab.publish.action'),
       });
       this.requireDescription(publish);
@@ -356,7 +356,7 @@ export class ReviewDetailSession {
     if (isRequestReview(review)) {
       const tabs = header.createDiv({
         attr: { 'aria-label': t('collab.review.sections'), role: 'tablist' },
-        cls: 'claudian-collab-review-tabs',
+        cls: 'grandemonium-collab-review-tabs',
       });
       const overviewTab = tabs.createEl('button', {
         attr: { role: 'tab', type: 'button' },
@@ -369,25 +369,25 @@ export class ReviewDetailSession {
       const condition = this.reviewCondition(review);
       if (condition) {
         tabs.createDiv({
-          cls: `claudian-collab-review-condition is-${condition.kind}`,
+          cls: `grandemonium-collab-review-condition is-${condition.kind}`,
           text: condition.text,
         });
       }
       const overviewControls = tabs.createDiv({
         cls: [
-          'claudian-collab-review-display-controls',
-          'claudian-collab-review-overview-controls',
+          'grandemonium-collab-review-display-controls',
+          'grandemonium-collab-review-overview-controls',
         ],
       });
       const changesControls = this.renderReviewDisplayControls(tabs);
-      changesControls.classList.add('claudian-collab-review-changes-controls');
+      changesControls.classList.add('grandemonium-collab-review-changes-controls');
       const overview = this.rootEl.createDiv({
         attr: { role: 'tabpanel' },
-        cls: 'claudian-collab-review-content claudian-collab-review-overview',
+        cls: 'grandemonium-collab-review-content grandemonium-collab-review-overview',
       });
       const changes = this.rootEl.createDiv({
         attr: { role: 'tabpanel' },
-        cls: 'claudian-collab-review-content claudian-collab-review-changes',
+        cls: 'grandemonium-collab-review-content grandemonium-collab-review-changes',
       });
       this.contentHostEl = changes;
       this.renderDescriptionEditor(overview, review, coordination, overviewControls);
@@ -417,7 +417,7 @@ export class ReviewDetailSession {
       changesTab.addEventListener('click', () => activate('changes', true));
       activate(this.requestReviewTab, false);
     } else {
-      this.contentHostEl = this.rootEl.createDiv({ cls: 'claudian-collab-review-content' });
+      this.contentHostEl = this.rootEl.createDiv({ cls: 'grandemonium-collab-review-content' });
     }
     if (this.contentHostEl) {
       this.diffSession.bind(this.contentHostEl, review, selected?.path);
@@ -438,7 +438,7 @@ export class ReviewDetailSession {
     header.classList.add('has-primary-action');
     const accept = header.createEl('button', {
       attr: { 'data-collab-action': 'accept', type: 'button' },
-      cls: 'claudian-collab-review-accept',
+      cls: 'grandemonium-collab-review-accept',
       text: t('collab.review.accept'),
     });
     const synchronized = canAcceptFromCoordination(coordination);
@@ -557,7 +557,7 @@ export class ReviewDetailSession {
       return;
     }
 
-    const header = this.rootEl.querySelector<HTMLElement>('.claudian-collab-review-header');
+    const header = this.rootEl.querySelector<HTMLElement>('.grandemonium-collab-review-header');
     if (header) {
       this.renderRequestAcceptAction(header, review, coordination);
       const title = header.querySelector('h2');
@@ -568,10 +568,10 @@ export class ReviewDetailSession {
       }
       const tabs = header.querySelectorAll<HTMLButtonElement>('[role="tab"]');
       if (tabs[1]) tabs[1].textContent = t('collab.review.changes', { count: review.files.length });
-      const conditionEl = header.querySelector<HTMLElement>('.claudian-collab-review-condition');
+      const conditionEl = header.querySelector<HTMLElement>('.grandemonium-collab-review-condition');
       const condition = this.reviewCondition(review);
       if (conditionEl && condition) {
-        conditionEl.className = `claudian-collab-review-condition is-${condition.kind}`;
+        conditionEl.className = `grandemonium-collab-review-condition is-${condition.kind}`;
         conditionEl.textContent = condition.text;
       }
     }
@@ -580,7 +580,7 @@ export class ReviewDetailSession {
       const ownsRequest = coordination?.snapshot.currentMember.id
         === review.detail.request.memberId;
       if (
-        !this.rootEl.querySelector('.claudian-collab-request-description.is-editing')
+        !this.rootEl.querySelector('.grandemonium-collab-request-description.is-editing')
         && (!ownsRequest || this.publishDescription === null)
       ) {
         this.descriptionEditor?.setValue(review.detail.request.description);
@@ -611,24 +611,24 @@ export class ReviewDetailSession {
     coordination: CollabCoordinationSnapshot | null,
     editActionHost?: HTMLElement,
   ): void {
-    const section = host.createDiv({ cls: 'claudian-collab-request-description' });
+    const section = host.createDiv({ cls: 'grandemonium-collab-request-description' });
     if (isRequestReview(review)) section.classList.add('is-request');
     const descriptionHeader = section.createDiv({
-      cls: 'claudian-collab-request-description-header',
+      cls: 'grandemonium-collab-request-description-header',
     });
     if (!isRequestReview(review)) {
       descriptionHeader.createSpan({ text: t('collab.publish.description') });
       const metadata = descriptionHeader.createDiv({
-        cls: 'claudian-collab-review-metadata-line',
+        cls: 'grandemonium-collab-review-metadata-line',
       });
       metadata.createDiv({
-        cls: 'claudian-collab-review-summary',
+        cls: 'grandemonium-collab-review-summary',
         text: t('collab.review.fileCount', { count: review.files.length }),
       });
       const condition = this.reviewCondition(review);
       if (condition) {
         metadata.createDiv({
-          cls: `claudian-collab-review-condition is-${condition.kind}`,
+          cls: `grandemonium-collab-review-condition is-${condition.kind}`,
           text: condition.text,
         });
       }
@@ -649,7 +649,7 @@ export class ReviewDetailSession {
       && coordination?.snapshot.currentMember.id === request.memberId
     );
     const descriptionModes = canEdit
-      ? descriptionHeader.createDiv({ cls: 'claudian-collab-request-description-modes' })
+      ? descriptionHeader.createDiv({ cls: 'grandemonium-collab-request-description-modes' })
       : null;
     if (isRequestReview(review) && descriptionModes) descriptionModes.hidden = true;
     const editorRoot = section.createDiv({
@@ -689,7 +689,7 @@ export class ReviewDetailSession {
       if (descriptionDiffersFromAuthority) {
         section.createDiv({
           attr: { 'aria-live': 'polite' },
-          cls: 'claudian-collab-request-description-status',
+          cls: 'grandemonium-collab-request-description-status',
           text: t('collab.publish.descriptionNotSynced'),
         });
       }
@@ -702,7 +702,7 @@ export class ReviewDetailSession {
         'data-action': 'open-request-description-editor',
         type: 'button',
       },
-      cls: 'claudian-collab-review-display-toggle',
+      cls: 'grandemonium-collab-review-display-toggle',
     });
     setIcon(openEditor, 'pencil');
     const enterEditing = (): void => {
@@ -720,14 +720,14 @@ export class ReviewDetailSession {
     openEditor.addEventListener('click', enterEditing);
     const status = section.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-request-description-status',
+      cls: 'grandemonium-collab-request-description-status',
     });
     if (descriptionDiffersFromAuthority) {
       status.setText(t('collab.publish.descriptionNotSynced'));
     }
     const save = descriptionModes!.createEl('button', {
       attr: { 'data-action': 'submit-request-description', type: 'button' },
-      cls: 'claudian-collab-request-description-submit',
+      cls: 'grandemonium-collab-request-description-submit',
       text: t('collab.publish.saveDescription'),
     });
     save.addEventListener('click', () => {
@@ -843,10 +843,10 @@ export class ReviewDetailSession {
     review: CollabRequestReview,
     coordination: CollabCoordinationSnapshot | null,
   ): void {
-    const section = host.createDiv({ cls: 'claudian-collab-request-comments' });
+    const section = host.createDiv({ cls: 'grandemonium-collab-request-comments' });
     this.requestCommentsTitleEl = section.createEl('h3');
     this.requestCommentsListEl = section.createDiv({
-      cls: 'claudian-collab-request-comment-list',
+      cls: 'grandemonium-collab-request-comment-list',
     });
     this.renderRequestCommentItems(review);
     if (review.detail.request.status !== 'open') return;
@@ -899,7 +899,7 @@ export class ReviewDetailSession {
     for (const comment of comments) {
       const item = list.createDiv({
         attr: { 'data-request-comment-id': comment.id },
-        cls: 'claudian-collab-request-comment',
+        cls: 'grandemonium-collab-request-comment',
       });
       renderCollabComment(item, {
         authorName: this.memberNames.get(comment.authorMemberId)
@@ -1059,10 +1059,10 @@ export class ReviewDetailSession {
         };
         this.review = { ...review, canAccept: false, detail };
         const condition = this.rootEl.querySelector<HTMLElement>(
-          '.claudian-collab-review-condition',
+          '.grandemonium-collab-review-condition',
         );
         if (condition) {
-          condition.className = 'claudian-collab-review-condition is-merged';
+          condition.className = 'grandemonium-collab-review-condition is-merged';
           condition.textContent = t('collab.review.accepted');
         }
         button.remove();
@@ -1203,7 +1203,7 @@ export class ReviewDetailSession {
     this.destroyDescriptionEditor();
     this.rootEl.replaceChildren();
     this.rootEl.createDiv({
-      cls: warning ? 'claudian-collab-review-message mod-warning' : 'claudian-collab-review-message',
+      cls: warning ? 'grandemonium-collab-review-message mod-warning' : 'grandemonium-collab-review-message',
       text: message,
     });
   }

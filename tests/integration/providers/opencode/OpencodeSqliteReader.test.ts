@@ -9,7 +9,7 @@ import { build } from 'esbuild';
 import type * as reader from '../../../../src/providers/opencode/history/OpencodeSqliteReader';
 
 it('reads history with the require function supplied by the Obsidian plugin loader', async () => {
-  const tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'claudian-opencode-loader-'));
+  const tmpRoot = mkdtempSync(path.join(os.tmpdir(), 'grandemonium-opencode-loader-'));
   try {
     const databasePath = path.join(tmpRoot, 'opencode.db');
     const db = new DatabaseSync(databasePath);

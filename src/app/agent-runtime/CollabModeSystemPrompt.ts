@@ -6,7 +6,7 @@ export function buildCollabModeSystemPrompt(
   return [
     '## Collab Mode',
     '',
-    'Claudian exposes a Vault-scoped local Agent Runtime for Collab context and operations.',
+    'Grandemonium exposes a Vault-scoped local Agent Runtime for Collab context and operations.',
     `RPC endpoint: ${endpoint.rpcUrl}`,
     'When a request may depend on Collab Projects, changes, requests, Tickets, comments, conflicts, roles, or membership, query the runtime instead of guessing.',
     "A plain-text reference @<exact display name>'s Changes means that active Member's current open Change Request in the selected Project.",

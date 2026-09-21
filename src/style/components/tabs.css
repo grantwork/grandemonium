@@ -1,4 +1,4 @@
-.claudian-tab-bar-container {
+.grandemonium-tab-bar-container {
   display: flex;
   align-items: center;
   flex: 1 1 auto;
@@ -7,7 +7,7 @@
   max-width: 100%;
 }
 
-.claudian-tab-badges {
+.grandemonium-tab-badges {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -21,20 +21,23 @@
   -ms-overflow-style: none;
 }
 
-.claudian-tab-badges::-webkit-scrollbar {
+.grandemonium-tab-badges::-webkit-scrollbar {
   display: none;
 }
 
-.claudian-tab-badge {
+.grandemonium-tab-badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 24px;
-  width: 24px;
-  max-width: 24px;
+  /* Collapsed badges carry a provider name, so they size to their label
+     instead of the single-digit square the tab index used to need. */
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 24px;
+  max-width: none;
   height: 24px;
   box-sizing: border-box;
-  padding: 0;
+  padding: 0 6px;
   border-radius: 4px;
   border: 2px solid var(--background-modifier-border);
   font-size: 12px;
@@ -48,7 +51,7 @@
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-.claudian-tab-badge-expanded {
+.grandemonium-tab-badge-expanded {
   flex: 0 0 auto;
   justify-content: flex-start;
   width: auto;
@@ -56,45 +59,45 @@
   padding: 0 8px;
 }
 
-.claudian-tab-badge:hover {
+.grandemonium-tab-badge:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.claudian-tab-badge-active {
+.grandemonium-tab-badge-active {
   border-color: var(--interactive-accent);
   color: var(--text-normal);
 }
 
-.claudian-tab-badge-streaming {
+.grandemonium-tab-badge-streaming {
   border-color: var(--text-normal);
 }
 
-body.theme-light .claudian-tab-badge-streaming {
+body.theme-light .grandemonium-tab-badge-streaming {
   border-color: #000000;
 }
 
-body.theme-dark .claudian-tab-badge-streaming {
+body.theme-dark .grandemonium-tab-badge-streaming {
   border-color: #ffffff;
 }
 
-.claudian-tab-badge-review {
+.grandemonium-tab-badge-review {
   border-color: var(--color-green);
 }
 
-.claudian-tab-badge-review-error {
+.grandemonium-tab-badge-review-error {
   border-color: var(--text-error);
 }
 
-.claudian-tab-badge-action-required {
+.grandemonium-tab-badge-action-required {
   border-color: var(--color-orange);
 }
 
-.claudian-tab-badge-idle {
+.grandemonium-tab-badge-idle {
   border-color: var(--background-modifier-border);
 }
 
-.claudian-tab-content-container {
+.grandemonium-tab-content-container {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -102,7 +105,7 @@ body.theme-dark .claudian-tab-badge-streaming {
   overflow: hidden;
 }
 
-.claudian-tab-content {
+.grandemonium-tab-content {
   position: relative; /* For scroll-to-bottom button positioning */
   display: flex;
   flex-direction: column;

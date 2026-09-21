@@ -52,7 +52,7 @@ import { ProjectControlClient } from '@/app/collab/publish/ProjectControlClient'
 import type {
   CloudAuthorityLifecycleSession,
 } from '@/app/collab/remote-authority/CloudAuthorityAdapter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface AuthorityTransferSourceRouteInput {

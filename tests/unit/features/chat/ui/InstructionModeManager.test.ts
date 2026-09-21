@@ -40,7 +40,7 @@ describe('InstructionModeManager', () => {
     expect(manager.isActive()).toBe(true);
     expect(inputEl.placeholder).toBe('Save in custom system prompt');
     expect(inputEl.focus).toHaveBeenCalled();
-    expect(wrapper.addClass).toHaveBeenCalledWith('claudian-input-instruction-mode');
+    expect(wrapper.addClass).toHaveBeenCalledWith('grandemonium-input-instruction-mode');
     expect(callbacks.onActiveChange).toHaveBeenCalledWith(true);
   });
 
@@ -73,7 +73,7 @@ describe('InstructionModeManager', () => {
 
     expect(manager.isActive()).toBe(false);
     expect(inputEl.placeholder).toBe('Ask...');
-    expect(wrapper.removeClass).toHaveBeenCalledWith('claudian-input-instruction-mode');
+    expect(wrapper.removeClass).toHaveBeenCalledWith('grandemonium-input-instruction-mode');
     expect(callbacks.onActiveChange).toHaveBeenLastCalledWith(false);
   });
 
@@ -95,7 +95,7 @@ describe('InstructionModeManager', () => {
 
     manager.destroy();
 
-    expect(wrapper.removeClass).toHaveBeenCalledWith('claudian-input-instruction-mode');
+    expect(wrapper.removeClass).toHaveBeenCalledWith('grandemonium-input-instruction-mode');
     expect(inputEl.placeholder).toBe('Ask...');
   });
 });

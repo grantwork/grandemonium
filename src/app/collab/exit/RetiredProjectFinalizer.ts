@@ -3,7 +3,7 @@ import type {
   RetiredCleanupChoiceIntent,
 } from '@/app/collab/exit/LocalProjectCleanupCoordinator';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RetiredProjectProjectionFinalizerPort {
   finalizeRetiredProject(projectId: string): Promise<void>;

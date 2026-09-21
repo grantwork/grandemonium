@@ -31,7 +31,7 @@ describe('multi-Manager membership lifecycle', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-multi-manager-lifecycle-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-multi-manager-lifecycle-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

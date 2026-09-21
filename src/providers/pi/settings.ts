@@ -27,6 +27,7 @@ export interface PersistedPiProviderSettings {
   cliPathsByHost: HostnameCliPaths;
   discoveredModels: PiDiscoveredModel[];
   enabled: boolean;
+  agentName: string;
   environmentHash: string;
   environmentVariables: string;
   modelAliases: Record<string, string>;
@@ -42,6 +43,7 @@ export const DEFAULT_PI_PROVIDER_SETTINGS: Readonly<PersistedPiProviderSettings>
   cliPathsByHost: {},
   discoveredModels: [],
   enabled: false,
+  agentName: 'pi',
   environmentHash: '',
   environmentVariables: '',
   modelAliases: {},
@@ -133,6 +135,7 @@ export function getPiProviderSettings(settings: Record<string, unknown>): PiProv
     cliPathsByHost,
     discoveredModels,
     enabled: readStoredBoolean(config.enabled, DEFAULT_PI_PROVIDER_SETTINGS.enabled),
+    agentName: readStoredString(config.agentName, DEFAULT_PI_PROVIDER_SETTINGS.agentName),
     environmentHash: readStoredString(
       config.environmentHash,
       DEFAULT_PI_PROVIDER_SETTINGS.environmentHash,

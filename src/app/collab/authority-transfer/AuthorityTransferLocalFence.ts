@@ -4,7 +4,7 @@ import type {
   CollabProjectWorkSessionSuspension,
 } from '@/app/collab/activity/CollabProjectWorkSession';
 import type { ProjectOperationSuspension } from '@/app/collab/ProjectOperationAdmission';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 interface AuthorityTransferAdmissionPort {
   drainAdmittedOperations(): Promise<void>;

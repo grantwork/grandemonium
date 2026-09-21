@@ -2,7 +2,7 @@ import { COLLAB_LIMITS, COLLAB_MEMBER_REF_PREFIX } from '@claudian-collab/protoc
 import type { Database, SqlValue } from 'sql.js';
 
 import { COLLAB_AUTHORITY_SCHEMA_VERSION } from '@/app/collab/CollabSchemaVersions';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 const AUTHORITY_SCHEMA_V1 = `
   CREATE TABLE IF NOT EXISTS members (
@@ -218,7 +218,7 @@ const AUTHORITY_SCHEMA_V3_TABLES_SQL = `
       AND substr(ticket_id, 1, 1) GLOB '[A-Za-z0-9]'
       AND ticket_id NOT GLOB '*[^A-Za-z0-9_-]*'
     ),
-    title TEXT NOT NULL CHECK(length(title) BETWEEN 1 AND ${CLAUDIAN_COLLAB_LIMITS.maxTicketTitleUtf16}),
+    title TEXT NOT NULL CHECK(length(title) BETWEEN 1 AND ${GRANDEMONIUM_COLLAB_LIMITS.maxTicketTitleUtf16}),
     body TEXT NOT NULL CHECK(length(body) > 0),
     status TEXT NOT NULL CHECK(status IN ('open', 'closed')),
     author_member_id TEXT NOT NULL REFERENCES members(member_id),

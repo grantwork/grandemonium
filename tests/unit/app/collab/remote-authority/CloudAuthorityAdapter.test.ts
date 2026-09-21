@@ -322,8 +322,8 @@ describe('CloudAuthorityAdapter', () => {
     const requests: Array<{ readonly actor: string | undefined; readonly url: string }> = [];
     const server = createServer((request, response) => {
       requests.push({
-        actor: typeof request.headers['x-claudian-development-actor'] === 'string'
-          ? request.headers['x-claudian-development-actor']
+        actor: typeof request.headers['x-grandemonium-development-actor'] === 'string'
+          ? request.headers['x-grandemonium-development-actor']
           : undefined,
         url: request.url ?? '',
       });
@@ -419,7 +419,7 @@ describe('CloudAuthorityAdapter', () => {
     expect(session.supports('requests')).toBe(false);
     expect(session.git).toEqual({
       headers: [{
-        name: 'X-Claudian-Development-Actor',
+        name: 'X-Grandemonium-Development-Actor',
         sensitive: false,
         value: ACTOR_ID,
       }],
@@ -427,13 +427,13 @@ describe('CloudAuthorityAdapter', () => {
     });
     expect(requests).toEqual([
       expect.objectContaining({
-        headers: { 'x-claudian-development-actor': ACTOR_ID },
+        headers: { 'x-grandemonium-development-actor': ACTOR_ID },
         method: 'GET',
         url: 'https://cloud.example.test/collab/capabilities',
       }),
       expect.objectContaining({
         body: expect.objectContaining({ data: { projectId: PROJECT_ID } }),
-        headers: { 'x-claudian-development-actor': ACTOR_ID },
+        headers: { 'x-grandemonium-development-actor': ACTOR_ID },
         method: 'POST',
         url: `https://cloud.example.test/v2/projects/${PROJECT_ID}/operations/getProjectSnapshot`,
       }),
@@ -486,7 +486,7 @@ describe('CloudAuthorityAdapter', () => {
         protocolVersion: 6,
         requestId: 'request-ensure',
       },
-      headers: { 'x-claudian-development-actor': ACTOR_ID },
+      headers: { 'x-grandemonium-development-actor': ACTOR_ID },
       method: 'POST',
       signal: controller.signal,
       url: `https://cloud.example.test/v2/projects/${PROJECT_ID}/operations/ensureMyRequest`,
@@ -544,7 +544,7 @@ describe('CloudAuthorityAdapter', () => {
         protocolVersion: 6,
         requestId: expect.any(String),
       },
-      headers: { 'x-claudian-development-actor': ACTOR_ID },
+      headers: { 'x-grandemonium-development-actor': ACTOR_ID },
       method: 'POST',
       signal: controller.signal,
       url: `https://cloud.example.test/v2/projects/${PROJECT_ID}/operations/acceptRequest`,
@@ -1000,7 +1000,7 @@ describe('CloudProjectEventClient', () => {
         const socket = new FakeSocket();
         sockets.push(socket);
         expect(input).toEqual({
-          headers: { 'x-claudian-development-actor': ACTOR_ID },
+          headers: { 'x-grandemonium-development-actor': ACTOR_ID },
           url: `wss://cloud.example.test/v2/projects/${PROJECT_ID}/events?afterSequence=${
             sockets.length === 1 ? 3 : 5
           }`,

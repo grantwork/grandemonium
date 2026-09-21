@@ -69,10 +69,10 @@ export function renderProviderModelPicker(
   const visibleModelsSetting = new Setting(options.container)
     .setName('Visible models')
     .setDesc(VISIBLE_MODELS_DESCRIPTION);
-  visibleModelsSetting.settingEl.addClass('claudian-provider-model-picker-setting');
+  visibleModelsSetting.settingEl.addClass('grandemonium-provider-model-picker-setting');
 
   const pickerEl = options.container.createDiv({
-    cls: `claudian-provider-model-picker claudian-provider-model-picker--${options.modifier}`,
+    cls: `grandemonium-provider-model-picker grandemonium-provider-model-picker--${options.modifier}`,
   });
   let searchQuery = '';
   let providerFilter = ALL_PROVIDERS_KEY;
@@ -80,29 +80,29 @@ export function renderProviderModelPicker(
   let catalogLoadFailed = false;
   let draggedModelId: string | null = null;
 
-  const summaryEl = pickerEl.createDiv({ cls: 'claudian-provider-model-picker-summary' });
-  const selectedEl = pickerEl.createDiv({ cls: 'claudian-provider-model-picker-selected' });
-  const catalogEl = pickerEl.createEl('details', { cls: 'claudian-provider-model-picker-catalog' });
+  const summaryEl = pickerEl.createDiv({ cls: 'grandemonium-provider-model-picker-summary' });
+  const selectedEl = pickerEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected' });
+  const catalogEl = pickerEl.createEl('details', { cls: 'grandemonium-provider-model-picker-catalog' });
   catalogEl.open = options.initiallyOpen ?? options.getState().selectedIds.length === 0;
 
   const catalogSummaryEl = catalogEl.createEl('summary', {
-    cls: 'claudian-provider-model-picker-catalog-summary',
+    cls: 'grandemonium-provider-model-picker-catalog-summary',
   });
   catalogSummaryEl.createSpan({
-    cls: 'claudian-provider-model-picker-catalog-caret',
+    cls: 'grandemonium-provider-model-picker-catalog-caret',
     text: '▸',
   });
   catalogSummaryEl.createSpan({
-    cls: 'claudian-provider-model-picker-catalog-title',
+    cls: 'grandemonium-provider-model-picker-catalog-title',
     text: 'Browse models',
   });
   const catalogSummaryCountEl = catalogSummaryEl.createSpan({
-    cls: 'claudian-provider-model-picker-catalog-count',
+    cls: 'grandemonium-provider-model-picker-catalog-count',
   });
 
-  const controlsEl = catalogEl.createDiv({ cls: 'claudian-provider-model-picker-controls' });
+  const controlsEl = catalogEl.createDiv({ cls: 'grandemonium-provider-model-picker-controls' });
   const searchInput = controlsEl.createEl('input', {
-    cls: 'claudian-provider-model-picker-search',
+    cls: 'grandemonium-provider-model-picker-search',
     type: 'search',
   });
   searchInput.placeholder = options.searchPlaceholder ?? 'Filter by model, provider, or ID...';
@@ -112,7 +112,7 @@ export function renderProviderModelPicker(
   });
 
   const providerSelectEl = controlsEl.createEl('select', {
-    cls: 'claudian-provider-model-picker-provider',
+    cls: 'grandemonium-provider-model-picker-provider',
   });
   providerSelectEl.addEventListener('change', () => {
     providerFilter = providerSelectEl.value;
@@ -120,7 +120,7 @@ export function renderProviderModelPicker(
   });
 
   const catalogActionEl = controlsEl.createEl('button', {
-    cls: 'claudian-provider-model-picker-action',
+    cls: 'grandemonium-provider-model-picker-action',
     text: 'Discover',
   });
   catalogActionEl.setAttribute('type', 'button');
@@ -128,7 +128,7 @@ export function renderProviderModelPicker(
     void loadCatalog(true);
   });
 
-  const listEl = catalogEl.createDiv({ cls: 'claudian-provider-model-picker-list' });
+  const listEl = catalogEl.createDiv({ cls: 'grandemonium-provider-model-picker-list' });
 
   const renderSummary = (): void => {
     summaryEl.empty();
@@ -139,7 +139,7 @@ export function renderProviderModelPicker(
 
     summaryEl.createSpan({ text: 'Visible: ' });
     summaryEl.createSpan({
-      cls: 'claudian-provider-model-picker-summary-value',
+      cls: 'grandemonium-provider-model-picker-summary-value',
       text: String(state.selectedIds.length),
     });
     summaryEl.createSpan({
@@ -187,22 +187,22 @@ export function renderProviderModelPicker(
     selectedEl.empty();
     const state = options.getState();
     if (state.selectedIds.length === 0) {
-      selectedEl.toggleClass('claudian-hidden', true);
+      selectedEl.toggleClass('grandemonium-hidden', true);
       return;
     }
 
-    selectedEl.toggleClass('claudian-hidden', false);
+    selectedEl.toggleClass('grandemonium-hidden', false);
     const modelsById = new Map(state.models.map(model => [model.id, model] as const));
     const defaultModelId = state.defaultModelId === undefined
       ? state.selectedIds[0]
       : state.defaultModelId;
-    const headerEl = selectedEl.createDiv({ cls: 'claudian-provider-model-picker-selected-header' });
+    const headerEl = selectedEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-header' });
     headerEl.createSpan({
-      cls: 'claudian-provider-model-picker-selected-label',
+      cls: 'grandemonium-provider-model-picker-selected-label',
       text: `Selected (${state.selectedIds.length})`,
     });
     const clearAllButton = headerEl.createEl('button', {
-      cls: 'claudian-provider-model-picker-selected-clear',
+      cls: 'grandemonium-provider-model-picker-selected-clear',
       text: 'Clear all',
     });
     clearAllButton.setAttribute('type', 'button');
@@ -211,7 +211,7 @@ export function renderProviderModelPicker(
       void persistSelectedIds([]);
     });
 
-    const rowsEl = selectedEl.createDiv({ cls: 'claudian-provider-model-picker-selected-rows' });
+    const rowsEl = selectedEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-rows' });
     for (const modelId of state.selectedIds) {
       const model = modelsById.get(modelId) ?? {
         id: modelId,
@@ -220,10 +220,10 @@ export function renderProviderModelPicker(
       };
       const defaultLabel = model.aliasPlaceholder
         ?? (model.providerLabel ? `${model.providerLabel}/${model.name}` : model.name);
-      const rowEl = rowsEl.createDiv({ cls: 'claudian-provider-model-picker-selected-row' });
+      const rowEl = rowsEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-row' });
       rowEl.setAttribute('data-model-id', modelId);
       if (model.isAvailable === false) {
-        rowEl.classList.add('claudian-provider-model-picker-selected-row--unavailable');
+        rowEl.classList.add('grandemonium-provider-model-picker-selected-row--unavailable');
       }
 
       rowEl.addEventListener('dragover', (event) => {
@@ -231,14 +231,14 @@ export function renderProviderModelPicker(
           return;
         }
         event.preventDefault();
-        rowEl.classList.add('claudian-provider-model-picker-selected-row--drop-target');
+        rowEl.classList.add('grandemonium-provider-model-picker-selected-row--drop-target');
       });
       rowEl.addEventListener('dragleave', () => {
-        rowEl.classList.remove('claudian-provider-model-picker-selected-row--drop-target');
+        rowEl.classList.remove('grandemonium-provider-model-picker-selected-row--drop-target');
       });
       rowEl.addEventListener('drop', (event) => {
         event.preventDefault();
-        rowEl.classList.remove('claudian-provider-model-picker-selected-row--drop-target');
+        rowEl.classList.remove('grandemonium-provider-model-picker-selected-row--drop-target');
         const sourceModelId = draggedModelId ?? event.dataTransfer?.getData('text/plain') ?? '';
         draggedModelId = null;
         if (!sourceModelId || sourceModelId === modelId) {
@@ -253,7 +253,7 @@ export function renderProviderModelPicker(
       });
 
       const dragHandle = rowEl.createEl('button', {
-        cls: 'claudian-provider-model-picker-selected-drag',
+        cls: 'grandemonium-provider-model-picker-selected-drag',
         text: '⋮⋮',
       });
       dragHandle.setAttribute('type', 'button');
@@ -265,7 +265,7 @@ export function renderProviderModelPicker(
       dragHandle.draggable = state.selectedIds.length > 1;
       dragHandle.addEventListener('dragstart', (event) => {
         draggedModelId = modelId;
-        rowEl.classList.add('claudian-provider-model-picker-selected-row--dragging');
+        rowEl.classList.add('grandemonium-provider-model-picker-selected-row--dragging');
         event.dataTransfer?.setData('text/plain', modelId);
         if (event.dataTransfer) {
           event.dataTransfer.effectAllowed = 'move';
@@ -273,7 +273,7 @@ export function renderProviderModelPicker(
       });
       dragHandle.addEventListener('dragend', () => {
         draggedModelId = null;
-        rowEl.classList.remove('claudian-provider-model-picker-selected-row--dragging');
+        rowEl.classList.remove('grandemonium-provider-model-picker-selected-row--dragging');
       });
       dragHandle.addEventListener('keydown', (event) => {
         const offset = event.key === 'ArrowUp'
@@ -299,45 +299,45 @@ export function renderProviderModelPicker(
         ));
       });
 
-      const infoEl = rowEl.createDiv({ cls: 'claudian-provider-model-picker-selected-info' });
-      const titleEl = infoEl.createDiv({ cls: 'claudian-provider-model-picker-selected-title' });
+      const infoEl = rowEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-info' });
+      const titleEl = infoEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-title' });
       if (model.providerLabel) {
         titleEl.createSpan({
-          cls: 'claudian-provider-model-picker-selected-badge',
+          cls: 'grandemonium-provider-model-picker-selected-badge',
           text: model.providerLabel,
         });
       }
       titleEl.createSpan({
-        cls: 'claudian-provider-model-picker-selected-name',
+        cls: 'grandemonium-provider-model-picker-selected-name',
         text: model.name,
       });
       if (modelId === defaultModelId) {
         titleEl.createSpan({
-          cls: 'claudian-provider-model-picker-selected-default',
+          cls: 'grandemonium-provider-model-picker-selected-default',
           text: 'Default',
         });
       }
       if (model.isAvailable === false && model.unavailableMessage) {
         infoEl.createDiv({
-          cls: 'claudian-provider-model-picker-selected-unavailable',
+          cls: 'grandemonium-provider-model-picker-selected-unavailable',
           text: model.unavailableMessage,
         });
       }
       infoEl.createDiv({
-        cls: 'claudian-provider-model-picker-selected-id',
+        cls: 'grandemonium-provider-model-picker-selected-id',
         text: model.id,
       });
 
-      const rowControlsEl = rowEl.createDiv({ cls: 'claudian-provider-model-picker-selected-controls' });
+      const rowControlsEl = rowEl.createDiv({ cls: 'grandemonium-provider-model-picker-selected-controls' });
       const aliasFieldEl = rowControlsEl.createEl('label', {
-        cls: 'claudian-provider-model-picker-selected-alias-field',
+        cls: 'grandemonium-provider-model-picker-selected-alias-field',
       });
       aliasFieldEl.createSpan({
-        cls: 'claudian-provider-model-picker-selected-alias-label',
+        cls: 'grandemonium-provider-model-picker-selected-alias-label',
         text: 'Alias (optional)',
       });
       const aliasInput = aliasFieldEl.createEl('input', {
-        cls: 'claudian-provider-model-picker-selected-alias',
+        cls: 'grandemonium-provider-model-picker-selected-alias',
         type: 'text',
       });
       aliasInput.placeholder = defaultLabel;
@@ -359,7 +359,7 @@ export function renderProviderModelPicker(
       });
 
       const removeButton = rowControlsEl.createEl('button', {
-        cls: 'claudian-provider-model-picker-selected-remove',
+        cls: 'grandemonium-provider-model-picker-selected-remove',
         text: '×',
       });
       removeButton.setAttribute('type', 'button');
@@ -385,7 +385,7 @@ export function renderProviderModelPicker(
       }
     }
 
-    providerSelectEl.toggleClass('claudian-hidden', providers.size === 0);
+    providerSelectEl.toggleClass('grandemonium-hidden', providers.size === 0);
     providerSelectEl.empty();
     providerSelectEl.createEl('option', {
       text: `All providers (${models.length})`,
@@ -430,7 +430,7 @@ export function renderProviderModelPicker(
 
     if (models.length === 0) {
       listEl.createDiv({
-        cls: 'claudian-provider-model-picker-empty',
+        cls: 'grandemonium-provider-model-picker-empty',
         text: loadingCatalog
           ? options.loadingCatalogText
           : catalogLoadFailed
@@ -443,10 +443,10 @@ export function renderProviderModelPicker(
     }
 
     for (const model of models) {
-      const rowEl = listEl.createEl('label', { cls: 'claudian-provider-model-picker-row' });
+      const rowEl = listEl.createEl('label', { cls: 'grandemonium-provider-model-picker-row' });
       const isSelected = selectedIds.has(model.id);
       if (isSelected) {
-        rowEl.classList.add('claudian-provider-model-picker-row--selected');
+        rowEl.classList.add('grandemonium-provider-model-picker-row--selected');
       }
       rowEl.title = model.id;
 
@@ -467,10 +467,10 @@ export function renderProviderModelPicker(
         void persistSelection();
       });
 
-      const textEl = rowEl.createDiv({ cls: 'claudian-provider-model-picker-row-text' });
-      const headerEl = textEl.createDiv({ cls: 'claudian-provider-model-picker-row-header' });
+      const textEl = rowEl.createDiv({ cls: 'grandemonium-provider-model-picker-row-text' });
+      const headerEl = textEl.createDiv({ cls: 'grandemonium-provider-model-picker-row-header' });
       headerEl.createSpan({
-        cls: 'claudian-provider-model-picker-row-name',
+        cls: 'grandemonium-provider-model-picker-row-name',
         text: model.name,
       });
       const badgeLabel = model.isAvailable === false
@@ -478,21 +478,21 @@ export function renderProviderModelPicker(
         : model.catalogBadge ?? model.providerLabel;
       if (badgeLabel) {
         const badgeEl = headerEl.createSpan({
-          cls: 'claudian-provider-model-picker-row-badge',
+          cls: 'grandemonium-provider-model-picker-row-badge',
           text: badgeLabel,
         });
         if (model.isAvailable === false) {
-          badgeEl.classList.add('claudian-provider-model-picker-row-badge--unavailable');
+          badgeEl.classList.add('grandemonium-provider-model-picker-row-badge--unavailable');
           badgeEl.title = model.unavailableTitle ?? `Configured model not currently reported by ${options.providerName}`;
         }
       }
       textEl.createDiv({
-        cls: 'claudian-provider-model-picker-row-meta',
+        cls: 'grandemonium-provider-model-picker-row-meta',
         text: model.id,
       });
       if (model.description) {
         textEl.createDiv({
-          cls: 'claudian-provider-model-picker-row-desc',
+          cls: 'grandemonium-provider-model-picker-row-desc',
           text: model.description,
         });
       }

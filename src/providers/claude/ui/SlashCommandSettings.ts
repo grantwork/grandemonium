@@ -45,7 +45,7 @@ export class SlashCommandModal extends Modal {
     const typeLabel = () => selectedType === 'skill' ? 'Skill' : 'Slash Command';
 
     this.setTitle(this.existingEntry ? `Edit ${typeLabel()}` : `Add ${typeLabel()}`);
-    this.modalEl.addClass('claudian-sp-modal');
+    this.modalEl.addClass('grandemonium-sp-modal');
 
     const { contentEl } = this;
 
@@ -66,7 +66,7 @@ export class SlashCommandModal extends Modal {
       if (!disableUserSetting || !disableUserToggle) return;
 
       const isSkillType = selectedType === 'skill';
-      disableUserSetting.settingEl.toggleClass('claudian-hidden', !isSkillType);
+      disableUserSetting.settingEl.toggleClass('grandemonium-hidden', !isSkillType);
       if (!isSkillType) {
         disableUserInvocation = false;
         disableUserToggle.setValue(false);
@@ -108,10 +108,10 @@ export class SlashCommandModal extends Modal {
         text.setValue(this.existingEntry?.description || '');
       });
 
-    const details = contentEl.createEl('details', { cls: 'claudian-sp-advanced-section' });
+    const details = contentEl.createEl('details', { cls: 'grandemonium-sp-advanced-section' });
     details.createEl('summary', {
       text: 'Advanced options',
-      cls: 'claudian-sp-advanced-summary',
+      cls: 'grandemonium-sp-advanced-summary',
     });
     if (
       this.existingEntry?.argumentHint
@@ -176,7 +176,7 @@ export class SlashCommandModal extends Modal {
         toggle.setValue(contextValue === 'fork')
           .onChange(value => {
             contextValue = value ? 'fork' : '';
-            agentSetting.settingEl.toggleClass('claudian-hidden', !value);
+            agentSetting.settingEl.toggleClass('grandemonium-hidden', !value);
           });
       });
 
@@ -188,14 +188,14 @@ export class SlashCommandModal extends Modal {
         text.setValue(this.existingEntry?.agent || '')
           .setPlaceholder('Code-reviewer');
       });
-    agentSetting.settingEl.toggleClass('claudian-hidden', contextValue !== 'fork');
+    agentSetting.settingEl.toggleClass('grandemonium-hidden', contextValue !== 'fork');
 
     new Setting(contentEl)
       .setName('Prompt template')
       .setDesc('Use $ARGUMENTS, $1, $2, @file, !`bash`');
 
     const contentArea = contentEl.createEl('textarea', {
-      cls: 'claudian-sp-content-area',
+      cls: 'grandemonium-sp-content-area',
       attr: {
         rows: '10',
         placeholder: 'Review this code for:\n$ARGUMENTS\n\n@$1',
@@ -206,17 +206,17 @@ export class SlashCommandModal extends Modal {
       : '';
     contentArea.value = initialContent;
 
-    const buttonContainer = contentEl.createDiv({ cls: 'claudian-sp-modal-buttons' });
+    const buttonContainer = contentEl.createDiv({ cls: 'grandemonium-sp-modal-buttons' });
 
     const cancelBtn = buttonContainer.createEl('button', {
       text: 'Cancel',
-      cls: 'claudian-cancel-btn',
+      cls: 'grandemonium-cancel-btn',
     });
     cancelBtn.addEventListener('click', () => this.close());
 
     const saveBtn = buttonContainer.createEl('button', {
       text: 'Save',
-      cls: 'claudian-save-btn',
+      cls: 'grandemonium-save-btn',
     });
     saveBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
@@ -328,32 +328,32 @@ export class SlashCommandSettings {
 
   private renderUnavailable(): void {
     this.containerEl.empty();
-    const emptyEl = this.containerEl.createDiv({ cls: 'claudian-sp-empty-state' });
+    const emptyEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-empty-state' });
     emptyEl.setText('Claude command catalog is unavailable.');
   }
 
   private render(): void {
     this.containerEl.empty();
 
-    const headerEl = this.containerEl.createDiv({ cls: 'claudian-sp-header' });
-    headerEl.createSpan({ text: t('settings.slashCommands.name'), cls: 'claudian-sp-label' });
+    const headerEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-header' });
+    headerEl.createSpan({ text: t('settings.slashCommands.name'), cls: 'grandemonium-sp-label' });
 
-    const actionsEl = headerEl.createDiv({ cls: 'claudian-sp-header-actions' });
+    const actionsEl = headerEl.createDiv({ cls: 'grandemonium-sp-header-actions' });
 
     const addBtn = actionsEl.createEl('button', {
-      cls: 'claudian-settings-action-btn',
+      cls: 'grandemonium-settings-action-btn',
       attr: { 'aria-label': 'Add' },
     });
     setIcon(addBtn, 'plus');
     addBtn.addEventListener('click', () => this.openCommandModal(null));
 
     if (this.commands.length === 0) {
-      const emptyEl = this.containerEl.createDiv({ cls: 'claudian-sp-empty-state' });
+      const emptyEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-empty-state' });
       emptyEl.setText('No commands or skills configured. Click + to create one.');
       return;
     }
 
-    const listEl = this.containerEl.createDiv({ cls: 'claudian-sp-list' });
+    const listEl = this.containerEl.createDiv({ cls: 'grandemonium-sp-list' });
 
     for (const cmd of this.commands) {
       this.renderCommandItem(listEl, cmd);
@@ -361,34 +361,34 @@ export class SlashCommandSettings {
   }
 
   private renderCommandItem(listEl: HTMLElement, cmd: ProviderCommandEntry): void {
-    const itemEl = listEl.createDiv({ cls: 'claudian-sp-item' });
+    const itemEl = listEl.createDiv({ cls: 'grandemonium-sp-item' });
 
-    const infoEl = itemEl.createDiv({ cls: 'claudian-sp-info' });
+    const infoEl = itemEl.createDiv({ cls: 'grandemonium-sp-info' });
 
-    const headerRow = infoEl.createDiv({ cls: 'claudian-sp-item-header' });
+    const headerRow = infoEl.createDiv({ cls: 'grandemonium-sp-item-header' });
 
-    const nameEl = headerRow.createSpan({ cls: 'claudian-sp-item-name' });
+    const nameEl = headerRow.createSpan({ cls: 'grandemonium-sp-item-name' });
     nameEl.setText(`/${cmd.name}`);
 
     if (isSkillEntry(cmd)) {
-      headerRow.createSpan({ text: 'skill', cls: 'claudian-slash-item-badge' });
+      headerRow.createSpan({ text: 'skill', cls: 'grandemonium-slash-item-badge' });
     }
 
     if (cmd.argumentHint) {
-      const hintEl = headerRow.createSpan({ cls: 'claudian-slash-item-hint' });
+      const hintEl = headerRow.createSpan({ cls: 'grandemonium-slash-item-hint' });
       hintEl.setText(cmd.argumentHint);
     }
 
     if (cmd.description) {
-      const descEl = infoEl.createDiv({ cls: 'claudian-sp-item-desc' });
+      const descEl = infoEl.createDiv({ cls: 'grandemonium-sp-item-desc' });
       descEl.setText(cmd.description);
     }
 
-    const actionsEl = itemEl.createDiv({ cls: 'claudian-sp-item-actions' });
+    const actionsEl = itemEl.createDiv({ cls: 'grandemonium-sp-item-actions' });
 
     if (cmd.isEditable) {
       const editBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn',
+        cls: 'grandemonium-settings-action-btn',
         attr: { 'aria-label': 'Edit' },
       });
       setIcon(editBtn, 'pencil');
@@ -397,7 +397,7 @@ export class SlashCommandSettings {
 
     if (!isSkillEntry(cmd) && cmd.isEditable) {
       const convertBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn',
+        cls: 'grandemonium-settings-action-btn',
         attr: { 'aria-label': 'Convert to skill' },
       });
       setIcon(convertBtn, 'package');
@@ -414,7 +414,7 @@ export class SlashCommandSettings {
 
     if (cmd.isDeletable) {
       const deleteBtn = actionsEl.createEl('button', {
-        cls: 'claudian-settings-action-btn claudian-settings-delete-btn',
+        cls: 'grandemonium-settings-action-btn grandemonium-settings-delete-btn',
         attr: { 'aria-label': 'Delete' },
       });
       setIcon(deleteBtn, 'trash-2');

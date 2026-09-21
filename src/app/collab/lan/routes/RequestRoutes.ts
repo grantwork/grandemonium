@@ -11,7 +11,7 @@ import type {
   CollabControlRouteHandler,
   CollabControlRouteRequest,
 } from '@/app/collab/lan/routes/RouteTypes';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function routeError(reason: string): CollabError {
   return new CollabError({

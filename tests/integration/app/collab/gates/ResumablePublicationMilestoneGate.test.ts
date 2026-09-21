@@ -15,7 +15,7 @@ import { TEST_INSTALLATION_A, TEST_INSTALLATION_B } from '@test/helpers/installa
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
+import { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { InvitationCodec } from '@/app/collab/lan/InvitationCodec';
 import { CollabProjectSetupService } from '@/app/collab/project/CollabProjectSetupService';
 import { CollabPublicationService } from '@/app/collab/publish/CollabPublicationService';
@@ -38,8 +38,8 @@ async function availablePort(): Promise<number> {
 
 describe('M4 resumable publication gate', () => {
   let SQL: SqlJsStatic;
-  let host: ClaudianCollabService;
-  let member: ClaudianCollabService;
+  let host: GrandemoniumCollabService;
+  let member: GrandemoniumCollabService;
   const publications: CollabPublicationService[] = [];
   let root: string;
 
@@ -55,7 +55,7 @@ describe('M4 resumable publication gate', () => {
   });
 
   it('commits offline once, resumes after reconstruction, and ensures one request', async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-m4-gate-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-m4-gate-'));
     const hostRoot = path.join(root, 'host-vault');
     const memberRoot = path.join(root, 'member-vault');
     await Promise.all([mkdir(hostRoot), mkdir(memberRoot)]);
@@ -63,7 +63,7 @@ describe('M4 resumable publication gate', () => {
       isAddressAllowed: address => address === '127.0.0.1',
     });
     const hostPort = await availablePort();
-    host = new ClaudianCollabService({
+    host = new GrandemoniumCollabService({
       installationKey: TEST_INSTALLATION_A,
       createAuthorityDatabase: authorityDirectory => new SqlJsProjectDatabase(
         authorityDirectory,
@@ -78,7 +78,7 @@ describe('M4 resumable publication gate', () => {
       obsidianConfigDirectory: '.obsidian',
       vaultRoot: hostRoot,
     });
-    member = new ClaudianCollabService({
+    member = new GrandemoniumCollabService({
       installationKey: TEST_INSTALLATION_B,
       getConfiguredGitPath: () => '',
       invitationCodec,
@@ -184,7 +184,7 @@ describe('M4 resumable publication gate', () => {
     const hostGit = await host.requireGitFoundation();
     const bareRepository = path.join(
       hostRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       projectId,

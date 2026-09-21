@@ -31,7 +31,7 @@ describe('ProjectInvitationModal', () => {
   it('owns invitation creation, copy, and revoke without changing its parent layout', async () => {
     const port: jest.Mocked<ProjectInvitationModalPort> = {
       createInvitation: jest.fn().mockResolvedValue(success({
-        encodedInvitation: 'claudian-collab:v2:invite-alpha',
+        encodedInvitation: 'grandemonium-collab:v2:invite-alpha',
         expiresAt: '2026-08-08T00:15:00.000Z',
       })),
       revokeInvitation: jest.fn().mockResolvedValue(success(undefined)),
@@ -49,12 +49,12 @@ describe('ProjectInvitationModal', () => {
       'project-alpha',
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
-    expect(modal.contentEl.textContent).toContain('claudian-collab:v2:invite-alpha');
+    expect(modal.contentEl.textContent).toContain('grandemonium-collab:v2:invite-alpha');
 
     modal.contentEl.querySelector<HTMLButtonElement>('[data-action="copy-invitation"]')
       ?.click();
     await flush();
-    expect(copyText).toHaveBeenCalledWith('claudian-collab:v2:invite-alpha');
+    expect(copyText).toHaveBeenCalledWith('grandemonium-collab:v2:invite-alpha');
 
     modal.contentEl.querySelector<HTMLButtonElement>('[data-action="revoke-invitation"]')
       ?.click();

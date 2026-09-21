@@ -18,7 +18,7 @@ import {
   type AuthoritySqlRow,
   SqlJsProjectDatabase,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 const CREATED_AT = '2026-08-08T00:00:00.000Z';
 const COMMENTED_AT = '2026-08-08T00:01:00.000Z';
@@ -36,7 +36,7 @@ describe('RequestCommentService', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-request-comment-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-request-comment-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {
@@ -114,7 +114,7 @@ describe('RequestCommentService', () => {
     '   ',
     'contains\u0000nul',
     'contains\u001fcontrol',
-    'x'.repeat(CLAUDIAN_COLLAB_LIMITS.maxCommentBytes + 1),
+    'x'.repeat(GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes + 1),
   ])('rejects invalid comment body %#', async body => {
     await expect(service.create('member-host', input('invalid-key', body)))
       .rejects.toMatchObject({ code: 'protocol-payload-invalid' });

@@ -21,12 +21,12 @@ import { AuthorityEventRepository } from '@/app/collab/authority/AuthorityEventR
 import { AuthorityIdempotencyRepository } from '@/app/collab/authority/AuthorityIdempotencyRepository';
 import { ProjectAuthorityRepository } from '@/app/collab/authority/ProjectAuthorityRepository';
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
 import { COLLAB_ORIGIN_MAIN_REF } from '@/app/collab/git/collabGitRefs';
 import { GitCommandRunner } from '@/app/collab/git/GitCommandRunner';
 import { GitRepositoryService } from '@/app/collab/git/GitRepositoryService';
 import { type GitRuntime,GitRuntimeResolver } from '@/app/collab/git/GitRuntimeResolver';
+import { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { JoinProjectCoordinator } from '@/app/collab/join/JoinProjectCoordinator';
 import {
   type CollabControlProjectService,
@@ -48,7 +48,7 @@ describe('Join Project same-device LAN integration', () => {
   let SQL: SqlJsStatic;
   let database: SqlJsProjectDatabase;
   let hostRoot: string;
-  let memberFoundation: ClaudianCollabService;
+  let memberFoundation: GrandemoniumCollabService;
   let memberRoot: string;
   let proxy: GitHttpBackendProxy;
   let root: string;
@@ -70,10 +70,10 @@ describe('Join Project same-device LAN integration', () => {
   });
 
   it('joins through pinned control and production Smart HTTP before activation', async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-join-lan-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-join-lan-'));
     hostRoot = path.join(root, 'host-vault');
     memberRoot = path.join(root, 'member-vault');
-    const authorityDirectory = path.join(hostRoot, '.claudian', 'collab', 'authorities', PROJECT_ID);
+    const authorityDirectory = path.join(hostRoot, '.grandemonium', 'collab', 'authorities', PROJECT_ID);
     const bareRepositoryPath = path.join(authorityDirectory, 'repository.git');
     await mkdir(authorityDirectory, { recursive: true });
     await mkdir(memberRoot);
@@ -202,7 +202,7 @@ describe('Join Project same-device LAN integration', () => {
       idempotencyKey: 'create-invitation-alpha',
       projectId: PROJECT_ID,
     });
-    memberFoundation = new ClaudianCollabService({
+    memberFoundation = new GrandemoniumCollabService({
       getConfiguredGitPath: () => runtime.executablePath,
       installationKey: TEST_INSTALLATION_B,
       obsidianConfigDirectory: '.obsidian',
@@ -280,7 +280,7 @@ describe('Join Project same-device LAN integration', () => {
     })).resolves.toMatchObject({ exitCode: 1 });
     await expect(readFile(path.join(
       memberRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,

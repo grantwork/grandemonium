@@ -2,7 +2,7 @@ import type { CollabProjectId } from '@claudian-collab/protocol';
 
 import type { RetirementTombstoneRepository } from '@/app/collab/retirement/RetirementTombstoneRepository';
 import type { CollabHostTrustTransitionProof, CollabRetirementResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RetirementTerminalResponse<T> {
   readonly body: T;

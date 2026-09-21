@@ -2,7 +2,7 @@ import { type CollabOperationId, type CollabProjectId, isCollabGitOid, isCollabO
 
 import { CollabPathPolicy } from '@/app/collab/CollabPathPolicy';
 import { type CollabConflictDescriptor, type CollabConflictEntry } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 export const COLLAB_CONFLICT_RESOLUTION_SCHEMA_VERSION = 2 as const;
 
@@ -83,7 +83,7 @@ function projectIdField(value: UnknownRecord, key: string): string {
 }
 
 function relativePathField(value: UnknownRecord, key: string): string {
-  const field = stringField(value, key, CLAUDIAN_COLLAB_LIMITS.maxRepositoryPathUtf16);
+  const field = stringField(value, key, GRANDEMONIUM_COLLAB_LIMITS.maxRepositoryPathUtf16);
   if (!pathPolicy.validateRepositoryPath(field).ok) {
     throw new TypeError(`Invalid ${key}`);
   }
@@ -125,7 +125,7 @@ function decodeDescriptor(value: unknown): CollabConflictDescriptor {
   }
   if (
     value.conflicts.length === 0
-    || value.conflicts.length > CLAUDIAN_COLLAB_LIMITS.maxChangedPaths
+    || value.conflicts.length > GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths
   ) {
     throw new TypeError('Invalid conflict count');
   }

@@ -34,7 +34,7 @@ import type {
   CloudAuthorityHttpRequest,
   CloudAuthorityHttpResponse,
 } from '@/app/collab/remote-authority/NodeCloudAuthorityHttpTransport';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 jest.setTimeout(30_000);
 
@@ -48,7 +48,7 @@ describe('Cloud Publish recovery integration', () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-publish-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-publish-'));
     const emptyConfigPath = path.join(root, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');
     const resolution = await new GitRuntimeResolver().resolve();

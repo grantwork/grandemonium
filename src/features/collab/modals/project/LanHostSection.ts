@@ -41,7 +41,7 @@ export class LanHostSection {
     private readonly options: LanHostSectionOptions,
   ) {
     this.project = options.project;
-    this.rootEl = createDiv({ cls: 'claudian-collab-host-section' });
+    this.rootEl = createDiv({ cls: 'grandemonium-collab-host-section' });
     this.render();
   }
 
@@ -77,11 +77,11 @@ export class LanHostSection {
     this.rootEl.replaceChildren();
     const warning = hostStatus === 'needs-attention' || !!this.errorText;
 
-    const header = this.rootEl.createDiv({ cls: 'claudian-collab-host-section-header' });
+    const header = this.rootEl.createDiv({ cls: 'grandemonium-collab-host-section-header' });
     header.createSpan({ text: t('collab.host.summary') });
     if (installationStatus === 'hosted-elsewhere') {
       header.createSpan({
-        cls: 'claudian-collab-host-badge',
+        cls: 'grandemonium-collab-host-badge',
         text: t('collab.host.hostedElsewhere'),
       });
       return;
@@ -91,21 +91,21 @@ export class LanHostSection {
       return;
     }
     header.createSpan({
-      cls: 'claudian-collab-host-badge',
+      cls: 'grandemonium-collab-host-badge',
       text: t('collab.host.hostedHere'),
     });
     this.renderStatusButton(header, hostStatus, warning);
     if (!warning) return;
 
-    const body = this.rootEl.createDiv({ cls: 'claudian-collab-host-body' });
+    const body = this.rootEl.createDiv({ cls: 'grandemonium-collab-host-body' });
     if (this.errorText) {
       body.createDiv({
         attr: { role: 'alert' },
-        cls: 'claudian-collab-host-error',
+        cls: 'grandemonium-collab-host-error',
         text: this.errorText,
       });
     }
-    const actions = body.createDiv({ cls: 'claudian-collab-host-actions' });
+    const actions = body.createDiv({ cls: 'grandemonium-collab-host-actions' });
     if (this.options.onOpenDiagnostics) {
       const diagnostics = actions.createEl('button', {
         attr: { 'data-action': 'host-diagnostics', type: 'button' },
@@ -152,8 +152,8 @@ export class LanHostSection {
         type: 'button',
       },
       cls: warning
-        ? 'claudian-collab-host-badge claudian-collab-host-badge--warning'
-        : 'claudian-collab-host-badge',
+        ? 'grandemonium-collab-host-badge grandemonium-collab-host-badge--warning'
+        : 'grandemonium-collab-host-badge',
       text: this.statusLabel(status),
     });
     button.disabled = pending;

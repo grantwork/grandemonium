@@ -1,19 +1,19 @@
 /* Write/Edit Diff Block - Subagent style */
-.claudian-write-edit-block {
+.grandemonium-write-edit-block {
   margin: 4px 0;
   background: transparent;
   overflow: hidden;
 }
 
-.claudian-text-block+.claudian-write-edit-block {
+.grandemonium-text-block+.grandemonium-write-edit-block {
   margin-top: 8px;
 }
 
-.claudian-write-edit-block+.claudian-text-block {
+.grandemonium-write-edit-block+.grandemonium-text-block {
   margin-top: 8px;
 }
 
-.claudian-write-edit-header {
+.grandemonium-write-edit-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -24,20 +24,20 @@
   overflow: hidden;
 }
 
-.claudian-write-edit-icon {
+.grandemonium-write-edit-icon {
   width: 16px;
   height: 16px;
   color: var(--text-accent);
   flex-shrink: 0;
 }
 
-.claudian-write-edit-icon svg {
+.grandemonium-write-edit-icon svg {
   width: 16px;
   height: 16px;
 }
 
 /* Two-part header: name (fixed) + summary (flexible) */
-.claudian-write-edit-name {
+.grandemonium-write-edit-name {
   font-family: var(--font-monospace);
   font-size: 13px;
   font-weight: 400;
@@ -46,7 +46,7 @@
   flex-shrink: 0;
 }
 
-.claudian-write-edit-summary {
+.grandemonium-write-edit-summary {
   font-family: var(--font-monospace);
   font-size: 13px;
   color: var(--text-muted);
@@ -57,57 +57,57 @@
   min-width: 0;
 }
 
-.claudian-write-edit-stats {
+.grandemonium-write-edit-stats {
   font-family: var(--font-monospace);
   font-size: 11px;
   flex-shrink: 0;
 }
 
-.claudian-write-edit-stats .added {
+.grandemonium-write-edit-stats .added {
   color: var(--color-green);
 }
 
-.claudian-write-edit-stats .removed {
+.grandemonium-write-edit-stats .removed {
   color: var(--color-red);
   margin-left: 4px;
 }
 
-.claudian-write-edit-status {
+.grandemonium-write-edit-status {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
 }
 
 /* Hide empty status on successful completion so stats align to right edge */
-.claudian-write-edit-block.done .claudian-write-edit-status:empty {
+.grandemonium-write-edit-block.done .grandemonium-write-edit-status:empty {
   display: none;
 }
 
-.claudian-write-edit-status svg {
+.grandemonium-write-edit-status svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-write-edit-status.status-completed {
+.grandemonium-write-edit-status.status-completed {
   color: var(--color-green);
 }
 
-.claudian-write-edit-status.status-error,
-.claudian-write-edit-status.status-blocked {
+.grandemonium-write-edit-status.status-error,
+.grandemonium-write-edit-status.status-blocked {
   color: var(--color-red);
 }
 
-.claudian-write-edit-content {
+.grandemonium-write-edit-content {
   padding: 0;
   background: transparent;
   overflow: hidden;
 }
 
-.claudian-write-edit-diff-row {
+.grandemonium-write-edit-diff-row {
   display: flex;
 }
 
-.claudian-write-edit-diff {
+.grandemonium-write-edit-diff {
   flex: 1;
   font-family: var(--font-monospace);
   font-size: 12px;
@@ -118,30 +118,30 @@
   overflow-x: auto;
 }
 
-.claudian-write-edit-loading,
-.claudian-write-edit-error,
-.claudian-write-edit-done-text {
+.grandemonium-write-edit-loading,
+.grandemonium-write-edit-error,
+.grandemonium-write-edit-done-text {
   font-family: var(--font-monospace);
   font-size: 12px;
   color: var(--text-muted);
 }
 
-.claudian-write-edit-error {
+.grandemonium-write-edit-error {
   color: var(--color-red);
 }
 
 /* Diff line styling */
-.claudian-diff-hunk {
+.grandemonium-diff-hunk {
   margin-bottom: 4px;
 }
 
-.claudian-diff-line {
+.grandemonium-diff-line {
   display: flex;
   white-space: pre-wrap;
   word-break: break-all;
 }
 
-.claudian-diff-prefix {
+.grandemonium-diff-prefix {
   flex-shrink: 0;
   width: 16px;
   text-align: center;
@@ -149,36 +149,36 @@
   user-select: none;
 }
 
-.claudian-diff-text {
+.grandemonium-diff-text {
   flex: 1;
   min-width: 0;
 }
 
 /* Diff colors - NO strikethrough for Write/Edit blocks */
-.claudian-diff-equal {
+.grandemonium-diff-equal {
   color: var(--text-muted);
 }
 
-.claudian-diff-delete {
+.grandemonium-diff-delete {
   background: rgba(255, 80, 80, 0.25);
   color: var(--text-normal);
 }
 
-.claudian-diff-delete .claudian-diff-prefix {
+.grandemonium-diff-delete .grandemonium-diff-prefix {
   color: var(--color-red);
 }
 
-.claudian-diff-insert {
+.grandemonium-diff-insert {
   background: rgba(80, 200, 80, 0.25);
   color: var(--text-normal);
 }
 
-.claudian-diff-insert .claudian-diff-prefix {
+.grandemonium-diff-insert .grandemonium-diff-prefix {
   color: var(--color-green);
 }
 
 /* Hunk separator */
-.claudian-diff-separator {
+.grandemonium-diff-separator {
   color: var(--text-muted);
   text-align: center;
   padding: 4px 0;
@@ -189,7 +189,7 @@
   font-size: 11px;
 }
 
-.claudian-diff-no-changes {
+.grandemonium-diff-no-changes {
   color: var(--text-muted);
   font-style: italic;
   padding: 8px;

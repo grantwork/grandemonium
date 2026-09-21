@@ -18,7 +18,7 @@ describe('NativeGitWorkingTreeReviewRepository', () => {
   let repositoryPath: string;
 
   beforeEach(async () => {
-    repositoryPath = await mkdtemp(path.join(os.tmpdir(), 'claudian-working-review-'));
+    repositoryPath = await mkdtemp(path.join(os.tmpdir(), 'grandemonium-working-review-'));
   });
 
   afterEach(async () => {

@@ -10,7 +10,7 @@ import {
 } from '@/app/collab/lan/CollabControlRouter';
 import type { LanCollabInvitation } from '@/app/collab/lan/InvitationCodec';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-alpha';
 const INVITATION_SECRET = Buffer.alloc(32, 2).toString('base64url');
@@ -234,7 +234,7 @@ describe('CollabControlRouter', () => {
         projectId: PROJECT_ID,
       }),
       headers: {
-        authorization: `Claudian-Invitation ${INVITATION_SECRET}`,
+        authorization: `Grandemonium-Invitation ${INVITATION_SECRET}`,
         'content-type': 'application/json',
         'x-request-id': REQUEST_ID,
       },
@@ -914,7 +914,7 @@ describe('CollabControlRouter', () => {
     const malformed = await fetch(`${endpoint}/v9/projects/${PROJECT_ID}/join-attempts`, {
       body: JSON.stringify({ projectId: PROJECT_ID }),
       headers: {
-        authorization: `Claudian-Invitation ${INVITATION_SECRET}`,
+        authorization: `Grandemonium-Invitation ${INVITATION_SECRET}`,
         'content-type': 'application/json',
       },
       method: 'POST',
@@ -924,7 +924,7 @@ describe('CollabControlRouter', () => {
     const oversized = await fetch(`${endpoint}/v9/projects/${PROJECT_ID}/join-attempts`, {
       body: JSON.stringify({ value: 'x'.repeat(COLLAB_LIMITS.maxJsonPayloadUtf8Bytes) }),
       headers: {
-        authorization: `Claudian-Invitation ${INVITATION_SECRET}`,
+        authorization: `Grandemonium-Invitation ${INVITATION_SECRET}`,
         'content-type': 'application/json',
       },
       method: 'POST',

@@ -1,8 +1,8 @@
 import { type CollabChangedFile, type CollabChangeRequest, type CollabComment, type CollabMember, type CollabRequestTicketRelation, type CollabResolvingTicketExpectation, type CollabTicketAcceptedRelation, type CollabTicketComment, type CollabTicketDetail, type CollabTicketSummary } from '@claudian-collab/protocol';
 
 import { type CollabBoundedQueryPort, type CollabConflictEntry, type CollabConflictFileContent, type CollabConflictOpaqueVersion, type CollabFeaturePort, type CollabLocalProjectSummary, type CollabProjectInspection, type CollabPublicationReview, type CollabPublishOutcome, type CollabResult, type CollabReviewFileContent } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 import {
   AGENT_RUNTIME_PROTOCOL_VERSION,
@@ -118,7 +118,7 @@ const RELATIVE_PATH = Object.freeze({
 });
 
 const SHARED_PAGE_CURSOR = Object.freeze({
-  maxLength: CLAUDIAN_COLLAB_LIMITS.maxPageCursorUtf16,
+  maxLength: GRANDEMONIUM_COLLAB_LIMITS.maxPageCursorUtf16,
   minLength: 1,
   pattern: CONTROL_FREE_PATTERN,
   type: 'string' as const,
@@ -137,35 +137,35 @@ const TICKET_REVISION = Object.freeze({
 });
 
 const TICKET_TITLE = Object.freeze({
-  maxLength: CLAUDIAN_COLLAB_LIMITS.maxTicketTitleUtf16,
+  maxLength: GRANDEMONIUM_COLLAB_LIMITS.maxTicketTitleUtf16,
   minLength: 1,
   pattern: NONBLANK_PATTERN,
   type: 'string' as const,
 });
 
 const TICKET_BODY = Object.freeze({
-  maxBytes: CLAUDIAN_COLLAB_LIMITS.maxTicketBodyBytes,
+  maxBytes: GRANDEMONIUM_COLLAB_LIMITS.maxTicketBodyBytes,
   minBytes: 1,
   pattern: NONBLANK_PATTERN,
   type: 'string' as const,
 });
 
 const REQUEST_COMMENT_BODY = Object.freeze({
-  maxBytes: CLAUDIAN_COLLAB_LIMITS.maxCommentBytes,
+  maxBytes: GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes,
   minBytes: 1,
   pattern: NONBLANK_PATTERN,
   type: 'string' as const,
 });
 
 const TICKET_COMMENT_BODY = Object.freeze({
-  maxBytes: CLAUDIAN_COLLAB_LIMITS.maxTicketCommentBytes,
+  maxBytes: GRANDEMONIUM_COLLAB_LIMITS.maxTicketCommentBytes,
   minBytes: 1,
   pattern: NONBLANK_PATTERN,
   type: 'string' as const,
 });
 
 const PUBLISH_DESCRIPTION = Object.freeze({
-  maxBytes: CLAUDIAN_COLLAB_LIMITS.maxRequestDescriptionBytes,
+  maxBytes: GRANDEMONIUM_COLLAB_LIMITS.maxRequestDescriptionBytes,
   minBytes: 1,
   pattern: NONBLANK_PATTERN,
   type: 'string' as const,
@@ -264,7 +264,7 @@ const resolvingTicketsParam = () => param(
       ]),
       type: 'object' as const,
     }),
-    maxItems: CLAUDIAN_COLLAB_LIMITS.maxRequestTicketRelations,
+    maxItems: GRANDEMONIUM_COLLAB_LIMITS.maxRequestTicketRelations,
     minItems: 0,
     type: 'array' as const,
     uniqueBy: 'ticketId',
@@ -353,8 +353,8 @@ const METHOD_DEFINITIONS = {
         SHARED_PAGE_CURSOR,
       ),
       param('limit', 'Maximum Tickets to return.', false, {
-        default: CLAUDIAN_COLLAB_LIMITS.defaultTicketPageSize,
-        maximum: CLAUDIAN_COLLAB_LIMITS.maxTicketPageSize,
+        default: GRANDEMONIUM_COLLAB_LIMITS.defaultTicketPageSize,
+        maximum: GRANDEMONIUM_COLLAB_LIMITS.maxTicketPageSize,
         minimum: 1,
         type: 'integer',
       }),
@@ -422,8 +422,8 @@ const METHOD_DEFINITIONS = {
     parameters: sharedPageParams(
       ticketIdParam(),
       'Ticket comment',
-      CLAUDIAN_COLLAB_LIMITS.defaultCommentPageSize,
-      CLAUDIAN_COLLAB_LIMITS.maxCommentPageSize,
+      GRANDEMONIUM_COLLAB_LIMITS.defaultCommentPageSize,
+      GRANDEMONIUM_COLLAB_LIMITS.maxCommentPageSize,
     ),
     resultDescription: 'Ticket comments and an optional continuation cursor.',
     execute: async (params, context, signal) => withCollab(
@@ -453,8 +453,8 @@ const METHOD_DEFINITIONS = {
     parameters: sharedPageParams(
       ticketIdParam(),
       'accepted relation',
-      CLAUDIAN_COLLAB_LIMITS.maxRelationsPerPage,
-      CLAUDIAN_COLLAB_LIMITS.maxRelationsPerPage,
+      GRANDEMONIUM_COLLAB_LIMITS.maxRelationsPerPage,
+      GRANDEMONIUM_COLLAB_LIMITS.maxRelationsPerPage,
     ),
     resultDescription: 'Accepted relations and an optional continuation cursor.',
     execute: async (params, context, signal) => withCollab(
@@ -538,8 +538,8 @@ const METHOD_DEFINITIONS = {
     parameters: sharedPageParams(
       requestIdParam(),
       'Request comment',
-      CLAUDIAN_COLLAB_LIMITS.defaultCommentPageSize,
-      CLAUDIAN_COLLAB_LIMITS.maxCommentPageSize,
+      GRANDEMONIUM_COLLAB_LIMITS.defaultCommentPageSize,
+      GRANDEMONIUM_COLLAB_LIMITS.maxCommentPageSize,
     ),
     resultDescription: 'Request comments and an optional continuation cursor.',
     execute: async (params, context, signal) => withCollab(
@@ -882,7 +882,7 @@ function ticketStatusDefinition(
 function listRuntimeOperations(): AgentRuntimeMethodOutcome {
   return success({
     access: 'read-write',
-    name: 'claudian-agent-runtime',
+    name: 'grandemonium-agent-runtime',
     operations: AGENT_RUNTIME_OPERATION_SUMMARIES,
     protocolVersion: AGENT_RUNTIME_PROTOCOL_VERSION,
   });

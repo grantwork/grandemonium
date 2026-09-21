@@ -1,11 +1,11 @@
-.claudian-history-container,
-.claudian-nav-dropup-container {
+.grandemonium-history-container,
+.grandemonium-nav-dropup-container {
   position: static;
 }
 
-.claudian-session-sidebar {
+.grandemonium-session-sidebar {
   display: none;
-  flex: 0 0 var(--claudian-session-sidebar-width, 240px);
+  flex: 0 0 var(--grandemonium-session-sidebar-width, 240px);
   flex-direction: column;
   min-width: 0;
   min-height: 0;
@@ -13,7 +13,7 @@
   background: var(--background-primary);
 }
 
-.claudian-session-resizer {
+.grandemonium-session-resizer {
   position: relative;
   display: none;
   flex: 0 0 5px;
@@ -21,7 +21,7 @@
   touch-action: none;
 }
 
-.claudian-session-resizer::after {
+.grandemonium-session-resizer::after {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 2px;
@@ -31,31 +31,31 @@
   transition: background 0.15s ease;
 }
 
-.claudian-session-resizer:hover::after,
-.claudian-session-resizer:focus-visible::after,
-.claudian-resizing-session-sidebar .claudian-session-resizer::after {
+.grandemonium-session-resizer:hover::after,
+.grandemonium-session-resizer:focus-visible::after,
+.grandemonium-resizing-session-sidebar .grandemonium-session-resizer::after {
   background: var(--interactive-accent);
 }
 
-.claudian-resizing-session-sidebar,
-.claudian-resizing-session-sidebar * {
+.grandemonium-resizing-session-sidebar,
+.grandemonium-resizing-session-sidebar * {
   cursor: col-resize;
   user-select: none;
 }
 
-.claudian-wide-session-layout .claudian-session-sidebar {
+.grandemonium-wide-session-layout .grandemonium-session-sidebar {
   display: flex;
 }
 
-.claudian-wide-session-layout .claudian-session-resizer {
+.grandemonium-wide-session-layout .grandemonium-session-resizer {
   display: block;
 }
 
-.claudian-wide-session-layout .claudian-view-input-nav-row {
+.grandemonium-wide-session-layout .grandemonium-view-input-nav-row {
   display: none;
 }
 
-.claudian-sidebar-surface-track {
+.grandemonium-sidebar-surface-track {
   display: flex;
   flex: 1 1 auto;
   min-width: 0;
@@ -64,21 +64,21 @@
   scrollbar-width: none;
 }
 
-.claudian-sidebar-surface-track--paging {
+.grandemonium-sidebar-surface-track--paging {
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
 }
 
-.claudian-sidebar-surface-track::-webkit-scrollbar {
+.grandemonium-sidebar-surface-track::-webkit-scrollbar {
   display: none;
 }
 
-.claudian-sidebar-surface-track > :is(
-  .claudian-session-surface,
-  .claudian-collab-surface,
-  .claudian-sidebar-surface-replica
+.grandemonium-sidebar-surface-track > :is(
+  .grandemonium-session-surface,
+  .grandemonium-collab-surface,
+  .grandemonium-sidebar-surface-replica
 ) {
   flex: 0 0 100%;
   width: 100%;
@@ -86,7 +86,7 @@
   scroll-snap-stop: always;
 }
 
-.claudian-sidebar-surface-replica {
+.grandemonium-sidebar-surface-replica {
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -96,26 +96,26 @@
   user-select: none;
 }
 
-.claudian-sidebar-surface-replica > .claudian-sidebar-surface-replica-content {
+.grandemonium-sidebar-surface-replica > .grandemonium-sidebar-surface-replica-content {
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
   min-height: 0;
 }
 
-.claudian-sidebar-surface-track > .claudian-sidebar-surface-page--before {
+.grandemonium-sidebar-surface-track > .grandemonium-sidebar-surface-page--before {
   order: 0;
 }
 
-.claudian-sidebar-surface-track > .claudian-sidebar-surface-page--active {
+.grandemonium-sidebar-surface-track > .grandemonium-sidebar-surface-page--active {
   order: 1;
 }
 
-.claudian-sidebar-surface-track > .claudian-sidebar-surface-page--after {
+.grandemonium-sidebar-surface-track > .grandemonium-sidebar-surface-page--after {
   order: 2;
 }
 
-.claudian-sidebar-surface-switcher {
+.grandemonium-sidebar-surface-switcher {
   display: flex;
   flex: 0 0 28px;
   align-items: center;
@@ -126,8 +126,8 @@
   background: transparent;
 }
 
-.claudian-session-surface,
-.claudian-collab-surface {
+.grandemonium-session-surface,
+.grandemonium-collab-surface {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -136,7 +136,7 @@
   overflow: hidden;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,13 +152,13 @@
   box-shadow: none;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button:hover,
-.claudian-session-sidebar .claudian-sidebar-surface-button:active {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button:hover,
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button:active {
   background: transparent;
   box-shadow: none;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button::before {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button::before {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -168,29 +168,29 @@
   transition: opacity 0.12s ease;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button:hover::before {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button:hover::before {
   opacity: 0.45;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button.is-active::before {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button.is-active::before {
   opacity: 0.72;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button:focus-visible {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button:focus-visible {
   background: transparent;
   box-shadow: none;
   outline: none;
 }
 
-.claudian-session-sidebar .claudian-sidebar-surface-button:focus-visible::before {
+.grandemonium-session-sidebar .grandemonium-sidebar-surface-button:focus-visible::before {
   opacity: 0.72;
   outline: 2px solid var(--interactive-accent);
   outline-offset: 2px;
 }
 
-.claudian-session-new-control,
-.claudian-session-search-control,
-.claudian-session-archive-control {
+.grandemonium-session-new-control,
+.grandemonium-session-search-control,
+.grandemonium-session-archive-control {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -205,17 +205,17 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.claudian-session-new-control:hover,
-.claudian-session-new-control:focus-visible,
-.claudian-session-search-control:hover,
-.claudian-session-search-control:focus-visible,
-.claudian-session-archive-control:hover,
-.claudian-session-archive-control:focus-visible {
+.grandemonium-session-new-control:hover,
+.grandemonium-session-new-control:focus-visible,
+.grandemonium-session-search-control:hover,
+.grandemonium-session-search-control:focus-visible,
+.grandemonium-session-archive-control:hover,
+.grandemonium-session-archive-control:focus-visible {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.claudian-session-search-field {
+.grandemonium-session-search-field {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -227,11 +227,11 @@
   color: var(--text-muted);
 }
 
-.claudian-session-archive-control {
+.grandemonium-session-archive-control {
   margin-bottom: 12px;
 }
 
-.claudian-session-search-input {
+.grandemonium-session-search-input {
   flex: 1 1 auto;
   min-width: 0;
   padding: 0;
@@ -243,33 +243,33 @@
   box-shadow: none;
 }
 
-.claudian-session-search-input:hover,
-.claudian-session-search-input:focus {
+.grandemonium-session-search-input:hover,
+.grandemonium-session-search-input:focus {
   border: 0;
   background: transparent;
   box-shadow: none;
   outline: none;
 }
 
-.claudian-session-search-input::-webkit-search-cancel-button {
+.grandemonium-session-search-input::-webkit-search-cancel-button {
   display: none;
 }
 
-.claudian-session-new-icon,
-.claudian-session-nav-icon {
+.grandemonium-session-new-icon,
+.grandemonium-session-nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 16px;
 }
 
-.claudian-session-new-icon svg,
-.claudian-session-nav-icon svg {
+.grandemonium-session-new-icon svg,
+.grandemonium-session-nav-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-session-sidebar .claudian-history-header {
+.grandemonium-session-sidebar .grandemonium-history-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -278,24 +278,24 @@
   border-bottom: none;
 }
 
-.claudian-session-sidebar .claudian-history-section--sessions:not(:first-child) {
+.grandemonium-session-sidebar .grandemonium-history-section--sessions:not(:first-child) {
   margin-top: 4px;
 }
 
-.claudian-session-sidebar .claudian-session-section-header {
+.grandemonium-session-sidebar .grandemonium-session-section-header {
   flex-shrink: 0;
   min-height: 40px;
   background: var(--background-primary);
 }
 
-.claudian-session-header-actions {
+.grandemonium-session-header-actions {
   display: flex;
   align-items: center;
   gap: 4px;
   margin-inline-start: auto;
 }
 
-.claudian-session-header-btn {
+.grandemonium-session-header-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -304,7 +304,7 @@
   cursor: pointer;
 }
 
-.claudian-session-header-icon {
+.grandemonium-session-header-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,22 +314,22 @@
   transition: color 0.15s ease;
 }
 
-.claudian-session-header-btn:hover .claudian-session-header-icon,
-.claudian-session-header-btn:focus-visible .claudian-session-header-icon {
+.grandemonium-session-header-btn:hover .grandemonium-session-header-icon,
+.grandemonium-session-header-btn:focus-visible .grandemonium-session-header-icon {
   color: var(--text-normal);
 }
 
-.claudian-session-header-icon svg {
+.grandemonium-session-header-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-session-header-icon[data-icon-state] svg {
+.grandemonium-session-header-icon[data-icon-state] svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-session-sidebar .claudian-history-list {
+.grandemonium-session-sidebar .grandemonium-history-list {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -338,7 +338,7 @@
   overflow: hidden;
 }
 
-.claudian-session-sidebar .claudian-history-section--pinned {
+.grandemonium-session-sidebar .grandemonium-history-section--pinned {
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
@@ -346,29 +346,29 @@
   min-height: 0;
 }
 
-.claudian-session-sidebar .claudian-history-section--pinned
-  .claudian-history-section-items {
+.grandemonium-session-sidebar .grandemonium-history-section--pinned
+  .grandemonium-history-section-items {
   min-height: 0;
   overflow-y: auto;
   overflow-anchor: none;
 }
 
-.claudian-session-sidebar .claudian-history-section--sessions,
-.claudian-session-sidebar .claudian-history-section--archived {
+.grandemonium-session-sidebar .grandemonium-history-section--sessions,
+.grandemonium-session-sidebar .grandemonium-history-section--archived {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
 }
 
-.claudian-session-sidebar .claudian-session-list-items {
+.grandemonium-session-sidebar .grandemonium-session-list-items {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overflow-anchor: none;
 }
 
-.claudian-session-group-header {
+.grandemonium-session-group-header {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -381,24 +381,24 @@
   border-radius: 6px;
 }
 
-.claudian-session-group-header:hover,
-.claudian-session-group-header:focus-visible {
+.grandemonium-session-group-header:hover,
+.grandemonium-session-group-header:focus-visible {
   background: var(--background-modifier-hover);
 }
 
-.claudian-session-group-icon {
+.grandemonium-session-group-icon {
   display: flex;
   flex: 0 0 14px;
   align-items: center;
   justify-content: center;
 }
 
-.claudian-session-group-icon svg {
+.grandemonium-session-group-icon svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-session-group-label {
+.grandemonium-session-group-label {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
@@ -406,19 +406,19 @@
   white-space: nowrap;
 }
 
-.claudian-session-group-header--attention .claudian-session-group-label {
+.grandemonium-session-group-header--attention .grandemonium-session-group-label {
   color: var(--text-normal);
   animation: attention-title-pulse 1.6s ease-in-out infinite;
 }
 
-.claudian-session-group-status {
+.grandemonium-session-group-status {
   flex-shrink: 0;
   font-size: 10px;
   font-weight: 400;
 }
 
-.claudian-session-group-running-indicator,
-.claudian-session-running-indicator {
+.grandemonium-session-group-running-indicator,
+.grandemonium-session-running-indicator {
   display: none;
   flex: 0 0 14px;
   align-items: center;
@@ -426,20 +426,20 @@
   color: var(--interactive-accent);
 }
 
-.claudian-session-group-running-indicator--visible,
-.claudian-session-running-indicator {
+.grandemonium-session-group-running-indicator--visible,
+.grandemonium-session-running-indicator {
   display: flex;
 }
 
-.claudian-session-group-running-indicator svg,
-.claudian-session-running-indicator svg {
+.grandemonium-session-group-running-indicator svg,
+.grandemonium-session-running-indicator svg {
   width: 14px;
   height: 14px;
   animation: spin 1s linear infinite;
   stroke-width: 2.5;
 }
 
-.claudian-session-status-indicator {
+.grandemonium-session-status-indicator {
   display: flex;
   flex: 0 0 14px;
   width: 14px;
@@ -448,29 +448,29 @@
   justify-content: center;
 }
 
-.claudian-session-group-status-indicator {
+.grandemonium-session-group-status-indicator {
   display: none;
 }
 
-.claudian-session-group-status-indicator--visible {
+.grandemonium-session-group-status-indicator--visible {
   display: flex;
 }
 
-.claudian-session-status-indicator svg {
+.grandemonium-session-status-indicator svg {
   width: 14px;
   height: 14px;
   stroke-width: 2.5;
 }
 
-.claudian-session-status-indicator--action-required {
+.grandemonium-session-status-indicator--action-required {
   color: var(--color-orange);
 }
 
-.claudian-session-status-indicator--error {
+.grandemonium-session-status-indicator--error {
   color: var(--text-error);
 }
 
-.claudian-session-group-new-action {
+.grandemonium-session-group-new-action {
   display: none;
   flex: 0 0 18px;
   width: 18px;
@@ -484,90 +484,90 @@
   box-shadow: none;
 }
 
-.claudian-session-group-header:hover .claudian-session-group-new-action,
-.claudian-session-group-header:focus-within .claudian-session-group-new-action {
+.grandemonium-session-group-header:hover .grandemonium-session-group-new-action,
+.grandemonium-session-group-header:focus-within .grandemonium-session-group-new-action {
   display: flex;
 }
 
-.claudian-session-group-new-action:hover,
-.claudian-session-group-new-action:focus-visible {
+.grandemonium-session-group-new-action:hover,
+.grandemonium-session-group-new-action:focus-visible {
   border: 0;
   background: transparent;
   color: var(--text-normal);
   box-shadow: none;
 }
 
-.claudian-session-group-new-action svg {
+.grandemonium-session-group-new-action svg {
   width: 14px;
   height: 14px;
   color: var(--text-muted);
   transition: color 0.15s ease;
 }
 
-.claudian-session-group-new-action:hover svg,
-.claudian-session-group-new-action:focus-visible svg {
+.grandemonium-session-group-new-action:hover svg,
+.grandemonium-session-group-new-action:focus-visible svg {
   color: var(--text-normal);
 }
 
-.claudian-session-group-body--collapsed {
+.grandemonium-session-group-body--collapsed {
   display: none;
 }
 
-.claudian-session-group-header--missing .claudian-session-group-icon,
-.claudian-session-group-header--missing .claudian-session-group-label,
-.claudian-session-group-header--missing .claudian-session-group-status {
+.grandemonium-session-group-header--missing .grandemonium-session-group-icon,
+.grandemonium-session-group-header--missing .grandemonium-session-group-label,
+.grandemonium-session-group-header--missing .grandemonium-session-group-status {
   color: var(--text-error);
 }
 
-.claudian-session-sidebar .claudian-history-item {
+.grandemonium-session-sidebar .grandemonium-history-item {
   position: relative;
   border-bottom: none;
   border-radius: 6px;
 }
 
-.claudian-session-sidebar .claudian-history-item-icon {
+.grandemonium-session-sidebar .grandemonium-history-item-icon {
   display: none;
 }
 
-.claudian-session-sidebar .claudian-history-item-title {
+.grandemonium-session-sidebar .grandemonium-history-item-title {
   color: var(--text-muted);
 }
 
-.claudian-session-sidebar .claudian-history-item.active,
-.claudian-session-sidebar .claudian-history-item.open {
+.grandemonium-session-sidebar .grandemonium-history-item.active,
+.grandemonium-session-sidebar .grandemonium-history-item.open {
   padding-inline-start: 12px;
   background: transparent;
   border-inline-start: none;
 }
 
-.claudian-session-sidebar .claudian-session-group-body .claudian-history-item {
+.grandemonium-session-sidebar .grandemonium-session-group-body .grandemonium-history-item {
   padding-inline-start: 32px;
 }
 
-.claudian-session-sidebar .claudian-history-item.active:hover,
-.claudian-session-sidebar .claudian-history-item.open:hover {
+.grandemonium-session-sidebar .grandemonium-history-item.active:hover,
+.grandemonium-session-sidebar .grandemonium-history-item.open:hover {
   background: var(--background-modifier-hover);
 }
 
-.claudian-session-sidebar .claudian-history-item.active .claudian-history-item-title {
+.grandemonium-session-sidebar .grandemonium-history-item.active .grandemonium-history-item-title {
   color: var(--text-normal);
 }
 
-.claudian-session-sidebar
-  .claudian-history-item.claudian-history-item--attention
-  .claudian-history-item-title {
+.grandemonium-session-sidebar
+  .grandemonium-history-item.grandemonium-history-item--attention
+  .grandemonium-history-item-title {
   color: var(--text-normal);
   animation: attention-title-pulse 1.6s ease-in-out infinite;
 }
 
-.claudian-session-sidebar .claudian-history-item-actions {
+.grandemonium-session-sidebar .grandemonium-history-item-actions {
   display: none;
   flex-shrink: 0;
   gap: 6px;
   margin-inline-start: 0;
 }
 
-.claudian-session-metadata-popover {
+.grandemonium-session-metadata-popover {
   position: fixed;
   z-index: 1000;
   box-sizing: border-box;
@@ -580,11 +580,11 @@
   box-shadow: var(--shadow-s);
 }
 
-body.theme-dark .claudian-session-metadata-popover {
+body.theme-dark .grandemonium-session-metadata-popover {
   background-color: #1e1e1e;
 }
 
-.claudian-session-metadata-row {
+.grandemonium-session-metadata-row {
   display: grid;
   grid-template-columns: 16px max-content minmax(0, 1fr);
   align-items: center;
@@ -594,63 +594,63 @@ body.theme-dark .claudian-session-metadata-popover {
   font-size: var(--font-ui-small);
 }
 
-.claudian-session-metadata-row--provider {
+.grandemonium-session-metadata-row--provider {
   grid-template-columns: 16px minmax(0, 1fr);
 }
 
-.claudian-session-metadata-row--unlabeled {
+.grandemonium-session-metadata-row--unlabeled {
   grid-template-columns: 16px minmax(0, 1fr);
 }
 
-.claudian-session-metadata-row--provider-no-icon {
+.grandemonium-session-metadata-row--provider-no-icon {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.claudian-session-metadata-provider-icon {
+.grandemonium-session-metadata-provider-icon {
   color: var(--text-muted);
 }
 
-.claudian-session-metadata-icon {
+.grandemonium-session-metadata-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
 }
 
-.claudian-session-metadata-icon svg {
+.grandemonium-session-metadata-icon svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-session-metadata-label {
+.grandemonium-session-metadata-label {
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.claudian-session-metadata-value {
+.grandemonium-session-metadata-value {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.claudian-session-metadata-value--content {
+.grandemonium-session-metadata-value--content {
   overflow-x: auto;
   overflow-y: hidden;
   text-overflow: clip;
   scrollbar-width: none;
 }
 
-.claudian-session-metadata-value--content::-webkit-scrollbar {
+.grandemonium-session-metadata-value--content::-webkit-scrollbar {
   display: none;
 }
 
-.claudian-session-sidebar .claudian-history-item:hover .claudian-history-item-actions,
-.claudian-session-sidebar .claudian-history-item:focus-within .claudian-history-item-actions {
+.grandemonium-session-sidebar .grandemonium-history-item:hover .grandemonium-history-item-actions,
+.grandemonium-session-sidebar .grandemonium-history-item:focus-within .grandemonium-history-item-actions {
   display: flex;
 }
 
-.claudian-session-sidebar .claudian-history-item-actions .claudian-action-btn {
+.grandemonium-session-sidebar .grandemonium-history-item-actions .grandemonium-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -664,29 +664,29 @@ body.theme-dark .claudian-session-metadata-popover {
   color: var(--text-muted);
 }
 
-.claudian-session-sidebar .claudian-history-item-actions .claudian-action-btn:hover,
-.claudian-session-sidebar .claudian-history-item-actions .claudian-action-btn:focus-visible {
+.grandemonium-session-sidebar .grandemonium-history-item-actions .grandemonium-action-btn:hover,
+.grandemonium-session-sidebar .grandemonium-history-item-actions .grandemonium-action-btn:focus-visible {
   background: transparent;
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-session-sidebar .claudian-history-item-actions .claudian-delete-btn:hover,
-.claudian-session-sidebar .claudian-history-item-actions .claudian-delete-btn:focus-visible {
+.grandemonium-session-sidebar .grandemonium-history-item-actions .grandemonium-delete-btn:hover,
+.grandemonium-session-sidebar .grandemonium-history-item-actions .grandemonium-delete-btn:focus-visible {
   color: var(--color-red);
 }
 
-.claudian-session-sidebar .claudian-archive-btn:disabled {
+.grandemonium-session-sidebar .grandemonium-archive-btn:disabled {
   color: var(--text-faint);
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.claudian-history-item--noninteractive .claudian-history-item-content {
+.grandemonium-history-item--noninteractive .grandemonium-history-item-content {
   cursor: default;
 }
 
-.claudian-history-archive-control {
+.grandemonium-history-archive-control {
   position: sticky;
   top: 0;
   z-index: 1;
@@ -703,14 +703,14 @@ body.theme-dark .claudian-session-metadata-popover {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.claudian-history-archive-control:hover,
-.claudian-history-archive-control:focus-visible {
+.grandemonium-history-archive-control:hover,
+.grandemonium-history-archive-control:focus-visible {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
 /* Single-pane dropup shell (opens upward since it's at bottom of view) */
-.claudian-nav-dropup-menu {
+.grandemonium-nav-dropup-menu {
   display: none;
   position: absolute;
   bottom: 100%;
@@ -728,29 +728,29 @@ body.theme-dark .claudian-session-metadata-popover {
   inset-inline-end: 0;
 }
 
-.claudian-nav-dropup-menu.visible {
+.grandemonium-nav-dropup-menu.visible {
   display: block;
 }
 
-.claudian-nav-dropup-menu--surface.visible {
+.grandemonium-nav-dropup-menu--surface.visible {
   display: flex;
   height: min(400px, 60vh);
   flex-direction: column;
 }
 
-.claudian-nav-dropup-menu--surface > .claudian-collab-surface {
+.grandemonium-nav-dropup-menu--surface > .grandemonium-collab-surface {
   width: 100%;
   height: 100%;
 }
 
-.claudian-compact-collab-button.is-active {
+.grandemonium-compact-collab-button.is-active {
   border: 0;
   background: transparent;
   box-shadow: none;
   color: var(--text-muted);
 }
 
-.claudian-history-header {
+.grandemonium-history-header {
   padding: 8px 12px;
   font-size: 12px;
   font-weight: 600;
@@ -760,20 +760,20 @@ body.theme-dark .claudian-session-metadata-popover {
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.claudian-history-list {
+.grandemonium-history-list {
   max-height: 350px;
   overflow-y: auto;
   overflow-anchor: none;
 }
 
-.claudian-history-empty {
+.grandemonium-history-empty {
   padding: 16px;
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
 }
 
-.claudian-history-item {
+.grandemonium-history-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -782,86 +782,86 @@ body.theme-dark .claudian-session-metadata-popover {
   transition: background 0.15s ease;
 }
 
-.claudian-history-item-icon {
+.grandemonium-history-item-icon {
   display: flex;
   align-items: center;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
-.claudian-history-item-icon svg {
+.grandemonium-history-item-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-history-item:last-child {
+.grandemonium-history-item:last-child {
   border-bottom: none;
 }
 
-.claudian-history-item:hover {
+.grandemonium-history-item:hover {
   background: var(--background-modifier-hover);
 }
 
-.claudian-history-item.active {
+.grandemonium-history-item.active {
   background: var(--background-modifier-hover);
   border-inline-start: 2px solid var(--interactive-accent);
   padding-inline-start: 10px;
 }
 
-.claudian-history-item.active:hover {
+.grandemonium-history-item.active:hover {
   background: var(--background-modifier-active-hover, var(--background-modifier-hover));
 }
 
-.claudian-history-item.active .claudian-history-item-icon {
+.grandemonium-history-item.active .grandemonium-history-item-icon {
   color: var(--interactive-accent);
 }
 
-.claudian-history-item.active .claudian-history-item-content {
+.grandemonium-history-item.active .grandemonium-history-item-content {
   cursor: default;
 }
 
-.claudian-history-item.active .claudian-history-item-date {
+.grandemonium-history-item.active .grandemonium-history-item-date {
   color: var(--text-faint);
 }
 
-.claudian-history-item.open {
+.grandemonium-history-item.open {
   background: var(--background-modifier-hover);
   border-inline-start: 2px solid var(--interactive-accent);
   padding-inline-start: 10px;
 }
 
-.claudian-history-item.open:hover {
+.grandemonium-history-item.open:hover {
   background: var(--background-modifier-active-hover, var(--background-modifier-hover));
 }
 
-.claudian-history-item.open .claudian-history-item-icon {
+.grandemonium-history-item.open .grandemonium-history-item-icon {
   color: var(--interactive-accent);
 }
 
-.claudian-history-item.open .claudian-history-item-date {
+.grandemonium-history-item.open .grandemonium-history-item-date {
   color: var(--text-muted);
 }
 
-.claudian-history-item.running .claudian-history-item-icon {
+.grandemonium-history-item.running .grandemonium-history-item-icon {
   color: var(--interactive-accent);
 }
 
-.claudian-history-item.running .claudian-history-item-icon svg {
+.grandemonium-history-item.running .grandemonium-history-item-icon svg {
   animation: spin 1s linear infinite;
 }
 
-.claudian-history-item.running .claudian-history-item-date {
+.grandemonium-history-item.running .grandemonium-history-item-date {
   color: var(--interactive-accent);
   font-weight: 500;
 }
 
-.claudian-history-item-content {
+.grandemonium-history-item-content {
   flex: 1;
   min-width: 0;
   cursor: pointer;
 }
 
-.claudian-history-item-title {
+.grandemonium-history-item-title {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-normal);
@@ -870,13 +870,13 @@ body.theme-dark .claudian-session-metadata-popover {
   text-overflow: ellipsis;
 }
 
-.claudian-history-item-date {
+.grandemonium-history-item-date {
   font-size: 11px;
   color: var(--text-faint);
   margin-top: 2px;
 }
 
-.claudian-history-item-actions {
+.grandemonium-history-item-actions {
   display: flex;
   gap: 4px;
   margin-inline-start: 8px;
@@ -884,15 +884,15 @@ body.theme-dark .claudian-session-metadata-popover {
   transition: opacity 0.15s ease;
 }
 
-.claudian-history-item:hover .claudian-history-item-actions {
+.grandemonium-history-item:hover .grandemonium-history-item-actions {
   opacity: 1;
 }
 
-.claudian-history-item:focus-within .claudian-history-item-actions {
+.grandemonium-history-item:focus-within .grandemonium-history-item-actions {
   opacity: 1;
 }
 
-.claudian-action-btn {
+.grandemonium-action-btn {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -902,25 +902,25 @@ body.theme-dark .claudian-session-metadata-popover {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.claudian-action-btn:hover {
+.grandemonium-action-btn:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.claudian-action-btn svg {
+.grandemonium-action-btn svg {
   width: 14px;
   height: 14px;
 }
 
-.claudian-delete-btn:hover {
+.grandemonium-delete-btn:hover {
   color: var(--color-red);
 }
 
-.claudian-open-new-tab-btn:hover {
+.grandemonium-open-new-tab-btn:hover {
   color: var(--interactive-accent);
 }
 
-.claudian-history-menu .claudian-history-item-actions .claudian-action-btn {
+.grandemonium-history-menu .grandemonium-history-item-actions .grandemonium-action-btn {
   background: transparent;
   border: none;
   box-shadow: none;
@@ -928,15 +928,15 @@ body.theme-dark .claudian-session-metadata-popover {
   transition: color 0.15s ease;
 }
 
-.claudian-history-menu .claudian-history-item-actions .claudian-action-btn:hover,
-.claudian-history-menu .claudian-history-item-actions .claudian-action-btn:focus-visible {
+.grandemonium-history-menu .grandemonium-history-item-actions .grandemonium-action-btn:hover,
+.grandemonium-history-menu .grandemonium-history-item-actions .grandemonium-action-btn:focus-visible {
   background: transparent;
   border: none;
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-rename-input {
+.grandemonium-rename-input {
   width: 100%;
   padding: 2px 4px;
   font-size: 13px;
@@ -947,13 +947,13 @@ body.theme-dark .claudian-session-metadata-popover {
   color: var(--text-normal);
 }
 
-.claudian-rename-input:focus {
+.grandemonium-rename-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--interactive-accent-hover);
 }
 
 /* Loading indicator for title generation */
-.claudian-action-loading {
+.grandemonium-action-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -962,7 +962,7 @@ body.theme-dark .claudian-session-metadata-popover {
   cursor: default;
 }
 
-.claudian-history-load-more {
+.grandemonium-history-load-more {
   width: calc(100% - 16px);
   margin: 8px;
   padding: 8px 12px;
@@ -973,7 +973,7 @@ body.theme-dark .claudian-session-metadata-popover {
   cursor: pointer;
 }
 
-.claudian-history-load-more:hover {
+.grandemonium-history-load-more:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }

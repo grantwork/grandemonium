@@ -9,7 +9,7 @@ import type {
   CollabRetirementPort,
 } from '@/app/collab/CollabFeatureService';
 import { type CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabProjectLifecycleProjectionPort {
   closeProjectAdmission(projectId: CollabProjectId): void;

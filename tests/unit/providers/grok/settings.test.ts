@@ -52,6 +52,7 @@ describe('Grok settings', () => {
 
   it('defaults to disabled with empty environment and host state', () => {
     expect(DEFAULT_GROK_PROVIDER_SETTINGS).toEqual({
+      agentName: 'grok',
       catalogsByHost: {},
       cliPath: '',
       cliPathsByHost: {},

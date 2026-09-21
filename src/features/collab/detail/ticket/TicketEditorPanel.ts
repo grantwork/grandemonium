@@ -221,7 +221,7 @@ export class TicketEditorPanel {
     }
     const snapshot = coordination.snapshot;
     this.resetRoot();
-    const form = this.rootEl.createEl('form', { cls: 'claudian-collab-ticket-editor' });
+    const form = this.rootEl.createEl('form', { cls: 'grandemonium-collab-ticket-editor' });
     form.createEl('h2', { text: t('collab.tickets.createTitle') });
     const title = this.textInput(form, t('collab.tickets.title'), 'ticket-title');
     title.value = draft?.title ?? '';
@@ -236,7 +236,7 @@ export class TicketEditorPanel {
     title.required = true;
     const status = form.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-ticket-editor-status',
+      cls: 'grandemonium-collab-ticket-editor-status',
     });
     const submit = form.createEl('button', {
       attr: { type: 'submit' },
@@ -276,22 +276,22 @@ export class TicketEditorPanel {
       && (current.role === 'manager' || ticket.authorMemberId === current.id);
     const canChangeStatus = canEdit;
     const editing = canEdit && draft?.edit !== null && draft?.edit !== undefined;
-    const editor = this.rootEl.createDiv({ cls: 'claudian-collab-ticket-editor' });
+    const editor = this.rootEl.createDiv({ cls: 'grandemonium-collab-ticket-editor' });
     if (!writable) {
       editor.createDiv({
         attr: { 'data-state': 'ticket-offline-read-only' },
-        cls: 'claudian-collab-ticket-offline-read-only',
+        cls: 'grandemonium-collab-ticket-offline-read-only',
         text: t('collab.tickets.offlineReadOnly'),
       });
     }
-    const titleRow = editor.createDiv({ cls: 'claudian-collab-ticket-detail-header' });
+    const titleRow = editor.createDiv({ cls: 'grandemonium-collab-ticket-detail-header' });
     const heading = titleRow.createEl('h2');
     heading.createSpan({
-      cls: 'claudian-collab-ticket-detail-title',
+      cls: 'grandemonium-collab-ticket-detail-title',
       text: ticket.title,
     });
     heading.createSpan({
-      cls: 'claudian-collab-ticket-detail-number',
+      cls: 'grandemonium-collab-ticket-detail-number',
       text: `#${ticket.number}`,
     });
     const statusButton = titleRow.createEl('button', {
@@ -300,7 +300,7 @@ export class TicketEditorPanel {
         'data-ticket-status': ticket.status,
         type: 'button',
       },
-      cls: 'claudian-collab-ticket-status-toggle',
+      cls: 'grandemonium-collab-ticket-status-toggle',
       text: ticket.status === 'open'
         ? t('collab.tickets.open')
         : t('collab.tickets.closed'),
@@ -328,13 +328,13 @@ export class TicketEditorPanel {
     }
     const mutationStatus = editor.createDiv({
       attr: { 'aria-live': 'polite' },
-      cls: 'claudian-collab-ticket-editor-status',
+      cls: 'grandemonium-collab-ticket-editor-status',
     });
 
     if (canEdit && !editing) {
       const edit = titleRow.createEl('button', {
         attr: { 'data-action': 'edit-ticket', type: 'button' },
-        cls: 'claudian-collab-ticket-edit',
+        cls: 'grandemonium-collab-ticket-edit',
         text: t('common.edit'),
       });
       edit.addEventListener('click', () => {
@@ -371,7 +371,7 @@ export class TicketEditorPanel {
         snapshot,
         editDraft.body,
       );
-      const editActions = editor.createDiv({ cls: 'claudian-collab-ticket-edit-actions' });
+      const editActions = editor.createDiv({ cls: 'grandemonium-collab-ticket-edit-actions' });
       const save = editActions.createEl('button', {
         attr: { 'data-action': 'save-ticket', type: 'button' },
         cls: 'mod-cta',
@@ -411,7 +411,7 @@ export class TicketEditorPanel {
         this.renderDetail(detail, coordination, nextDraft);
       });
     } else {
-      const bodyPreview = editor.createDiv({ cls: 'claudian-collab-ticket-markdown' });
+      const bodyPreview = editor.createDiv({ cls: 'grandemonium-collab-ticket-markdown' });
       this.renderMarkdown(detail.body, bodyPreview);
     }
 
@@ -428,14 +428,14 @@ export class TicketEditorPanel {
     writable: boolean,
     commentDraft: MarkdownDraftState | null,
   ): void {
-    const activity = editor.createDiv({ cls: 'claudian-collab-ticket-activity' });
+    const activity = editor.createDiv({ cls: 'grandemonium-collab-ticket-activity' });
     const entries = this.activityEntries(detail);
     if (entries.length > 0) {
       activity.classList.add('has-entries');
       activity.createEl('h3', {
         text: t('collab.tickets.activity', { count: entries.length }),
       });
-      const timeline = activity.createDiv({ cls: 'claudian-collab-ticket-timeline' });
+      const timeline = activity.createDiv({ cls: 'grandemonium-collab-ticket-timeline' });
       for (const entry of entries) {
         const kind = entry.kind === 'comment' ? 'comment' : entry.relation.kind;
         const item = timeline.createDiv({
@@ -443,7 +443,7 @@ export class TicketEditorPanel {
             'data-activity-at': entry.at,
             'data-activity-kind': kind,
           },
-          cls: `claudian-collab-ticket-activity-item is-${kind}`,
+          cls: `grandemonium-collab-ticket-activity-item is-${kind}`,
         });
         if (entry.kind === 'comment') {
           const member = snapshot.members.find(
@@ -458,13 +458,13 @@ export class TicketEditorPanel {
             renderMarkdown: this.options.renderMarkdown,
           });
         } else {
-          const metadata = item.createDiv({ cls: 'claudian-collab-comment-meta' });
+          const metadata = item.createDiv({ cls: 'grandemonium-collab-comment-meta' });
           metadata.createEl('time', {
             attr: { datetime: entry.at },
             text: new Date(entry.at).toLocaleString(),
           });
           item.createDiv({
-            cls: 'claudian-collab-ticket-relation-event',
+            cls: 'grandemonium-collab-ticket-relation-event',
             text: `${entry.relation.kind === 'resolves'
               ? t('collab.tickets.resolvedBy')
               : t('collab.tickets.referencedBy')} ${entry.relation.commitOid.slice(0, 8)}`,
@@ -644,7 +644,7 @@ export class TicketEditorPanel {
   }
 
   private textInput(root: HTMLElement, labelText: string, field: string): HTMLInputElement {
-    const label = root.createEl('label', { cls: 'claudian-collab-ticket-field' });
+    const label = root.createEl('label', { cls: 'grandemonium-collab-ticket-field' });
     label.createSpan({ text: labelText });
     return label.createEl('input', {
       attr: { 'data-field': field, type: 'text' },
@@ -659,8 +659,8 @@ export class TicketEditorPanel {
     snapshot: CollabProjectSnapshot,
     draft?: MarkdownDraftState,
   ): MarkdownDraftEditor {
-    const fieldEl = root.createDiv({ cls: 'claudian-collab-ticket-field' });
-    const headerEl = fieldEl.createDiv({ cls: 'claudian-collab-ticket-field-header' });
+    const fieldEl = root.createDiv({ cls: 'grandemonium-collab-ticket-field' });
+    const headerEl = fieldEl.createDiv({ cls: 'grandemonium-collab-ticket-field-header' });
     headerEl.createSpan({ text: labelText });
     const toolbarEl = headerEl.createDiv();
     const editorEl = fieldEl.createDiv({ attr: { 'data-field': field } });
@@ -692,7 +692,7 @@ export class TicketEditorPanel {
   private renderMessage(message: string, error = false): void {
     this.resetRoot();
     this.rootEl.createDiv({
-      cls: `claudian-collab-ticket-editor-status${error ? ' is-error' : ''}`,
+      cls: `grandemonium-collab-ticket-editor-status${error ? ' is-error' : ''}`,
       text: message,
     });
   }
@@ -701,7 +701,7 @@ export class TicketEditorPanel {
     this.resetRoot();
     this.rootEl.createDiv({
       attr: { 'data-state': 'ticket-offline-read-only' },
-      cls: 'claudian-collab-ticket-offline-read-only',
+      cls: 'grandemonium-collab-ticket-offline-read-only',
       text: message,
     });
   }
@@ -863,7 +863,7 @@ export class TicketEditorPanel {
       }
     }
     const status = this.rootEl.querySelector<HTMLElement>(
-      '.claudian-collab-ticket-editor-status',
+      '.grandemonium-collab-ticket-editor-status',
     );
     if (!status) return;
     if (this.mutationInFlight) status.setText(t('collab.tickets.saving'));

@@ -1,35 +1,35 @@
 /* Input area */
-.claudian-input-container {
+.grandemonium-input-container {
   position: relative;
   padding: 12px 0 0 0;
 }
 
-.claudian-input-footer {
+.grandemonium-input-footer {
   position: relative;
   flex-shrink: 0;
   padding: 6px 0 0 0;
 }
 
-.claudian-active-input-slot > .claudian-input-composer > .claudian-input-container {
+.grandemonium-active-input-slot > .grandemonium-input-composer > .grandemonium-input-container {
   padding-top: 0;
 }
 
 /* Input wrapper (border container) - flex column so textarea expands when no chips */
-.claudian-input-wrapper {
-  --claudian-input-wrapper-border-color: var(--background-modifier-border);
-  --claudian-input-wrapper-box-shadow: none;
+.grandemonium-input-wrapper {
+  --grandemonium-input-wrapper-border-color: var(--background-modifier-border);
+  --grandemonium-input-wrapper-box-shadow: none;
   position: relative;
   display: flex;
   flex-direction: column;
   min-height: 140px;
-  border: 1px solid var(--claudian-input-wrapper-border-color);
+  border: 1px solid var(--grandemonium-input-wrapper-border-color);
   border-radius: 6px;
   background: var(--background-primary);
-  box-shadow: var(--claudian-input-wrapper-box-shadow);
+  box-shadow: var(--grandemonium-input-wrapper-box-shadow);
 }
 
 /* Nav row (tab badges start, action icons end) - above input wrapper */
-.claudian-input-nav-row {
+.grandemonium-input-nav-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -37,11 +37,11 @@
   min-height: 0;
 }
 
-.claudian-input-nav-row:empty {
+.grandemonium-input-nav-row:empty {
   display: none;
 }
 
-.claudian-input-nav-content {
+.grandemonium-input-nav-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -49,7 +49,7 @@
   min-width: 0;
 }
 
-.claudian-input-nav-actions {
+.grandemonium-input-nav-actions {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -57,7 +57,7 @@
   margin-inline-start: auto;
 }
 
-.claudian-input-nav-btn {
+.grandemonium-input-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,17 +73,17 @@
   transition: color 0.15s ease;
 }
 
-.claudian-input-nav-btn:hover,
-.claudian-input-nav-btn:focus-visible,
-.claudian-input-nav-btn:active {
+.grandemonium-input-nav-btn:hover,
+.grandemonium-input-nav-btn:focus-visible,
+.grandemonium-input-nav-btn:active {
   border: 0;
   background: transparent;
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-input-nav-btn:disabled,
-.claudian-input-nav-btn[aria-disabled='true'] {
+.grandemonium-input-nav-btn:disabled,
+.grandemonium-input-nav-btn[aria-disabled='true'] {
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -92,7 +92,7 @@
 }
 
 /* Obsidian applies more specific native-button chrome than the shared nav class. */
-button.claudian-input-nav-btn {
+button.grandemonium-input-nav-btn {
   appearance: none;
   flex: 0 0 24px;
   width: 24px;
@@ -106,9 +106,9 @@ button.claudian-input-nav-btn {
   color: var(--text-muted);
 }
 
-button.claudian-input-nav-btn:hover,
-button.claudian-input-nav-btn:focus-visible,
-button.claudian-input-nav-btn:active {
+button.grandemonium-input-nav-btn:hover,
+button.grandemonium-input-nav-btn:focus-visible,
+button.grandemonium-input-nav-btn:active {
   padding: 0;
   border: 0;
   background: transparent;
@@ -116,8 +116,8 @@ button.claudian-input-nav-btn:active {
   color: var(--text-normal);
 }
 
-button.claudian-input-nav-btn:disabled,
-button.claudian-input-nav-btn[aria-disabled='true'] {
+button.grandemonium-input-nav-btn:disabled,
+button.grandemonium-input-nav-btn[aria-disabled='true'] {
   padding: 0;
   border: 0;
   background: transparent;
@@ -126,22 +126,22 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   cursor: default;
 }
 
-.claudian-input-nav-btn svg {
+.grandemonium-input-nav-btn svg {
   width: 16px;
   height: 16px;
 }
 
-.claudian-new-tab-btn svg {
+.grandemonium-new-tab-btn svg {
   width: 16.8px;
   height: 16.8px;
 }
 
-.claudian-input-wrapper textarea.claudian-input {
+.grandemonium-input-wrapper textarea.grandemonium-input {
   width: 100%;
   flex: 1 1 auto;
   field-sizing: content;
   min-height: 60px;
-  max-height: var(--claudian-textarea-max-height, none);
+  max-height: var(--grandemonium-textarea-max-height, none);
   resize: none;
   padding: 8px 10px 10px 10px;
   border: none;
@@ -156,20 +156,20 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   unicode-bidi: plaintext; /* Proper BiDi text handling for mixed RTL/LTR */
 }
 
-.claudian-input-wrapper textarea.claudian-input:hover,
-.claudian-input-wrapper textarea.claudian-input:focus {
+.grandemonium-input-wrapper textarea.grandemonium-input:hover,
+.grandemonium-input-wrapper textarea.grandemonium-input:focus {
   outline: none;
   border: none;
   background: transparent;
   box-shadow: none;
 }
 
-.claudian-input-wrapper textarea.claudian-input::placeholder {
+.grandemonium-input-wrapper textarea.grandemonium-input::placeholder {
   color: var(--text-muted);
 }
 
 /* Input toolbar */
-.claudian-input-toolbar {
+.grandemonium-input-toolbar {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -180,13 +180,13 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
 }
 
 /* Hide secondary text when the full toolbar would wrap. */
-.claudian-input-toolbar--compact .claudian-thinking-effort > .claudian-thinking-label-text,
-.claudian-input-toolbar--compact .claudian-context-meter-percent {
+.grandemonium-input-toolbar--compact .grandemonium-thinking-effort > .grandemonium-thinking-label-text,
+.grandemonium-input-toolbar--compact .grandemonium-context-meter-percent {
   display: none;
 }
 
 /* Composer queue status row (queued follow-up preview + steer action) */
-.claudian-input-queue-row {
+.grandemonium-input-queue-row {
   display: none;
   font-size: 12px;
   color: var(--text-muted);
@@ -196,7 +196,7 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   padding: 0 2px 8px 2px;
 }
 
-.claudian-queue-indicator-text {
+.grandemonium-queue-indicator-text {
   min-width: 0;
   flex: 1 1 auto;
   white-space: nowrap;
@@ -204,15 +204,15 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   text-overflow: ellipsis;
 }
 
-.claudian-queue-indicator-actions {
+.grandemonium-queue-indicator-actions {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.claudian-queue-indicator-actions button.claudian-queue-indicator-action,
-.claudian-queue-indicator-actions button.claudian-queue-indicator-icon-action {
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-action,
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-icon-action {
   flex: 0 0 auto;
   height: auto;
   padding: 0;
@@ -224,16 +224,16 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   cursor: pointer;
 }
 
-.claudian-queue-indicator-actions button.claudian-queue-indicator-action:is(:hover, :focus-visible, :active),
-.claudian-queue-indicator-actions button.claudian-queue-indicator-icon-action:is(:hover, :focus-visible, :active) {
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-action:is(:hover, :focus-visible, :active),
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-icon-action:is(:hover, :focus-visible, :active) {
   border: 0;
   background: transparent;
   box-shadow: none;
   color: var(--text-normal);
 }
 
-.claudian-queue-indicator-actions button.claudian-queue-indicator-action[disabled],
-.claudian-queue-indicator-actions button.claudian-queue-indicator-icon-action[disabled] {
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-action[disabled],
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-icon-action[disabled] {
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -241,20 +241,20 @@ button.claudian-input-nav-btn[aria-disabled='true'] {
   cursor: default;
 }
 
-.claudian-queue-indicator-actions button.claudian-queue-indicator-icon-action {
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-icon-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.claudian-queue-indicator-actions button.claudian-queue-indicator-icon-action svg {
+.grandemonium-queue-indicator-actions button.grandemonium-queue-indicator-icon-action svg {
   width: 14px;
   height: 14px;
   color: currentColor;
 }
 
 /* Light blue border when instruction mode is active */
-.claudian-input-wrapper.claudian-input-instruction-mode {
-  --claudian-input-wrapper-border-color: #60a5fa;
-  --claudian-input-wrapper-box-shadow: 0 0 0 1px #60a5fa;
+.grandemonium-input-wrapper.grandemonium-input-instruction-mode {
+  --grandemonium-input-wrapper-border-color: #60a5fa;
+  --grandemonium-input-wrapper-box-shadow: 0 0 0 1px #60a5fa;
 }

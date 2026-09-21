@@ -15,7 +15,7 @@ import type {
 import type { PublishProjectContext } from '@/app/collab/publish/PublishCoordinator';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import { type CollabConflictDescriptor, type CollabConflictEntry, type CollabConflictFileContent, type CollabConflictFileRequest, type CollabConflictSession, type CollabConflictTextSegment, type CollabOperationOptions, type CollabPublicationReview, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface ConflictResolutionProjectPort {
   load(projectId: CollabProjectId): Promise<PublishProjectContext>;

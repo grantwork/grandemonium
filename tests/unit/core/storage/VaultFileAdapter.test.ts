@@ -522,13 +522,13 @@ describe('VaultFileAdapter', () => {
       });
 
       await expect(Promise.all([
-        vaultAdapter.ensureFolder('.claudian/sessions'),
-        vaultAdapter.ensureFolder('.claudian/sessions'),
+        vaultAdapter.ensureFolder('.grandemonium/sessions'),
+        vaultAdapter.ensureFolder('.grandemonium/sessions'),
       ])).resolves.toEqual([undefined, undefined]);
 
       expect(mockAdapter.mkdir).toHaveBeenCalledTimes(2);
-      expect(mockAdapter.mkdir).toHaveBeenNthCalledWith(1, '.claudian');
-      expect(mockAdapter.mkdir).toHaveBeenNthCalledWith(2, '.claudian/sessions');
+      expect(mockAdapter.mkdir).toHaveBeenNthCalledWith(1, '.grandemonium');
+      expect(mockAdapter.mkdir).toHaveBeenNthCalledWith(2, '.grandemonium/sessions');
     });
   });
 
@@ -608,8 +608,8 @@ describe('VaultFileAdapter', () => {
       ['package', '.agents/skills/portable-skill', 'folder'],
       ['SKILL.md', '.agents/skills/portable-skill/SKILL.md', 'file'],
     ] as const)('rejects a symlinked %s on desktop adapters', async (_label, relative, type) => {
-      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-vault-'));
-      const externalPath = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-external-'));
+      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-vault-'));
+      const externalPath = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-external-'));
       try {
         if (relative !== '.agents') {
           await fs.mkdir(path.join(vaultPath, '.agents/skills/portable-skill'), { recursive: true });
@@ -834,7 +834,7 @@ describe('VaultFileAdapter', () => {
     });
 
     it('never overwrites a destination child created during relocation', async () => {
-      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-vault-'));
+      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-vault-'));
       try {
         await fs.mkdir(path.join(vaultPath, '.agents/skills/old'), { recursive: true });
         await fs.writeFile(path.join(vaultPath, '.agents/skills/old/a.txt'), 'source');
@@ -872,7 +872,7 @@ describe('VaultFileAdapter', () => {
     });
 
     it('never overwrites a source child created before rollback', async () => {
-      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'claudian-vault-'));
+      const vaultPath = await fs.mkdtemp(path.join(os.tmpdir(), 'grandemonium-vault-'));
       try {
         await fs.mkdir(path.join(vaultPath, '.agents/skills/old'), { recursive: true });
         await fs.writeFile(path.join(vaultPath, '.agents/skills/old/a.txt'), 'source');

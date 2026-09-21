@@ -16,7 +16,7 @@ describe('HostTrustTransitionService', () => {
   const roots: string[] = [];
 
   async function identity(name: string): Promise<LanTlsIdentity> {
-    const root = await mkdtemp(path.join(tmpdir(), `claudian-${name}-`));
+    const root = await mkdtemp(path.join(tmpdir(), `grandemonium-${name}-`));
     roots.push(root);
     return new LanTlsIdentity(root, {
       installationKey: TEST_INSTALLATION_A,

@@ -257,12 +257,12 @@ describe('AgentSkillSettings', () => {
     expect(text).not.toContain('provider compatibility issue');
     expect(text).toContain('.agents/skills/broken');
     expect(text).toContain('Missing description');
-    const header = findByClass(container, 'claudian-agent-skills-header');
+    const header = findByClass(container, 'grandemonium-agent-skills-header');
     expect(header).toBeDefined();
     expect(flattenText(header!)).toContain(
       'Manage shared skills in .agents/skills/ for compatible providers.',
     );
-    expect(findByClass(header!, 'claudian-sp-header-actions')).toBeDefined();
+    expect(findByClass(header!, 'grandemonium-sp-header-actions')).toBeDefined();
     expect(coordinator.subscribe).toHaveBeenCalledTimes(1);
   });
 

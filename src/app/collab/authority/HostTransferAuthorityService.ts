@@ -21,7 +21,7 @@ import type {
   DeclineHostTransferRequest,
 } from '@/app/collab/lan/LanCollabControlOperations';
 import type { CollabHostTransferSummary, CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const HOST_TRANSFER_OFFER_TTL_MS = 24 * 60 * 60 * 1000;
 const CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;

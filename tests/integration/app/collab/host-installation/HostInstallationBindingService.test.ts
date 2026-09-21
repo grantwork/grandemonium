@@ -25,7 +25,7 @@ describe('HostInstallationBindingService filesystem boundary', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-host-installation-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-host-installation-'));
   });
 
   afterEach(async () => {
@@ -53,11 +53,11 @@ describe('HostInstallationBindingService filesystem boundary', () => {
   }
 
   function authorityDirectory(): string {
-    return path.join(vaultRoot, '.claudian', 'collab', 'authorities', PROJECT_ID);
+    return path.join(vaultRoot, '.grandemonium', 'collab', 'authorities', PROJECT_ID);
   }
 
   function markerPath(): string {
-    return path.join(authorityDirectory(), '.claudian-authority.json');
+    return path.join(authorityDirectory(), '.grandemonium-authority.json');
   }
 
   async function writeMarker(value: unknown): Promise<void> {
@@ -159,7 +159,7 @@ describe('HostInstallationBindingService filesystem boundary', () => {
     await writeMarker({ projectId: PROJECT_ID, schemaVersion: 1 });
     const scopedRuntime = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -291,7 +291,7 @@ describe('HostInstallationBindingService filesystem boundary', () => {
     const retiredProjectId = 'project-retire';
     const retiredAuthorityDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       retiredProjectId,

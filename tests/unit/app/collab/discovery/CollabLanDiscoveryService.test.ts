@@ -56,7 +56,7 @@ describe('CollabLanDiscoveryService', () => {
     });
 
     expect(fake.runtime.publish).toHaveBeenCalledWith({
-      name: expect.stringMatching(/^Claudian Collab project-a [0-9a-f]{12}$/),
+      name: expect.stringMatching(/^Grandemonium Collab project-a [0-9a-f]{12}$/),
       port: 54545,
       txt: {
         caFingerprint: 'ab'.repeat(32),

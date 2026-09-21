@@ -69,7 +69,7 @@ describe('CollabGitOriginPolicy', () => {
 
   it('repairs a legacy stopped-Host origin without creating a new sentinel', async () => {
     const repository = git([
-      'https://127.0.0.1:1/claudian-collab/host-stopped/project-a',
+      'https://127.0.0.1:1/grandemonium-collab/host-stopped/project-a',
     ]);
 
     await rotateTrustedCollabOrigin(repository, {
@@ -256,7 +256,7 @@ describe('CollabGitOriginPolicy', () => {
   it('rotates a fenced stopped-Host origin to Cloud after LAN relinquishment', async () => {
     const cloudUrl = 'https://cloud.example.test/v2/projects/project-a/repository.git';
     const repository = git([
-      'https://127.0.0.1:1/claudian-collab/host-stopped/project-a',
+      'https://127.0.0.1:1/grandemonium-collab/host-stopped/project-a',
     ]);
 
     await rotateAuthorityTransferOrigin(repository, {

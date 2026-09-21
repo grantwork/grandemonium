@@ -2,7 +2,7 @@ import { loadPrism } from 'obsidian';
 
 import { transformMarkdownSegments } from '../../../utils/markdownSegments';
 
-const PLACEHOLDER_LANGUAGE_PREFIX = 'claudian-display-only-fence-';
+const PLACEHOLDER_LANGUAGE_PREFIX = 'grandemonium-display-only-fence-';
 
 interface PrismHighlighter {
   highlightElement(element: Element): void;

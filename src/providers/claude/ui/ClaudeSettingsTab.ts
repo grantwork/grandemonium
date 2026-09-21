@@ -7,6 +7,7 @@ import { t } from '../../../i18n/i18n';
 import { renderEnvironmentSettingsSection } from '../../../shared/settings/EnvironmentSettingsSection';
 import { renderHostnameCliPathSetting } from '../../../shared/settings/HostnameCliPathSetting';
 import { renderNativeMcpSettingsSection } from '../../../shared/settings/NativeMcpSettingsSection';
+import { renderProviderAgentNameSetting } from '../../../shared/settings/ProviderAgentNameSetting';
 import { renderProviderEnablementSetting } from '../../../shared/settings/ProviderEnablementSetting';
 import { renderLastEnabledProviderWarning } from '../../../shared/settings/ProviderModelEnablementWarning';
 import { getHostnameKey } from '../../../utils/env';
@@ -85,6 +86,18 @@ export const claudeSettingsTabRenderer: ProviderSettingsTabRenderer = {
           lastProviderWarning.showFor();
         }
         context.notifyProviderModelOptionsChanged('claude');
+      },
+    });
+
+    renderProviderAgentNameSetting({
+      container,
+      defaultAgentName: 'claude',
+      getValue: () => getClaudeProviderSettings(settingsBag).agentName,
+      name: 'Agent name',
+      onChange: async (agentName) => {
+        await context.plugin.mutateSettings((settings) => {
+          updateClaudeProviderSettings(settings, { agentName });
+        });
       },
     });
 
@@ -242,7 +255,7 @@ export const claudeSettingsTabRenderer: ProviderSettingsTabRenderer = {
 
     new Setting(container).setName(t('settings.slashCommands.name')).setHeading();
 
-    const slashCommandsDesc = container.createDiv({ cls: 'claudian-sp-settings-desc' });
+    const slashCommandsDesc = container.createDiv({ cls: 'grandemonium-sp-settings-desc' });
     const descP = slashCommandsDesc.createEl('p', { cls: 'setting-item-description' });
     descP.appendText(t('settings.slashCommands.desc') + ' ');
     descP.createEl('a', {
@@ -250,7 +263,7 @@ export const claudeSettingsTabRenderer: ProviderSettingsTabRenderer = {
       href: 'https://code.claude.com/docs/en/skills',
     });
 
-    const slashCommandsContainer = container.createDiv({ cls: 'claudian-slash-commands-container' });
+    const slashCommandsContainer = container.createDiv({ cls: 'grandemonium-slash-commands-container' });
     new SlashCommandSettings(
       slashCommandsContainer,
       context.plugin.app,
@@ -267,13 +280,13 @@ export const claudeSettingsTabRenderer: ProviderSettingsTabRenderer = {
 
     new Setting(container).setName(t('settings.subagents.name')).setHeading();
 
-    const agentsDesc = container.createDiv({ cls: 'claudian-sp-settings-desc' });
+    const agentsDesc = container.createDiv({ cls: 'grandemonium-sp-settings-desc' });
     agentsDesc.createEl('p', {
       text: t('settings.subagents.desc'),
       cls: 'setting-item-description',
     });
 
-    const agentsContainer = container.createDiv({ cls: 'claudian-agents-container' });
+    const agentsContainer = container.createDiv({ cls: 'grandemonium-agents-container' });
     new AgentSettings(agentsContainer, {
       app: context.plugin.app,
       agentManager: claudeWorkspace.agentManager,
@@ -295,13 +308,13 @@ export const claudeSettingsTabRenderer: ProviderSettingsTabRenderer = {
 
     new Setting(container).setName(t('settings.plugins.name')).setHeading();
 
-    const pluginsDesc = container.createDiv({ cls: 'claudian-plugin-settings-desc' });
+    const pluginsDesc = container.createDiv({ cls: 'grandemonium-plugin-settings-desc' });
     pluginsDesc.createEl('p', {
       text: t('settings.plugins.desc'),
       cls: 'setting-item-description',
     });
 
-    const pluginsContainer = container.createDiv({ cls: 'claudian-plugins-container' });
+    const pluginsContainer = container.createDiv({ cls: 'grandemonium-plugins-container' });
     new PluginSettingsManager(pluginsContainer, {
       pluginManager: claudeWorkspace.pluginManager,
       agentManager: claudeWorkspace.agentManager,

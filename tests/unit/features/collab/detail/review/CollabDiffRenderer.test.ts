@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 import {
   CollabDiffRenderer,
   type CollabDiffThemeSource,
@@ -181,7 +181,7 @@ describe('CollabDiffRenderer', () => {
     })).rejects.toMatchObject({ code: 'operation-failed' });
     await expect(renderer.render({
       ...input('large.md'),
-      newText: 'x'.repeat(CLAUDIAN_COLLAB_LIMITS.maxTextDiffBytes + 1),
+      newText: 'x'.repeat(GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffBytes + 1),
     })).rejects.toMatchObject({ code: 'quota-exceeded' });
     expect(harness.load).not.toHaveBeenCalled();
   });

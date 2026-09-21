@@ -31,7 +31,7 @@ function createMockCallbacks() {
 
 function createContainerWithInputWrapper(): { container: any; inputWrapper: any } {
   const container = createMockEl();
-  const inputWrapper = container.createDiv({ cls: 'claudian-input-wrapper' });
+  const inputWrapper = container.createDiv({ cls: 'grandemonium-input-wrapper' });
   return { container, inputWrapper };
 }
 
@@ -184,7 +184,7 @@ describe('ImageContextManager', () => {
 
       const mgr = new ImageContextManager(c, input, cb, previewContainer);
       expect(mgr).toBeDefined();
-      const trayEl = previewContainer.querySelector('.claudian-context-row');
+      const trayEl = previewContainer.querySelector('.grandemonium-context-row');
       expect(trayEl).not.toBeNull();
     });
 
@@ -198,7 +198,7 @@ describe('ImageContextManager', () => {
 
       new ImageContextManager(c, input, cb, previewContainer);
       expect(previewContainer.children).toContain(existingContent);
-      expect(previewContainer.querySelector('.claudian-context-row')).not.toBeNull();
+      expect(previewContainer.querySelector('.grandemonium-context-row')).not.toBeNull();
     });
   });
 });
@@ -665,7 +665,7 @@ describe('ImageContextManager - Private Helpers', () => {
 
   describe('destroy', () => {
     it('unregisters paste and drag/drop listeners', () => {
-      const inputWrapper = manager['containerEl'].querySelector('.claudian-input-wrapper');
+      const inputWrapper = manager['containerEl'].querySelector('.grandemonium-input-wrapper');
       const inputEl = manager['inputEl'];
 
       expect(inputEl.getEventListenerCount('paste')).toBe(1);
@@ -710,12 +710,12 @@ describe('ImageContextManager - Private Helpers', () => {
       try {
         manager.setImages([createImageAttachment({ name: 'photo.png' })]);
         const previewButton = manager['contextTray']['containerEl']
-          .querySelector('.claudian-context-chip-main');
+          .querySelector('.grandemonium-context-chip-main');
 
         expect(previewButton.tagName).toBe('BUTTON');
         previewButton.click();
         expect(mockBody.createDiv).toHaveBeenCalledWith({
-          cls: 'claudian-image-modal-overlay',
+          cls: 'grandemonium-image-modal-overlay',
         });
 
         manager.destroy();
@@ -729,16 +729,16 @@ describe('ImageContextManager - Private Helpers', () => {
       manager.setImages([createImageAttachment({ id: 'img-1', name: 'photo.png', size: 2048 })]);
 
       const trayEl = manager['contextTray']['containerEl'];
-      const chipEl = trayEl.querySelector('.claudian-context-chip--image');
+      const chipEl = trayEl.querySelector('.grandemonium-context-chip--image');
       expect(chipEl).not.toBeNull();
 
-      const thumbEl = chipEl.querySelector('.claudian-context-chip-thumbnail');
+      const thumbEl = chipEl.querySelector('.grandemonium-context-chip-thumbnail');
       expect(thumbEl).toBeNull();
 
-      const labelEl = chipEl.querySelector('.claudian-context-chip-label');
+      const labelEl = chipEl.querySelector('.grandemonium-context-chip-label');
       expect(labelEl?.textContent).toBe('Image');
 
-      const removeEl = chipEl.querySelector('.claudian-context-chip-remove');
+      const removeEl = chipEl.querySelector('.grandemonium-context-chip-remove');
       expect(removeEl).not.toBeNull();
     });
 
@@ -749,7 +749,7 @@ describe('ImageContextManager - Private Helpers', () => {
       ]);
 
       const trayEl = manager['contextTray']['containerEl'];
-      const labels = trayEl.querySelectorAll('.claudian-context-chip-label');
+      const labels = trayEl.querySelectorAll('.grandemonium-context-chip-label');
 
       expect(labels.map((label: any) => label.textContent)).toEqual(['Image 1', 'Image 2']);
     });
@@ -769,8 +769,8 @@ describe('ImageContextManager - Private Helpers', () => {
       cb.onImagesChanged.mockClear();
 
       const trayEl = mgr['contextTray']['containerEl'];
-      const firstChip = trayEl.querySelector('.claudian-context-chip--image');
-      const removeEl = firstChip.querySelector('.claudian-context-chip-remove');
+      const firstChip = trayEl.querySelector('.grandemonium-context-chip--image');
+      const removeEl = firstChip.querySelector('.grandemonium-context-chip-remove');
       removeEl.dispatchEvent({ type: 'click', stopPropagation: jest.fn() });
 
       expect(mgr.getAttachedImages()).toHaveLength(1);

@@ -16,8 +16,8 @@ import type {
   LocalAgentRuntimeHttpServerEndpoint,
 } from './app/agent-runtime';
 import type {
-  ClaudianCollabService,
   CollabFeatureService,
+  GrandemoniumCollabService,
 } from './app/collab';
 import type {
   GitRuntimeResolution,
@@ -25,9 +25,9 @@ import type {
 } from './app/collab/git/GitRuntimeResolver';
 import { CollabComposerReferenceService } from './app/CollabComposerReferenceService';
 import { ConversationRepository } from './app/conversations/ConversationRepository';
-import { ClaudianProviderHost } from './app/providers/ClaudianProviderHost';
+import { GrandemoniumProviderHost } from './app/providers/GrandemoniumProviderHost';
 import { ChatModelSelectionCoordinator } from './app/settings/ChatModelSelectionCoordinator';
-import { DEFAULT_CLAUDIAN_SETTINGS } from './app/settings/defaultSettings';
+import { DEFAULT_GRANDEMONIUM_SETTINGS } from './app/settings/defaultSettings';
 import { PinnedLinkedContentPathCoordinator } from './app/settings/PinnedLinkedContentPathCoordinator';
 import type {
   ConditionalSettingsMutation,
@@ -70,17 +70,16 @@ import type {
 } from './core/providers/types';
 import { DEFAULT_CHAT_PROVIDER_ID } from './core/providers/types';
 import type {
-  ClaudianSettings,
   Conversation,
   ConversationMeta,
   ConversationMutablePatch,
+  GrandemoniumSettings,
   SessionMetadata,
 } from './core/types';
 import {
-  VIEW_TYPE_CLAUDIAN,
+  VIEW_TYPE_GRANDEMONIUM,
 } from './core/types';
 import type { ChatViewPlacement, EnvironmentScope } from './core/types/settings';
-import { ClaudianView } from './features/chat/ClaudianView';
 import type { ChatExecutionPersistence } from './features/chat/execution/ChatExecutionCoordinator';
 import {
   DEFAULT_MAX_WARM_AGENT_PROCESSES,
@@ -88,6 +87,7 @@ import {
   WarmExecutionPool,
 } from './features/chat/execution/WarmExecutionPool';
 import { registerFileMenu } from './features/chat/fileMenu';
+import { GrandemoniumView } from './features/chat/GrandemoniumView';
 import {
   COLLAB_DETAIL_VIEW_TYPE,
   CollabDetailView,
@@ -103,10 +103,10 @@ import {
 } from './features/collab/navigation/ResponsiveCollabRouter';
 import { DeferredCollabSurfaceController } from './features/collab/sidebar/DeferredCollabSurfaceController';
 import type { GitSetupResolution } from './features/collab/sidebar/GitSetupPanel';
-import { CommentsController } from './features/comments';
+import { type CommentReviewOutcome, CommentsController } from './features/comments';
 import type { CollabSidebarSurfaceFactory } from './features/FeatureHost';
 import { type InlineEditContext, InlineEditModal } from './features/inline-edit/ui/InlineEditModal';
-import { ClaudianSettingTab } from './features/settings/ClaudianSettings';
+import { GrandemoniumSettingTab } from './features/settings/GrandemoniumSettings';
 import { setLocale, t } from './i18n/i18n';
 import type { Locale } from './i18n/types';
 import { deleteLegacyMcpConfig } from './providers/claude/storage/LegacyMcpConfigCleanup';
@@ -115,7 +115,7 @@ import { getInstallationKey } from './utils/env';
 import { revealWorkspaceLeaf } from './utils/obsidianCompat';
 import { getVaultPath } from './utils/path';
 
-function isClaudianView(value: unknown): value is ClaudianView {
+function isGrandemoniumView(value: unknown): value is GrandemoniumView {
   return !!value
     && typeof value === 'object'
     && typeof (value as { getTabManager?: unknown }).getTabManager === 'function';
@@ -177,11 +177,11 @@ function hasSamePendingProviderSessionInvalidations(
     && entries.every(([providerId, generation]) => pending.get(providerId) === generation);
 }
 
-export default class ClaudianPlugin extends Plugin {
-  settings!: ClaudianSettings;
+export default class GrandemoniumPlugin extends Plugin {
+  settings!: GrandemoniumSettings;
   storage!: SharedAppStorage;
   readonly executionLifecycleRegistry = new ProviderExecutionLifecycleRegistry();
-  readonly providerHost = new ClaudianProviderHost(this);
+  readonly providerHost = new GrandemoniumProviderHost(this);
   readonly warmExecutionPool = new WarmExecutionPool(
     () => this.settings?.maxWarmAgentProcesses ?? DEFAULT_MAX_WARM_AGENT_PROCESSES,
   );
@@ -192,7 +192,7 @@ export default class ClaudianPlugin extends Plugin {
     () => this.getCollabFeatureService(),
     () => this.isCollabEnabled(),
   );
-  private collabFoundation: ClaudianCollabService | null = null;
+  private collabFoundation: GrandemoniumCollabService | null = null;
   private collabSettingsGitResolver: GitRuntimeResolver | null = null;
   private collabFeatureService: CollabFeatureService | null = null;
   private collabFeatureServicePromise: Promise<CollabFeatureService | null> | null = null;
@@ -208,7 +208,7 @@ export default class ClaudianPlugin extends Plugin {
   private readonly collabPreparedReviews = new CollabPreparedReviewCache();
   private readonly collabTransientSurfaces = new CollabTransientSurfaceRegistry();
   private collabDetailViewCoordinator: CollabDetailViewCoordinator | null = null;
-  private settingsCoordinator!: SettingsCoordinator<ClaudianSettings>;
+  private settingsCoordinator!: SettingsCoordinator<GrandemoniumSettings>;
   private chatModelSelectionCoordinator!: ChatModelSelectionCoordinator;
   private pinnedLinkedContentPaths!: PinnedLinkedContentPathCoordinator;
   private conversationRepository!: ConversationRepository;
@@ -247,8 +247,8 @@ export default class ClaudianPlugin extends Plugin {
       // Provider workspace services are initialized lazily on first use.
 
       this.registerView(
-        VIEW_TYPE_CLAUDIAN,
-        (leaf) => new ClaudianView(leaf, this)
+        VIEW_TYPE_GRANDEMONIUM,
+        (leaf) => new GrandemoniumView(leaf, this)
       );
       this.registerView(
         COLLAB_DETAIL_VIEW_TYPE,
@@ -284,7 +284,7 @@ export default class ClaudianPlugin extends Plugin {
         this.notifyConversationViewsChanged();
       }));
 
-      this.addRibbonIcon('bot', 'Open Claudian', () => {
+      this.addRibbonIcon('bot', 'Open Grandemonium', () => {
         void this.activateView();
       });
 
@@ -447,9 +447,15 @@ export default class ClaudianPlugin extends Plugin {
         },
       });
 
-      this.addSettingTab(new ClaudianSettingTab(this.app, this));
+      this.addSettingTab(new GrandemoniumSettingTab(this.app, this));
 
       await this.comments.load();
+      this.comments.setAiPort({
+        agentNames: () => ProviderRegistry
+          .getEnabledProviderIds(this.settings)
+          .map(providerId => ProviderRegistry.getAgentName(providerId, this.settings)),
+        request: (prompt, targetAgentName) => this.dispatchCommentReview(prompt, targetAgentName),
+      });
       this.initializeCollabLayoutLifecycle();
       if (this.isCollabEnabled()) void this.startAgentRuntime();
       this.scheduleRemainingSessionMetadataLoad();
@@ -517,7 +523,7 @@ export default class ClaudianPlugin extends Plugin {
 
   async activateView() {
     const { workspace } = this.app;
-    const existingLeaf = workspace.getLeavesOfType(VIEW_TYPE_CLAUDIAN)[0];
+    const existingLeaf = workspace.getLeavesOfType(VIEW_TYPE_GRANDEMONIUM)[0];
     const leaf = existingLeaf
       ?? this.getLeafForPlacement(this.settings.chatViewPlacement);
     if (!leaf) return;
@@ -532,13 +538,13 @@ export default class ClaudianPlugin extends Plugin {
     try {
       if (!existingLeaf) {
         await leaf.setViewState({
-          type: VIEW_TYPE_CLAUDIAN,
+          type: VIEW_TYPE_GRANDEMONIUM,
           active: true,
         });
       }
 
       await revealWorkspaceLeaf(workspace, leaf);
-      if (!focusSuperseded && isClaudianView(leaf.view)) {
+      if (!focusSuperseded && isGrandemoniumView(leaf.view)) {
         leaf.view.focusActiveInput();
       }
     } finally {
@@ -552,9 +558,9 @@ export default class ClaudianPlugin extends Plugin {
       createMainTabTarget: async () => {
         const leaf = this.app.workspace.getLeaf('tab');
         if (!leaf) return null;
-        await leaf.setViewState({ active: true, type: VIEW_TYPE_CLAUDIAN });
+        await leaf.setViewState({ active: true, type: VIEW_TYPE_GRANDEMONIUM });
         const view = leaf.view;
-        if (!isClaudianView(view)) return null;
+        if (!isGrandemoniumView(view)) return null;
         return {
           prepare: async () => {
             view.refreshDualPaneLayout();
@@ -564,10 +570,10 @@ export default class ClaudianPlugin extends Plugin {
         } satisfies ResponsiveCollabTarget;
       },
       listExistingTargets: () => this.app.workspace
-        .getLeavesOfType(VIEW_TYPE_CLAUDIAN)
+        .getLeavesOfType(VIEW_TYPE_GRANDEMONIUM)
         .flatMap(leaf => {
           const view = leaf.view;
-          return isClaudianView(view) ? [{
+          return isGrandemoniumView(view) ? [{
             reveal: () => revealWorkspaceLeaf(this.app.workspace, leaf),
             select: () => view.selectCollabSurface(),
           } satisfies ResponsiveCollabTarget] : [];
@@ -595,7 +601,7 @@ export default class ClaudianPlugin extends Plugin {
           throw new Error('Collab was disabled while loading.');
         }
         if (!feature) {
-          const unavailable = hostEl.createDiv({ cls: 'claudian-collab-panel-status' });
+          const unavailable = hostEl.createDiv({ cls: 'grandemonium-collab-panel-status' });
           unavailable.setText(t('collab.notices.desktopRequired'));
           return {
             destroy: () => unavailable.remove(),
@@ -724,7 +730,7 @@ export default class ClaudianPlugin extends Plugin {
     const collab = await import('./app/collab');
     if (!this.isCollabEnabled() || generation !== this.collabLifecycleGeneration) return null;
     const installationKey = getInstallationKey();
-    const foundation = new collab.ClaudianCollabService({
+    const foundation = new collab.GrandemoniumCollabService({
       getConfiguredGitPath: () => this.settings.collabGitPath ?? '',
       getProjectsFolder: () => this.settings.collabProjectsFolder,
       installationKey,
@@ -1145,7 +1151,7 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   private canCreateNewTab(): boolean {
-    const hasClaudianLeaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CLAUDIAN).length > 0;
+    const hasGrandemoniumLeaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_GRANDEMONIUM).length > 0;
     const view = this.getView();
     const tabManager = view?.getTabManager();
 
@@ -1153,14 +1159,14 @@ export default class ClaudianPlugin extends Plugin {
       return true;
     }
 
-    if (hasClaudianLeaf) {
+    if (hasGrandemoniumLeaf) {
       return false;
     }
 
     return true;
   }
 
-  private async ensureViewOpen(): Promise<ClaudianView | null> {
+  private async ensureViewOpen(): Promise<GrandemoniumView | null> {
     const existingView = this.getView();
     if (existingView) {
       return existingView;
@@ -1195,17 +1201,17 @@ export default class ClaudianPlugin extends Plugin {
     this.tabWorkspaceMigrationCoordinator = new TabWorkspaceMigrationCoordinator(
       sharedStorage,
       this.app.workspace,
-      isClaudianView,
+      isGrandemoniumView,
     );
     try {
       await deleteLegacyMcpConfig(sharedStorage.getAdapter());
     } catch {
       new Notice('Failed to remove obsolete Claude configuration');
     }
-    const { claudian } = await sharedStorage.initialize();
+    const { grandemonium } = await sharedStorage.initialize();
     this.settings = {
-      ...DEFAULT_CLAUDIAN_SETTINGS,
-      ...claudian,
+      ...DEFAULT_GRANDEMONIUM_SETTINGS,
+      ...grandemonium,
     };
     const normalizedWarmExecutionLimit = normalizeWarmExecutionLimit(
       this.settings.maxWarmAgentProcesses,
@@ -1218,7 +1224,7 @@ export default class ClaudianPlugin extends Plugin {
       async (settings) => {
         ProviderSettingsCoordinator.normalizeProviderSelection(settings);
         ProviderSettingsCoordinator.persistProjectedProviderState(settings);
-        await this.storage.saveClaudianSettings(settings);
+        await this.storage.saveGrandemoniumSettings(settings);
       },
     );
     this.chatModelSelectionCoordinator = new ChatModelSelectionCoordinator(
@@ -1664,7 +1670,7 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   private markPendingSessionInvalidations(
-    settings: ClaudianSettings,
+    settings: GrandemoniumSettings,
     providerIds: ProviderId[],
   ): Map<ProviderId, number> {
     const marked = this.stagePendingSessionInvalidations(settings, providerIds);
@@ -1673,7 +1679,7 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   private stagePendingSessionInvalidations(
-    settings: ClaudianSettings,
+    settings: GrandemoniumSettings,
     providerIds: ProviderId[],
   ): Map<ProviderId, number> {
     const pending = readPendingProviderSessionInvalidations(settings);
@@ -1802,8 +1808,8 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   async mutateSettings(
-    mutation: SettingsMutation<ClaudianSettings>,
-    onCommitted?: SettingsCommit<ClaudianSettings>,
+    mutation: SettingsMutation<GrandemoniumSettings>,
+    onCommitted?: SettingsCommit<GrandemoniumSettings>,
   ): Promise<void> {
     await this.settingsCoordinator.mutate(mutation, onCommitted);
   }
@@ -1872,7 +1878,7 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   async mutateSettingsConditionally(
-    mutation: ConditionalSettingsMutation<ClaudianSettings>,
+    mutation: ConditionalSettingsMutation<GrandemoniumSettings>,
   ): Promise<void> {
     await this.settingsCoordinator.mutateConditionally(mutation);
   }
@@ -1895,7 +1901,7 @@ export default class ClaudianPlugin extends Plugin {
 
   async applyProviderRuntimeSettings(
     providerIds: ProviderId[],
-    mutation: SettingsMutation<ClaudianSettings>,
+    mutation: SettingsMutation<GrandemoniumSettings>,
     onApplied?: () => void | Promise<void>,
   ): Promise<void> {
     const uniqueProviderIds = Array.from(new Set(providerIds));
@@ -1913,7 +1919,7 @@ export default class ClaudianPlugin extends Plugin {
 
   private async commitProviderRuntimeSettings(
     providerIds: ProviderId[],
-    mutation: SettingsMutation<ClaudianSettings>,
+    mutation: SettingsMutation<GrandemoniumSettings>,
     options: {
       failureMessage: string;
       onInvalidationsPersisted?: (
@@ -2323,6 +2329,29 @@ export default class ClaudianPlugin extends Plugin {
     }
   }
 
+  /**
+   * Routes a comment review request to one open chat view, which owns tab and
+   * provider dispatch. Returns the agent names that accepted it.
+   */
+  private async dispatchCommentReview(
+    prompt: string,
+    targetAgentName?: string,
+  ): Promise<CommentReviewOutcome> {
+    const view = this.getAllViews()[0];
+    if (!view) return { queued: [], sent: [] };
+    const targetProviderId = targetAgentName
+      ? ProviderRegistry.getEnabledProviderIds(this.settings).find(
+        providerId => ProviderRegistry.getAgentName(providerId, this.settings) === targetAgentName,
+      )
+      : undefined;
+    if (targetAgentName && !targetProviderId) return { queued: [], sent: [] };
+    const result = await view.broadcastPromptToProviderTabs(prompt, targetProviderId);
+    const toNames = (providerIds: ProviderId[]): string[] => providerIds.map(
+      providerId => ProviderRegistry.getAgentName(providerId, this.settings),
+    );
+    return { queued: toNames(result.queued), sent: toNames(result.sent) };
+  }
+
   notifyProviderChatOptionsChanged(providerId: ProviderId): Promise<void> {
     const reconcileAndRefresh = async (): Promise<void> => {
       let didReconcile = false;
@@ -2408,7 +2437,7 @@ export default class ClaudianPlugin extends Plugin {
   }
 
   registerTabWorkspaceStateDelivery(
-    view: ClaudianView,
+    view: GrandemoniumView,
     hasViewScopedState: boolean,
   ) {
     return this.tabWorkspaceMigrationCoordinator.registerStateDelivery(
@@ -2425,17 +2454,17 @@ export default class ClaudianPlugin extends Plugin {
     await this.tabWorkspaceMigrationCoordinator.completeMigration();
   }
 
-  getView(): ClaudianView | null {
-    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_CLAUDIAN);
-    return leaves.map(leaf => leaf.view).find(isClaudianView) ?? null;
+  getView(): GrandemoniumView | null {
+    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_GRANDEMONIUM);
+    return leaves.map(leaf => leaf.view).find(isGrandemoniumView) ?? null;
   }
 
-  getAllViews(): ClaudianView[] {
-    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_CLAUDIAN);
-    return leaves.map(leaf => leaf.view).filter(isClaudianView);
+  getAllViews(): GrandemoniumView[] {
+    const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_GRANDEMONIUM);
+    return leaves.map(leaf => leaf.view).filter(isGrandemoniumView);
   }
 
-  findConversationAcrossViews(conversationId: string): { view: ClaudianView; tabId: string } | null {
+  findConversationAcrossViews(conversationId: string): { view: GrandemoniumView; tabId: string } | null {
     for (const view of this.getAllViews()) {
       const tabManager = view.getTabManager();
       if (!tabManager) continue;

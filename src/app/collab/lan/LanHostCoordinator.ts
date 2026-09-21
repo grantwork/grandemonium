@@ -88,7 +88,7 @@ import type {
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabRetirementResult } from '@/core/collab';
 import { type CollabHostSession, type CollabHostStatus, type CollabInvitationView } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { type InstallationKey, parseInstallationKey } from '@/core/device/InstallationKey';
 
 const HOST_LOCK_MAX_BYTES = 1_024;
@@ -98,7 +98,7 @@ const MAX_TIMEOUT_MS = 2_147_483_647;
 const AUTHORITY_TRANSFER_EXPIRY_RETRY_MS = 60_000;
 const HOST_LOCK_NONCE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 const ACTIVE_HOST_LOCK_NONCES = (() => {
-  const key = Symbol.for('claudian.collab.active-host-lock-nonces');
+  const key = Symbol.for('grandemonium.collab.active-host-lock-nonces');
   const scope = window as unknown as Record<PropertyKey, unknown>;
   const existing = scope[key];
   if (existing instanceof Set) return existing as Set<string>;
@@ -492,7 +492,7 @@ export class LanHostCoordinator {
 
   constructor(private readonly options: LanHostCoordinatorOptions) {
     const installationKey = parseInstallationKey(options.installationKey);
-    this.#hostLockPath = `.claudian/collab/installations/${installationKey}/lan-host.lock`;
+    this.#hostLockPath = `.grandemonium/collab/installations/${installationKey}/lan-host.lock`;
     this.#clearAuthorityTransferExpiryTimeout = options.clearAuthorityTransferExpiryTimeout
       ?? (handle => window.clearTimeout(handle));
     this.now = options.now ?? (() => new Date());

@@ -3,11 +3,11 @@ import {
   TEST_COLLAB_RESULT_STATUSES,
 } from '@test/helpers/collab/CollabFeatureTestHarness';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
 import {
   type CollabFeaturePort,
   type CollabResult,
 } from '@/core/collab/CollabFeaturePort';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { CollabConflictDescriptor } from '@/core/collab/types';
 
 describe('CollabFeaturePort', () => {

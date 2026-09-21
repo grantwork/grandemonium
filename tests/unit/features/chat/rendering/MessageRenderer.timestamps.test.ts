@@ -43,8 +43,8 @@ describe.each(providers)('%s message timestamps', (providerId) => {
     ];
     for (const message of messages) renderer[method](message);
 
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp')).toHaveLength(3);
-    expect(messagesEl.querySelector('.claudian-message-images')?.querySelector('.claudian-message-timestamp')).not.toBeNull();
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp')).toHaveLength(3);
+    expect(messagesEl.querySelector('.grandemonium-message-images')?.querySelector('.grandemonium-message-timestamp')).not.toBeNull();
     renderer.dispose();
   });
 });
@@ -55,27 +55,27 @@ describe('message timestamp refresh', () => {
     const msg: ChatMessage = { id: 'assistant', role: 'assistant', content: 'Final reply', timestamp };
     renderer[method](msg);
     const messageEl = messagesEl.querySelector<HTMLElement>('[data-message-id="assistant"]')!;
-    const contentEl = messageEl.querySelector('.claudian-message-content')!;
+    const contentEl = messageEl.querySelector('.grandemonium-message-content')!;
     const partialReply = contentEl.createDiv({ text: 'Partial reply' });
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp').length).toBe(0);
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp').length).toBe(0);
 
     settings.showMessageTimestamps = true;
     renderer.refreshMessageTimestamps();
     renderer.refreshMessageTimestamps();
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp').length).toBe(0);
-    expect(messageEl.querySelector('.claudian-message-content')).toBe(contentEl);
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp').length).toBe(0);
+    expect(messageEl.querySelector('.grandemonium-message-content')).toBe(contentEl);
     expect(partialReply.textContent).toBe('Partial reply');
     expect(partialReply.parentElement).toBe(contentEl);
 
     msg.completedAt = new Date(2026, 8, 7, 14, 35).getTime();
     renderer.finalizeResponse(msg, [msg]);
     renderer.refreshMessageTimestamps();
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp')).toHaveLength(1);
-    expect(messagesEl.querySelector('.claudian-message-timestamp')?.textContent).toBe('14:35');
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp')).toHaveLength(1);
+    expect(messagesEl.querySelector('.grandemonium-message-timestamp')?.textContent).toBe('14:35');
 
     settings.showMessageTimestamps = false;
     renderer.refreshMessageTimestamps();
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp').length).toBe(0);
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp').length).toBe(0);
     renderer.dispose();
   });
 
@@ -85,7 +85,7 @@ describe('message timestamp refresh', () => {
     renderer.addMessage(msg);
     settings.showMessageTimestamps = false;
     renderer.updateLiveUserMessage(msg);
-    expect(messagesEl.querySelectorAll('.claudian-message-timestamp').length).toBe(0);
+    expect(messagesEl.querySelectorAll('.grandemonium-message-timestamp').length).toBe(0);
     renderer.dispose();
   });
 });
@@ -99,6 +99,6 @@ it.each([
     id: 'clock', role: 'user', content: 'Hello',
     timestamp: new Date(2026, 8, 7, hour, 5).getTime(),
   });
-  expect(messagesEl.querySelector('.claudian-message-timestamp')?.textContent).toBe(expected);
+  expect(messagesEl.querySelector('.grandemonium-message-timestamp')?.textContent).toBe(expected);
   renderer.dispose();
 });

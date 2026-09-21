@@ -10,7 +10,7 @@ import {
   type WorkspaceLeaf,
 } from 'obsidian';
 
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type {
   CollabConflictDetailViewState,
   CollabDetailConflictPanelFactory,
@@ -39,7 +39,7 @@ import type {
 } from '@/features/collab/handoff/CollabPreparedReviewCache';
 import { t } from '@/i18n/i18n';
 
-export const COLLAB_DETAIL_VIEW_TYPE = 'claudian-collab-detail';
+export const COLLAB_DETAIL_VIEW_TYPE = 'grandemonium-collab-detail';
 
 const WORKING_TREE_SNAPSHOT_ID_PATTERN = /^[0-9a-f]{64}$/;
 
@@ -295,7 +295,7 @@ export class CollabDetailView extends ItemView {
       if (state?.kind === 'request') void this.reviewSession?.refresh();
     });
     this.contentEl.replaceChildren();
-    this.contentEl.classList.add('claudian-collab-review');
+    this.contentEl.classList.add('grandemonium-collab-review');
     if (this.state) {
       if (this.state.kind === 'conflict') {
         await this.loadConflict(this.state);
@@ -376,7 +376,7 @@ export class CollabDetailView extends ItemView {
     this.contentEl.replaceChildren();
     this.diffSession.clear();
     this.contentEl.createDiv({
-      cls: warning ? `claudian-collab-review-empty is-warning` : `claudian-collab-review-empty`,
+      cls: warning ? `grandemonium-collab-review-empty is-warning` : `grandemonium-collab-review-empty`,
       text: message,
     });
   }
@@ -401,7 +401,7 @@ export class CollabDetailView extends ItemView {
     this.conflictSession = null;
     this.reviewSession?.destroy({ retainDiff: options.retainReviewDiff });
     this.reviewSession = null;
-    this.contentEl.classList.remove('claudian-collab-conflict');
+    this.contentEl.classList.remove('grandemonium-collab-conflict');
     if (!options.retainReviewDiff) this.diffSession.clear();
   }
 

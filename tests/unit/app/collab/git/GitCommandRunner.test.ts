@@ -18,7 +18,7 @@ describe('GitCommandRunner', () => {
   let emptyConfigPath: string;
 
   beforeEach(async () => {
-    workingDirectory = await mkdtemp(path.join(tmpdir(), 'claudian-git-runner-'));
+    workingDirectory = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-runner-'));
     emptyConfigPath = path.join(workingDirectory, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');
   });
@@ -45,9 +45,9 @@ describe('GitCommandRunner', () => {
       network: {
         headers: [
           { name: 'Authorization', value: secret },
-          { name: 'X-Claudian-Development-Actor', value: 'member-alice' },
+          { name: 'X-Grandemonium-Development-Actor', value: 'member-alice' },
         ],
-        sslCaInfoPath: '/vault/.claudian/collab/ca.pem',
+        sslCaInfoPath: '/vault/.grandemonium/collab/ca.pem',
       },
       platform: 'win32',
     });
@@ -76,12 +76,12 @@ describe('GitCommandRunner', () => {
       { key: 'http.extraHeader', value: `Authorization: ${secret}` },
       {
         key: 'http.extraHeader',
-        value: 'X-Claudian-Development-Actor: member-alice',
+        value: 'X-Grandemonium-Development-Actor: member-alice',
       },
       { key: 'http.schannelCheckRevoke', value: 'false' },
       { key: 'http.schannelUseSSLCAInfo', value: 'true' },
       { key: 'http.sslBackend', value: 'schannel' },
-      { key: 'http.sslCAInfo', value: '/vault/.claudian/collab/ca.pem' },
+      { key: 'http.sslCAInfo', value: '/vault/.grandemonium/collab/ca.pem' },
       { key: 'transfer.fsckObjects', value: 'true' },
     ]));
 
@@ -89,7 +89,7 @@ describe('GitCommandRunner', () => {
       emptyConfigPath,
       network: {
         headers: [{ name: 'Authorization', value: secret }],
-        sslCaInfoPath: '/vault/.claudian/collab/ca.pem',
+        sslCaInfoPath: '/vault/.grandemonium/collab/ca.pem',
       },
       platform: 'linux',
     });
@@ -110,20 +110,20 @@ describe('GitCommandRunner', () => {
       },
       emptyConfigPath,
       identity: {
-        email: 'collab@claudian.local',
-        name: 'Claudian Collab',
+        email: 'collab@grandemonium.local',
+        name: 'Grandemonium Collab',
       },
     });
 
     expect(environment).toMatchObject({
-      GIT_AUTHOR_EMAIL: 'collab@claudian.local',
-      GIT_AUTHOR_NAME: 'Claudian Collab',
-      GIT_COMMITTER_EMAIL: 'collab@claudian.local',
-      GIT_COMMITTER_NAME: 'Claudian Collab',
+      GIT_AUTHOR_EMAIL: 'collab@grandemonium.local',
+      GIT_AUTHOR_NAME: 'Grandemonium Collab',
+      GIT_COMMITTER_EMAIL: 'collab@grandemonium.local',
+      GIT_COMMITTER_NAME: 'Grandemonium Collab',
     });
     expect(() => buildIsolatedGitEnvironment({
       emptyConfigPath,
-      identity: { email: 'collab@claudian.local', name: 'Injected\nAuthor' },
+      identity: { email: 'collab@grandemonium.local', name: 'Injected\nAuthor' },
     })).toThrow(expect.objectContaining({
       safeContext: { reason: 'unsafe-git-identity' },
     }));
@@ -278,7 +278,7 @@ describe('GitCommandRunner', () => {
       cwd: workingDirectory,
       network: {
         headers: [{
-          name: 'X-Claudian-Development-Actor',
+          name: 'X-Grandemonium-Development-Actor',
           sensitive: false,
           value: 'member-alice',
         }],

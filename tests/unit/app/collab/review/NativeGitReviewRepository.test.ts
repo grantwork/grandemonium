@@ -6,7 +6,7 @@ import {
   NativeGitReviewRepository,
   type ReviewGitNetworkPort,
 } from '@/app/collab/review/NativeGitReviewRepository';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
 const BASE = '0'.repeat(40);
 const MAIN = '1'.repeat(40);
@@ -17,7 +17,7 @@ const REMOTE_URL = 'https://192.168.1.20/repository.git';
 const CURRENT_HOST_URL = 'https://192.168.1.21:54545/v1/git/project-a/repository.git';
 const NETWORK: GitNetworkEnvironment = {
   headers: [{ name: 'Authorization', value: 'Basic Zm9vOmJhcg==' }],
-  sslCaInfoPath: '/vault/.claudian/review-ca.pem',
+  sslCaInfoPath: '/vault/.grandemonium/review-ca.pem',
 };
 
 describe('NativeGitReviewRepository', () => {
@@ -229,7 +229,7 @@ describe('NativeGitReviewRepository', () => {
       oldText: 'old\n',
     });
 
-    const manyLines = `${'x\n'.repeat(CLAUDIAN_COLLAB_LIMITS.maxTextDiffLines)}x`;
+    const manyLines = `${'x\n'.repeat(GRANDEMONIUM_COLLAB_LIMITS.maxTextDiffLines)}x`;
     git.readBlobsAtPaths.mockResolvedValueOnce([
       Buffer.from('old\n'),
       Buffer.from(manyLines),

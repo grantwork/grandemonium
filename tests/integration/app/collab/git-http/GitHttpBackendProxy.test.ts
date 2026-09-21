@@ -22,7 +22,7 @@ import { GitRepositoryService } from '@/app/collab/git/GitRepositoryService';
 import { type GitRuntime,GitRuntimeResolver } from '@/app/collab/git/GitRuntimeResolver';
 import { GitHttpBackendProxy } from '@/app/collab/lan/GitHttpBackendProxy';
 import { LanTlsIdentity } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT_ID = 'project-alpha';
 const MEMBER_ID = 'member-alice';
@@ -82,7 +82,7 @@ describe('GitHttpBackendProxy integration', () => {
   let url: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-git-http-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-http-'));
     authenticationCalls = 0;
     backpressureCount = 0;
     forceBackpressure = false;

@@ -3,7 +3,7 @@
 import { type CollabMember } from '@claudian-collab/protocol';
 
 import { type CollabCoordinationSnapshot, type CollabFeatureState, type CollabLocalProjectSummary } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 jest.mock('obsidian', () => ({
   Modal: class MockModal {
@@ -74,7 +74,7 @@ function createPort(
     ?? members[0]!;
   return {
     createInvitation: jest.fn().mockResolvedValue(success({
-      encodedInvitation: 'claudian-collab:v2:invite-alpha',
+      encodedInvitation: 'grandemonium-collab:v2:invite-alpha',
       expiresAt: '2026-08-08T00:15:00.000Z',
     })),
     acceptHostTransfer: jest.fn().mockResolvedValue(success(undefined)),
@@ -265,7 +265,7 @@ describe('ProjectManagementModal', () => {
     expect(modal.contentEl.textContent).toContain('You');
     expect(modal.contentEl.textContent).toContain('Managers: 2');
     expect(modal.contentEl.querySelectorAll(
-      '.claudian-collab-access-badge[data-role="manager"]',
+      '.grandemonium-collab-access-badge[data-role="manager"]',
     )).toHaveLength(2);
     expect(modal.contentEl.querySelector('[data-action="start-host"]')).toBeNull();
     expect(modal.contentEl.querySelector<HTMLButtonElement>(
@@ -278,14 +278,14 @@ describe('ProjectManagementModal', () => {
     )?.disabled).toBe(true);
 
     const projectActions = modal.contentEl.querySelector(
-      '.claudian-collab-project-actions',
+      '.grandemonium-collab-project-actions',
     );
     expect(projectActions).not.toBeNull();
     expect(Array.from(projectActions?.children ?? []).map(child => (
       child.className
     ))).toEqual([
-      'claudian-collab-project-actions-primary',
-      'claudian-collab-project-actions-lifecycle',
+      'grandemonium-collab-project-actions-primary',
+      'grandemonium-collab-project-actions-lifecycle',
     ]);
     expect(Array.from(projectActions?.querySelectorAll('button') ?? []).map(button => (
       button.getAttribute('data-action')
@@ -302,7 +302,7 @@ describe('ProjectManagementModal', () => {
       'project-alpha',
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
-    expect(modal.contentEl.textContent).not.toContain('claudian-collab:v2:invite-alpha');
+    expect(modal.contentEl.textContent).not.toContain('grandemonium-collab:v2:invite-alpha');
     expect(modal.contentEl.querySelector('[data-action="create-invitation"]'))
       .not.toBeNull();
 
@@ -728,10 +728,10 @@ describe('ProjectManagementModal', () => {
     modal.onOpen();
     await flush();
     expect(modal.contentEl.querySelector(
-      '.claudian-collab-project-actions [data-action="start-host"]',
+      '.grandemonium-collab-project-actions [data-action="start-host"]',
     )).not.toBeNull();
     expect(Array.from(modal.contentEl.querySelectorAll(
-      '.claudian-collab-project-actions button',
+      '.grandemonium-collab-project-actions button',
     )).map(button => button.getAttribute('data-action'))).toEqual([
       'start-host',
       'leave-project',
@@ -763,7 +763,7 @@ describe('ProjectManagementModal', () => {
     modal.onOpen();
     await flush();
 
-    const host = modal.contentEl.querySelector('.claudian-collab-project-host-action');
+    const host = modal.contentEl.querySelector('.grandemonium-collab-project-host-action');
     expect(host?.textContent).toContain('Hosted on another device');
     expect(host?.querySelectorAll('button')).toHaveLength(0);
     expect(port.startHost).not.toHaveBeenCalled();
@@ -853,7 +853,7 @@ describe('ProjectManagementModal', () => {
     modal.contentEl.querySelector<HTMLButtonElement>('[data-action="start-host"]')?.click();
     await flush();
     expect(modal.contentEl.querySelector(
-      '.claudian-collab-project-actions [data-action="host-diagnostics"]',
+      '.grandemonium-collab-project-actions [data-action="host-diagnostics"]',
     )).not.toBeNull();
     expect(modal.contentEl.querySelector('[data-state="host-diagnostics"]')).toBeNull();
   });

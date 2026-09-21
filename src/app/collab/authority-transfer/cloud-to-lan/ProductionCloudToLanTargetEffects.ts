@@ -51,14 +51,14 @@ import type {
 } from '@/app/collab/authority-transfer/cloud-to-lan/CloudToLanTargetCoordinator';
 import { writeDurablePrivateFile } from '@/app/collab/authority-transfer/DurablePrivateFile';
 import type { AuthorityTransferPersistence } from '@/app/collab/authority-transfer/persistence/AuthorityTransferPersistence';
-import type {
-  ClaudianCollabService,
-  CollabAuthorityFoundation,
-} from '@/app/collab/ClaudianCollabService';
 import {
   isCollabLocalCloudMembership,
   isCollabLocalLanMembership,
 } from '@/app/collab/CollabLocalProjectRepository';
+import type {
+  CollabAuthorityFoundation,
+  GrandemoniumCollabService,
+} from '@/app/collab/GrandemoniumCollabService';
 import type {
   LanAuthorityTransferRouteRegistration,
   LanAuthorityTransferTargetStagedService,
@@ -69,7 +69,7 @@ import { fingerprintCertificatePem } from '@/app/collab/lan/LanTlsIdentity';
 import type { CloudAuthorityLifecycleSession } from '@/app/collab/remote-authority/CloudAuthorityAdapter';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabCloudProjectSnapshot, CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MANIFEST_FILE = 'checkpoint.json';
 const COORDINATION_FILE = 'coordination.ndjson';
@@ -201,7 +201,7 @@ function decodeTargetProof(value: string): TargetProofEnvelope {
 export interface ProductionCloudToLanTargetEffectsOptions {
   readonly cloudSession: CloudAuthorityLifecycleSession | null;
   readonly convergence: AuthorityTransferLocalConvergence;
-  readonly foundation: ClaudianCollabService;
+  readonly foundation: GrandemoniumCollabService;
   readonly now?: () => Date;
   readonly persistence: AuthorityTransferPersistence;
   readonly projectId: string;

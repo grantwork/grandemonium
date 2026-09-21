@@ -72,7 +72,7 @@ import { LocalProjectControlPort } from '@/app/collab/publish/LocalProjectContro
 import { ReconnectProjectCoordinator } from '@/app/collab/reconnect/ReconnectProjectCoordinator';
 import { CollabAuthoritySessionFactory } from '@/app/collab/remote-authority/CollabAuthoritySessionFactory';
 import { LanAuthorityAdapter } from '@/app/collab/remote-authority/LanAuthorityAdapter';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { parseInstallationKey } from '@/core/device/InstallationKey';
 
 const HOST_CREDENTIAL = Buffer.alloc(32, 1).toString('base64url');
@@ -94,7 +94,7 @@ function projectionOptions(): Pick<CollabClientProjectionOptions, 'authoritySess
 function hostLockPath(root: string): string {
   return path.join(
     root,
-    '.claudian',
+    '.grandemonium',
     'collab',
     'installations',
     INSTALLATION_A,
@@ -301,7 +301,7 @@ describe('LanHostCoordinator production transport', () => {
 
   beforeAll(async () => {
     SQL = await initSqlJs();
-    tlsFixtureRoot = await mkdtemp(path.join(tmpdir(), 'claudian-lan-host-tls-'));
+    tlsFixtureRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-lan-host-tls-'));
     const identity = new LanTlsIdentity(tlsFixtureRoot, {
       installationKey: INSTALLATION_A,
     });
@@ -354,7 +354,7 @@ describe('LanHostCoordinator production transport', () => {
     openProjectCount = 0;
     assertHostInstallationOwned = jest.fn().mockResolvedValue(undefined);
     resetProjectConnection = jest.fn();
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-lan-host-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-lan-host-'));
     localProjects = new CollabLocalProjectRepository(root, {
       installationKey: INSTALLATION_A,
     });
@@ -737,7 +737,7 @@ describe('LanHostCoordinator production transport', () => {
       member: { role: 'manager' },
     });
     await expect(memberAccess.service.createInvitation(PROJECT_ID)).resolves.toMatchObject({
-      encodedInvitation: expect.stringMatching(/^claudian-collab:v9:/),
+      encodedInvitation: expect.stringMatching(/^grandemonium-collab:v9:/),
     });
     await expect(memberAccess.service.removeMember({
       memberId: 'member-host',
@@ -2528,7 +2528,7 @@ describe('LanHostCoordinator production transport', () => {
     await localProjects.ensurePrivateStateContainer();
     const lockPath = path.join(
       root,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_A,
@@ -2550,7 +2550,7 @@ describe('LanHostCoordinator production transport', () => {
   it('never reads or reclaims a copied same-PID lock from another installation', async () => {
     const foreignLockPath = path.join(
       root,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'installations',
       INSTALLATION_B,
@@ -2666,7 +2666,7 @@ describe('LanHostCoordinator production transport', () => {
 
       await coordinator.stopProject(PROJECT_ID);
       await expect(coordinator.createInvitation(betaId)).resolves.toMatchObject({
-        encodedInvitation: expect.stringMatching(/^claudian-collab:v9:/),
+        encodedInvitation: expect.stringMatching(/^grandemonium-collab:v9:/),
       });
       await coordinator.stopProject(betaId);
       await expect(fetch(`${alpha.endpoint}/v9/projects/${betaId}/snapshot`))
@@ -2729,7 +2729,7 @@ describe('LanHostCoordinator production transport', () => {
     const invitation = await coordinator.createInvitation(PROJECT_ID);
     const pendingPath = path.join(
       root,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -2793,7 +2793,7 @@ describe('LanHostCoordinator production transport', () => {
       expect(await authorityDatabase.read(connection => connection.get(
         'SELECT revoked_at FROM invitations ORDER BY created_at DESC LIMIT 1',
       ))).toEqual({ revoked_at: expect.any(String) });
-      expect(invitation.encodedInvitation).toMatch(/^claudian-collab:v9:/);
+      expect(invitation.encodedInvitation).toMatch(/^grandemonium-collab:v9:/);
     } finally {
       await coordinator.stopProject(PROJECT_ID);
       await new Promise<void>(resolve => {
@@ -2827,7 +2827,7 @@ describe('LanHostCoordinator production transport', () => {
 
 describe('LanHostCoordinator lazy construction', () => {
   it('applies the durable Project start guard before every Host recovery path', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-lan-host-guard-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-lan-host-guard-'));
     const openProject = jest.fn();
     const admissionOrder: string[] = [];
     const runWithProjectStartGuard = jest.fn(async () => {
@@ -2860,7 +2860,7 @@ describe('LanHostCoordinator lazy construction', () => {
   });
 
   it('does not open ordinary Host authority ahead of incoming transfer recovery', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-lan-host-incoming-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-lan-host-incoming-'));
     const openProject = jest.fn();
     const recovery = createHostTransferRecoveryRecord({
       ownerInstallationKey: "device-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -2869,7 +2869,7 @@ describe('LanHostCoordinator lazy construction', () => {
       projectId: PROJECT_ID,
       receiverCredential: Buffer.alloc(32, 2).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-incoming',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-incoming',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\ntarget\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.20:54545',
@@ -2904,7 +2904,7 @@ describe('LanHostCoordinator lazy construction', () => {
   });
 
   it('does not create private state or start network work in its constructor', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-lan-host-lazy-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-lan-host-lazy-'));
     const coordinator = new LanHostCoordinator({
       assertHostInstallationOwned: async () => undefined,
       commitHostedRoute: async () => undefined,
@@ -2919,7 +2919,7 @@ describe('LanHostCoordinator lazy construction', () => {
       vaultRoot: root,
     });
 
-    await expect(access(path.join(root, '.claudian'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(access(path.join(root, '.grandemonium'))).rejects.toMatchObject({ code: 'ENOENT' });
     await coordinator.close();
     await rm(root, { force: true, recursive: true });
   });

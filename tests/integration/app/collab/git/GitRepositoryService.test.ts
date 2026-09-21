@@ -31,7 +31,7 @@ describe('GitRepositoryService integration', () => {
   let service: GitRepositoryService;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-git-repository-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-repository-'));
     const emptyConfigPath = path.join(root, 'empty.gitconfig');
     await writeFile(emptyConfigPath, '');
     const resolution = await new GitRuntimeResolver().resolve();
@@ -238,8 +238,8 @@ describe('GitRepositoryService integration', () => {
     ]);
     const acceptedCommit = await service.commitTree(repositoryPath, {
       identity: {
-        email: 'collab@claudian.local',
-        name: 'Claudian Collab',
+        email: 'collab@grandemonium.local',
+        name: 'Grandemonium Collab',
       },
       message: 'Accepted',
       parents: [baseCommit],
@@ -250,7 +250,7 @@ describe('GitRepositoryService integration', () => {
       cwd: repositoryPath,
     });
     expect(acceptedIdentity.stdout.toString('utf8').trim()).toBe(
-      'Claudian Collab\0collab@claudian.local\0Claudian Collab\0collab@claudian.local',
+      'Grandemonium Collab\0collab@grandemonium.local\0Grandemonium Collab\0collab@grandemonium.local',
     );
     const memberCommit = await service.commitTree(repositoryPath, {
       message: 'Member',

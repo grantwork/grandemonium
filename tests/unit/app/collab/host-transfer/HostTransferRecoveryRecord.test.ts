@@ -26,7 +26,7 @@ const record: HostTransferRecoveryRecord = {
   receiverCredential: 'A'.repeat(43),
   receiverCredentialHash: null,
   targetTerminalResponseReceived: false,
-  stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+  stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
   manifestDigest: null,
   ownerInstallationKey: TEST_INSTALLATION_A,
   activationCertificate: null,

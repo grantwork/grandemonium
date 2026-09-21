@@ -42,8 +42,8 @@ import type {
   RevokeInvitationRequest,
 } from '@/app/collab/lan/LanCollabControlOperations';
 import type { CollabLanProjectSnapshot } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const JOIN_FAILURE_WINDOW_MS = 60_000;
 const JOIN_FAILURE_LIMIT = 5;
@@ -709,7 +709,7 @@ export class PendingMembershipService {
       },
       ticketHighlights: this.tickets.listHighlights(
         connection,
-        CLAUDIAN_COLLAB_LIMITS.maxTicketHighlights,
+        GRANDEMONIUM_COLLAB_LIMITS.maxTicketHighlights,
       ),
     };
   }

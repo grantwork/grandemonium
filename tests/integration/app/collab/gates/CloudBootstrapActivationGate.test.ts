@@ -199,7 +199,7 @@ describe('Cloud bootstrap activation gate', () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-bootstrap-gate-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-bootstrap-gate-'));
   });
 
   afterEach(async () => {
@@ -214,12 +214,12 @@ describe('Cloud bootstrap activation gate', () => {
       origin: 'https://192.168.1.20:54545',
     });
     for (const clientRoot of [hostRoot, participantRoot]) {
-      await mkdir(path.join(clientRoot, '.claudian', 'collab', 'projects', PROJECT_ID), {
+      await mkdir(path.join(clientRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID), {
         recursive: true,
       });
       await mkdir(path.join(clientRoot, 'workspace', PROJECT_ID), { recursive: true });
       await writeFile(
-        path.join(clientRoot, '.claudian', 'collab', 'projects', PROJECT_ID, 'membership.json'),
+        path.join(clientRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID, 'membership.json'),
         membership,
       );
       await writeFile(
@@ -370,7 +370,7 @@ describe('Cloud bootstrap activation gate', () => {
 
     for (const clientRoot of [hostRoot, participantRoot]) {
       expect(await readFile(
-        path.join(clientRoot, '.claudian', 'collab', 'projects', PROJECT_ID, 'membership.json'),
+        path.join(clientRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID, 'membership.json'),
         'utf8',
       )).toBe(membership);
       expect(await readFile(

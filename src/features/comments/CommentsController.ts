@@ -1,6 +1,8 @@
 import type { Editor} from "obsidian";
 import { type App, MarkdownView, normalizePath, Notice, type Plugin, type PluginManifest, TFile } from "obsidian";
 
+import { ProviderRegistry } from "../../core/providers/ProviderRegistry";
+import { findAgentMention } from "./agent-mention";
 import {
   AUTHOR_OVERRIDE_KEY,
   detectOsUsername,
@@ -17,7 +19,10 @@ import {
   renderExportFileName,
   resolveExportDirectory,
 } from "./export";
+import { buildImplementMessage, type ImplementTarget } from "./implement-message";
 import { registerReadingView } from "./reading-view";
+import { buildReviewMessage } from "./review-message";
+import { shouldStartSelectionComment } from "./selection-comment";
 import {
   type CommentsSettings,
   DEFAULT_SETTINGS,
@@ -37,14 +42,157 @@ import {
 import { commitSuggestionAcceptance } from "./suggestion-editor";
 import type { Anchor, ParsedDoc } from "./types";
 
+const DEFAULT_CLAUDE_AGENT_NAME = "claude";
+
+/**
+ * Sends the review prompt to the AIs. Supplied by the composition root so this
+ * vendored feature never reaches into chat; resolves with the names reached.
+ */
+export interface CommentReviewOutcome {
+  /** Agent names that started reviewing straight away. */
+  sent: string[];
+  /** Agent names that were mid-turn and queued the request behind it. */
+  queued: string[];
+}
+
+/**
+ * The chat side, as this vendored feature sees it. Supplied by the composition
+ * root so comments never import chat code.
+ */
+export interface CommentAiPort {
+  /** Agent names of the enabled AIs, used to tell their replies from a person's. */
+  agentNames(): string[];
+  /** Sends a prompt to every enabled AI, or to one when `targetAgentName` is given. */
+  request(prompt: string, targetAgentName?: string): Promise<CommentReviewOutcome>;
+}
+
+/**
+ * A queued request runs only after the AI finishes what it is doing, so it is
+ * reported apart from one that started immediately.
+ */
+export function describeReviewOutcome(sent: string[], queued: string[]): string {
+  const parts: string[] = [];
+  if (sent.length > 0) parts.push(`Review requested from ${sent.join(", ")}.`);
+  if (queued.length > 0) {
+    parts.push(`Queued behind current work for ${queued.join(", ")}.`);
+  }
+  return parts.length > 0
+    ? parts.join(" ")
+    : "No enabled AI has a chat tab to review comments.";
+}
+
+/** Reports what one AI did with an implementation request. */
+export function describeImplementOutcome(
+  agentName: string,
+  sent: string[],
+  queued: string[]
+): string {
+  if (sent.length > 0) return `${agentName} is making the changes.`;
+  if (queued.length > 0) return `${agentName} will make the changes after its current work.`;
+  return `${agentName} has no chat tab to make the changes.`;
+}
+
 export class CommentsController {
   settings: CommentsSettings = DEFAULT_SETTINGS;
   private applyingSuggestion = false;
   private settingsWriteQueue: Promise<void> = Promise.resolve();
   private readonly store: CommentsSettingsStore;
 
+  private aiPort: CommentAiPort | null = null;
+
   constructor(private readonly plugin: Plugin) {
     this.store = new CommentsSettingsStore(plugin);
+  }
+
+  /** Installed by the composition root once the chat side can accept prompts. */
+  setAiPort(port: CommentAiPort | null): void {
+    this.aiPort = port;
+  }
+
+  /** True while an AI can be asked to review; the action stays hidden otherwise. */
+  canRequestReview(): boolean {
+    return this.aiPort !== null;
+  }
+
+  /** Whether a thread entry was written by one of the enabled AIs. */
+  isAgentAuthor(author: string): boolean {
+    const names = this.aiPort?.agentNames() ?? [];
+    return names.some(name => name.toLowerCase() === author.trim().toLowerCase());
+  }
+
+  /**
+   * Called after the user adds a comment or reply. Requests a review straight
+   * away when that setting is on, so the review action need not be pressed.
+   */
+  async notifyUserCommentAdded(filePath: string, text = ""): Promise<void> {
+    const port = this.aiPort;
+    if (!this.settings.reviewOnComment || !port) return;
+    // "@gpt run your changes" addresses one AI; an untagged comment still goes
+    // to every enabled one.
+    const mentioned = findAgentMention(text, port.agentNames());
+    await this.requestReview(filePath, mentioned);
+  }
+
+  /**
+   * Asks one AI to carry out what it proposed on one comment. The target is
+   * required: the configured prompt alone does not say which comment, and an
+   * AI reading the whole block would otherwise act on every open comment.
+   */
+  async requestImplementation(agentName: string, target: ImplementTarget): Promise<void> {
+    const port = this.aiPort;
+    if (!port) {
+      new Notice("No AI is available to make changes.");
+      return;
+    }
+    const prompt = this.settings.implementPrompt.trim();
+    if (!prompt) {
+      new Notice("Set an implementation request in comments settings first.");
+      return;
+    }
+    try {
+      const { queued, sent } = await port.request(
+        buildImplementMessage(prompt, target),
+        agentName,
+      );
+      new Notice(describeImplementOutcome(agentName, sent, queued));
+    } catch (error) {
+      new Notice(
+        "Implementation request failed: "
+          + (error instanceof Error ? error.message : String(error))
+      );
+    }
+  }
+
+  /**
+   * Asks every enabled AI to review open comments, using the configured
+   * prompt. The file is named so an AI whose tab is linked elsewhere still
+   * reviews the right note.
+   */
+  async requestReview(
+    filePath: string | null = null,
+    targetAgentName: string | null = null,
+  ): Promise<void> {
+    const port = this.aiPort;
+    if (!port) {
+      new Notice("No AI is available to review comments.");
+      return;
+    }
+    const prompt = this.settings.reviewPrompt.trim();
+    if (!prompt) {
+      new Notice("Set a review request in comments settings first.");
+      return;
+    }
+    try {
+      const { queued, sent } = await port.request(
+        buildReviewMessage(prompt, filePath),
+        targetAgentName ?? undefined,
+      );
+      new Notice(describeReviewOutcome(sent, queued));
+    } catch (error) {
+      new Notice(
+        "Review request failed: " + (error instanceof Error ? error.message : String(error))
+      );
+    }
   }
 
   /** Obsidian app handle, delegated so feature code keeps using `this.app`. */
@@ -55,6 +203,19 @@ export class CommentsController {
   /** Host plugin manifest, read by the sidebar for its block language tag. */
   get manifest(): PluginManifest {
     return this.plugin.manifest;
+  }
+
+  /**
+   * The name Claude signs review comments with, so the exported skill matches
+   * the identity the chat system prompt already gives it. Reads the host
+   * plugin's settings structurally: this vendored feature only holds `Plugin`.
+   */
+  claudeAgentName(): string {
+    const settings = (this.plugin as Plugin & { settings?: unknown }).settings;
+    if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+      return DEFAULT_CLAUDE_AGENT_NAME;
+    }
+    return ProviderRegistry.getAgentName('claude', settings as Record<string, unknown>);
   }
 
   async load(): Promise<void> {
@@ -353,6 +514,40 @@ export class CommentsController {
     const anchor = this.anchorFromSelection(editor);
     if (!anchor) return;
     void this.openSidebar().then((view) => view?.startDraft(file, anchor));
+  }
+
+  /**
+   * Opens a comment draft as soon as a passage is selected in the editor, so a
+   * comment needs no context menu. Called from the editor extension after the
+   * pointer is released, with the document text and selection it observed.
+   */
+  startSelectionComment(text: string, from: number, to: number): void {
+    const file = this.app.workspace.getActiveFile();
+    if (!file || file.extension !== "md") return;
+    const doc = parseDocument(text);
+    if (doc.error) return;
+    const openDraftRange = this.openSidebarView()?.draftRange(file.path, doc.prose) ?? null;
+    if (
+      !shouldStartSelectionComment({
+        enabled: this.settings.commentOnSelection,
+        from,
+        to,
+        proseLength: doc.prose.length,
+        openDraftRange,
+      })
+    ) {
+      return;
+    }
+    const anchor = makeAnchor(doc.prose, from, to);
+    void this.openSidebar().then((view) => view?.startDraft(file, anchor));
+  }
+
+  /** The comment sidebar if it is already open; never opens one. */
+  private openSidebarView(): CommentSidebar | null {
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_COMMENTS)) {
+      if (leaf.view instanceof CommentSidebar) return leaf.view;
+    }
+    return null;
   }
 
   addSuggestionFromSelection(editor: Editor): void {

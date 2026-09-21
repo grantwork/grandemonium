@@ -13,12 +13,12 @@ describe('FilesystemLocalRepositoryIdentity', () => {
   };
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-retired-identity-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-retired-identity-'));
     await mkdir(path.join(root, '.git'), { recursive: true });
     await writeFile(path.join(root, '.git', 'config'), [
       '[core]',
       '\trepositoryformatversion = 0',
-      '[claudian]',
+      '[grandemonium]',
       '\tprojectId = project-alpha',
       '\tmemberId = member-alpha',
       '\tpersonalRef = refs/heads/members/member-alpha',
@@ -30,7 +30,7 @@ describe('FilesystemLocalRepositoryIdentity', () => {
     await rm(root, { force: true, recursive: true });
   });
 
-  it('verifies the exact Claudian repository identity without a Git process', async () => {
+  it('verifies the exact Grandemonium repository identity without a Git process', async () => {
     await expect(new FilesystemLocalRepositoryIdentity()
       .assertLocalRepositoryIdentity(root, expected)).resolves.toBeUndefined();
   });
@@ -46,10 +46,10 @@ describe('FilesystemLocalRepositoryIdentity', () => {
   });
 
   it('never follows a symlinked Git directory', async () => {
-    const outside = await mkdtemp(path.join(tmpdir(), 'claudian-retired-git-'));
+    const outside = await mkdtemp(path.join(tmpdir(), 'grandemonium-retired-git-'));
     await rm(path.join(root, '.git'), { recursive: true });
     await mkdir(path.join(outside, '.git'), { recursive: true });
-    await writeFile(path.join(outside, '.git', 'config'), '[claudian]\nprojectId = project-alpha\n');
+    await writeFile(path.join(outside, '.git', 'config'), '[grandemonium]\nprojectId = project-alpha\n');
     await symlink(path.join(outside, '.git'), path.join(root, '.git'));
 
     await expect(new FilesystemLocalRepositoryIdentity()

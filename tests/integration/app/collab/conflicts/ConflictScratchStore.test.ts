@@ -62,11 +62,11 @@ describe('ConflictScratchStore', () => {
 
   it('rejects symlinked operation boundaries without exposing the target path', async () => {
     const { record, store } = await createSubject();
-    const outside = await mkdtemp(path.join(tmpdir(), 'claudian-conflict-outside-'));
+    const outside = await mkdtemp(path.join(tmpdir(), 'grandemonium-conflict-outside-'));
     await store.ensureContainer();
     const operationPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'conflicts',
       record.operationId,
@@ -85,7 +85,7 @@ describe('ConflictScratchStore', () => {
   });
 
   async function createSubject() {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-conflict-store-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-conflict-store-'));
     const projects = new CollabLocalProjectRepository(vaultRoot);
     const store = new ConflictScratchStore(vaultRoot, projects);
     const record: ConflictResolutionRecord = {

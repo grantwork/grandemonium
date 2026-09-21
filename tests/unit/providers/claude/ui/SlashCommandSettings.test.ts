@@ -64,6 +64,6 @@ describe('SlashCommandSettings', () => {
     new SlashCommandSettings(container, {} as never, null);
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(container.createDiv).toHaveBeenCalledWith({ cls: 'claudian-sp-empty-state' });
+    expect(container.createDiv).toHaveBeenCalledWith({ cls: 'grandemonium-sp-empty-state' });
   });
 });

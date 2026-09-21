@@ -44,7 +44,7 @@ describe('GitRuntimeResolver', () => {
   let pathGit: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-git-resolver-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-git-resolver-'));
     manualGit = path.join(root, 'manual-git');
     pathGit = path.join(root, 'path-git');
     await writeFile(manualGit, '');

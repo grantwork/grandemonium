@@ -44,7 +44,7 @@ describe('CopyableCodeFence', () => {
         copyLabel: 'Copy prompt',
       });
 
-      expect((wrapper as any).hasClass('claudian-code-wrapper')).toBe(true);
+      expect((wrapper as any).hasClass('grandemonium-code-wrapper')).toBe(true);
       expect((wrapper as any).children[0]?.children[0]?.textContent).toBe(prompt);
       const copyButton = (wrapper as any).querySelector('.copy-code-button');
       expect(copyButton.getAttribute('aria-label')).toBe('Copy prompt');
@@ -90,11 +90,11 @@ describe('CopyableCodeFence', () => {
     const repeated = enhanceRenderedCodeFence(pre);
 
     expect(repeated).toBe(wrapper);
-    expect((wrapper as any).hasClass('claudian-code-wrapper')).toBe(true);
+    expect((wrapper as any).hasClass('grandemonium-code-wrapper')).toBe(true);
     expect((wrapper as any).hasClass('has-language')).toBe(true);
-    expect((wrapper as any).querySelector('.claudian-code-lang-label')?.textContent)
+    expect((wrapper as any).querySelector('.grandemonium-code-lang-label')?.textContent)
       .toBe('typescript');
     expect((wrapper as any).children).toContain(copyButton);
-    expect(container.querySelectorAll('.claudian-code-wrapper')).toHaveLength(1);
+    expect(container.querySelectorAll('.grandemonium-code-wrapper')).toHaveLength(1);
   });
 });

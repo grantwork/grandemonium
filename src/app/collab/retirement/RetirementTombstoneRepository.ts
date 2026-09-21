@@ -9,7 +9,7 @@ import {
 } from '@/app/collab/retirement/RetirementTombstoneRecord';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
 import type { CollabRetirementResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MEMBER_CREDENTIAL_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 

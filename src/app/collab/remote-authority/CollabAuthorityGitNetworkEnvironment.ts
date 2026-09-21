@@ -18,7 +18,7 @@ export class CollabAuthorityGitNetworkEnvironment {
   ): Promise<GitNetworkEnvironment> {
     let sslCaInfoPath: string | undefined;
     if (network.caCertificatePem !== undefined) {
-      const relativeCaPath = `.claudian/collab/projects/${projectId}/git-ca.pem`;
+      const relativeCaPath = `.grandemonium/collab/projects/${projectId}/git-ca.pem`;
       const existingCaPath = await resolveCollabVaultPath(this.vaultRoot, relativeCaPath);
       const existingCa = await readFile(existingCaPath, 'utf8').catch(error => {
         if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;

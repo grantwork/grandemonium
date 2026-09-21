@@ -7,11 +7,11 @@
 - Controllers request conversation and execution changes through injected callbacks, `FeatureHost`, and `ChatExecutionCoordinator`; cross-tab operations remain `TabManager` authority.
 - Renderers and UI components may render state and emit user intent. They must not mutate tab membership, conversation persistence, or provider-session lifecycle directly.
 - `InputController` builds canonical execution requests; providers own native prompt encoding.
-- App-provided Main Agent dynamic sections are best-effort provider-default system instructions. Resolve them before ordinary or steered execution, never encode them as input blocks, expose them in rendered text, or persist them in Claudian's input ledger, and never let resolution failure block Chat.
+- App-provided Main Agent dynamic sections are best-effort provider-default system instructions. Resolve them before ordinary or steered execution, never encode them as input blocks, expose them in rendered text, or persist them in Grandemonium's input ledger, and never let resolution failure block Chat.
 - `TabRuntimeInputBindings` is the sole Main Chat owner of composer input and keydown forwarding. Shared dropdown sources contribute matching, loading, and selection semantics but must not install their own input listeners.
 - Main Chat obtains Collab composer references only through the optional `FeatureHost.collabComposerReferences` port. Those menus use the Collab Panel's effective selected Project without mutating selection and insert only visible plain text; no hidden entity metadata enters messages or persistence.
 - Collab surface availability, composer references, and the Collab dynamic system-prompt section all follow the application-owned live Collab enablement predicate. Disabled views must remove Collab from surface rotation, destroy an instantiated Collab controller, and preserve the active chat tab; plugin-lifetime composer ports reset to a cold unavailable state rather than becoming terminally disposed.
-- Single-panel and dual-pane Collab presentation share one lazy `CollabPanel` controller and one rendered DOM tree. `ClaudianView` reparents that surface between the compact nav dropup and persistent sidebar; closing the dropup only deactivates it, while disabling Collab or closing the view destroys it. History and compact Collab dropups are mutually exclusive.
+- Single-panel and dual-pane Collab presentation share one lazy `CollabPanel` controller and one rendered DOM tree. `GrandemoniumView` reparents that surface between the compact nav dropup and persistent sidebar; closing the dropup only deactivates it, while disabling Collab or closing the view destroys it. History and compact Collab dropups are mutually exclusive.
 - Sidebar surface swipes use one native horizontal scroll container with mandatory snap points. Chromium owns wheel transactions, momentum, drag position, and gesture completion; do not classify physical swipes from delta strength or idle timers, cancel wheel events, or translate the surface strip. Preload the first horizontal drag target without changing semantic activity. For swipe navigation, commit `activeSidebarSurface`, `inert`, `aria-hidden`, and provider surface activation only from `scrollend` after snap completion. This keeps the wheel target valid through Chromium's transaction when the pointer is stationary. With exactly two enabled surfaces, keep the live active surface at the center snap and use one inert, accessibility-hidden visual replica so the other logical surface occupies both adjacent snaps. The replica owns no controller or semantic state, both copies map to the same logical surface, and replica refresh must happen during alignment rather than wheel or scroll dispatch.
 - Resolve provider-owned services through registries:
   - `ProviderRegistry`: execution backends, title generation, instruction refinement, inline edit, task-result interpretation.
@@ -36,26 +36,26 @@
 | `ChatState` | Transient per-tab message projection, stream state, queued input, render state, and conversation-operation flags |
 | `TabStatePersistenceCoordinator` | Debouncing, snapshotting, ordering, retry retention, and flushing of tab-layout writes |
 | `TabBar` | Expanded-title presentation state for the current view |
-| `ClaudianView` | View assembly, rendered DOM placement, presentation coordination, layout-mode navigation, startup restore-policy application, and view-scoped tab-state publication |
+| `GrandemoniumView` | View assembly, rendered DOM placement, presentation coordination, layout-mode navigation, startup restore-policy application, and view-scoped tab-state publication |
 
 `TabSession` stores lifecycle values, while lifecycle operations in `TabLifecycle` and `TabManager` perform the transitions. Controllers, renderers, and UI components must request those operations instead of assigning lifecycle state themselves.
 
-`TabStatePersistenceCoordinator` owns write sequencing, not semantic tab state. It receives open-tab snapshots captured by `TabManager` plus view presentation metadata assembled by `ClaudianView`; it must not infer, add, or remove runtime tabs.
+`TabStatePersistenceCoordinator` owns write sequencing, not semantic tab state. It receives open-tab snapshots captured by `TabManager` plus view presentation metadata assembled by `GrandemoniumView`; it must not infer, add, or remove runtime tabs.
 
 ## State Model
 
 Keep these layers independent:
 
 1. **Durable conversation state**
-   - Claudian's in-memory conversation projection, metadata, input ledger, and provider resume snapshot are coordinated by the application conversation repository.
+   - Grandemonium's in-memory conversation projection, metadata, input ledger, and provider resume snapshot are coordinated by the application conversation repository.
    - Provider-native transcripts remain provider-owned replay sources and are read-only.
 2. **Persisted tab shell**
-   - Each Claudian view persists every open tab shell, tab order, actual active tab, conversation bindings, unbound-tab model seeds, and expanded-title tab IDs in Obsidian view state. Runtime lifecycle values are not part of the snapshot.
+   - Each Grandemonium view persists every open tab shell, tab order, actual active tab, conversation bindings, unbound-tab model seeds, and expanded-title tab IDs in Obsidian view state. Runtime lifecycle values are not part of the snapshot.
    - Startup restoration is a boolean preference that defaults on. When enabled, single-pane mode restores every open shell while dual-pane mode restores only the last active shell; when disabled, either layout starts fresh.
    - Unsent composer content, DOM, controllers, hydrated messages, pending turns, execution sessions, and provider-native state are never persisted.
    - Every restored tab enters as `cold`. Restore admits inactive tabs first and performs one final activation so restoration cannot warm background tabs accidentally.
    - The former plugin-global tab snapshot is a migration source for one primary view only, never concurrent live authority.
-   - `ClaudianView.onOpen()` may assemble the runtime shell, but initial tab restoration waits for Obsidian's `setState()` delivery. A same-instance reopen instead restores the finalized shutdown snapshot so an older delivered layout cannot replace it.
+   - `GrandemoniumView.onOpen()` may assemble the runtime shell, but initial tab restoration waits for Obsidian's `setState()` delivery. A same-instance reopen instead restores the finalized shutdown snapshot so an older delivered layout cannot replace it.
    - Versioned view-state decoding is fail-closed: one malformed tab, duplicate ID, invalid active target, or invalid expanded-title target rejects the entire view snapshot. Permissive normalization is reserved for the legacy plugin-global migration source.
 3. **Runtime tab state**
    - `TabSession`, `ChatState`, controllers, renderers, and DOM exist only for the current view runtime. An unbound tab snapshots its own provider/model draft when created.
@@ -123,7 +123,26 @@ Tab activation and conversation hydration do not themselves authorize creation o
 - `TabModelSelectionCoordinator` serializes blank-tab provider changes per tab. Later choices targeting an in-flight provider share its initialization result, and failed overlapping transitions restore the last stable provider/model without seeding future tabs.
 - Restoration, hydration, automatic availability fallback, fork inheritance, and auxiliary executions must not update the future-tab model seed.
 
+## Retired Chat Context (pending full removal)
+
+Linked content and editor selection were withdrawn from Chat on 17 September 2026. Review comments now carry their own file, so the chat no longer needs a per-conversation file reference or a captured selection. The withdrawal is deliberately partial: the UI is unmounted and nothing is sent to providers, but state, persistence, and session-history grouping still run, so the decision is reversible while it is evaluated in real use.
+
+Withdrawn so far:
+
+- `InputController` no longer puts `linkedContent` or `editorSelection` into the execution request context. This is the single choke point; provider encoders still accept both.
+- `LinkedContentController.mountWelcome` and `mountContextTray` are no-ops, which strands `LinkedContentSelector`, `LinkedContentChip`, `LinkedContentPickerSource`, `renderSelector`, `renderChip`, `activateCurrentContent`, and the `.grandemonium-welcome-linked-content` mount in `WelcomeRenderer`.
+- `SelectionController.updateIndicator` only clears its tray slot. Selection capture, highlighting, and `getContext()` stay live.
+- `src/core/prompt/mainAgent.ts` documents `review_target` and `comment_target` instead of `linked_content` and `editor_selection`.
+
+Still live, and load-bearing:
+
+- `ConversationMeta.linkedContentPath` and its storage, because `SessionListOrganizer` groups session history by it. Dropping it flattens history to one list, which is a separate user-facing decision.
+- The first-turn freeze and immutability rules above, which keep that stored path correct.
+- `appendLinkedContent`, `appendLinkedContentBody`, and `appendEditorContext` in `src/utils/context.ts` plus every provider encoder that calls them. They are unreachable from Chat but still reachable from other callers, so verify before deleting.
+
+Full removal is warranted once the chat has run without either concept long enough to be sure, and once session-history grouping is settled. It then means deleting the controller, picker, chip, selector, the editor-selection context type, the provider encoding paths, and the persisted field behind a migration.
+
 ## Gotchas
 
-- `ClaudianView.onClose()` must abort active tabs and dispose execution coordinators.
+- `GrandemoniumView.onClose()` must abort active tabs and dispose execution coordinators.
 - Forking is provider-owned under the hood. Use execution and provider history contracts instead of reconstructing provider session IDs in feature code.

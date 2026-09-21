@@ -6,7 +6,7 @@ import {
   trimAuthorityKeysetPage,
 } from '@/app/collab/authority/AuthorityKeysetPage';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface PendingTicketRelationInput {
   readonly relationId: string;

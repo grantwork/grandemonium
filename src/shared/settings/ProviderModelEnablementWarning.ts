@@ -26,10 +26,10 @@ interface ProviderModelEnablementWarningOptions {
 }
 
 const PROVIDER_WARNING_CLASSES = [
-  'claudian-provider-model-warning',
-  'claudian-setting-validation',
-  'claudian-setting-validation-warning',
-  'claudian-hidden',
+  'grandemonium-provider-model-warning',
+  'grandemonium-setting-validation',
+  'grandemonium-setting-validation-warning',
+  'grandemonium-hidden',
 ].join(' ');
 
 const LAST_PROVIDER_WARNING_DURATION_MS = 10_000;
@@ -46,7 +46,7 @@ function renderProviderWarning(
   });
 
   const setVisible = (visible: boolean): void => {
-    warningEl.toggleClass('claudian-hidden', !visible);
+    warningEl.toggleClass('grandemonium-hidden', !visible);
   };
 
   setVisible(false);

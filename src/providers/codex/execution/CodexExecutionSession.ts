@@ -22,6 +22,7 @@ import {
   buildSystemPrompt,
   type SystemPromptSettings,
 } from '../../../core/prompt/mainAgent';
+import { resolveAgentName } from '../../../core/providers/agentName';
 import type { ProviderHost } from '../../../core/providers/ProviderHost';
 import type { ChatMessage, ImageAttachment, StreamChunk } from '../../../core/types';
 import { appendBrowserContext } from '../../../utils/browser';
@@ -87,6 +88,7 @@ import {
 } from '../runtime/CodexWorkspaceDependencyTool';
 import {
   type CodexSafeMode,
+  DEFAULT_CODEX_PROVIDER_CONFIG,
   getCodexProviderSettings,
   getEffectiveCodexReasoningSummary,
 } from '../settings';
@@ -100,7 +102,7 @@ import { CodexExecutionServerRequestRouter } from './CodexExecutionServerRequest
 const PASSIVE_INSTRUCTIONS =
   'Do not invoke tools. Complete the request only from the supplied input and context.';
 const LEGACY_WORKSPACE_DEPENDENCY_INSTRUCTIONS =
-  'This thread predates Claudian client-hosted workspace dependency tools. Do not emulate load_workspace_dependencies or install replacement dependencies.';
+  'This thread predates Grandemonium client-hosted workspace dependency tools. Do not emulate load_workspace_dependencies or install replacement dependencies.';
 const CODEX_SUPPORTS_EXACT_BUILT_IN_TOOL_ALLOW_LIST = false;
 const MISSED_TURN_COMPLETION_GRACE_MS = 1_000;
 const MISSED_TURN_COMPLETION_MAX_ATTEMPTS = 3;
@@ -469,7 +471,7 @@ export class CodexExecutionSession
         this.finishError(
           run,
           'configuration',
-          'No Codex model is selected. Enable a model in Claudian settings.',
+          'No Codex model is selected. Enable a model in Grandemonium settings.',
           true,
         );
         return;
@@ -1802,6 +1804,10 @@ export class CodexExecutionSession
       customPrompt: this.plugin.settings.systemPrompt,
       vaultPath: this.config.vaultWorkingDirectory,
       userName: this.plugin.settings.userName,
+      agentName: resolveAgentName(
+        getCodexProviderSettings(this.plugin.settings).agentName,
+        DEFAULT_CODEX_PROVIDER_CONFIG.agentName,
+      ),
     };
   }
 
@@ -1952,7 +1958,7 @@ export class CodexExecutionSession
         .map(block => block.image);
       if (images.length > 0) {
         tempDirectory = fs.mkdtempSync(
-          path.join(os.tmpdir(), 'claudian-codex-images-'),
+          path.join(os.tmpdir(), 'grandemonium-codex-images-'),
         );
         images.forEach((image, index) => {
           if (!image.mediaType.startsWith('image/')) return;

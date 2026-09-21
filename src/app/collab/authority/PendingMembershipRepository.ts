@@ -4,7 +4,7 @@ import { type CollabChangeRequest, type CollabMember, type CollabMemberId, colla
 
 import { RequestTicketRelationRepository } from '@/app/collab/authority/RequestTicketRelationRepository';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface AuthorityInvitationRecord {
   readonly createdAt: string;

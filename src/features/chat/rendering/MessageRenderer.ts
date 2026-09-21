@@ -153,12 +153,12 @@ export class MessageRenderer {
     if (timestampMs === undefined) return;
     msgEl.setAttribute('data-message-timestamp', String(timestampMs));
     const toolbar = this.getOrCreateActionsToolbar(msgEl);
-    toolbar.querySelector<HTMLElement>('.claudian-message-timestamp')?.remove();
+    toolbar.querySelector<HTMLElement>('.grandemonium-message-timestamp')?.remove();
     if (this.plugin.settings?.showMessageTimestamps !== true) {
       return;
     }
 
-    const timestampEl = toolbar.createDiv({ cls: 'claudian-message-timestamp' });
+    const timestampEl = toolbar.createDiv({ cls: 'grandemonium-message-timestamp' });
     const timestamp = new Date(timestampMs);
     const label = timestamp.toLocaleTimeString(undefined, {
       hour: '2-digit',
@@ -206,19 +206,19 @@ export class MessageRenderer {
     }
 
     const msgEl = this.messagesEl.createDiv({
-      cls: `claudian-message claudian-message-${msg.role}`,
+      cls: `grandemonium-message grandemonium-message-${msg.role}`,
       attr: {
         'data-message-id': msg.id,
         'data-role': msg.role,
       },
     });
 
-    const contentEl = msgEl.createDiv({ cls: 'claudian-message-content', attr: { dir: 'auto' } });
+    const contentEl = msgEl.createDiv({ cls: 'grandemonium-message-content', attr: { dir: 'auto' } });
 
     if (msg.role === 'user') {
       const textToShow = this.getUserMessageTextToShow(msg);
       if (textToShow) {
-        const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
+        const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
         void this.renderContent(textEl, textToShow);
         this.addUserCopyButton(msgEl, textToShow);
         this.applyTocTitle(msgEl, textToShow);
@@ -244,7 +244,7 @@ export class MessageRenderer {
       return;
     }
 
-    const contentEl = msgEl.querySelector<HTMLElement>('.claudian-message-content');
+    const contentEl = msgEl.querySelector<HTMLElement>('.grandemonium-message-content');
     if (!contentEl) {
       return;
     }
@@ -253,16 +253,16 @@ export class MessageRenderer {
 
     const textToShow = this.getUserMessageTextToShow(msg);
     if (textToShow) {
-      const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
+      const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
       void this.renderContent(textEl, textToShow);
       this.applyTocTitle(msgEl, textToShow);
     } else {
       msgEl.removeAttribute('data-toc-title');
     }
 
-    const toolbar = msgEl.querySelector<HTMLElement>('.claudian-user-msg-actions');
+    const toolbar = msgEl.querySelector<HTMLElement>('.grandemonium-user-msg-actions');
     if (toolbar) {
-      toolbar.querySelectorAll('.claudian-user-msg-copy-btn').forEach((el) => el.remove());
+      toolbar.querySelectorAll('.grandemonium-user-msg-copy-btn').forEach((el) => el.remove());
     }
 
     if (textToShow) {
@@ -345,19 +345,19 @@ export class MessageRenderer {
     }
 
     const msgEl = this.messagesEl.createDiv({
-      cls: `claudian-message claudian-message-${msg.role}`,
+      cls: `grandemonium-message grandemonium-message-${msg.role}`,
       attr: {
         'data-message-id': msg.id,
         'data-role': msg.role,
       },
     });
 
-    const contentEl = msgEl.createDiv({ cls: 'claudian-message-content', attr: { dir: 'auto' } });
+    const contentEl = msgEl.createDiv({ cls: 'grandemonium-message-content', attr: { dir: 'auto' } });
 
     if (msg.role === 'user') {
       const textToShow = this.getUserMessageTextToShow(msg);
       if (textToShow) {
-        const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
+        const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
         void this.renderContent(textEl, textToShow);
         this.addUserCopyButton(msgEl, textToShow);
         this.applyTocTitle(msgEl, textToShow);
@@ -384,8 +384,8 @@ export class MessageRenderer {
   /** Reparents completed output without replacing live tool or Markdown elements. */
   finalizeResponse(msg: ChatMessage, messages: ChatMessage[], collapse = true): void {
     const msgEl = this.messagesEl.querySelector<HTMLElement>(`[data-message-id="${msg.id}"]`);
-    const contentEl = msgEl?.querySelector<HTMLElement>('.claudian-message-content');
-    if (!msgEl || !contentEl || msgEl.querySelector('.claudian-work-header')) return;
+    const contentEl = msgEl?.querySelector<HTMLElement>('.grandemonium-message-content');
+    if (!msgEl || !contentEl || msgEl.querySelector('.grandemonium-work-header')) return;
 
     const blocks = msg.contentBlocks?.length
       ? msg.contentBlocks
@@ -412,23 +412,23 @@ export class MessageRenderer {
       const children = Array.from(contentEl.children) as HTMLElement[];
       const finalBlockCount = blocks.slice(finalStart).filter(block => block.type === 'citations'
         || (block.type === 'text' && stripLegacyInterruptIndicator(block.content).content.trim())).length;
-      const answerEls = new Set(children.filter(child => child.classList.contains('claudian-text-block')
-        || child.classList.contains('claudian-citations')).slice(-finalBlockCount));
+      const answerEls = new Set(children.filter(child => child.classList.contains('grandemonium-text-block')
+        || child.classList.contains('grandemonium-citations')).slice(-finalBlockCount));
       // Fallback tool calls can follow the answer in the DOM without belonging to the answer.
       const workEls = children.filter(child => !answerEls.has(child));
       if (earlierEls.length || workEls.length || msg.durationSeconds !== undefined) {
         const seconds = Math.max(0, Math.floor(msg.durationSeconds ?? 0));
         const duration = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-        const wrapper = contentEl.createDiv({ cls: 'claudian-work' });
+        const wrapper = contentEl.createDiv({ cls: 'grandemonium-work' });
         contentEl.insertBefore(wrapper, contentEl.firstChild);
-        const historyId = `claudian-work-history-${MessageRenderer.nextHistoryId++}`;
+        const historyId = `grandemonium-work-history-${MessageRenderer.nextHistoryId++}`;
         const label = msg.durationSeconds === undefined ? 'Worked' : `Worked for ${duration}`;
         const header = wrapper.createEl('button', {
-          cls: 'claudian-work-header',
+          cls: 'grandemonium-work-header',
           text: label,
           attr: { type: 'button', 'aria-label': label, 'aria-expanded': 'false', 'aria-controls': historyId },
         });
-        const history = wrapper.createDiv({ cls: 'claudian-work-history', attr: { id: historyId } });
+        const history = wrapper.createDiv({ cls: 'grandemonium-work-history', attr: { id: historyId } });
         history.hidden = true;
         header.addEventListener('click', () => {
           history.hidden = !history.hidden;
@@ -442,8 +442,8 @@ export class MessageRenderer {
     const toolbar = this.getOrCreateActionsToolbar(msgEl);
     toolbar.empty();
     for (const child of Array.from(contentEl.children)) {
-      if (child.classList.contains('claudian-text-block')) {
-        child.querySelector('.claudian-text-copy-btn')?.remove();
+      if (child.classList.contains('grandemonium-text-block')) {
+        child.querySelector('.grandemonium-text-copy-btn')?.remove();
       }
     }
     const copyText = canCollapse ? finalText : stripLegacyInterruptIndicator(
@@ -481,18 +481,18 @@ export class MessageRenderer {
   }
 
   private renderInterruptMessage(): void {
-    const msgEl = this.messagesEl.createDiv({ cls: 'claudian-message claudian-message-assistant' });
-    const contentEl = msgEl.createDiv({ cls: 'claudian-message-content', attr: { dir: 'auto' } });
+    const msgEl = this.messagesEl.createDiv({ cls: 'grandemonium-message grandemonium-message-assistant' });
+    const contentEl = msgEl.createDiv({ cls: 'grandemonium-message-content', attr: { dir: 'auto' } });
     this.appendInterruptIndicator(contentEl);
   }
 
   appendInterruptIndicator(contentEl: HTMLElement): void {
-    const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
-    textEl.createSpan({ cls: 'claudian-interrupted', text: 'Interrupted' });
+    const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
+    textEl.createSpan({ cls: 'grandemonium-interrupted', text: 'Interrupted' });
     textEl.appendText(' ');
     textEl.createSpan({
-      cls: 'claudian-interrupted-hint',
-      text: '\u00B7 What should Claudian do instead?',
+      cls: 'grandemonium-interrupted-hint',
+      text: '\u00B7 What should Grandemonium do instead?',
     });
   }
 
@@ -519,7 +519,7 @@ export class MessageRenderer {
           if (!normalized.content.trim()) {
             continue;
           }
-          const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
+          const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
           void this.renderContent(textEl, normalized.content);
           this.addTextCopyButton(textEl, normalized.content);
         } else if (block.type === 'citations') {
@@ -531,8 +531,8 @@ export class MessageRenderer {
             renderedToolIds.add(toolCall.id);
           }
         } else if (block.type === 'context_compacted') {
-          const boundaryEl = contentEl.createDiv({ cls: 'claudian-compact-boundary' });
-          boundaryEl.createSpan({ cls: 'claudian-compact-boundary-label', text: 'Conversation compacted' });
+          const boundaryEl = contentEl.createDiv({ cls: 'grandemonium-compact-boundary' });
+          boundaryEl.createSpan({ cls: 'grandemonium-compact-boundary-label', text: 'Conversation compacted' });
         } else if (block.type === 'subagent') {
           const taskToolCall = msg.toolCalls?.find((toolCall) => {
             if (toolCall.id !== block.subagentId) return false;
@@ -561,7 +561,7 @@ export class MessageRenderer {
         const normalized = stripLegacyInterruptIndicator(msg.content);
         hadLegacyInterruptIndicator ||= normalized.interrupted;
         if (normalized.content.trim()) {
-          const textEl = contentEl.createDiv({ cls: 'claudian-text-block' });
+          const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
           void this.renderContent(textEl, normalized.content);
           this.addTextCopyButton(textEl, normalized.content);
         }
@@ -770,11 +770,11 @@ export class MessageRenderer {
    * Renders image attachments above a message.
    */
   renderMessageImages(containerEl: HTMLElement, images: ImageAttachment[]): HTMLElement {
-    const imagesEl = containerEl.createDiv({ cls: 'claudian-message-images' });
+    const imagesEl = containerEl.createDiv({ cls: 'grandemonium-message-images' });
 
     for (const image of images) {
       const imageWrapper = imagesEl.createEl('button', {
-        cls: 'claudian-message-image',
+        cls: 'grandemonium-message-image',
         attr: {
           'aria-label': `Preview ${image.name}`,
           type: 'button',
@@ -859,7 +859,7 @@ export class MessageRenderer {
       }
     } catch {
       el.createDiv({
-        cls: 'claudian-render-error',
+        cls: 'grandemonium-render-error',
         text: 'Failed to render message content.',
       });
     }
@@ -877,7 +877,7 @@ export class MessageRenderer {
    */
   addTextCopyButton(textEl: HTMLElement, markdown: string): void {
     const copyBtn = textEl.createEl('button', {
-      cls: 'claudian-text-copy-btn',
+      cls: 'grandemonium-text-copy-btn',
       attr: {
         'aria-label': 'Copy message',
         type: 'button',
@@ -922,22 +922,22 @@ export class MessageRenderer {
     if (!msg.userMessageId || !this.isRewindEligible(allMessages, index)) return;
     const msgEl = this.liveMessageEls.get(msg.id);
     if (!msgEl) return;
-    if (this.rewindCallback && !msgEl.querySelector('.claudian-message-rewind-btn')) {
+    if (this.rewindCallback && !msgEl.querySelector('.grandemonium-message-rewind-btn')) {
       this.addRewindButton(msgEl, msg.id);
     }
     this.liveMessageEls.delete(msg.id);
   }
 
   private getOrCreateActionsToolbar(msgEl: HTMLElement): HTMLElement {
-    const existing = Array.from(msgEl.children).find(child => child.classList.contains('claudian-user-msg-actions')) as HTMLElement | undefined;
+    const existing = Array.from(msgEl.children).find(child => child.classList.contains('grandemonium-user-msg-actions')) as HTMLElement | undefined;
     if (existing) return existing;
-    return msgEl.createDiv({ cls: 'claudian-user-msg-actions claudian-message-actions' });
+    return msgEl.createDiv({ cls: 'grandemonium-user-msg-actions grandemonium-message-actions' });
   }
 
   private addUserCopyButton(msgEl: HTMLElement, content: string): void {
     const toolbar = this.getOrCreateActionsToolbar(msgEl);
     const copyBtn = toolbar.createEl('button', {
-      cls: 'claudian-user-msg-copy-btn',
+      cls: 'grandemonium-user-msg-copy-btn',
       attr: { type: 'button' },
     });
     setIcon(copyBtn, 'copy');
@@ -971,7 +971,7 @@ export class MessageRenderer {
     if (!this.getCapabilities().supportsRewind) return;
     const toolbar = this.getOrCreateActionsToolbar(msgEl);
     const btn = toolbar.createEl('button', {
-      cls: 'claudian-message-rewind-btn',
+      cls: 'grandemonium-message-rewind-btn',
       attr: { type: 'button' },
     });
     if (toolbar.firstChild !== btn) toolbar.insertBefore(btn, toolbar.firstChild);
@@ -1023,7 +1023,7 @@ export class MessageRenderer {
   private addSpeakButton(toolbar: HTMLElement, markdown: string): void {
     if (!isReadAloudAvailable(this.plugin.settings)) return;
     const btn = toolbar.createEl('button', {
-      cls: 'claudian-message-speak-btn',
+      cls: 'grandemonium-message-speak-btn',
       attr: { type: 'button', 'aria-label': t('chat.speak.ariaLabel'), 'aria-pressed': 'false' },
     });
     setIcon(btn, 'volume-2');
@@ -1055,7 +1055,7 @@ export class MessageRenderer {
     if (!this.getCapabilities().supportsFork) return;
     const toolbar = this.getOrCreateActionsToolbar(msgEl);
     const btn = toolbar.createEl('button', {
-      cls: 'claudian-message-fork-btn',
+      cls: 'grandemonium-message-fork-btn',
       attr: { type: 'button' },
     });
     setIcon(btn, 'git-fork');

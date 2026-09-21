@@ -1,7 +1,7 @@
 import type { CollabRequestDetail, CollabRole } from '@claudian-collab/protocol';
 
 import type { CollabOperationOptions, CollabRequestReview, CollabReviewFileContent, CollabReviewFileRequest } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface CollabReviewProjectContext {
   readonly memberId: string;

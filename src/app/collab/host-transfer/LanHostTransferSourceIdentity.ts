@@ -8,7 +8,7 @@ import type {
   HostTransferSourceIdentityPort,
 } from '@/app/collab/host-transfer/HostTransferCoordinatorPorts';
 import type { LanTlsIdentity } from '@/app/collab/lan/LanTlsIdentity';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export class LanHostTransferSourceIdentity implements HostTransferSourceIdentityPort {
   constructor(

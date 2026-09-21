@@ -13,7 +13,7 @@ import {
 import type {
   AuthorityTransferPersistence,
 } from '@/app/collab/authority-transfer/persistence/AuthorityTransferPersistence';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import { parseInstallationKey } from '@/core/device/InstallationKey';
 
 function statusError(reason: string): CollabError {

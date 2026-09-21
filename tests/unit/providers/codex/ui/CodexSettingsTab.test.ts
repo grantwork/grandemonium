@@ -635,14 +635,14 @@ describe('CodexSettingsTab', () => {
     );
     const warningEl = container.createDiv.mock.results[warningCallIndex]?.value;
     expect(warningCallIndex).toBeGreaterThanOrEqual(0);
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', false);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', false);
 
     plugin.settings.providerConfigs.codex.customModels = 'gpt-custom';
     const pickerContext = mockRenderCodexModelPicker.mock.calls[0][1];
     pickerContext.notifyProviderModelOptionsChanged('codex');
 
     expect(context.notifyProviderModelOptionsChanged).toHaveBeenCalledWith('codex');
-    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('claudian-hidden', true);
+    expect(warningEl.toggleClass).toHaveBeenLastCalledWith('grandemonium-hidden', true);
   });
 
   it('renders the fixed-root shared skill manager', () => {
@@ -830,16 +830,16 @@ describe('CodexSettingsTab', () => {
     expect(mockSaveSettings).not.toHaveBeenCalled();
 
     const validationCallIndex = container.createDiv.mock.calls.findIndex(
-      ([options]: [{ cls?: string }?]) => options?.cls?.includes('claudian-cli-path-validation'),
+      ([options]: [{ cls?: string }?]) => options?.cls?.includes('grandemonium-cli-path-validation'),
     );
     const validationEl = container.createDiv.mock.results[validationCallIndex]?.value;
     expect(validationCallIndex).toBeGreaterThanOrEqual(0);
     expect(validationEl.setText).toHaveBeenLastCalledWith(
       'WSL mode expects a Linux command or Linux absolute path, not a Windows executable path.',
     );
-    expect(validationEl.hasClass('claudian-hidden')).toBe(false);
+    expect(validationEl.hasClass('grandemonium-hidden')).toBe(false);
     expect(cliPathSetting.textComponents[0].inputEl.toggleClass).toHaveBeenLastCalledWith(
-      'claudian-input-error',
+      'grandemonium-input-error',
       true,
     );
   });

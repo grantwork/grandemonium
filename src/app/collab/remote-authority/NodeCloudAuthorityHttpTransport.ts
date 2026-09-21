@@ -12,7 +12,7 @@ import {
   cloudAuthorityOperationError,
   cloudAuthorityProtocolError,
 } from '@/app/collab/remote-authority/CloudAuthorityError';
-import type { CollabError } from '@/core/collab/ClaudianCollabError';
+import type { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 

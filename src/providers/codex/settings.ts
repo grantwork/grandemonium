@@ -29,6 +29,7 @@ const CODEX_REASONING_SUMMARIES = ['auto', 'concise', 'detailed', 'none'] as con
 
 export interface CodexProviderConfig {
   enabled: boolean;
+  agentName: string;
   safeMode: CodexSafeMode;
   cliPath: string;
   cliPathsByHost: HostnameCliPaths;
@@ -116,6 +117,7 @@ function ensureCodexProjectionMap(
 
 export interface CodexProviderSettings {
   enabled: CodexProviderConfig['enabled'];
+  agentName: CodexProviderConfig['agentName'];
   safeMode: CodexProviderConfig['safeMode'];
   cliPath: CodexProviderConfig['cliPath'];
   cliPathsByHost: CodexProviderConfig['cliPathsByHost'];
@@ -137,6 +139,7 @@ export interface CodexProviderSettings {
 
 export const DEFAULT_CODEX_PROVIDER_CONFIG: Readonly<CodexProviderConfig> = Object.freeze({
   enabled: false,
+  agentName: 'gpt',
   safeMode: 'workspace-write',
   cliPath: '',
   cliPathsByHost: {},
@@ -406,6 +409,7 @@ function getCodexStoredConfig(
       config.enabled,
       readStoredBoolean(settings.codexEnabled, DEFAULT_CODEX_PROVIDER_CONFIG.enabled),
     ),
+    agentName: readStoredString(config.agentName, DEFAULT_CODEX_PROVIDER_CONFIG.agentName),
     safeMode: readStoredCodexSafeMode(
       config.safeMode,
       readStoredCodexSafeMode(settings.codexSafeMode, DEFAULT_CODEX_PROVIDER_CONFIG.safeMode),

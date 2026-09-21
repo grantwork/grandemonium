@@ -42,7 +42,7 @@ import {
   type AuthorityTransferProjectCatalog,
 } from '@/app/collab/authority-transfer/persistence/AuthorityTransferPersistenceStores';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import type { InstallationKey } from '@/core/device/InstallationKey';
 
 export interface AuthorityTransferPersistenceOptions {

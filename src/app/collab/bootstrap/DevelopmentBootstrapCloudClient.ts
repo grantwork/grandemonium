@@ -16,7 +16,7 @@ import type {
   DevelopmentBootstrapCloudPort,
 } from '@/app/collab/bootstrap/CloudBootstrapCoordinator';
 import { canonicalCloudOrigin } from '@/app/collab/remote-authority/CloudAuthorityUrls';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const JSON_TIMEOUT_MS = 30_000;
 const UPLOAD_TIMEOUT_MS = 15 * 60 * 1_000;
@@ -263,7 +263,7 @@ export class DevelopmentBootstrapCloudClient implements DevelopmentBootstrapClou
       const outgoing = requestFn(url, {
         headers: {
           ...headers,
-          'x-claudian-development-actor': this.#actorId,
+          'x-grandemonium-development-actor': this.#actorId,
         },
         method,
       }, incoming => {

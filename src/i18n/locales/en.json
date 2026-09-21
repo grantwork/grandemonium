@@ -138,7 +138,7 @@
       "addProject": "Add project",
       "createProject": "Create",
       "projectPicker": "Select project",
-      "emptyDescription": "Create a local project or join one from another Claudian user.",
+      "emptyDescription": "Create a local project or join one from another Grandemonium user.",
       "joinProject": "Join",
       "reconnectProject": "Reconnect project...",
       "joinUnavailable": "Joining becomes available with LAN collaboration.",
@@ -413,7 +413,7 @@
     }
   },
   "settings": {
-    "title": "Tandemonium Settings",
+    "title": "Grandemonium Settings",
     "tabs": {
       "general": "General",
       "comments": "Comments",
@@ -430,7 +430,7 @@
     "models": "Models",
     "experimental": "Experimental",
     "userName": {
-      "name": "What should Tandemonium call you?",
+      "name": "What should Grandemonium call you?",
       "desc": "Your name for personalized greetings (leave empty for generic greetings)"
     },
     "excludedTags": {
@@ -489,13 +489,13 @@
     },
     "hiddenSlashCommands": {
       "name": "Hidden Commands and Skills",
-      "desc": "Hide specific commands and skills from the dropdown. Useful for hiding Claude Code entries that are not relevant to Tandemonium. Enter names without the leading slash, one per line.",
+      "desc": "Hide specific commands and skills from the dropdown. Useful for hiding Claude Code entries that are not relevant to Grandemonium. Enter names without the leading slash, one per line.",
       "placeholder": "commit\nbuild\ntest"
     },
     "mcpServers": {
       "name": "MCP Servers",
       "descBeforeCommand": "Claude Code manages MCP servers via its own CLI. Configure with ",
-      "descAfterCommand": " and they will be available in Tandemonium. ",
+      "descAfterCommand": " and they will be available in Grandemonium. ",
       "learnMore": "Learn more"
     },
     "plugins": {
@@ -604,8 +604,8 @@
     },
     "collabGitInstallation": {
       "summary": "Git setup help",
-      "requirement": "Claudian Collab uses Native Git 2.38 or newer installed on your computer.",
-      "verify": "Ask Claudian to check and verify your installation:",
+      "requirement": "Grandemonium Collab uses Native Git 2.38 or newer installed on your computer.",
+      "verify": "Ask Grandemonium to check and verify your installation:",
       "prompt": "Check my Git installation on this computer.\n1. Report whether Git is installed, the executable path, and the version.\n2. If Git is not installed, advise me how to install it on this device.\n3. Do not install or change anything."
     },
     "collabGitStatus": {
@@ -613,7 +613,7 @@
       "available": "Git executable detected",
       "unavailable": "Git executable not found"
     },
-    "collabReadMore": "Read more about Claudian Collab Mode",
+    "collabReadMore": "Read more about Grandemonium Collab Mode",
     "collabGitPath": {
       "name": "Native Git path",
       "desc": "Optional absolute path to Native Git for Collab. Leave empty to detect Git automatically.",
@@ -625,7 +625,7 @@
     },
     "collabProjectsFolder": {
       "name": "Projects folder",
-      "desc": "Vault-relative folder for future Collab Projects. You do not need to create it first; Claudian creates or claims it on the next Create or Join. Existing Projects stay in place.",
+      "desc": "Vault-relative folder for future Collab Projects. You do not need to create it first; Grandemonium creates or claims it on the next Create or Join. Existing Projects stay in place.",
       "placeholder": "workspace"
     },
     "enableDualPane": {
@@ -674,7 +674,7 @@
       "desc": "Show Write and Edit diffs expanded when they first appear."
     },
     "chatViewPlacement": {
-      "name": "Open Tandemonium in",
+      "name": "Open Grandemonium in",
       "desc": "Choose where the chat panel opens when it is created",
       "rightSidebar": "Right sidebar",
       "leftSidebar": "Left sidebar",
@@ -697,13 +697,13 @@
     "providerEnablement": {
       "name": "Enable {provider}",
       "desc": "Make enabled {provider} models available for new conversations. Existing sessions are preserved when disabled.",
-      "lastProviderWarning": "At least one provider must remain enabled for Tandemonium to work.",
+      "lastProviderWarning": "At least one provider must remain enabled for Grandemonium to work.",
       "noModelsWarning": "No {provider} models are enabled. Go to Models below and enable at least one model."
     },
     "codex": {
       "installationMethod": {
         "name": "Installation method",
-        "desc": "How Tandemonium should launch Codex on Windows. Native Windows uses a Windows executable path. WSL launches the Linux CLI inside a selected distro.",
+        "desc": "How Grandemonium should launch Codex on Windows. Native Windows uses a Windows executable path. WSL launches the Linux CLI inside a selected distro.",
         "nativeWindows": "Native Windows",
         "wsl": "WSL"
       },
@@ -754,7 +754,7 @@
       },
       "mcp": {
         "descBeforeCommand": "Codex manages MCP servers via its own CLI. Configure with ",
-        "descAfterCommand": " and they will be available in Tandemonium. ",
+        "descAfterCommand": " and they will be available in Grandemonium. ",
         "learnMore": "Learn more"
       },
       "environment": {

@@ -101,7 +101,7 @@ describe('built-in ProviderModule catalog', () => {
       safeMode: 'read-only',
     });
     expect(getProviderConfig(normalizedSettings, 'opencode')).toMatchObject({
-      selectedMode: 'claudian-safe',
+      selectedMode: 'grandemonium-safe',
     });
     expect(getProviderConfig(normalizedSettings, 'pi')).toMatchObject({
       toolMode: 'readonly',
@@ -119,7 +119,7 @@ describe('built-in ProviderModule catalog', () => {
         },
       },
     })).toBe(true);
-    expect(getProviderConfig(normalizedSettings, 'opencode').selectedMode).toBe('claudian-safe');
+    expect(getProviderConfig(normalizedSettings, 'opencode').selectedMode).toBe('grandemonium-safe');
   });
 
   it('does not report canonical provider defaults as changed', () => {

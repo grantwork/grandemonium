@@ -45,7 +45,7 @@ function fill(modal: JoinProjectModal): void {
     '[data-field="invitation"]',
   )!;
   const member = modal.contentEl.querySelector<HTMLInputElement>('[data-field="member-name"]')!;
-  invitation.value = 'claudian-collab:v2:payload';
+  invitation.value = 'grandemonium-collab:v2:payload';
   invitation.dispatchEvent(new Event('input'));
   member.value = 'Alice';
   member.dispatchEvent(new Event('input'));
@@ -68,7 +68,7 @@ describe('JoinProjectModal', () => {
     await flush();
 
     expect(port.joinProject).toHaveBeenCalledWith({
-      encodedInvitation: 'claudian-collab:v2:payload',
+      encodedInvitation: 'grandemonium-collab:v2:payload',
       memberDisplayName: 'Alice',
     }, expect.objectContaining({ signal: expect.any(AbortSignal) }));
     expect(onJoined).toHaveBeenCalledWith(expect.objectContaining({ id: 'project-alpha' }));

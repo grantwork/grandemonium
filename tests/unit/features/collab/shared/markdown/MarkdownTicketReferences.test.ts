@@ -18,7 +18,7 @@ describe('renderMarkdownWithTicketReferences', () => {
     });
 
     const reference = host.querySelector<HTMLButtonElement>(
-      '.claudian-collab-markdown-ticket-reference',
+      '.grandemonium-collab-markdown-ticket-reference',
     );
     expect(reference?.textContent).toBe('#17');
     expect(reference?.dataset.ticketNumber).toBe('17');

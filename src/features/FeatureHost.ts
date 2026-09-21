@@ -5,10 +5,10 @@ import type { CollabComposerReferencePort } from '../core/collab';
 import type { ProviderHost } from '../core/providers/ProviderHost';
 import type { AppTabManagerState, ProviderId } from '../core/providers/types';
 import type {
-  ClaudianSettings,
   Conversation,
   ConversationMeta,
   ConversationMutablePatch,
+  GrandemoniumSettings,
   StoredChatModelSelection,
 } from '../core/types';
 import type { ChatExecutionPersistence } from './chat/execution/ChatExecutionCoordinator';
@@ -32,6 +32,14 @@ export interface FeatureTabManagerHost {
   invalidateProviderResources(providerIds: ProviderId | ProviderId[], generation: number): void;
 }
 
+/** What each provider did with a broadcast prompt. */
+export interface ProviderBroadcastResult {
+  /** Providers that started a turn with the prompt. */
+  sent: ProviderId[];
+  /** Providers mid-turn that took it onto their queue instead. */
+  queued: ProviderId[];
+}
+
 export interface FeatureViewHost extends TabManagerViewHost {
   getActiveTab(): AssembledTabRuntime | null;
   getTabManager(): FeatureTabManagerHost | null;
@@ -40,6 +48,13 @@ export interface FeatureViewHost extends TabManagerViewHost {
   refreshTabControls(): void;
   refreshDualPaneLayout(): void;
   refreshCollabAvailability(): void;
+  /** Gives every newly enabled provider its tab. */
+  refreshProviderTabs(): void;
+  /** Sends one prompt to every enabled provider's tab; reports what each did with it. */
+  broadcastPromptToProviderTabs(
+    prompt: string,
+    targetProviderId?: ProviderId,
+  ): Promise<ProviderBroadcastResult>;
   refreshMessageTimestamps(): void;
   updateHiddenProviderCommands(): void;
   invalidateProviderResources(providerIds: ProviderId[], generation: number): void;
@@ -76,7 +91,7 @@ export interface FeatureHost {
   readonly chatModelSelection: ChatModelSelectionPort;
   readonly executionPersistence: ChatExecutionPersistence;
   readonly providerHost: ProviderHost;
-  readonly settings: ClaudianSettings;
+  readonly settings: GrandemoniumSettings;
 
   /** Quote-anchored review comments feature. */
   readonly comments: CommentsController;
@@ -96,7 +111,7 @@ export interface FeatureHost {
   >;
 
   mutateSettings(
-    mutation: (settings: ClaudianSettings) => void | Promise<void>,
+    mutation: (settings: GrandemoniumSettings) => void | Promise<void>,
   ): Promise<void>;
   getActiveEnvironmentVariables(providerId?: ProviderId): string;
   getAgentSkillResourceGeneration(): number;

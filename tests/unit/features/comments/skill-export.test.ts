@@ -1,4 +1,4 @@
-import { SKILL_MARKDOWN } from "@/features/comments/skill-export";
+import { buildSkillMarkdown, SKILL_MARKDOWN } from "@/features/comments/skill-export";
 
 describe("exported Claude skill edit-suggestion contract", () => {
   it("documents the optional suggestion schema and replacement metadata", () => {
@@ -36,5 +36,17 @@ describe("exported Claude skill edit-suggestion contract", () => {
   it("documents accepted and declined history outcomes", () => {
     expect(SKILL_MARKDOWN).toContain('suggestion.result: "accepted"');
     expect(SKILL_MARKDOWN).toContain('suggestion.result: "declined"');
+  });
+});
+
+describe("exported skill author identity", () => {
+  it("tells the assistant to reply under its configured agent name", () => {
+    expect(buildSkillMarkdown("gpt")).toContain('{ "author": "gpt", "ts":');
+  });
+
+  it("keeps the sample thread distinct from the assistant's own name", () => {
+    const skill = buildSkillMarkdown("gpt");
+
+    expect(skill).toContain('"author": "Leon"');
   });
 });

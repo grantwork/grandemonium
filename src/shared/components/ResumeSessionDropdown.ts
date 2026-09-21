@@ -1,5 +1,5 @@
 /**
- * Claudian - Resume session dropdown
+ * Grandemonium - Resume session dropdown
  *
  * Dropup UI for selecting a previous conversation to resume.
  * Shown when the /resume built-in command is executed.
@@ -48,7 +48,7 @@ export class ResumeSessionDropdown {
     this.conversations = this.sortConversations(conversations);
     this.currentConversationId = currentConversationId;
     this.callbacks = callbacks;
-    this.listboxId = `claudian-resume-listbox-${++nextListboxId}`;
+    this.listboxId = `grandemonium-resume-listbox-${++nextListboxId}`;
     this.previousInputAttributes = new Map(
       INPUT_ACCESSIBILITY_ATTRIBUTES.map(attribute => [
         attribute,
@@ -56,7 +56,7 @@ export class ResumeSessionDropdown {
       ])
     );
 
-    this.dropdownEl = this.containerEl.createDiv({ cls: 'claudian-resume-dropdown' });
+    this.dropdownEl = this.containerEl.createDiv({ cls: 'grandemonium-resume-dropdown' });
     this.configureInputAccessibility();
     this.render();
     this.dropdownEl.addClass('visible');
@@ -131,7 +131,7 @@ export class ResumeSessionDropdown {
   }
 
   private updateSelection(scrollSelectedIntoView = true): void {
-    const items = this.dropdownEl.querySelectorAll('.claudian-resume-item');
+    const items = this.dropdownEl.querySelectorAll('.grandemonium-resume-item');
     let activeOptionId: string | null = null;
     items?.forEach((item, index) => {
       if (index === this.selectedIndex) {
@@ -163,16 +163,16 @@ export class ResumeSessionDropdown {
   private render(): void {
     this.dropdownEl.empty();
 
-    const header = this.dropdownEl.createDiv({ cls: 'claudian-resume-header' });
+    const header = this.dropdownEl.createDiv({ cls: 'grandemonium-resume-header' });
     header.createSpan({ text: 'Resume conversation' });
 
-    const list = this.dropdownEl.createDiv({ cls: 'claudian-resume-list' });
+    const list = this.dropdownEl.createDiv({ cls: 'grandemonium-resume-list' });
     list.setAttribute('id', this.listboxId);
     list.setAttribute('role', 'listbox');
     list.setAttribute('aria-label', 'Resume conversation');
 
     if (this.conversations.length === 0) {
-      list.createDiv({ cls: 'claudian-resume-empty', text: 'No conversations' });
+      list.createDiv({ cls: 'grandemonium-resume-empty', text: 'No conversations' });
       this.inputEl.removeAttribute('aria-activedescendant');
       return;
     }
@@ -181,20 +181,20 @@ export class ResumeSessionDropdown {
       const conv = this.conversations[i];
       const isCurrent = conv.id === this.currentConversationId;
 
-      const item = list.createDiv({ cls: 'claudian-resume-item' });
+      const item = list.createDiv({ cls: 'grandemonium-resume-item' });
       item.setAttribute('id', `${this.listboxId}-option-${i}`);
       item.setAttribute('role', 'option');
       if (isCurrent) item.addClass('current');
       if (i === this.selectedIndex) item.addClass('selected');
 
-      const iconEl = item.createDiv({ cls: 'claudian-resume-item-icon' });
+      const iconEl = item.createDiv({ cls: 'grandemonium-resume-item-icon' });
       setIcon(iconEl, isCurrent ? 'message-square-dot' : 'message-square');
 
-      const content = item.createDiv({ cls: 'claudian-resume-item-content' });
-      const titleEl = content.createDiv({ cls: 'claudian-resume-item-title', text: conv.title });
+      const content = item.createDiv({ cls: 'grandemonium-resume-item-content' });
+      const titleEl = content.createDiv({ cls: 'grandemonium-resume-item-title', text: conv.title });
       titleEl.setAttribute('title', conv.title);
       content.createDiv({
-        cls: 'claudian-resume-item-date',
+        cls: 'grandemonium-resume-item-date',
         text: isCurrent ? 'Current session' : this.formatDate(conv.lastActivityAt),
       });
 

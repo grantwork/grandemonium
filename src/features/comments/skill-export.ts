@@ -1,4 +1,4 @@
-export const SKILL_MARKDOWN = `---
+const buildSkill = (agentName: string): string => `---
 name: obsidian-tandem-comments
 description: Read, write, reply to and resolve comments and edit suggestions in Markdown files that use the tandem-comments format (a \`\`\`tandem-comments fenced JSON block near the end of the file, quote-anchored via W3C TextQuoteSelector). Trigger whenever a Markdown file contains a tandem-comments block, or the user asks to comment on / annotate / review text in an Obsidian note, suggest an edit, reply to a comment, or resolve comments.
 ---
@@ -30,7 +30,7 @@ stays **100% untouched** — never write markers into the body text.
 - **Locating a passage:** search the prose for \`anchor.exact\`; on multiple hits
   disambiguate via \`prefix\`/\`suffix\`, falling back to the hit closest to \`pos\`
   (character offset into the prose).
-- **Replying:** append \`{ "author": "Claude", "ts": "<ISO-8601 UTC>", "text": "..." }\`
+- **Replying:** append \`{ "author": "${agentName}", "ts": "<ISO-8601 UTC>", "text": "..." }\`
   to the \`thread\` array.
 - **New comment:** add a new key (4-digit hex id, e.g. \`"7c2e"\`) with \`anchor\` +
   \`status: "open"\` + \`thread\`. Anchor: \`exact\` = exact quote from the prose,
@@ -82,8 +82,16 @@ interface NodePathLike {
 
 declare const require: ((m: string) => unknown) | undefined;
 
+/** The skill text, with the assistant told to sign replies as `agentName`. */
+export function buildSkillMarkdown(agentName: string): string {
+  return buildSkill(agentName);
+}
+
+/** Default-identity skill text, retained for callers without a configured name. */
+export const SKILL_MARKDOWN = buildSkill("claude");
+
 /** Writes the skill file to ~/.claude/skills/obsidian-tandem-comments/SKILL.md (desktop only). */
-export function exportSkill(): string {
+export function exportSkill(agentName = "claude"): string {
   if (typeof require !== "function") {
     throw new Error("Skill export is only available in the desktop app.");
   }
@@ -93,6 +101,6 @@ export function exportSkill(): string {
   const dir = path.join(os.homedir(), ".claude", "skills", "obsidian-tandem-comments");
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, "SKILL.md");
-  fs.writeFileSync(file, SKILL_MARKDOWN, "utf8");
+  fs.writeFileSync(file, buildSkill(agentName), "utf8");
   return file;
 }

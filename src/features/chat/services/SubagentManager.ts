@@ -705,7 +705,7 @@ export class SubagentManager {
     const description = (newInput.description as string) || '';
     if (description) {
       info.description = description;
-      const labelEl = wrapperEl.querySelector('.claudian-subagent-label');
+      const labelEl = wrapperEl.querySelector('.grandemonium-subagent-label');
       if (labelEl) {
         const truncated = description.length > 40 ? description.substring(0, 40) + '...' : description;
         labelEl.setText(truncated);
@@ -714,7 +714,7 @@ export class SubagentManager {
     const prompt = (newInput.prompt as string) || '';
     if (prompt) {
       info.prompt = prompt;
-      const promptEl = wrapperEl.querySelector('.claudian-subagent-prompt-text');
+      const promptEl = wrapperEl.querySelector('.grandemonium-subagent-prompt-text');
       if (promptEl) {
         promptEl.setText(prompt);
       }

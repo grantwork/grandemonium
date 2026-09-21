@@ -73,7 +73,7 @@ describe('persistent LAN authority-transfer services', () => {
       localRole: 'source',
       operationIntentId: 'intent-owner',
       projectId: PROJECT_ID,
-      stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
       status: status(),
       terminalCleanupCompleted: false,
       terminalResponder: { expiresAt: status().expiresAt, state: 'active' },
@@ -91,7 +91,7 @@ describe('persistent LAN authority-transfer services', () => {
           expect(input).toEqual({
             operationIntentId: 'intent-owner',
             projectId: PROJECT_ID,
-            stagingDirectoryName: `.claudian-authority-transfer-${TRANSFER_ID}`,
+            stagingDirectoryName: `.grandemonium-authority-transfer-${TRANSFER_ID}`,
             transferId: TRANSFER_ID,
           });
           calls.push('complete');

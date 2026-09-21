@@ -16,7 +16,7 @@ describe('LocalCloudBootstrapReadinessInspector', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-bootstrap-readiness-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-bootstrap-readiness-'));
   });
 
   afterEach(async () => {
@@ -40,7 +40,7 @@ describe('LocalCloudBootstrapReadinessInspector', () => {
         }),
         local: {
           projects: {
-            getConflictDirectoryPath: () => '.claudian/collab/conflicts',
+            getConflictDirectoryPath: () => '.grandemonium/collab/conflicts',
             hostTransferRecovery: { load: async () => null },
             listPendingOperationProjectIds: async () => [],
             loadMembership: async () => ({

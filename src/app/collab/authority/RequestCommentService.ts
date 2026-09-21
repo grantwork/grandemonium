@@ -14,8 +14,8 @@ import type { RequestEnsureDatabasePort } from '@/app/collab/authority/RequestEn
 import {
   decodeAuthorityComment,
 } from '@/app/collab/authority/RequestQueryRepository';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 export interface RequestCommentServiceOptions {
   readonly createCommentId?: () => string;
@@ -49,7 +49,7 @@ function normalizeBody(body: string): string {
   });
   if (
     normalized.length === 0
-    || Buffer.byteLength(normalized, 'utf8') > CLAUDIAN_COLLAB_LIMITS.maxCommentBytes
+    || Buffer.byteLength(normalized, 'utf8') > GRANDEMONIUM_COLLAB_LIMITS.maxCommentBytes
     || containsForbiddenControl
   ) {
     throw commentError('request-comment-body-invalid');

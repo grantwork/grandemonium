@@ -10,7 +10,7 @@ import { parsePathEntries, resolveNvmDefaultBin } from './path';
 const isWindows = process.platform === 'win32';
 const PATH_SEPARATOR = isWindows ? ';' : ':';
 const NODE_EXECUTABLE = isWindows ? 'node.exe' : 'node';
-const DEVICE_SETTINGS_STORAGE_KEY = 'claudian.deviceSettingsKey';
+const DEVICE_SETTINGS_STORAGE_KEY = 'grandemonium.deviceSettingsKey';
 let cachedDeviceSettingsSeed: string | null = null;
 let cachedDeviceSettingsKey: string | null = null;
 

@@ -8,7 +8,7 @@ import type {
   CollabResult,
   CollabWorkingTreeReview,
 } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   PersonalChangesPanel,
   type PersonalChangesPanelPort,
@@ -207,24 +207,24 @@ describe('PersonalChangesPanel', () => {
     expect(dirtyContainer.textContent).not.toContain('Review changes');
     expect(dirtyContainer.textContent).not.toContain('My request');
     const fileList = dirtyContainer.querySelector<HTMLElement>(
-      '.claudian-collab-file-list',
+      '.grandemonium-collab-file-list',
     )!;
     expect(fileList.tagName).toBe('UL');
     expect(fileList.getAttribute('aria-label')).toBe('2 changed files');
     expect(fileList.querySelectorAll(':scope > li')).toHaveLength(2);
     expect([
       ...fileList.querySelectorAll<HTMLButtonElement>(
-        ':scope > li > .claudian-collab-file-button',
+        ':scope > li > .grandemonium-collab-file-button',
       ),
     ].map(button => button.dataset.path)).toEqual([
       'note.md',
       'assets/image.png',
     ]);
-    expect(fileList.querySelector('[data-path="note.md"] .claudian-collab-file-kind'))
+    expect(fileList.querySelector('[data-path="note.md"] .grandemonium-collab-file-kind'))
       .toMatchObject({ textContent: 'M' });
     expect(fileList.querySelector('[data-path="note.md"] [data-kind="modified"]'))
       .not.toBeNull();
-    expect(fileList.querySelector('[data-path="assets/image.png"] .claudian-collab-file-kind'))
+    expect(fileList.querySelector('[data-path="assets/image.png"] .grandemonium-collab-file-kind'))
       .toMatchObject({ textContent: 'A' });
     dirtyContainer.querySelector<HTMLButtonElement>('[data-action="review-personal"]')?.click();
     expect(onOpenWorkingTreeReview).toHaveBeenCalledWith(
@@ -672,7 +672,7 @@ describe('PersonalChangesPanel', () => {
     const file = container.querySelector<HTMLButtonElement>('[data-path="note.md"]')!;
     file.click();
     file.focus();
-    const root = container.querySelector<HTMLElement>('.claudian-collab-publish')!;
+    const root = container.querySelector<HTMLElement>('.grandemonium-collab-publish')!;
     root.scrollTop = 37;
     container.querySelector<HTMLButtonElement>('[data-path="note.md"]')?.focus();
 
@@ -700,7 +700,7 @@ describe('PersonalChangesPanel', () => {
     await flush();
 
     expect(signal.aborted).toBe(true);
-    expect(container.querySelector('.claudian-collab-publish')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-publish')).toBeNull();
     const subscription = fixture.port.subscribe.mock.results[0]?.value as { dispose: jest.Mock };
     expect(subscription.dispose).toHaveBeenCalledTimes(1);
   });

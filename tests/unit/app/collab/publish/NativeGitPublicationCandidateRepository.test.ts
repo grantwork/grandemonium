@@ -121,8 +121,8 @@ describe('NativeGitPublicationCandidateRepository', () => {
     );
     expect(git.commitTree).toHaveBeenCalledWith(CONTEXT.repositoryPath, {
       identity: {
-        email: 'collab@claudian.local',
-        name: 'Claudian Collab',
+        email: 'collab@grandemonium.local',
+        name: 'Grandemonium Collab',
       },
       message: 'Prepare publication candidate',
       parents: [CONTRIBUTION, MAIN],
@@ -130,7 +130,7 @@ describe('NativeGitPublicationCandidateRepository', () => {
     });
     expect(git.createRef).toHaveBeenCalledWith(
       CONTEXT.repositoryPath,
-      'refs/claudian/publications/publish-a',
+      'refs/grandemonium/publications/publish-a',
       CANDIDATE,
     );
     expect(git.personalOid).toBe(CONTRIBUTION);

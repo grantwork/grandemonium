@@ -458,7 +458,7 @@ describe('Tab provider execution ownership', () => {
     tab.dom.messagesEl.scrollTo = jest.fn();
 
     const bottomButton = tab.dom.messagesWrapperEl.querySelector(
-      '.claudian-nav-btn-bottom',
+      '.grandemonium-nav-btn-bottom',
     );
     bottomButton?.click();
 
@@ -476,25 +476,25 @@ describe('Tab provider execution ownership', () => {
 
     expect(tab.state.autoScrollEnabled).toBe(true);
 
-    const sidebar = tab.dom.messagesWrapperEl.querySelector('.claudian-nav-sidebar');
+    const sidebar = tab.dom.messagesWrapperEl.querySelector('.grandemonium-nav-sidebar');
     for (const buttonIndex of [0, 1, 3]) {
       bottomButton?.click();
       sidebar?.children[buttonIndex]?.click();
       expect(tab.state.autoScrollEnabled).toBe(false);
     }
 
-    const userMessage = tab.dom.messagesEl.createDiv({ cls: 'claudian-message-user' });
+    const userMessage = tab.dom.messagesEl.createDiv({ cls: 'grandemonium-message-user' });
     userMessage.setAttribute('data-toc-title', 'Prompt');
     const queryMessages = tab.dom.messagesEl.querySelectorAll.bind(tab.dom.messagesEl);
     tab.dom.messagesEl.querySelectorAll = jest.fn((selector: string) => (
-      selector === '.claudian-message-user, [data-role="user"]'
+      selector === '.grandemonium-message-user, [data-role="user"]'
         ? [userMessage]
         : queryMessages(selector)
     ));
     const messageControl = userMessage.createEl('button');
     bottomButton?.click();
     sidebar?.children[2]?.click();
-    tab.dom.messagesWrapperEl.querySelector('.claudian-nav-toc-item')?.click();
+    tab.dom.messagesWrapperEl.querySelector('.grandemonium-nav-toc-item')?.click();
     expect(tab.state.autoScrollEnabled).toBe(false);
 
     bottomButton?.click();
@@ -613,7 +613,7 @@ describe('Tab provider execution ownership', () => {
     tab.state.autoScrollEnabled = false;
     tab.dom.messagesEl.scrollTo = jest.fn();
 
-    tab.dom.messagesWrapperEl.querySelector('.claudian-nav-btn-bottom')?.click();
+    tab.dom.messagesWrapperEl.querySelector('.grandemonium-nav-btn-bottom')?.click();
 
     expect(tab.state.autoScrollEnabled).toBe(false);
   });
@@ -706,7 +706,7 @@ describe('Tab provider execution ownership', () => {
       tab.state.autoScrollEnabled = false;
 
       tab.dom.messagesEl.dispatchEvent('scroll');
-      tab.dom.messagesWrapperEl.querySelector('.claudian-nav-btn-top')?.click();
+      tab.dom.messagesWrapperEl.querySelector('.grandemonium-nav-btn-top')?.click();
       tab.dom.messagesEl.dispatchEvent({ type: 'wheel', deltaY: 120 });
       jest.advanceTimersByTime(150);
 
@@ -1041,6 +1041,22 @@ describe('Tab provider execution ownership', () => {
     expect(tab.providerId).toBe('claude');
   });
 
+  it('binds a blank tab to its requested provider before that provider has models', async () => {
+    const plugin = createPlugin();
+    const uiConfig = ProviderRegistry.getChatUIConfig('codex');
+    (uiConfig.getDefaultModel as jest.Mock).mockReturnValue(null);
+    (uiConfig.getModelOptions as jest.Mock).mockReturnValue([]);
+
+    const tab = await createTestTab({
+      plugin,
+      containerEl: createMockEl() as any,
+      providerId: 'codex',
+    });
+
+    expect(tab.providerId).toBe('codex');
+    expect(tab.draftModel).toBeNull();
+  });
+
   it('records an explicit blank-tab model choice as the future-tab seed', async () => {
     const originalResizeObserver = globalThis.ResizeObserver;
     globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
@@ -1056,7 +1072,7 @@ describe('Tab provider execution ownership', () => {
     });
     const modelOptions = Array.from(
       tab.dom.inputWrapper.querySelectorAll(
-        '.claudian-model-option',
+        '.grandemonium-model-option',
       ) as NodeListOf<HTMLElement>,
     );
     const alternate = modelOptions.find(option =>
@@ -1103,7 +1119,7 @@ describe('Tab provider execution ownership', () => {
       });
       const modelOptions = Array.from(
         tab.dom.inputWrapper.querySelectorAll(
-          '.claudian-model-option',
+          '.grandemonium-model-option',
         ) as NodeListOf<HTMLElement>,
       );
       const codex = modelOptions.find(option =>
@@ -1164,7 +1180,7 @@ describe('Tab provider execution ownership', () => {
       });
       const modelOptions = Array.from(
         tab.dom.inputWrapper.querySelectorAll(
-          '.claudian-model-option',
+          '.grandemonium-model-option',
         ) as NodeListOf<HTMLElement>,
       );
       const codex = modelOptions.find(option =>
@@ -1210,7 +1226,7 @@ describe('Tab provider execution ownership', () => {
     const tab = await createTestTab({ plugin, containerEl: createMockEl() as any });
     const modelOptions = Array.from(
       tab.dom.inputWrapper.querySelectorAll(
-        '.claudian-model-option',
+        '.grandemonium-model-option',
       ) as NodeListOf<HTMLElement>,
     );
     const alternate = modelOptions.find(option =>
@@ -1266,7 +1282,7 @@ describe('Tab provider execution ownership', () => {
       });
       const modelOptions = Array.from(
         tab.dom.inputWrapper.querySelectorAll(
-          '.claudian-model-option',
+          '.grandemonium-model-option',
         ) as NodeListOf<HTMLElement>,
       );
       const first = modelOptions.find(option =>
@@ -1314,7 +1330,7 @@ describe('Tab provider execution ownership', () => {
     });
     const modelOptions = Array.from(
       tab.dom.inputWrapper.querySelectorAll(
-        '.claudian-model-option',
+        '.grandemonium-model-option',
       ) as NodeListOf<HTMLElement>,
     );
     const alternate = modelOptions.find(option =>
@@ -1358,7 +1374,7 @@ describe('Tab provider execution ownership', () => {
     });
     const modelOptions = Array.from(
       tab.dom.inputWrapper.querySelectorAll(
-        '.claudian-model-option',
+        '.grandemonium-model-option',
       ) as NodeListOf<HTMLElement>,
     );
     const alternate = modelOptions.find(option =>
@@ -1391,7 +1407,7 @@ describe('Tab provider execution ownership', () => {
     });
     const modelOptions = Array.from(
       tab.dom.inputWrapper.querySelectorAll(
-        '.claudian-model-option',
+        '.grandemonium-model-option',
       ) as NodeListOf<HTMLElement>,
     );
     const alternate = modelOptions.find(option =>
@@ -1562,35 +1578,6 @@ describe('Tab provider execution ownership', () => {
     }, 'paste');
 
     expect(attached).toBe(true);
-    expect(tab.lifecycleState).toBe('cold');
-    globalThis.ResizeObserver = originalResizeObserver;
-  });
-
-  it('commits a provisional preview when the user removes captured editor context', async () => {
-    const originalResizeObserver = globalThis.ResizeObserver;
-    globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-      disconnect: jest.fn(),
-      observe: jest.fn(),
-    })) as unknown as typeof ResizeObserver;
-    const plugin = createPlugin();
-    const tab = await createTestTab({
-      plugin,
-      containerEl: createMockEl() as any,
-      lifecycleState: 'provisional',
-    });
-    const selectionController = tab.controllers.selectionController as any;
-    selectionController.storedSelection = {
-      lineCount: 1,
-      notePath: 'note.md',
-      selectedText: 'draft context',
-    };
-    selectionController.updateIndicator();
-
-    const removeButton = tab.dom.contextRowEl.querySelector(
-      '.claudian-context-chip-remove',
-    ) as any;
-    removeButton.dispatchEvent('click');
-
     expect(tab.lifecycleState).toBe('cold');
     globalThis.ResizeObserver = originalResizeObserver;
   });

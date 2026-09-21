@@ -31,7 +31,7 @@ import {
 } from '@/app/collab/host-transfer/HostTransferPackage';
 import type { HostTransferRecoveryRecord } from '@/app/collab/host-transfer/HostTransferRecoveryRecord';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const INSTALL_OWNER_FILE = '.host-transfer-install-owner.json';
 const INSTALL_COMPLETE_FILE = '.host-transfer-installed.json';
@@ -49,7 +49,7 @@ const INSTALL_OWNER_KEYS = [
 interface InstallOwner {
   readonly activatedSnapshotDigest: string;
   readonly manifestDigest: string;
-  readonly owner: 'claudian-host-transfer-install';
+  readonly owner: 'grandemonium-host-transfer-install';
   readonly projectId: CollabProjectId;
   readonly schemaVersion: 1;
   readonly transferId: CollabOperationId;
@@ -172,7 +172,7 @@ function decodeInstallOwner(serialized: string): InstallOwner {
     || Object.keys(record).some(key => !INSTALL_OWNER_KEYS.includes(
       key as typeof INSTALL_OWNER_KEYS[number],
     ))
-    || record.owner !== 'claudian-host-transfer-install'
+    || record.owner !== 'grandemonium-host-transfer-install'
     || record.schemaVersion !== 1
     || typeof record.projectId !== 'string'
     || typeof record.transferId !== 'string'
@@ -398,7 +398,7 @@ export class IncomingHostTransferPackage implements IncomingHostTransferPackageP
     const owner: InstallOwner = Object.freeze({
       activatedSnapshotDigest: sha256(activated.bytes),
       manifestDigest: input.manifestDigest,
-      owner: 'claudian-host-transfer-install',
+      owner: 'grandemonium-host-transfer-install',
       projectId: input.record.projectId,
       schemaVersion: 1,
       transferId: input.record.transferId,
@@ -600,7 +600,7 @@ export class IncomingHostTransferPackage implements IncomingHostTransferPackageP
   }
 
   private async requireStaging(record: HostTransferRecoveryRecord): Promise<string> {
-    const expectedName = `.claudian-host-transfer-${record.transferId}`;
+    const expectedName = `.grandemonium-host-transfer-${record.transferId}`;
     if (record.stagingDirectoryName !== expectedName) {
       throw packageError('host-transfer-target-staging-name-invalid');
     }

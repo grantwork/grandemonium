@@ -11,7 +11,7 @@ import {
   type ConflictResolutionRecord,
 } from '@/app/collab/conflicts/ConflictResolutionRecord';
 import type { PublishProjectContext } from '@/app/collab/publish/PublishCoordinator';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PERSONAL = '1'.repeat(40);
 const MAIN = '2'.repeat(40);

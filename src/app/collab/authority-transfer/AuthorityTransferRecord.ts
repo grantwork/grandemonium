@@ -223,7 +223,7 @@ export function decodeAuthorityTransferRecord(value: unknown): AuthorityTransfer
   if (
     value.projectId !== status.projectId
     || value.transferId !== status.transferId
-    || stagingDirectoryName !== `.claudian-authority-transfer-${status.transferId}`
+    || stagingDirectoryName !== `.grandemonium-authority-transfer-${status.transferId}`
     || (localRole === 'source') !== (status.direction === 'lan-to-cloud')
     || (lifecycleOwnership === 'proposal' && status.phase !== 'collecting-readiness')
     || (receiptVerifier !== null && (

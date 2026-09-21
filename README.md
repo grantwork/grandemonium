@@ -1,4 +1,4 @@
-# Tandemonium
+# Grandemonium
 
 An Obsidian plugin that puts a coding agent and a review workflow in the same
 vault. Chat with Claude Code, Codex, Grok, OpenCode or Pi in a sidebar that
@@ -47,8 +47,8 @@ This plugin is not in the Obsidian community directory. Build it and copy the
 three build artefacts into a vault.
 
 ```bash
-git clone https://github.com/grantwork/tandemonium.git
-cd tandemonium
+git clone https://github.com/grantwork/grandemonium.git
+cd grandemonium
 npm install
 npm run build
 ```
@@ -60,8 +60,8 @@ npm run deploy
 ```
 
 That builds and copies `main.js`, `styles.css` and `manifest.json` into
-`.obsidian/plugins/tandemonium/` for every listed vault. Restart Obsidian and
-enable Tandemonium under Community plugins.
+`.obsidian/plugins/grandemonium/` for every listed vault. Restart Obsidian and
+enable Grandemonium under Community plugins.
 
 To install somewhere not in the register, pass paths directly:
 
@@ -119,7 +119,7 @@ setting under which a prompt injection hidden in a note could act on your
 machine. Switch to Safe mode in the chat toolbar if you want approval prompts.
 
 API keys entered in plugin settings are stored unencrypted in the vault, under
-`.claudian/`. Prefer authenticating your CLI directly, and add that folder to
+`.grandemonium/`. Prefer authenticating your CLI directly, and add that folder to
 your vault's `.gitignore` if the vault is a Git repository.
 
 ## Licence and attribution

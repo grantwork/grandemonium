@@ -1,10 +1,10 @@
 import { COLLAB_LIMITS as SHARED_COLLAB_LIMITS } from '@claudian-collab/protocol';
 
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
 
-describe('ClaudianCollabConstants', () => {
+describe('GrandemoniumCollabConstants', () => {
   it('extends canonical limits with application-owned local policy', () => {
-    expect(CLAUDIAN_COLLAB_LIMITS).toEqual({
+    expect(GRANDEMONIUM_COLLAB_LIMITS).toEqual({
       ...SHARED_COLLAB_LIMITS,
       hostRepositorySoftLimitBytes: 1024 * 1024 * 1024,
       maxCheckoutBytes: 500 * 1024 * 1024,
@@ -15,6 +15,6 @@ describe('ClaudianCollabConstants', () => {
       maxTicketAcceptedRelations: 2_000,
       maxTicketHighlights: 5,
     });
-    expect(Object.isFrozen(CLAUDIAN_COLLAB_LIMITS)).toBe(true);
+    expect(Object.isFrozen(GRANDEMONIUM_COLLAB_LIMITS)).toBe(true);
   });
 });

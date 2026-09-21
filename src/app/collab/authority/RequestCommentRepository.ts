@@ -6,7 +6,7 @@ import {
 } from '@/app/collab/authority/RequestQueryRepository';
 import { RequestTicketRelationRepository } from '@/app/collab/authority/RequestTicketRelationRepository';
 import type { AuthorityDatabaseConnection } from '@/app/collab/authority/SqlJsProjectDatabase';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function commentError(reason: string): CollabError {
   return new CollabError({

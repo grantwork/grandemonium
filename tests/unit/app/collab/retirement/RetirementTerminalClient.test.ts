@@ -1,5 +1,5 @@
 import { RetirementTerminalClient } from '@/app/collab/retirement/RetirementTerminalClient';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const INPUT = {
   hostCaCertificatePem: 'old-ca',

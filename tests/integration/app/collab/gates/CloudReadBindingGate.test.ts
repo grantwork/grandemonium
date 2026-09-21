@@ -106,7 +106,7 @@ async function createRepository(root: string): Promise<RepositoryFixture> {
   await mkdir(working);
   await git(working, ['init', '--initial-branch=main']);
   await git(working, ['config', 'user.name', 'Cloud Gate']);
-  await git(working, ['config', 'user.email', 'gate@claudian.local']);
+  await git(working, ['config', 'user.email', 'gate@grandemonium.local']);
   await writeFile(path.join(working, 'shared.md'), 'shared cloud state\n');
   await git(working, ['add', 'shared.md']);
   await git(working, ['commit', '-m', 'main']);
@@ -289,7 +289,7 @@ async function startGateServer(repository: RepositoryFixture): Promise<GateServe
         ], limits));
         return;
       }
-      const actor = request.headers['x-claudian-development-actor'];
+      const actor = request.headers['x-grandemonium-development-actor'];
       if (
         typeof actor !== 'string'
         || ![HOST_MEMBER_ID, OTHER_MEMBER_ID].includes(actor)
@@ -351,7 +351,7 @@ async function startGateServer(repository: RepositoryFixture): Promise<GateServe
   });
   server.on('upgrade', (request, socket, head) => {
     const match = matchCollabCloudRoute(request.method ?? '', request.url ?? '');
-    const actor = request.headers['x-claudian-development-actor'];
+    const actor = request.headers['x-grandemonium-development-actor'];
     if (
       match?.kind !== 'project-events'
       || match.projectId !== PROJECT_ID
@@ -586,7 +586,7 @@ async function createClient(
 
 describe('Cloud read and binding gate', () => {
   it('binds and restarts two clients through real upload-pack without reviving LAN', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-read-binding-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-read-binding-'));
     const repository = await createRepository(root);
     const server = await startGateServer(repository);
     try {
@@ -657,14 +657,14 @@ describe('Cloud read and binding gate', () => {
 
       await expect(stat(path.join(
         clients[0]!.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'authorities',
         PROJECT_ID,
       ))).rejects.toMatchObject({ code: 'ENOENT' });
       await expect(readFile(path.join(
         clients[0]!.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'retired-lan-authorities',
         PROJECT_ID,
@@ -673,7 +673,7 @@ describe('Cloud read and binding gate', () => {
       ), 'utf8')).resolves.toBe('inert after binding');
       await expect(stat(path.join(
         clients[1]!.vaultRoot,
-        '.claudian',
+        '.grandemonium',
         'collab',
         'retired-lan-authorities',
       ))).rejects.toMatchObject({ code: 'ENOENT' });

@@ -1,7 +1,7 @@
 import { buildOpencodePromptBlocks, buildOpencodePromptText } from '../../../../src/providers/opencode/runtime/buildOpencodePrompt';
 
 describe('buildOpencodePromptText', () => {
-  it('appends Claudian XML context to the user query', () => {
+  it('appends Grandemonium XML context to the user query', () => {
     const prompt = buildOpencodePromptText({
       browserSelection: {
         selectedText: 'Browser quote',

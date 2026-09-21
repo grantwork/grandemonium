@@ -35,7 +35,7 @@ export function renderCopyableCodeFence(
   text: string,
   options: CopyableCodeFenceOptions,
 ): HTMLElement {
-  const wrapper = container.createDiv({ cls: 'claudian-code-wrapper' });
+  const wrapper = container.createDiv({ cls: 'grandemonium-code-wrapper' });
   const pre = wrapper.createEl('pre');
   pre.createEl('code', { text });
 
@@ -67,11 +67,11 @@ export function renderCopyableCodeFence(
 
 /** Adopts an Obsidian-rendered `pre` and preserves its native copy button. */
 export function enhanceRenderedCodeFence(pre: HTMLPreElement): HTMLElement {
-  if (pre.parentElement?.classList.contains('claudian-code-wrapper')) {
+  if (pre.parentElement?.classList.contains('grandemonium-code-wrapper')) {
     return pre.parentElement;
   }
 
-  const wrapper = createDiv({ cls: 'claudian-code-wrapper' });
+  const wrapper = createDiv({ cls: 'grandemonium-code-wrapper' });
   pre.parentElement?.insertBefore(wrapper, pre);
   wrapper.appendChild(pre);
 
@@ -80,7 +80,7 @@ export function enhanceRenderedCodeFence(pre: HTMLPreElement): HTMLElement {
   if (code && language) {
     wrapper.classList.add('has-language');
     const label = createSpan({
-      cls: 'claudian-code-lang-label',
+      cls: 'grandemonium-code-lang-label',
       text: language,
     });
     wrapper.appendChild(label);

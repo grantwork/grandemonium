@@ -18,7 +18,6 @@ import type {
   AuthorityDatabaseConnection,
   AuthoritySqlRow,
 } from '@/app/collab/authority/SqlJsProjectDatabase';
-import type { ClaudianCollabService } from '@/app/collab/ClaudianCollabService';
 import {
   createCollabFileExclusively,
   ensureCollabVaultDirectory,
@@ -26,10 +25,11 @@ import {
   writeCollabFileAtomically,
 } from '@/app/collab/CollabFilesystemBoundary';
 import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
+import type { GrandemoniumCollabService } from '@/app/collab/GrandemoniumCollabService';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const ARTIFACT_DIRECTORY = '.claudian/collab/cloud-bootstrap-artifacts';
+const ARTIFACT_DIRECTORY = '.grandemonium/collab/cloud-bootstrap-artifacts';
 const BUNDLE_TIMEOUT_MS = 15 * 60 * 1_000;
 const MAX_ARTIFACT_INTENT_BYTES = 128 * 1024;
 
@@ -43,7 +43,7 @@ interface BootstrapArtifactIntent {
 export interface LocalDevelopmentBootstrapSourceOptions {
   readonly createAttemptId?: () => string;
   readonly foundation: Pick<
-    ClaudianCollabService,
+    GrandemoniumCollabService,
     'hostInstallations' | 'local' | 'openAuthority' | 'requireGitFoundation'
   >;
   readonly now?: () => Date;

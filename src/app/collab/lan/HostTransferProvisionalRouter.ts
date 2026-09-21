@@ -17,7 +17,7 @@ import type {
   IncomingHostTransferTerminalResult,
 } from '@/app/collab/host-transfer/IncomingHostTransferCoordinator';
 import { COLLAB_HOST_TRANSFER_PROTOCOL_VERSION } from '@/app/collab/lan/LanCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const HOST_TRANSFER_ROUTE_PREFIX = `/v${COLLAB_HOST_TRANSFER_PROTOCOL_VERSION}/host-transfers`;
 const ROUTE_PATTERN = new RegExp(`^${HOST_TRANSFER_ROUTE_PREFIX}/([^/]+)/(probe|stage|activate|cancel|complete|confirm)$`);
@@ -61,7 +61,7 @@ function credentialHash(credential: string): Buffer {
 function requireCredential(request: IncomingMessage, expected: Buffer): void {
   const authorization = request.headers.authorization;
   const match = typeof authorization === 'string'
-    ? /^Claudian-Receiver ([A-Za-z0-9_-]{43})$/.exec(authorization)
+    ? /^Grandemonium-Receiver ([A-Za-z0-9_-]{43})$/.exec(authorization)
     : null;
   if (!match) throw routeError('host-transfer-receiver-authentication-failed', 'authentication-failed');
   const actual = credentialHash(match[1]);
@@ -200,7 +200,7 @@ export class HostTransferProvisionalRouter {
   }
 
   async handle(request: IncomingMessage, response: ServerResponse): Promise<boolean> {
-    const parsed = new URL(request.url ?? '/', 'https://claudian.invalid');
+    const parsed = new URL(request.url ?? '/', 'https://grandemonium.invalid');
     const match = ROUTE_PATTERN.exec(parsed.pathname);
     if (!match || parsed.search || parsed.hash) return false;
     const [, transferId, action] = match;
@@ -266,7 +266,7 @@ export class HostTransferProvisionalRouter {
         return true;
       }
 
-      const manifestLength = Number(request.headers['x-claudian-manifest-length']);
+      const manifestLength = Number(request.headers['x-grandemonium-manifest-length']);
       if (
         !Number.isSafeInteger(manifestLength)
         || manifestLength < 1

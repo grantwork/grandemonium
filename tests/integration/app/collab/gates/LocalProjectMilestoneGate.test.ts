@@ -21,9 +21,9 @@ import { TEST_INSTALLATION_A } from '@test/helpers/installations';
 import initSqlJs, { type SqlJsStatic } from 'sql.js';
 
 import {
-  ClaudianCollabService,
   CollabProjectSetupService,
   createCollabFeatureSubcomposition,
+  GrandemoniumCollabService,
 } from '@/app/collab';
 import { SqlJsProjectDatabase } from '@/app/collab/authority/SqlJsProjectDatabase';
 import {
@@ -69,15 +69,15 @@ describe('G3 local Project milestone gate', () => {
   });
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-m2-gate-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-m2-gate-'));
   });
 
   afterEach(async () => {
     if (vaultRoot) await rm(vaultRoot, { force: true, recursive: true });
   });
 
-  function createFoundation(configuredGitPath = ''): ClaudianCollabService {
-    return new ClaudianCollabService({
+  function createFoundation(configuredGitPath = ''): GrandemoniumCollabService {
+    return new GrandemoniumCollabService({
       createAuthorityDatabase: authorityDirectory => (
         new SqlJsProjectDatabase(authorityDirectory, { loadSqlJs: async () => SQL })
       ),
@@ -139,9 +139,9 @@ describe('G3 local Project milestone gate', () => {
     expect(git(vaultRoot, [
       'check-ignore',
       'workspace/m2-notes/.git/config',
-      '.claudian/collab/projects/project-m2/membership.json',
+      '.grandemonium/collab/projects/project-m2/membership.json',
     ]).split('\n').sort()).toEqual([
-      '.claudian/collab/projects/project-m2/membership.json',
+      '.grandemonium/collab/projects/project-m2/membership.json',
       'workspace/m2-notes/.git/config',
     ]);
 
@@ -181,7 +181,7 @@ describe('G3 local Project milestone gate', () => {
     let addresses = ['127.0.0.1'];
     let checkAddress!: () => Promise<void>;
     const invitationCodec = new InvitationCodec({ isAddressAllowed: () => true });
-    const foundation = new ClaudianCollabService({
+    const foundation = new GrandemoniumCollabService({
       createAuthorityDatabase: authorityDirectory => (
         new SqlJsProjectDatabase(authorityDirectory, { loadSqlJs: async () => SQL })
       ),
@@ -317,7 +317,7 @@ describe('G3 local Project milestone gate', () => {
       lifecycleOwnership: 'owned',
       localRole: 'source',
       operationIntentId,
-      stagingDirectoryName: `.claudian-authority-transfer-${transferId}`,
+      stagingDirectoryName: `.grandemonium-authority-transfer-${transferId}`,
       status: transferStatus('source-relinquished'),
     });
     const custody = decodeAuthorityTransferClaimCustodyRecord({
@@ -681,7 +681,7 @@ describe('G3 local Project milestone gate', () => {
         .update(encodeCollabTransferredMembershipClaimBatchDigestInput(unsignedClaimBatch), 'utf8')
         .digest('hex'),
     };
-    const stagingDirectoryName = `.claudian-authority-transfer-${transferId}`;
+    const stagingDirectoryName = `.grandemonium-authority-transfer-${transferId}`;
     const reserved = await foundation.local.workspace.reserveProjectsFolderChild('workspace', {
       childName: stagingDirectoryName,
       operationId: transferId,

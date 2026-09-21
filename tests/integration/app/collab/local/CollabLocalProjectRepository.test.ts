@@ -146,7 +146,7 @@ describe('CollabLocalProjectRepository', () => {
   let vaultRoot: string;
 
   beforeEach(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-collab-local-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-collab-local-'));
   });
 
   afterEach(async () => {
@@ -161,13 +161,13 @@ describe('CollabLocalProjectRepository', () => {
       schemaVersion: COLLAB_LOCAL_PROJECT_SCHEMA_VERSION,
       selectedProjectId: null,
     });
-    await expect(readdir(path.join(vaultRoot, '.claudian'))).rejects.toMatchObject({
+    await expect(readdir(path.join(vaultRoot, '.grandemonium'))).rejects.toMatchObject({
       code: 'ENOENT',
     });
   });
 
   it('migrates the development schema and persists the current shape', async () => {
-    const stateDirectory = path.join(vaultRoot, '.claudian', 'collab');
+    const stateDirectory = path.join(vaultRoot, '.grandemonium', 'collab');
     await mkdir(stateDirectory, { recursive: true });
     await writeFile(path.join(stateDirectory, 'index.json'), JSON.stringify({
       projects: [{
@@ -204,7 +204,7 @@ describe('CollabLocalProjectRepository', () => {
   });
 
   it('migrates active v1 index and membership records to v3 without touching the workspace', async () => {
-    const stateDirectory = path.join(vaultRoot, '.claudian', 'collab');
+    const stateDirectory = path.join(vaultRoot, '.grandemonium', 'collab');
     const projectState = path.join(stateDirectory, 'projects', PROJECT_ID);
     const workspace = path.join(vaultRoot, 'workspace', PROJECT_ID);
     await mkdir(projectState, { recursive: true });
@@ -244,7 +244,7 @@ describe('CollabLocalProjectRepository', () => {
   });
 
   it('migrates v2 lifecycle projections without reactivating leaving or retired Projects', async () => {
-    const stateDirectory = path.join(vaultRoot, '.claudian', 'collab');
+    const stateDirectory = path.join(vaultRoot, '.grandemonium', 'collab');
     const projectState = path.join(stateDirectory, 'projects', PROJECT_ID);
     await mkdir(projectState, { recursive: true });
     const leavingMembership = {
@@ -324,7 +324,7 @@ describe('CollabLocalProjectRepository', () => {
       projects: [{ authorityKind: 'cloud', id: PROJECT_ID }],
     });
     const persisted = JSON.parse(await readFile(
-      path.join(vaultRoot, '.claudian', 'collab', 'projects', PROJECT_ID, 'membership.json'),
+      path.join(vaultRoot, '.grandemonium', 'collab', 'projects', PROJECT_ID, 'membership.json'),
       'utf8',
     ));
     expect(persisted).not.toHaveProperty('hostOwnership');
@@ -367,7 +367,7 @@ describe('CollabLocalProjectRepository', () => {
     await repository.saveMembership(first);
     await repository.saveMembership(second);
     await writeFile(
-      path.join(vaultRoot, '.claudian', 'collab', 'index.json'),
+      path.join(vaultRoot, '.grandemonium', 'collab', 'index.json'),
       '{corrupt',
     );
 
@@ -396,7 +396,7 @@ describe('CollabLocalProjectRepository', () => {
     }));
     await repository.transitionProjectToRetired(retirement);
     await repository.saveMembership(cloudMembershipRecord());
-    const indexPath = path.join(vaultRoot, '.claudian', 'collab', 'index.json');
+    const indexPath = path.join(vaultRoot, '.grandemonium', 'collab', 'index.json');
     await writeFile(indexPath, '{corrupt');
 
     await expect(repository.repairIndexFromMemberships()).rejects.toMatchObject({
@@ -421,7 +421,7 @@ describe('CollabLocalProjectRepository', () => {
       workspacePath: 'workspace/project-retired',
     }));
     await repository.transitionProjectToRetired(retirement);
-    const indexPath = path.join(vaultRoot, '.claudian', 'collab', 'index.json');
+    const indexPath = path.join(vaultRoot, '.grandemonium', 'collab', 'index.json');
     await writeFile(indexPath, JSON.stringify({
       projects: [indexEntry({
         cleanupStatus: 'pending',
@@ -539,7 +539,7 @@ describe('CollabLocalProjectRepository', () => {
     const repository = new CollabLocalProjectRepository(vaultRoot);
 
     await expect(repository.listRetirementTombstoneProjectIds()).resolves.toEqual([]);
-    await expect(stat(path.join(vaultRoot, '.claudian'))).rejects.toMatchObject({
+    await expect(stat(path.join(vaultRoot, '.grandemonium'))).rejects.toMatchObject({
       code: 'ENOENT',
     });
   });
@@ -569,7 +569,7 @@ describe('CollabLocalProjectRepository', () => {
     await repository.saveRetirementTombstone(tombstone);
     await writeFile(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'retirement-tombstones',
       'index.json',
@@ -609,7 +609,7 @@ describe('CollabLocalProjectRepository', () => {
     // written, so a crash after the file commit is always recoverable.
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'retirement-tombstones',
       'index.json',
@@ -654,7 +654,7 @@ describe('CollabLocalProjectRepository', () => {
       projectId: PROJECT_ID,
       receiverCredential: Buffer.alloc(32, 1).toString('base64url'),
       sourceHostMemberId: 'member-source',
-      stagingDirectoryName: '.claudian-host-transfer-transfer-one',
+      stagingDirectoryName: '.grandemonium-host-transfer-transfer-one',
       targetCaCertificatePem: '-----BEGIN CERTIFICATE-----\nQUJD\n-----END CERTIFICATE-----\n',
       targetCaFingerprint: 'b'.repeat(64),
       targetEndpoint: 'https://192.168.1.20:27001',
@@ -894,7 +894,7 @@ describe('CollabLocalProjectRepository', () => {
     await repository.finalizeRetiredProject(PROJECT_ID);
     await writeFile(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'retirement-acknowledgements',
       `.${PROJECT_ID}.json.00000000-0000-4000-8000-000000000000.tmp`,
@@ -906,7 +906,7 @@ describe('CollabLocalProjectRepository', () => {
     await expect(repository.loadRetirementRecord(PROJECT_ID)).resolves.toEqual(retirement);
     await expect(stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -920,7 +920,7 @@ describe('CollabLocalProjectRepository', () => {
 
   it('refuses to purge a Project-private state symlink boundary', async () => {
     const external = path.join(vaultRoot, 'external-private-state');
-    const projectsDirectory = path.join(vaultRoot, '.claudian', 'collab', 'projects');
+    const projectsDirectory = path.join(vaultRoot, '.grandemonium', 'collab', 'projects');
     await mkdir(external, { recursive: true });
     await mkdir(projectsDirectory, { recursive: true });
     await writeFile(path.join(external, 'secret.txt'), 'preserve\n');
@@ -937,7 +937,7 @@ describe('CollabLocalProjectRepository', () => {
   it('rejects corrupt records without leaking credential text or absolute paths', async () => {
     const stateDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -1037,7 +1037,7 @@ describe('CollabLocalProjectRepository', () => {
     });
     const projectDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -1100,7 +1100,7 @@ describe('CollabLocalProjectRepository', () => {
     expect(spawnSync('git', ['init', '--quiet'], { cwd: vaultRoot }).status).toBe(0);
     const ignored = spawnSync(
       'git',
-      ['check-ignore', '--quiet', `.claudian/collab/projects/${PROJECT_ID}/membership.json`],
+      ['check-ignore', '--quiet', `.grandemonium/collab/projects/${PROJECT_ID}/membership.json`],
       { cwd: vaultRoot },
     );
 
@@ -1115,16 +1115,16 @@ describe('CollabLocalProjectRepository', () => {
 
     expect(spawnSync(
       'git',
-      ['check-ignore', '--quiet', `.claudian/collab/projects/${PROJECT_ID}/membership.json`],
+      ['check-ignore', '--quiet', `.grandemonium/collab/projects/${PROJECT_ID}/membership.json`],
       { cwd: vaultRoot },
     ).status).toBe(0);
   });
 
   it('rejects a symlinked private-state boundary without exposing its target', async () => {
-    const outside = await mkdtemp(path.join(tmpdir(), 'claudian-collab-private-outside-'));
+    const outside = await mkdtemp(path.join(tmpdir(), 'grandemonium-collab-private-outside-'));
     try {
-      await mkdir(path.join(vaultRoot, '.claudian'));
-      await symlink(outside, path.join(vaultRoot, '.claudian', 'collab'), 'junction');
+      await mkdir(path.join(vaultRoot, '.grandemonium'));
+      await symlink(outside, path.join(vaultRoot, '.grandemonium', 'collab'), 'junction');
       const repository = new CollabLocalProjectRepository(vaultRoot);
 
       await expect(repository.saveMembership(membershipRecord())).rejects.toMatchObject({
@@ -1143,17 +1143,17 @@ describe('CollabLocalProjectRepository', () => {
 
     await repository.saveMembership(membershipRecord());
 
-    const collabDirectory = await stat(path.join(vaultRoot, '.claudian', 'collab'));
+    const collabDirectory = await stat(path.join(vaultRoot, '.grandemonium', 'collab'));
     const projectDirectory = await stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
     ));
     const membershipFile = await stat(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -1177,7 +1177,7 @@ describe('CollabLocalProjectRepository', () => {
       code: 'operation-failed',
       safeContext: { reason: 'local-record-corrupt' },
     });
-    await expect(readdir(path.join(vaultRoot, '.claudian'))).rejects.toMatchObject({
+    await expect(readdir(path.join(vaultRoot, '.grandemonium'))).rejects.toMatchObject({
       code: 'ENOENT',
     });
   });
@@ -1304,7 +1304,7 @@ describe('CollabLocalProjectRepository', () => {
     });
     await writeFile(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       '.DS_Store',
@@ -1324,7 +1324,7 @@ describe('CollabLocalProjectRepository', () => {
     });
     const pendingPath = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'projects',
       PROJECT_ID,
@@ -1385,7 +1385,7 @@ describe('CollabLocalProjectRepository', () => {
     expect(repairedPath).toBe(emptyConfigPath);
     expect(await readFile(repairedPath, 'utf8')).toBe('');
     expect(await readFile(
-      path.join(vaultRoot, '.claudian', 'collab', '.gitignore'),
+      path.join(vaultRoot, '.grandemonium', 'collab', '.gitignore'),
       'utf8',
     )).toContain('/*');
   });
@@ -1400,7 +1400,7 @@ describe('CollabLocalProjectRepository', () => {
 
     expect(authorityDirectory).toBe(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
@@ -1410,7 +1410,7 @@ describe('CollabLocalProjectRepository', () => {
     expect(process.platform === 'win32' || (authorityStat.mode & 0o777) === 0o700)
       .toBe(true);
     expect(JSON.parse(await readFile(
-      path.join(authorityDirectory, '.claudian-authority.json'),
+      path.join(authorityDirectory, '.grandemonium-authority.json'),
       'utf8',
     ))).toEqual({
       ownerInstallationKey: TEST_INSTALLATION_A,
@@ -1432,7 +1432,7 @@ describe('CollabLocalProjectRepository', () => {
     });
     const capability = await repository.createOwnedAuthorityDirectory(PROJECT_ID);
     const authorityDirectory = capability.authorityDirectory;
-    await rm(path.join(authorityDirectory, '.claudian-authority.json'));
+    await rm(path.join(authorityDirectory, '.grandemonium-authority.json'));
     await writeFile(path.join(authorityDirectory, 'keep.db'), 'unowned');
 
     await expect(repository.removeOwnedAuthorityDirectory(capability)).rejects.toMatchObject({
@@ -1462,7 +1462,7 @@ describe('CollabLocalProjectRepository', () => {
 
     expect(retiredDirectory).toBe(path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'retired-lan-authorities',
       PROJECT_ID,
@@ -1480,13 +1480,13 @@ describe('CollabLocalProjectRepository', () => {
     });
     const authorityDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
     );
     await mkdir(authorityDirectory, { recursive: true });
-    await writeFile(path.join(authorityDirectory, '.claudian-authority.json'), JSON.stringify({
+    await writeFile(path.join(authorityDirectory, '.grandemonium-authority.json'), JSON.stringify({
       projectId: PROJECT_ID,
       schemaVersion: 1,
     }));
@@ -1495,7 +1495,7 @@ describe('CollabLocalProjectRepository', () => {
     await expect(repository.claimLegacyAuthorityDirectory(PROJECT_ID))
       .resolves.toMatchObject({ authorityDirectory });
     expect(JSON.parse(await readFile(
-      path.join(authorityDirectory, '.claudian-authority.json'),
+      path.join(authorityDirectory, '.grandemonium-authority.json'),
       'utf8',
     ))).toEqual({
       ownerInstallationKey: TEST_INSTALLATION_A,
@@ -1510,13 +1510,13 @@ describe('CollabLocalProjectRepository', () => {
     });
     const authorityDirectory = path.join(
       vaultRoot,
-      '.claudian',
+      '.grandemonium',
       'collab',
       'authorities',
       PROJECT_ID,
     );
     await mkdir(authorityDirectory, { recursive: true });
-    await writeFile(path.join(authorityDirectory, '.claudian-authority.json'), JSON.stringify({
+    await writeFile(path.join(authorityDirectory, '.grandemonium-authority.json'), JSON.stringify({
       projectId: PROJECT_ID,
       schemaVersion: 1,
     }));

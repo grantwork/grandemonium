@@ -8,13 +8,13 @@ import {
 import type { ComposerContextTray } from '@/features/chat/ui/ComposerContextTray';
 import { revealWorkspaceLeaf } from '@/utils/obsidianCompat';
 
-import { LinkedContentChip } from './LinkedContentChip';
+import type { LinkedContentChip } from './LinkedContentChip';
 import { LinkedContentPickerSource } from './LinkedContentPickerSource';
 import {
   deriveLinkedContentPresentation,
   type LinkedContentPresentation,
 } from './LinkedContentPresentation';
-import { LinkedContentSelector } from './LinkedContentSelector';
+import type { LinkedContentSelector } from './LinkedContentSelector';
 
 export type LinkedContentMode = 'auto-draft' | 'explicit-draft' | 'submitting' | 'locked';
 
@@ -229,18 +229,15 @@ export class LinkedContentController {
     if (normalizedPath === this.path) this.publish();
   }
 
-  mountWelcome(welcomeEl: HTMLElement): void {
+  /**
+   * Linked content is no longer a chat-facing concept: comments carry their own
+   * file. Selection state and persistence stay live for session-history
+   * grouping, so this mounts nothing rather than being torn out.
+   */
+  mountWelcome(_welcomeEl: HTMLElement): void {
     this.assertLive();
     this.selector?.destroy();
-    const mountEl = welcomeEl.querySelector<HTMLElement>('.claudian-welcome-linked-content');
-    if (!mountEl) {
-      throw new Error('Welcome content does not expose a Linked content mount');
-    }
-    this.selector = new LinkedContentSelector(mountEl, {
-      listItems: () => this.pickerSource.list(),
-      onSelect: path => this.selectExplicit(path),
-    });
-    this.renderSelector();
+    this.selector = null;
   }
 
   unmountWelcome(): void {
@@ -248,15 +245,11 @@ export class LinkedContentController {
     this.selector = null;
   }
 
-  mountContextTray(contextTray: ComposerContextTray): void {
+  /** See {@link mountWelcome}: the chip is not shown in the composer any more. */
+  mountContextTray(_contextTray: ComposerContextTray): void {
     this.assertLive();
     this.chip?.destroy();
-    this.chip = new LinkedContentChip(contextTray, () => {
-      void this.activateCurrentContent();
-    }, () => {
-      this.selectExplicit(null);
-    });
-    this.renderChip();
+    this.chip = null;
   }
 
   unmountContextTray(): void {

@@ -52,12 +52,12 @@ import type {
   LanToCloudSourceEffects,
 } from '@/app/collab/authority-transfer/lan-to-cloud/LanToCloudSourceCoordinator';
 import type { AuthorityTransferPersistence } from '@/app/collab/authority-transfer/persistence/AuthorityTransferPersistence';
+import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
 import type {
-  ClaudianCollabService,
   CollabAuthorityFoundation,
   CollabGitFoundation,
-} from '@/app/collab/ClaudianCollabService';
-import { isCollabLocalLanMembership } from '@/app/collab/CollabLocalProjectRepository';
+  GrandemoniumCollabService,
+} from '@/app/collab/GrandemoniumCollabService';
 import {
   PersistentLanAuthorityTransferTerminalSourceService,
 } from '@/app/collab/lan/authority-transfer/PersistentLanAuthorityTransferServices';
@@ -68,7 +68,7 @@ import type {
   CloudAuthorityLifecycleSession,
 } from '@/app/collab/remote-authority/CloudAuthorityAdapter';
 import type { CollabOperationOptions } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MANIFEST_FILE = 'checkpoint.json';
 const COORDINATION_FILE = 'coordination.ndjson';
@@ -104,7 +104,7 @@ interface SourceProofEnvelope {
 export interface ProductionLanToCloudSourceEffectsOptions {
   readonly cloudSession: CloudAuthorityLifecycleSession | null;
   readonly convergence: AuthorityTransferLocalConvergence;
-  readonly foundation: ClaudianCollabService;
+  readonly foundation: GrandemoniumCollabService;
   readonly persistence: AuthorityTransferPersistence;
   readonly projectId: string;
 }

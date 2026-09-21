@@ -23,15 +23,15 @@ import type { GitRepositoryService } from '@/app/collab/git/GitRepositoryService
 import { publicationCandidateRef } from '@/app/collab/publish/NativeGitPublicationCandidateRepository';
 import type { PublishProjectContext } from '@/app/collab/publish/PublishCoordinator';
 import { type CollabConflictDescriptor, type CollabConflictEntry, type CollabConflictTextSegment } from '@/core/collab';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const STAGE_PATTERN = /^(100644|100755) ([0-9a-f]{40}(?:[0-9a-f]{24})?) ([123])\t(.+)$/;
 const SCRATCH_BRANCH = 'refs/heads/resolution';
 const RESULT_REF = 'refs/heads/resolved';
 const RESOLUTION_IDENTITY = Object.freeze({
-  email: 'collab@claudian.local',
-  name: 'Claudian Collab',
+  email: 'collab@grandemonium.local',
+  name: 'Grandemonium Collab',
 });
 const CONFLICT_MARKER_SIZE = 64;
 const MERGE_FILE_EXIT_CODES = Object.freeze(Array.from({ length: 128 }, (_, index) => index));
@@ -230,9 +230,9 @@ export class ConflictScratchGitRepository {
     const result = await this.runner.run({
       args: ['cat-file', 'blob', entry.oid],
       cwd: scratchPath,
-      maxStdoutBytes: CLAUDIAN_COLLAB_LIMITS.maxBlobBytes + 1,
+      maxStdoutBytes: GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes + 1,
     });
-    if (result.stdout.byteLength > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+    if (result.stdout.byteLength > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
       throw scratchError('quota-exceeded', 'conflict-stage-blob-too-large');
     }
     return result.stdout;
@@ -255,15 +255,15 @@ export class ConflictScratchGitRepository {
   ): Promise<readonly CollabConflictTextSegment[]> {
     throwIfCancelled(signal);
     const versions = [personal, base, accepted];
-    if (versions.some(version => (version?.byteLength ?? 0) > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes)) {
+    if (versions.some(version => (version?.byteLength ?? 0) > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes)) {
       throw scratchError('quota-exceeded', 'conflict-stage-blob-too-large');
     }
     const token = randomUUID().replaceAll('-', '');
     const markers = {
-      acceptedLabel: `CLAUDIAN_ACCEPTED_${token}`,
-      baseLabel: `CLAUDIAN_BASE_${token}`,
+      acceptedLabel: `GRANDEMONIUM_ACCEPTED_${token}`,
+      baseLabel: `GRANDEMONIUM_BASE_${token}`,
       markerSize: CONFLICT_MARKER_SIZE,
-      personalLabel: `CLAUDIAN_PERSONAL_${token}`,
+      personalLabel: `GRANDEMONIUM_PERSONAL_${token}`,
     };
     const temporaryPath = await mkdtemp(path.join(path.dirname(scratchPath), '.merge-file-'));
     const personalPath = path.join(temporaryPath, 'personal');
@@ -294,7 +294,7 @@ export class ConflictScratchGitRepository {
           acceptedPath,
         ],
         cwd: temporaryPath,
-        maxStdoutBytes: (CLAUDIAN_COLLAB_LIMITS.maxBlobBytes * 3) + (1024 * 1024),
+        maxStdoutBytes: (GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes * 3) + (1024 * 1024),
         signal,
       });
       throwIfCancelled(signal);
@@ -533,7 +533,7 @@ export class ConflictScratchGitRepository {
       maxStdoutBytes: 16 * 1024 * 1024,
     });
     const records = parseGitNulFields(result.stdout);
-    if (records.length > CLAUDIAN_COLLAB_LIMITS.maxChangedPaths * 3) {
+    if (records.length > GRANDEMONIUM_COLLAB_LIMITS.maxChangedPaths * 3) {
       throw scratchError('quota-exceeded', 'conflict-index-stage-limit');
     }
     const stages = records.map(record => {

@@ -86,7 +86,7 @@ describe('CollabHttpClient pinned transport', () => {
   let codec: InvitationCodec;
 
   beforeAll(async () => {
-    vaultRoot = await mkdtemp(path.join(tmpdir(), 'claudian-http-client-'));
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'grandemonium-http-client-'));
     hostIdentity = new LanTlsIdentity(vaultRoot, {
       installationKey: TEST_INSTALLATION_A,
     });
@@ -146,7 +146,7 @@ describe('CollabHttpClient pinned transport', () => {
       path: '/v9/projects/project-alpha/join-attempts',
     }, invite.invitationSecret)).resolves.toEqual({ ok: true });
     expect(server.requests).toEqual([{
-      authorization: `Claudian-Invitation ${invite.invitationSecret}`,
+      authorization: `Grandemonium-Invitation ${invite.invitationSecret}`,
       path: '/v9/projects/project-alpha/join-attempts',
     }]);
   });

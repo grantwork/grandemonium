@@ -23,8 +23,8 @@ import {
   type GitNetworkEnvironment,
   parseGitNulFields,
 } from '@/app/collab/git/GitCommandRunner';
-import { CLAUDIAN_COLLAB_LIMITS } from '@/core/collab/ClaudianCollabConstants';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { GRANDEMONIUM_COLLAB_LIMITS } from '@/core/collab/GrandemoniumCollabConstants';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const SAFE_REMOTE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
@@ -492,10 +492,10 @@ export function parseGitBatchBlobSequence(
     if (!match || !Number.isSafeInteger(size) || size < 0) {
       throw machineOutputError('git-batch-header-malformed');
     }
-    if (size > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+    if (size > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
       throw new CollabError({
         code: 'quota-exceeded',
-        safeContext: { limit: CLAUDIAN_COLLAB_LIMITS.maxBlobBytes, quota: 'maxBlobBytes' },
+        safeContext: { limit: GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes, quota: 'maxBlobBytes' },
       });
     }
     const terminatorIndex = cursor + size;
@@ -564,10 +564,10 @@ export function parseGitBatchBlob(output: Uint8Array, expectedOid: string): Buff
     throw machineOutputError('git-batch-header-malformed');
   }
   const size = Number(match[2]);
-  if (!Number.isSafeInteger(size) || size > CLAUDIAN_COLLAB_LIMITS.maxBlobBytes) {
+  if (!Number.isSafeInteger(size) || size > GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes) {
     throw new CollabError({
       code: 'quota-exceeded',
-      safeContext: { limit: CLAUDIAN_COLLAB_LIMITS.maxBlobBytes, quota: 'maxBlobBytes' },
+      safeContext: { limit: GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes, quota: 'maxBlobBytes' },
     });
   }
   const contentsStart = headerEnd + 1;
@@ -763,11 +763,11 @@ export class GitRepositoryService {
     }
     assertSafeIdentity(config.userDisplayName, 'member-display-name');
     const entries: ReadonlyArray<readonly [string, string]> = [
-      ['claudian.projectId', config.projectId],
-      ['claudian.memberId', config.memberId],
-      ['claudian.personalRef', config.personalRef],
+      ['grandemonium.projectId', config.projectId],
+      ['grandemonium.memberId', config.memberId],
+      ['grandemonium.personalRef', config.personalRef],
       ['user.name', config.userDisplayName],
-      ['user.email', `${config.memberId}@members.claudian.local`],
+      ['user.email', `${config.memberId}@members.grandemonium.local`],
       ['core.autocrlf', 'false'],
       ['core.safecrlf', 'true'],
       ['core.quotepath', 'false'],
@@ -798,9 +798,9 @@ export class GitRepositoryService {
       throw repositoryError('repository-invalid', 'collab-personal-ref-mismatch');
     }
     const entries: ReadonlyArray<readonly [string, string]> = [
-      ['claudian.projectId', expected.projectId],
-      ['claudian.memberId', expected.memberId],
-      ['claudian.personalRef', expected.personalRef],
+      ['grandemonium.projectId', expected.projectId],
+      ['grandemonium.memberId', expected.memberId],
+      ['grandemonium.personalRef', expected.personalRef],
     ];
     for (const [key, value] of entries) {
       const result = await this.runner.run({
@@ -1036,7 +1036,7 @@ export class GitRepositoryService {
       args: [
         'update-ref',
         '-m',
-        'Claudian Collab delete',
+        'Grandemonium Collab delete',
         '-d',
         ref,
         expectedOid,
@@ -1312,7 +1312,7 @@ export class GitRepositoryService {
     const result = await this.runner.run({
       args: ['cat-file', '--batch'],
       cwd: repositoryPath,
-      maxStdoutBytes: requests.length * (CLAUDIAN_COLLAB_LIMITS.maxBlobBytes + 256),
+      maxStdoutBytes: requests.length * (GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes + 256),
       stdin: requests.map(request => (
         `${request.treeish}:${request.repositoryRelativePath}\n`
       )).join(''),
@@ -1722,7 +1722,7 @@ export class GitRepositoryService {
       args: [
         'update-ref',
         '-m',
-        'Claudian Collab update',
+        'Grandemonium Collab update',
         ref,
         nextOid,
         expectedOid ?? zeroOid,
@@ -1739,7 +1739,7 @@ export class GitRepositoryService {
     const result = await this.runner.run({
       args: ['cat-file', '--batch'],
       cwd: repositoryPath,
-      maxStdoutBytes: CLAUDIAN_COLLAB_LIMITS.maxBlobBytes + 256,
+      maxStdoutBytes: GRANDEMONIUM_COLLAB_LIMITS.maxBlobBytes + 256,
       stdin: `${oid}\n`,
     });
     return parseGitBatchBlob(result.stdout, oid);

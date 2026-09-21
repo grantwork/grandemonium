@@ -45,7 +45,7 @@ import type {
   CloudAuthorityHttpRequest,
   CloudAuthorityHttpResponse,
 } from '@/app/collab/remote-authority/NodeCloudAuthorityHttpTransport';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 jest.setTimeout(30_000);
 
@@ -68,7 +68,7 @@ describe('Cloud Accept recovery integration', () => {
   });
 
   it('recovers a committed Accept from snapshot, detail, and main without repeating it', async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-cloud-accept-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-cloud-accept-'));
     const authorityPath = path.join(root, 'authority.git');
     const clonesPath = path.join(root, 'clones');
     const seedPath = path.join(root, 'seed');

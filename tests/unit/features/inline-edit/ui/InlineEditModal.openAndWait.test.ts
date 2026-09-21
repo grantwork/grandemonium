@@ -270,7 +270,7 @@ describe('InlineEditModal - openAndWait', () => {
 
       expect(getFoldersSpy).toHaveBeenCalledTimes(1);
       const labels = (global as any).document.body
-        .querySelectorAll('.claudian-composer-dropdown-label')
+        .querySelectorAll('.grandemonium-composer-dropdown-label')
         .map((element: { textContent: string }) => element.textContent);
       expect(labels).toEqual(['@src/']);
 
@@ -1295,8 +1295,8 @@ describe('InlineEditModal - openAndWait', () => {
       const previewEl = widgetRef.createDiffPreviewDOM([
         { type: 'insert', text: 'Updated text' },
       ]);
-      const actionBar = previewEl.querySelector('.claudian-inline-preview-actions');
-      const actionButtons = previewEl.querySelectorAll('.claudian-inline-preview-action');
+      const actionBar = previewEl.querySelector('.grandemonium-inline-preview-actions');
+      const actionButtons = previewEl.querySelectorAll('.grandemonium-inline-preview-action');
 
       expect(actionBar).not.toBeNull();
       expect(actionButtons).toHaveLength(2);
@@ -1452,10 +1452,10 @@ describe('InlineEditModal - openAndWait', () => {
         plugin
       );
 
-      const diffBlocks = previewEl.querySelectorAll('.claudian-diff-block');
+      const diffBlocks = previewEl.querySelectorAll('.grandemonium-diff-block');
       expect(diffBlocks).toHaveLength(2);
-      expect(diffBlocks[0].hasClass('claudian-diff-del')).toBe(true);
-      expect(diffBlocks[1].hasClass('claudian-diff-ins')).toBe(true);
+      expect(diffBlocks[0].hasClass('grandemonium-diff-del')).toBe(true);
+      expect(diffBlocks[1].hasClass('grandemonium-diff-ins')).toBe(true);
 
       widgetRef.reject();
       await expect(resultPromise).resolves.toEqual({ decision: 'reject' });

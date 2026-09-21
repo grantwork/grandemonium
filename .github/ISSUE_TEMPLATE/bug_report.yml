@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible problem with Tandemonium
+description: Report a reproducible problem with Grandemonium
 title: "[Bug]: "
 labels:
   - bug
@@ -55,7 +55,7 @@ body:
       label: Environment
       description: Include every applicable version and installation detail.
       value: |
-        - Tandemonium version:
+        - Grandemonium version:
         - Obsidian version:
         - Operating system:
         - Provider:

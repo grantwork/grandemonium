@@ -18,7 +18,7 @@ import {
 } from '@/app/collab/reconciliation/ReconciliationCoordinator';
 import type { CollabProjectSnapshot } from '@/core/collab';
 import { type CollabConflictDescriptor } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const MAIN = '1'.repeat(40);
 const PERSONAL = '2'.repeat(40);

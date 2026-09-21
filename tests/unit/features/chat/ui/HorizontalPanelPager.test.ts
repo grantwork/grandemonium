@@ -302,10 +302,10 @@ describe('HorizontalPanelPager', () => {
       viewportWidth: VIEWPORT_WIDTH,
     });
 
-    const replica = trackEl.querySelector('.claudian-sidebar-surface-replica');
-    const before = trackEl.querySelector('.claudian-sidebar-surface-page--before');
-    const active = trackEl.querySelector('.claudian-sidebar-surface-page--active');
-    const after = trackEl.querySelector('.claudian-sidebar-surface-page--after');
+    const replica = trackEl.querySelector('.grandemonium-sidebar-surface-replica');
+    const before = trackEl.querySelector('.grandemonium-sidebar-surface-page--before');
+    const active = trackEl.querySelector('.grandemonium-sidebar-surface-page--active');
+    const after = trackEl.querySelector('.grandemonium-sidebar-surface-page--after');
 
     expect(replica).not.toBeNull();
     expect(replica?.getAttribute('aria-hidden')).toBe('true');
@@ -354,7 +354,7 @@ describe('HorizontalPanelPager', () => {
       viewportWidth: VIEWPORT_WIDTH,
     });
 
-    const replica = trackEl.querySelector('.claudian-sidebar-surface-replica')!;
+    const replica = trackEl.querySelector('.grandemonium-sidebar-surface-replica')!;
     expect(replica.querySelector<HTMLElement>('[data-scroll-container]')?.scrollTop).toBe(72);
     expect(replica.querySelector<HTMLInputElement>('[data-runtime-value]')?.value).toBe(
       'runtime value',
@@ -384,7 +384,7 @@ describe('HorizontalPanelPager', () => {
     scrollTo(trackEl, VIEWPORT_WIDTH * 2);
     endScroll(trackEl);
 
-    const replica = trackEl.querySelector('.claudian-sidebar-surface-replica');
+    const replica = trackEl.querySelector('.grandemonium-sidebar-surface-replica');
     expect(replica?.textContent).toContain('Session snapshot');
     expect(replica?.textContent).not.toContain('Collab snapshot');
 
@@ -413,11 +413,11 @@ describe('HorizontalPanelPager', () => {
       viewportWidth: VIEWPORT_WIDTH,
     });
 
-    const replica = trackEl.querySelector('.claudian-sidebar-surface-replica');
+    const replica = trackEl.querySelector('.grandemonium-sidebar-surface-replica');
     expect(replica).not.toBeNull();
     expect(replica?.getAttribute('aria-hidden')).toBe('true');
     expect(replica?.hasAttribute('inert')).toBe(true);
-    expect(replica?.classList.contains('claudian-hidden')).toBe(false);
+    expect(replica?.classList.contains('grandemonium-hidden')).toBe(false);
     expect(trackEl.scrollLeft).toBe(VIEWPORT_WIDTH);
 
     pager.update({
@@ -427,10 +427,10 @@ describe('HorizontalPanelPager', () => {
       viewportWidth: VIEWPORT_WIDTH,
     });
 
-    expect(replica?.classList.contains('claudian-hidden')).toBe(true);
+    expect(replica?.classList.contains('grandemonium-hidden')).toBe(true);
     expect(replica?.children).toHaveLength(0);
     for (const panel of panels) {
-      expect(panel.element.className).not.toContain('claudian-sidebar-surface-page--');
+      expect(panel.element.className).not.toContain('grandemonium-sidebar-surface-page--');
     }
 
     pager.destroy();
@@ -455,15 +455,15 @@ describe('HorizontalPanelPager', () => {
     const childrenBeforeScroll = [...trackEl.children];
     scrollTo(trackEl, VIEWPORT_WIDTH - 40);
 
-    const replica = trackEl.querySelector('.claudian-sidebar-surface-replica');
+    const replica = trackEl.querySelector('.grandemonium-sidebar-surface-replica');
     expect([...trackEl.children]).toEqual(childrenBeforeScroll);
     expect(panels[1].element.classList).toContain(
-      'claudian-sidebar-surface-page--before',
+      'grandemonium-sidebar-surface-page--before',
     );
     expect(panels[0].element.classList).toContain(
-      'claudian-sidebar-surface-page--active',
+      'grandemonium-sidebar-surface-page--active',
     );
-    expect(replica?.classList).toContain('claudian-sidebar-surface-page--after');
+    expect(replica?.classList).toContain('grandemonium-sidebar-surface-page--after');
 
     scrollTo(trackEl, 0);
     endScroll(trackEl);

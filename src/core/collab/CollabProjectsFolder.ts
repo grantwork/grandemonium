@@ -101,7 +101,7 @@ export function parseCollabProjectsFolder(
     }
 
     const comparable = segment.toLocaleLowerCase('en-US');
-    if (comparable === '.git' || comparable === '.claudian' || configSegments.has(comparable)) {
+    if (comparable === '.git' || comparable === '.grandemonium' || configSegments.has(comparable)) {
       return failure('reserved-directory', 'The Projects folder cannot use a reserved application folder.');
     }
   }

@@ -74,10 +74,10 @@ describe('registerFileLinkHandler', () => {
 });
 
 it.each([
-  ['claudian-file-link', '', false],
+  ['grandemonium-file-link', '', false],
   ['internal-link', '', true],
   ['internal-link', '#Heading', false],
-  ['claudian-file-link', '#^block', true],
+  ['grandemonium-file-link', '#^block', true],
 ] as const)('focuses the existing tab for %s with subpath %s (deferred: %s)', async (className, subpath, isDeferred) => {
   const existingLeaf = {
     isDeferred,

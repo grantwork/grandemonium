@@ -7,7 +7,7 @@ import type {
   ProvisionalAuthorityDirectoryCapability,
 } from '@/app/collab/CollabLocalProjectRepository';
 import { SerialTaskQueue } from '@/app/collab/SerialTaskQueue';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 import {
   type InstallationKey,
   isInstallationKey,

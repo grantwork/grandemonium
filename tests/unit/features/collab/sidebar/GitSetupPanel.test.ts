@@ -25,9 +25,9 @@ describe('GitSetupPanel', () => {
 
     panel.render();
 
-    expect(container.querySelector<HTMLAnchorElement>('.claudian-collab-git-guide')?.href)
+    expect(container.querySelector<HTMLAnchorElement>('.grandemonium-collab-git-guide')?.href)
       .toBe('https://git-scm.com/download/win');
-    expect(container.querySelector<HTMLTextAreaElement>('.claudian-collab-git-prompt')?.value)
+    expect(container.querySelector<HTMLTextAreaElement>('.grandemonium-collab-git-prompt')?.value)
       .toContain('not WSL');
     container.querySelector<HTMLButtonElement>('[data-action="rescan"]')?.click();
     await Promise.resolve();
@@ -35,7 +35,7 @@ describe('GitSetupPanel', () => {
 
     expect(onRescan).toHaveBeenCalledTimes(1);
     expect(container.textContent).toContain('2.45.1');
-    expect(container.querySelector('.claudian-collab-git-guide')).toBeNull();
+    expect(container.querySelector('.grandemonium-collab-git-guide')).toBeNull();
   });
 
   it('copies the agent prompt and saves a trimmed advanced path', async () => {
@@ -53,7 +53,7 @@ describe('GitSetupPanel', () => {
     panel.render();
 
     container.querySelector<HTMLButtonElement>('[data-action="copy-prompt"]')?.click();
-    const input = container.querySelector<HTMLInputElement>('.claudian-collab-git-path')!;
+    const input = container.querySelector<HTMLInputElement>('.grandemonium-collab-git-path')!;
     input.value = '  /opt/homebrew/bin/git  ';
     container.querySelector<HTMLButtonElement>('[data-action="save-path"]')?.click();
     await Promise.resolve();

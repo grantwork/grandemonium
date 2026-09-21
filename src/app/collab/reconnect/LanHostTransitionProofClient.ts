@@ -12,7 +12,7 @@ import {
 } from '@/app/collab/lan/CollabHttpClient';
 import { lanCollabControlOperationCodec } from '@/app/collab/lan/LanCollabControlOperationCodecs';
 import type { CollabHostTrustTransitionProof } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 function decodeProofs(
   value: unknown,

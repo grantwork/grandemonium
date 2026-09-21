@@ -1,12 +1,12 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-describe('Claudian view container styles', () => {
+describe('Grandemonium view container styles', () => {
   it('preserves Obsidian host spacing outside the left sidebar', () => {
     const css = readFileSync(path.resolve('src/style/base/container.css'), 'utf8');
 
     expect(css).not.toMatch(
-      /\.workspace-leaf-content \.view-content\.claudian-container\s*{[^}]*padding:/,
+      /\.workspace-leaf-content \.view-content\.grandemonium-container\s*{[^}]*padding:/,
     );
   });
 
@@ -15,7 +15,7 @@ describe('Claudian view container styles', () => {
 
     expect(css).not.toContain(':has(');
     expect(css).toMatch(
-      /\.workspace-split\.mod-left-split \.view-content\.claudian-container\s*{[^}]*padding-bottom:\s*0;[^}]*overflow:\s*hidden;/,
+      /\.workspace-split\.mod-left-split \.view-content\.grandemonium-container\s*{[^}]*padding-bottom:\s*0;[^}]*overflow:\s*hidden;/,
     );
   });
 });

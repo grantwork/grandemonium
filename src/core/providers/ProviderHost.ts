@@ -5,7 +5,7 @@ import type {
   ProviderExecutionLifecycleRegistry,
   ProviderExecutionTransitionScope,
 } from '../execution';
-import type { ClaudianSettings } from '../types';
+import type { GrandemoniumSettings } from '../types';
 import type { EnvironmentScope } from '../types/settings';
 import type { ProviderCliResolutionContext, ProviderId } from './types';
 
@@ -19,16 +19,16 @@ import type { ProviderCliResolutionContext, ProviderId } from './types';
 export interface ProviderHost {
   readonly app: App;
   readonly executionLifecycleRegistry: ProviderExecutionLifecycleRegistry;
-  readonly settings: ClaudianSettings;
+  readonly settings: GrandemoniumSettings;
   readonly storage: SharedAppStorage;
   readonly manifest?: { version?: string };
 
   saveSettings(): Promise<void>;
   mutateSettings(
-    mutation: (settings: ClaudianSettings) => void | Promise<void>,
+    mutation: (settings: GrandemoniumSettings) => void | Promise<void>,
   ): Promise<void>;
   mutateSettingsConditionally(
-    mutation: (settings: ClaudianSettings) => boolean | Promise<boolean>,
+    mutation: (settings: GrandemoniumSettings) => boolean | Promise<boolean>,
   ): Promise<void>;
   loadData(): Promise<unknown>;
   saveData(data: unknown): Promise<void>;
@@ -46,7 +46,7 @@ export interface ProviderHost {
    */
   applyProviderRuntimeSettings(
     providerIds: ProviderId[],
-    mutation: (settings: ClaudianSettings) => void | Promise<void>,
+    mutation: (settings: GrandemoniumSettings) => void | Promise<void>,
     onApplied?: () => void | Promise<void>,
   ): Promise<void>;
   getResolvedProviderCliPath(

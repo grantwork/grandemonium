@@ -25,11 +25,11 @@ import {
   type DetachedProjectMarker,
 } from '@/app/collab/exit/DetachedProjectMarker';
 import { parseCollabProjectsFolder } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
-const PROJECTS_ROOT_MARKER_NAME = '.claudian-collab-root.json';
+const PROJECTS_ROOT_MARKER_NAME = '.grandemonium-collab-root.json';
 const PROJECTS_ROOT_MARKER = {
-  owner: 'claudian-collab-projects',
+  owner: 'grandemonium-collab-projects',
   schemaVersion: 1,
 } as const;
 const PROJECTS_ROOT_MARKER_CONTENTS = `${JSON.stringify(PROJECTS_ROOT_MARKER, null, 2)}\n`;
@@ -74,7 +74,7 @@ export interface CollabProjectsFolderChildOwnership {
 }
 
 interface CollabProjectsFolderChildMarker extends CollabProjectsFolderChildOwnership {
-  readonly owner: 'claudian-collab-operation-child';
+  readonly owner: 'grandemonium-collab-operation-child';
   readonly schemaVersion: 1;
 }
 
@@ -119,7 +119,7 @@ function operationChildMarker(
   return {
     childName: ownership.childName,
     operationId: ownership.operationId,
-    owner: 'claudian-collab-operation-child',
+    owner: 'grandemonium-collab-operation-child',
     projectId: ownership.projectId,
     purpose: ownership.purpose,
     schemaVersion: 1,
@@ -246,10 +246,10 @@ export class CollabWorkspaceService {
     const parentPath = path.dirname(projectPath);
     const childName = path.basename(projectPath);
     return {
-      detachedGitPath: path.join(projectPath, `.claudian-collab-git-${operationId}`),
-      detachedProjectPath: path.join(parentPath, `.claudian-collab-project-${operationId}-${childName}`),
+      detachedGitPath: path.join(projectPath, `.grandemonium-collab-git-${operationId}`),
+      detachedProjectPath: path.join(parentPath, `.grandemonium-collab-project-${operationId}-${childName}`),
       gitPath: path.join(projectPath, '.git'),
-      markerPath: path.join(projectPath, '.claudian-collab-detached.json'),
+      markerPath: path.join(projectPath, '.grandemonium-collab-detached.json'),
       projectPath,
     };
   }
@@ -260,7 +260,7 @@ export class CollabWorkspaceService {
     marker: DetachedProjectMarker,
   ): Promise<void> {
     const paths = await this.resolveCleanupPaths(workspacePath, operationId);
-    const markerRelativePath = `${workspacePath}/.claudian-collab-detached.json`;
+    const markerRelativePath = `${workspacePath}/.grandemonium-collab-detached.json`;
     const created = await createCollabFileExclusively(
       this.vaultRoot,
       markerRelativePath,
@@ -270,7 +270,7 @@ export class CollabWorkspaceService {
     if (!created) {
       await this.assertDetachedProjectMarker(workspacePath, operationId, marker);
     }
-    if (paths.markerPath !== path.join(paths.projectPath, '.claudian-collab-detached.json')) {
+    if (paths.markerPath !== path.join(paths.projectPath, '.grandemonium-collab-detached.json')) {
       throw workspaceBoundaryError('detached-marker-path-invalid');
     }
   }
@@ -367,7 +367,7 @@ export class CollabWorkspaceService {
       throw workspaceBoundaryError('cleanup-operation-id-invalid');
     }
     const projectPath = await resolveCollabVaultPath(this.vaultRoot, workspacePath);
-    const detachedRelativePath = `${projectsFolder}/.claudian-collab-project-${operationId}-${childName}`;
+    const detachedRelativePath = `${projectsFolder}/.grandemonium-collab-project-${operationId}-${childName}`;
     const detachedProjectPath = await resolveCollabVaultPath(this.vaultRoot, detachedRelativePath);
     if (await this.#cleanupPathExists(detachedProjectPath)) {
       const projectStillExists = await this.#cleanupPathExists(projectPath);
@@ -391,7 +391,7 @@ export class CollabWorkspaceService {
     const projectsFolder = workspacePath.slice(0, separatorIndex);
     await this.#requireOwnedProjectsFolder(projectsFolder);
     const childName = workspacePath.slice(separatorIndex + 1);
-    const detachedRelativePath = `${projectsFolder}/.claudian-collab-project-${operationId}-${childName}`;
+    const detachedRelativePath = `${projectsFolder}/.grandemonium-collab-project-${operationId}-${childName}`;
     const detachedPath = await resolveCollabVaultPath(this.vaultRoot, detachedRelativePath);
     if (!await this.#cleanupPathExists(detachedPath)) return;
     await this.#requireCleanupDirectory(detachedPath, 'detached-project-invalid');
@@ -556,7 +556,7 @@ export class CollabWorkspaceService {
   ): string {
     const identity = JSON.stringify(marker);
     const digest = createHash('sha256').update(identity, 'utf8').digest('hex');
-    return `${projectsFolder}/.claudian-operation-${digest}.json`;
+    return `${projectsFolder}/.grandemonium-operation-${digest}.json`;
   }
 
    async #validateExistingOperationChildMarker(
@@ -663,7 +663,7 @@ export class CollabWorkspaceService {
       throw workspaceBoundaryError('cleanup-operation-id-invalid');
     }
     const sourcePath = await resolveCollabVaultPath(this.vaultRoot, workspacePath);
-    const detachedRelativePath = `${projectsFolder}/.claudian-collab-project-${operationId}-${childName}`;
+    const detachedRelativePath = `${projectsFolder}/.grandemonium-collab-project-${operationId}-${childName}`;
     const detachedPath = await resolveCollabVaultPath(this.vaultRoot, detachedRelativePath);
     const sourceExists = await this.#cleanupPathExists(sourcePath);
     const detachedExists = await this.#cleanupPathExists(detachedPath);
@@ -672,7 +672,7 @@ export class CollabWorkspaceService {
     }
     const rootPath = sourceExists ? sourcePath : detachedPath;
     await this.#requireCleanupDirectory(rootPath, 'project-workspace-boundary-invalid');
-    return path.join(rootPath, '.claudian-collab-detached.json');
+    return path.join(rootPath, '.grandemonium-collab-detached.json');
   }
 
   async isProjectRootRemoved(
@@ -693,7 +693,7 @@ export class CollabWorkspaceService {
     const sourcePath = await resolveCollabVaultPath(this.vaultRoot, workspacePath);
     const detachedPath = await resolveCollabVaultPath(
       this.vaultRoot,
-      `${projectsFolder}/.claudian-collab-project-${operationId}-${childName}`,
+      `${projectsFolder}/.grandemonium-collab-project-${operationId}-${childName}`,
     );
     return !await this.#cleanupPathExists(sourcePath)
       && !await this.#cleanupPathExists(detachedPath);

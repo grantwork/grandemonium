@@ -32,7 +32,7 @@ describe('CollabProjectsFolder', () => {
     ['workspace/COM¹.md', 'windows-reserved-superscript'],
     ['workspace/LPT²', 'windows-reserved-superscript'],
     ['workspace/.git', 'reserved-directory'],
-    ['workspace/.claudian', 'reserved-directory'],
+    ['workspace/.grandemonium', 'reserved-directory'],
     ['workspace/control\u0001', 'control-character'],
   ])('rejects %s (%s)', (raw) => {
     expect(parseCollabProjectsFolder(raw)).toEqual(expect.objectContaining({

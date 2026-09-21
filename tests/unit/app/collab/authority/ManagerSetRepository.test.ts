@@ -25,7 +25,7 @@ describe('ManagerSetRepository', () => {
   });
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'claudian-manager-set-'));
+    root = await mkdtemp(path.join(tmpdir(), 'grandemonium-manager-set-'));
     const authorityDirectory = path.join(root, 'authority');
     await mkdir(authorityDirectory);
     database = new SqlJsProjectDatabase(authorityDirectory, {

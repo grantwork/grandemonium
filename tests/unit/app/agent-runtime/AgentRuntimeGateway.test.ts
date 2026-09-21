@@ -3,7 +3,7 @@ import {
   type CollabAgentPort,
 } from '@/app/agent-runtime/AgentRuntimeGateway';
 import { type CollabLocalProjectSummary, type CollabResult } from '@/core/collab';
-import { CollabError } from '@/core/collab/ClaudianCollabError';
+import { CollabError } from '@/core/collab/GrandemoniumCollabError';
 
 const PROJECT: CollabLocalProjectSummary = {
   authorityKind: 'lan',
@@ -79,7 +79,7 @@ describe('AgentRuntimeGateway', () => {
       id: 'catalog-1',
       result: {
         access: 'read-write',
-        name: 'claudian-agent-runtime',
+        name: 'grandemonium-agent-runtime',
         operations: expect.arrayContaining([
           {
             access: 'read',
