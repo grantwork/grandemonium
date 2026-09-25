@@ -1,6 +1,9 @@
 import { getVaultPath } from '../../utils/path';
+import type { DeferredAuxiliaryExecutionContext } from '../auxiliary/AuxiliaryExecutionContext';
+import { CommentReviewRunner } from '../auxiliary/CommentReviewRunner';
 import { InlineEditService as SharedInlineEditService } from '../auxiliary/InlineEditService';
 import { InstructionRefineService as SharedInstructionRefineService } from '../auxiliary/InstructionRefineService';
+import { RepositoryThreadSession } from '../auxiliary/RepositoryThreadSession';
 import { TitleGenerationService as SharedTitleGenerationService } from '../auxiliary/TitleGenerationService';
 import type {
   ProviderExecutionBackend,
@@ -111,6 +114,51 @@ export class ProviderRegistry {
     return new SharedInlineEditService(
       this.createAuxiliaryExecutionContext(plugin, providerId),
     );
+  }
+
+  /**
+   * Background comment reviews for one provider, each in a disposable session.
+   * They share the passive interaction port, so an approval or a question is
+   * refused rather than left waiting on a UI no one is looking at.
+   */
+  static createCommentReviewRunner(plugin: ProviderHost, providerId: ProviderId): CommentReviewRunner {
+    return new CommentReviewRunner(this.createDeferredAuxiliaryExecutionContext(plugin, providerId));
+  }
+
+  /**
+   * One agent's conversation in a repository comment thread. Unlike a review,
+   * the thread has a reader watching it, so approvals go to the port the
+   * thread supplies instead of being refused.
+   */
+  static createRepositoryThreadSession(
+    plugin: ProviderHost,
+    providerId: ProviderId,
+    interactionPort: ProviderInteractionPort,
+  ): RepositoryThreadSession {
+    return new RepositoryThreadSession({
+      ...this.createDeferredAuxiliaryExecutionContext(plugin, providerId),
+      interactionPort,
+    });
+  }
+
+  /**
+   * These runners outlive any one turn and may be created before anything has
+   * started the provider, such as when the comments panel opens without a
+   * chat tab. Each turn starts the workspace first, as a chat tab does.
+   */
+  private static createDeferredAuxiliaryExecutionContext(
+    plugin: ProviderHost,
+    providerId: ProviderId,
+  ): DeferredAuxiliaryExecutionContext {
+    return {
+      interactionPort: PASSIVE_AUXILIARY_INTERACTION_PORT,
+      lifecycleRegistry: plugin.executionLifecycleRegistry,
+      resolveBackend: async () => {
+        await ProviderWorkspaceRegistry.ensureInitialized(plugin, providerId, 'auxiliary-execution');
+        return this.createExecutionBackend(plugin, providerId);
+      },
+      vaultWorkingDirectory: getVaultPath(plugin.app) ?? '.',
+    };
   }
 
   private static createAuxiliaryExecutionContext(

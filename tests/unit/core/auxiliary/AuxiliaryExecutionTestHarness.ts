@@ -36,6 +36,10 @@ export class FakeAuxiliarySession implements ProviderExecutionSession {
     this.active?.emit({ text, type: 'text_delta' });
   }
 
+  emit(event: WithoutScope<ProviderExecutionEvent>): void {
+    this.active?.emit(event);
+  }
+
   complete(): void {
     this.status = 'idle';
     this.active?.finish({ reason: 'completed', type: 'turn_completed' });

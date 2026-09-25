@@ -1,4 +1,4 @@
-import { findAgentMention } from "@/features/comments/agent-mention";
+import { findAgentMention, resolveReplyTarget } from "@/features/comments/agent-mention";
 
 const AGENTS = ["claude", "gpt"];
 
@@ -37,5 +37,29 @@ describe("findAgentMention", () => {
 
   it("matches an email-like string without treating it as a mention", () => {
     expect(findAgentMention("mail me at grant@gpt.com", AGENTS)).toBeNull();
+  });
+});
+
+describe("choosing which AI a reply goes to", () => {
+  const AGENTS = ["claude", "gpt"];
+
+  it("broadcasts when nothing is chosen and nobody is tagged", () => {
+    expect(resolveReplyTarget("looks fine to me", AGENTS, "")).toBeNull();
+  });
+
+  it("uses the standing choice so the reader stops typing a tag", () => {
+    expect(resolveReplyTarget("looks fine to me", AGENTS, "gpt")).toBe("gpt");
+  });
+
+  it("lets a tag override the standing choice for one reply", () => {
+    expect(resolveReplyTarget("@claude take this one", AGENTS, "gpt")).toBe("claude");
+  });
+
+  it("matches the standing choice regardless of case or padding", () => {
+    expect(resolveReplyTarget("hello", AGENTS, " GPT ")).toBe("gpt");
+  });
+
+  it("broadcasts when the chosen AI is no longer enabled", () => {
+    expect(resolveReplyTarget("hello", ["claude"], "gpt")).toBeNull();
   });
 });

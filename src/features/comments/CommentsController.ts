@@ -2,7 +2,7 @@ import type { Editor} from "obsidian";
 import { type App, MarkdownView, normalizePath, Notice, type Plugin, type PluginManifest, TFile } from "obsidian";
 
 import { ProviderRegistry } from "../../core/providers/ProviderRegistry";
-import { findAgentMention } from "./agent-mention";
+import { resolveReplyTarget } from "./agent-mention";
 import {
   AUTHOR_OVERRIDE_KEY,
   detectOsUsername,
@@ -10,6 +10,8 @@ import {
   LEGACY_AUTHOR_OVERRIDE_KEY,
   resolveAuthorName,
 } from "./author";
+import { CommentIndex } from "./comment-index";
+import type { CommentPopoverHost } from "./comment-popover";
 import { CommentsSettingsStore } from "./CommentsSettingsStore";
 import { confirmAction } from "./confirm-action";
 import { buildEditorExtension } from "./editor-extension";
@@ -20,7 +22,10 @@ import {
   resolveExportDirectory,
 } from "./export";
 import { buildImplementMessage, type ImplementTarget } from "./implement-message";
+import { buildInbox, type InboxView, readMarkKey } from "./inbox-model";
+import { type ReadMark, ReadMarksStore } from "./read-marks";
 import { registerReadingView } from "./reading-view";
+import { type RepositoryAgentPort, RepositoryThreadsController } from "./RepositoryThreadsController";
 import { buildReviewMessage } from "./review-message";
 import { shouldStartSelectionComment } from "./selection-comment";
 import {
@@ -29,67 +34,68 @@ import {
   parseCommentsSettings,
   settingsEffects,
 } from "./settings-model";
-import { CommentSidebar, VIEW_TYPE_COMMENTS } from "./sidebar";
+import { CommentSidebar, suggestionFailureMessage, VIEW_TYPE_COMMENTS } from "./sidebar";
 import {
+  addReply,
+  declineSuggestion,
   makeAnchor,
   parseDocument,
   planSuggestionAcceptance,
+  removeComment,
   resolveAll,
   resolveAnchor,
   serializeDocument,
+  setStatus,
   type SuggestionAcceptancePlan,
 } from "./store";
 import { commitSuggestionAcceptance } from "./suggestion-editor";
+import type { ThreadActivity } from "./thread-status";
+import { formatSidebarTimestamp } from "./timestamp";
 import type { Anchor, ParsedDoc } from "./types";
 
 const DEFAULT_CLAUDE_AGENT_NAME = "claude";
 
-/**
- * Sends the review prompt to the AIs. Supplied by the composition root so this
- * vendored feature never reaches into chat; resolves with the names reached.
- */
-export interface CommentReviewOutcome {
-  /** Agent names that started reviewing straight away. */
-  sent: string[];
-  /** Agent names that were mid-turn and queued the request behind it. */
-  queued: string[];
+export type CommentReviewResult =
+  | { readonly kind: "completed" }
+  | { readonly kind: "cancelled" }
+  | { readonly kind: "failed"; readonly message: string };
+
+/** One AI working on one review, running in a background session of its own. */
+export interface CommentReviewHandle {
+  readonly agentName: string;
+  /** When the review was asked for, so the age a reader sees includes any wait. */
+  readonly startedAt: number;
+  /** Settles once and never rejects: every outcome is a result. */
+  readonly done: Promise<CommentReviewResult>;
+  cancel(): void;
 }
 
 /**
- * The chat side, as this vendored feature sees it. Supplied by the composition
- * root so comments never import chat code.
+ * The AIs, as this vendored feature sees them. Supplied by the composition root
+ * so comments never import chat or provider code.
  */
 export interface CommentAiPort {
   /** Agent names of the enabled AIs, used to tell their replies from a person's. */
   agentNames(): string[];
-  /** Sends a prompt to every enabled AI, or to one when `targetAgentName` is given. */
-  request(prompt: string, targetAgentName?: string): Promise<CommentReviewOutcome>;
+  /**
+   * Starts one review per AI reached: every enabled one, or the one named. Each
+   * runs in a disposable session, so no review inherits another's context. A
+   * review used to go into a long-lived chat tab, whose context grew with every
+   * comment in every note until it degraded. Empty when no AI could take it.
+   */
+  review(prompt: string, targetAgentName?: string): CommentReviewHandle[];
 }
 
-/**
- * A queued request runs only after the AI finishes what it is doing, so it is
- * reported apart from one that started immediately.
- */
-export function describeReviewOutcome(sent: string[], queued: string[]): string {
-  const parts: string[] = [];
-  if (sent.length > 0) parts.push(`Review requested from ${sent.join(", ")}.`);
-  if (queued.length > 0) {
-    parts.push(`Queued behind current work for ${queued.join(", ")}.`);
-  }
-  return parts.length > 0
-    ? parts.join(" ")
-    : "No enabled AI has a chat tab to review comments.";
+/** A handle, plus which thread in which note is waiting on it. */
+interface ActiveReview {
+  readonly filePath: string | null;
+  /** Null for a review of a whole note rather than of one thread. */
+  readonly threadKey: string | null;
+  readonly handle: CommentReviewHandle;
 }
 
-/** Reports what one AI did with an implementation request. */
-export function describeImplementOutcome(
-  agentName: string,
-  sent: string[],
-  queued: string[]
-): string {
-  if (sent.length > 0) return `${agentName} is making the changes.`;
-  if (queued.length > 0) return `${agentName} will make the changes after its current work.`;
-  return `${agentName} has no chat tab to make the changes.`;
+function errorText(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 export class CommentsController {
@@ -100,8 +106,190 @@ export class CommentsController {
 
   private aiPort: CommentAiPort | null = null;
 
+  /**
+   * Replies typed but not sent, keyed by file and comment. The popover is
+   * dismissed by a click anywhere else, which would otherwise throw the text
+   * away. Session-only: an unsent reply is not worth writing into the note.
+   */
+  private readonly replyDrafts = new Map<string, string>();
+
+  private readonly index: CommentIndex;
+  private readonly readMarks: ReadMarksStore;
+  private repositoryPort: RepositoryAgentPort | null = null;
+  /** Comments about the whole vault, each a live conversation with an AI. */
+  readonly repository: RepositoryThreadsController;
+  /**
+   * Every review still running. Each settles on its own, so a thread clears the
+   * moment its own review ends; a chat tab only ever reported that it was idle.
+   */
+  private readonly activeReviews = new Set<ActiveReview>();
+  /** Failed reviews by thread key, until the thread is asked again. */
+  private readonly reviewErrors = new Map<string, ThreadActivity["errors"]>();
+  private indexSweep: Promise<void> | null = null;
+
   constructor(private readonly plugin: Plugin) {
     this.store = new CommentsSettingsStore(plugin);
+    this.index = new CommentIndex({
+      listFiles: () =>
+        plugin.app.vault.getMarkdownFiles().map((file) => ({
+          mtime: file.stat.mtime,
+          path: file.path,
+        })),
+      read: async (path) => {
+        const file = plugin.app.vault.getAbstractFileByPath(path);
+        return file instanceof TFile ? await plugin.app.vault.cachedRead(file) : null;
+      },
+    });
+    this.repository = new RepositoryThreadsController({
+      agents: () => this.repositoryPort,
+      author: () => this.currentAuthor(),
+      notify: (message, options) => new Notice(message, options?.persistent ? 0 : 10_000),
+      now: () => this.nowTs(),
+      preferredAgentName: () => this.settings.replyTarget,
+      resolveBehavior: () => this.settings.resolveBehavior,
+      storage: {
+        read: () => this.store.readRepositoryThreads(),
+        write: (data) => this.store.writeRepositoryThreads(data),
+      },
+    });
+    this.readMarks = new ReadMarksStore({
+      load: (key) => {
+        const stored: unknown = plugin.app.loadLocalStorage(key);
+        return stored;
+      },
+      save: (key, value) => plugin.app.saveLocalStorage(key, value),
+    });
+  }
+
+  /**
+   * Every open comment in the vault, under the note it belongs to. The panel
+   * exists to be emptied, so nothing is filed out of sight: unread marks a row
+   * rather than moving it somewhere the reader has to remember to look.
+   */
+  inbox(): InboxView {
+    const runningPaths = new Set<string>();
+    const runningThreads = new Map<string, number>();
+    for (const { filePath, handle, threadKey } of this.activeReviews) {
+      if (filePath) runningPaths.add(filePath);
+      if (!threadKey) continue;
+      // Several AIs may be on one thread; the reader has been waiting since the
+      // first was asked, so that is the age the row shows.
+      const earliest = runningThreads.get(threadKey);
+      runningThreads.set(
+        threadKey,
+        earliest === undefined ? handle.startedAt : Math.min(earliest, handle.startedAt)
+      );
+    }
+    return buildInbox({
+      files: this.index.files(),
+      readMarks: this.readMarks.marks(),
+      runningPaths,
+      runningThreads,
+      selfAuthor: this.currentAuthor(),
+      sortOrder: this.settings.sidebarSortOrder,
+    });
+  }
+
+  threadActivity(filePath: string, commentId: string): ThreadActivity {
+    const key = readMarkKey(filePath, commentId);
+    const replying = [...this.activeReviews]
+      .filter((review) => review.threadKey === key)
+      .map((review) => review.handle.agentName);
+    return { errors: this.reviewErrors.get(key) ?? [], replying };
+  }
+
+  /** Stops every AI still working on one thread. What it already wrote stays. */
+  stopReviews(filePath: string, commentId: string): void {
+    const key = readMarkKey(filePath, commentId);
+    for (const review of this.activeReviews) {
+      if (review.threadKey === key) review.handle.cancel();
+    }
+  }
+
+  /**
+   * Starts a review on every AI the port reaches and follows each to its end.
+   * A failure is shown in its thread, or for a whole-note review in a popup
+   * that stays until dismissed; a stop the reader asked for is not a failure.
+   */
+  private dispatch(
+    prompt: string,
+    targetAgentName: string | null,
+    filePath: string | null,
+    commentId: string | null
+  ): void {
+    const port = this.aiPort;
+    if (!port) return;
+    let handles: CommentReviewHandle[];
+    try {
+      handles = port.review(prompt, targetAgentName ?? undefined);
+    } catch (error) {
+      new Notice("Review request failed: " + errorText(error));
+      return;
+    }
+    if (handles.length === 0) {
+      new Notice(
+        targetAgentName
+          ? `${targetAgentName} is not available to review comments.`
+          : "No enabled AI could take the review."
+      );
+      return;
+    }
+    const threadKey = filePath && commentId ? readMarkKey(filePath, commentId) : null;
+    const subject = filePath ? filePath.split("/").pop() ?? filePath : "your comments";
+    // Asking again supersedes whatever went wrong last time.
+    if (threadKey) this.reviewErrors.delete(threadKey);
+    for (const handle of handles) {
+      const review: ActiveReview = { filePath, handle, threadKey };
+      this.activeReviews.add(review);
+      void handle.done.then((result) => {
+        this.activeReviews.delete(review);
+        if (result.kind === "failed") {
+          if (threadKey) {
+            const error = { author: handle.agentName, text: `Couldn't finish: ${result.message}`, ts: this.nowTs() };
+            this.reviewErrors.set(threadKey, [...(this.reviewErrors.get(threadKey) ?? []), error]);
+          } else {
+            new Notice(`${handle.agentName} couldn't finish reviewing ${subject}: ${result.message}`, 0);
+          }
+        }
+        this.refreshSidebars();
+      });
+    }
+    this.refreshSidebars();
+  }
+
+  markThreadsRead(items: Iterable<ReadMark>): void {
+    this.readMarks.markAllRead(items);
+  }
+
+  /** Sweeps the vault once; callers arriving mid-sweep share the one in flight. */
+  async refreshIndex(): Promise<void> {
+    this.indexSweep ??= this.index
+      .refresh()
+      .then(() => {
+        this.readMarks.prune(new Set(this.index.files().map((file) => file.path)));
+      })
+      .finally(() => {
+        this.indexSweep = null;
+      });
+    await this.indexSweep;
+  }
+
+  private async reindexFile(file: TFile): Promise<void> {
+    if (file.extension !== "md") return;
+    let changed: boolean;
+    try {
+      changed = await this.index.refreshFile(file.path, file.stat.mtime);
+    } catch {
+      // A file that cannot be read now keeps whatever the index last saw.
+      return;
+    }
+    if (changed) this.refreshSidebars();
+  }
+
+  private refreshSidebars(): void {
+    for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE_COMMENTS)) {
+      if (leaf.view instanceof CommentSidebar) void leaf.view.render();
+    }
   }
 
   /** Installed by the composition root once the chat side can accept prompts. */
@@ -109,9 +297,20 @@ export class CommentsController {
     this.aiPort = port;
   }
 
+  /** Installed by the composition root; repository threads stay hidden without it. */
+  setRepositoryPort(port: RepositoryAgentPort | null): void {
+    this.repositoryPort = port;
+    this.refreshSidebars();
+  }
+
   /** True while an AI can be asked to review; the action stays hidden otherwise. */
   canRequestReview(): boolean {
     return this.aiPort !== null;
+  }
+
+  /** Agent names of the enabled AIs, for the reply-target picker. */
+  enabledAgentNames(): string[] {
+    return this.aiPort?.agentNames() ?? [];
   }
 
   /** Whether a thread entry was written by one of the enabled AIs. */
@@ -124,13 +323,13 @@ export class CommentsController {
    * Called after the user adds a comment or reply. Requests a review straight
    * away when that setting is on, so the review action need not be pressed.
    */
-  async notifyUserCommentAdded(filePath: string, text = ""): Promise<void> {
+  async notifyUserCommentAdded(filePath: string, text = "", commentId?: string): Promise<void> {
     const port = this.aiPort;
     if (!this.settings.reviewOnComment || !port) return;
-    // "@gpt run your changes" addresses one AI; an untagged comment still goes
-    // to every enabled one.
-    const mentioned = findAgentMention(text, port.agentNames());
-    await this.requestReview(filePath, mentioned);
+    // "@gpt run your changes" addresses one AI; otherwise the standing choice
+    // decides, and only an unset choice reaches every enabled AI.
+    const target = resolveReplyTarget(text, port.agentNames(), this.settings.replyTarget);
+    await this.requestReview(filePath, target, commentId);
   }
 
   /**
@@ -149,18 +348,7 @@ export class CommentsController {
       new Notice("Set an implementation request in comments settings first.");
       return;
     }
-    try {
-      const { queued, sent } = await port.request(
-        buildImplementMessage(prompt, target),
-        agentName,
-      );
-      new Notice(describeImplementOutcome(agentName, sent, queued));
-    } catch (error) {
-      new Notice(
-        "Implementation request failed: "
-          + (error instanceof Error ? error.message : String(error))
-      );
-    }
+    this.dispatch(buildImplementMessage(prompt, target), agentName, target.filePath, target.commentId);
   }
 
   /**
@@ -171,6 +359,7 @@ export class CommentsController {
   async requestReview(
     filePath: string | null = null,
     targetAgentName: string | null = null,
+    commentId?: string,
   ): Promise<void> {
     const port = this.aiPort;
     if (!port) {
@@ -182,17 +371,7 @@ export class CommentsController {
       new Notice("Set a review request in comments settings first.");
       return;
     }
-    try {
-      const { queued, sent } = await port.request(
-        buildReviewMessage(prompt, filePath),
-        targetAgentName ?? undefined,
-      );
-      new Notice(describeReviewOutcome(sent, queued));
-    } catch (error) {
-      new Notice(
-        "Review request failed: " + (error instanceof Error ? error.message : String(error))
-      );
-    }
+    this.dispatch(buildReviewMessage(prompt, filePath), targetAgentName, filePath, commentId ?? null);
   }
 
   /** Obsidian app handle, delegated so feature code keeps using `this.app`. */
@@ -220,6 +399,9 @@ export class CommentsController {
 
   async load(): Promise<void> {
     await this.loadSettings();
+    await this.repository.load().catch(() => {
+      new Notice("Repository comments could not be loaded.");
+    });
     this.applyHighlightAppearance();
     this.applyReadingViewPreference();
 
@@ -277,6 +459,38 @@ export class CommentsController {
     });
 
     this.plugin.registerEvent(
+      this.app.vault.on("modify", (file) => {
+        if (file instanceof TFile) void this.reindexFile(file);
+      })
+    );
+    this.plugin.registerEvent(
+      this.app.vault.on("create", (file) => {
+        if (file instanceof TFile) void this.reindexFile(file);
+      })
+    );
+    this.plugin.registerEvent(
+      this.app.vault.on("delete", (file) => {
+        this.index.forget(file.path);
+        this.refreshSidebars();
+      })
+    );
+    this.plugin.registerEvent(
+      this.app.vault.on("rename", (file, oldPath) => {
+        // Read marks are keyed by path, so they have to follow the file or
+        // every thread in it would come back as unread.
+        this.index.rename(oldPath, file.path);
+        this.readMarks.rename(oldPath, file.path);
+        this.refreshSidebars();
+      })
+    );
+    // The first sweep reads every note, so it runs behind the rest of startup.
+    // A vault that refuses a read leaves the inbox thinner, never unloaded.
+    void this.refreshIndex().then(
+      () => this.refreshSidebars(),
+      () => undefined
+    );
+
+    this.plugin.registerEvent(
       this.app.workspace.on("editor-menu", (menu, editor) => {
         if (!editor.somethingSelected()) return;
         menu.addItem((item) =>
@@ -303,6 +517,8 @@ export class CommentsController {
   }
 
   unload(): void {
+    this.replyDrafts.clear();
+    void this.repository.dispose();
     for (const doc of this.allDocuments()) {
       doc.body.style.removeProperty("--tc-highlight-color");
       doc.body.style.removeProperty("--tc-highlight-opacity");
@@ -539,7 +755,112 @@ export class CommentsController {
       return;
     }
     const anchor = makeAnchor(doc.prose, from, to);
-    void this.openSidebar().then((view) => view?.startDraft(file, anchor));
+    void this.openSidebar(undefined, { activate: false }).then((view) =>
+      view?.startDraft(file, anchor, { focus: false })
+    );
+  }
+
+  /**
+   * Wires one inline popover to the plugin. The sidebar keeps the full surface,
+   * so anything beyond replying and resolving hands off to it.
+   */
+  commentPopoverHost(id: string, close: () => void): CommentPopoverHost {
+    const file = this.app.workspace.getActiveFile();
+    const draftKey = `${file?.path ?? ""}\u0000${id}`;
+    return {
+      authorColorOverrides: this.settings.authorColorOverrides,
+      colorAuthorNames: this.settings.colorAuthorNames,
+      formatTimestamp: (ts) => formatSidebarTimestamp(ts, this.settings.timestampDisplay),
+      submitOnEnter: this.settings.submitShortcut === "enter",
+      replyDraft: this.replyDrafts.get(draftKey) ?? "",
+      size:
+        this.settings.commentPopoverWidth && this.settings.commentPopoverHeight
+          ? {
+              width: this.settings.commentPopoverWidth,
+              height: this.settings.commentPopoverHeight,
+            }
+          : null,
+      onReplyDraftChange: (text) => {
+        if (text) this.replyDrafts.set(draftKey, text);
+        else this.replyDrafts.delete(draftKey);
+      },
+      onSizeChange: ({ width, height }) => {
+        void this.updateSettings({
+          commentPopoverWidth: width,
+          commentPopoverHeight: height,
+        });
+      },
+      onReply: (text) => {
+        if (!file) return;
+        void this.updateDoc(file, (d) =>
+          addReply(d.comments, id, this.currentAuthor(), this.nowTs(), text)
+        ).then((ok) => {
+          if (ok) void this.notifyUserCommentAdded(file.path, text, id);
+        });
+      },
+      onResolve: () => {
+        if (!file) return;
+        void (async () => {
+          const removes = this.settings.resolveBehavior === "remove";
+          if (
+            removes &&
+            this.settings.confirmDestructiveActions &&
+            !(await confirmAction(this.app, {
+              title: "Resolve?",
+              message: "This will permanently remove the comment thread from the note.",
+              confirmLabel: "Resolve",
+            }))
+          ) {
+            return;
+          }
+          await this.updateDoc(file, (d) => {
+            if (removes) removeComment(d.comments, id);
+            else setStatus(d.comments, id, "resolved");
+          });
+          close();
+        })();
+      },
+      onAcceptSuggestion: () => {
+        if (!file) return;
+        const result = this.acceptEditSuggestion(file, id);
+        if (!result.ok) {
+          new Notice(suggestionFailureMessage(result.reason));
+          return;
+        }
+        close();
+      },
+      onDeclineSuggestion: () => {
+        if (!file) return;
+        void (async () => {
+          if (
+            this.settings.resolveBehavior === "remove" &&
+            this.settings.confirmDestructiveActions &&
+            !(await confirmAction(this.app, {
+              title: "Decline suggestion?",
+              message:
+                "This will permanently remove the suggestion and its discussion from the note.",
+              confirmLabel: "Decline",
+            }))
+          ) {
+            return;
+          }
+          await this.updateDoc(file, (d) => {
+            const result = declineSuggestion(d.comments, id, this.settings.resolveBehavior);
+            if (!result.ok) new Notice(suggestionFailureMessage(result.reason));
+          });
+          close();
+        })();
+      },
+      onOpenSidebar: () => {
+        close();
+        void this.openSidebar(id);
+      },
+    };
+  }
+
+  /** Read by the editor extension: an open sidebar takes a highlight click. */
+  isSidebarOpen(): boolean {
+    return this.openSidebarView() !== null;
   }
 
   /** The comment sidebar if it is already open; never opens one. */
@@ -622,18 +943,28 @@ export class CommentsController {
     return { anchor: makeAnchor(doc.prose, from, to) };
   }
 
-  async openSidebar(focusId?: string): Promise<CommentSidebar | null> {
+  /**
+   * `activate: false` opens the panel without making it the active leaf, so the
+   * editor keeps focus and its selection.
+   */
+  async openSidebar(
+    focusId?: string,
+    options: { activate?: boolean } = {}
+  ): Promise<CommentSidebar | null> {
     const { workspace } = this.app;
     let leaf = workspace.getLeavesOfType(VIEW_TYPE_COMMENTS)[0];
     if (!leaf) {
       const right = workspace.getRightLeaf(false);
       if (!right) return null;
       leaf = right;
-      await leaf.setViewState({ type: VIEW_TYPE_COMMENTS, active: true });
+      await leaf.setViewState({ type: VIEW_TYPE_COMMENTS, active: options.activate ?? true });
     }
     await workspace.revealLeaf(leaf);
     const view = leaf.view instanceof CommentSidebar ? leaf.view : null;
-    if (view && focusId) view.focusComment(focusId);
+    // A highlight click names only the comment; the note it sits in is the one
+    // being read, which is what keys the thread in the vault-wide list.
+    const filePath = workspace.getActiveFile()?.path;
+    if (view && focusId && filePath) view.focusComment(filePath, focusId);
     return view;
   }
 
@@ -644,6 +975,31 @@ export class CommentsController {
   }
 
   /** Scrolls the Markdown editor to the resolved anchor position. */
+  /**
+   * Opens the note a thread belongs to and puts the reader on its passage.
+   * The inbox lists threads from notes that are not open, which is why this
+   * opens one first rather than reporting that nothing is open, as
+   * {@link revealAnchor} does. Clicking the highlight there opens the popover.
+   */
+  async revealComment(file: TFile, id: string): Promise<void> {
+    const open = this.app.workspace
+      .getLeavesOfType("markdown")
+      .find((leaf) => leaf.view instanceof MarkdownView && leaf.view.file?.path === file.path);
+    if (open) await this.app.workspace.revealLeaf(open);
+    else await this.app.workspace.getLeaf(false).openFile(file);
+    const doc = await this.readDoc(file);
+    const comment = doc.comments[id];
+    if (!comment) {
+      new Notice("That comment is no longer in the note.");
+      return;
+    }
+    // A rewritten passage has nothing left to scroll to, and saying so every
+    // time would nag: opening the note is the useful half, and is why the
+    // reader is being taken there at all.
+    if (resolveAnchor(doc.prose, comment.anchor).kind !== "resolved") return;
+    this.revealAnchor(file, comment.anchor);
+  }
+
   revealAnchor(file: TFile, anchor: Anchor): void {
     const leaf = this.app.workspace
       .getLeavesOfType("markdown")
