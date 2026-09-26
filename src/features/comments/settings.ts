@@ -238,6 +238,28 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
+      .setName("Comment popover")
+      .setDesc(
+        "Show a comment thread over its highlight in the editor. Turn this off to open the sidebar instead."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.commentPopover)
+          .onChange((value) => this.plugin.updateSettings({ commentPopover: value }))
+      );
+
+    new Setting(containerEl)
+      .setName("Comment popover on hover")
+      .setDesc(
+        "Also preview a thread when the pointer rests on its highlight. The preview is read only; clicking still opens the full popover."
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.commentPopoverHover)
+          .onChange((value) => this.plugin.updateSettings({ commentPopoverHover: value }))
+      );
+
+    new Setting(containerEl)
       .setName("AI review request")
       .setDesc(
         "Sent to every enabled AI when the review action on a comment is used. Each replies under its own agent name."

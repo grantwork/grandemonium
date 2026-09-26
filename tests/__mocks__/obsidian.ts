@@ -120,6 +120,11 @@ export class App {
     adapter: {
       basePath: '/mock/vault/path',
     },
+    // The comments index sweeps every note on load.
+    getMarkdownFiles: jest.fn().mockReturnValue([]),
+    getAbstractFileByPath: jest.fn().mockReturnValue(null),
+    cachedRead: jest.fn().mockResolvedValue(''),
+    on: jest.fn(),
   };
   workspace: any = {
     getLeavesOfType: jest.fn().mockReturnValue([]),
@@ -327,6 +332,8 @@ export const loadPrism = jest.fn().mockResolvedValue({
 });
 
 export const setIcon = jest.fn();
+
+export const setTooltip = jest.fn();
 
 // Notice mock that tracks constructor calls
 export const Notice = jest.fn().mockImplementation((_message: string, _timeout?: number) => {});

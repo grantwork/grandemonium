@@ -1,5 +1,8 @@
 import {
   DEFAULT_SETTINGS,
+  MAX_POPOVER_SIZE,
+  MIN_POPOVER_HEIGHT,
+  MIN_POPOVER_WIDTH,
   normalizeVaultFolderPath,
   parseCommentsSettings,
   SETTINGS_VERSION,
@@ -157,5 +160,47 @@ describe("settings model", () => {
 
     const readingView = { ...DEFAULT_SETTINGS, showReadingViewIndicator: false };
     expect(settingsEffects(DEFAULT_SETTINGS, readingView).refreshReadingViewIndicator).toBe(true);
+  });
+
+  it("redraws the sidebar when the reply target changes, so the chosen chip shows", () => {
+    const toClaude = { ...DEFAULT_SETTINGS, replyTarget: "claude" };
+    expect(settingsEffects(DEFAULT_SETTINGS, toClaude)).toEqual({
+      refreshHighlights: false,
+      refreshAuthorColors: false,
+      refreshSidebar: true,
+      refreshReadingViewIndicator: false,
+      resetResolvedVisibility: false,
+    });
+  });
+});
+
+describe("comment popover size", () => {
+  function parseSize(width: unknown, height: unknown) {
+    const { settings } = parseCommentsSettings({
+      commentPopoverWidth: width,
+      commentPopoverHeight: height,
+    });
+    return { width: settings.commentPopoverWidth, height: settings.commentPopoverHeight };
+  }
+
+  it("keeps a size the reader dragged out", () => {
+    expect(parseSize(420, 300)).toEqual({ width: 420, height: 300 });
+  });
+
+  it("treats anything unset or nonsensical as never resized", () => {
+    expect(parseSize(undefined, undefined)).toEqual({ width: 0, height: 0 });
+    expect(parseSize(0, -40)).toEqual({ width: 0, height: 0 });
+    expect(parseSize("wide", Number.NaN)).toEqual({ width: 0, height: 0 });
+  });
+
+  it("clamps a size that would leave the popover unreadable or off screen", () => {
+    expect(parseSize(40, 20)).toEqual({
+      width: MIN_POPOVER_WIDTH,
+      height: MIN_POPOVER_HEIGHT,
+    });
+    expect(parseSize(9000, 9000)).toEqual({
+      width: MAX_POPOVER_SIZE,
+      height: MAX_POPOVER_SIZE,
+    });
   });
 });

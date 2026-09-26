@@ -12,6 +12,9 @@ import type { CommentsSettings } from './settings-model';
  */
 export const COMMENTS_SETTINGS_KEY = 'tandemComments';
 
+/** Repository threads are data, not settings, so they sit under their own key. */
+export const REPOSITORY_THREADS_KEY = 'repositoryThreads';
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -33,9 +36,22 @@ export class CommentsSettingsStore {
 
   /** Merges the comments settings into `data.json`, leaving every other key intact. */
   async write(settings: CommentsSettings): Promise<void> {
+    await this.writeKey(COMMENTS_SETTINGS_KEY, settings);
+  }
+
+  async readRepositoryThreads(): Promise<unknown> {
+    const data: unknown = await this.plugin.loadData();
+    return isRecord(data) ? data[REPOSITORY_THREADS_KEY] : undefined;
+  }
+
+  async writeRepositoryThreads(threads: unknown): Promise<void> {
+    await this.writeKey(REPOSITORY_THREADS_KEY, threads);
+  }
+
+  private async writeKey(key: string, value: unknown): Promise<void> {
     const existing: unknown = await this.plugin.loadData();
     const document = isRecord(existing) ? { ...existing } : {};
-    document[COMMENTS_SETTINGS_KEY] = settings;
+    document[key] = value;
     await this.plugin.saveData(document);
   }
 }

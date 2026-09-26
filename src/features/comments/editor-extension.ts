@@ -1,7 +1,14 @@
-import { Annotation, RangeSetBuilder, Transaction } from "@codemirror/state";
+import { Annotation, type Extension, RangeSetBuilder, Transaction } from "@codemirror/state";
 import type { DecorationSet, EditorView, ViewUpdate } from "@codemirror/view";
 import { Decoration, ViewPlugin } from "@codemirror/view";
 
+import {
+  commentPopoverExtension,
+  type CommentPopoverTarget,
+  dismissCommentPopover,
+  popoverTargetFor,
+  showCommentPopover,
+} from "./comment-popover";
 import type { CommentsController } from "./CommentsController";
 import {
   changesTouchCommentBlock,
@@ -21,9 +28,31 @@ const REANCHOR_DEBOUNCE_MS = 800;
 const NORMALIZE_DEBOUNCE_MS = 500;
 
 export interface EditorExtensionHost {
-  settings: { schemaHint: boolean };
+  settings: { schemaHint: boolean; commentPopover: boolean };
   isApplyingSuggestion(): boolean;
+  /** Whether a comment sidebar is on screen to expand the thread in. */
+  isSidebarOpen(): boolean;
   openSidebar(id?: string): unknown;
+}
+
+export type HighlightClick =
+  | { kind: "popover"; target: CommentPopoverTarget }
+  | { kind: "sidebar" };
+
+/**
+ * Where a click on a highlight sends the reader. An open sidebar wins: showing
+ * the thread twice at once is noise, and the sidebar is the fuller surface. The
+ * popover covers the case where the sidebar is closed, and is also the fallback
+ * an orphaned anchor cannot use, having no passage to sit over.
+ */
+export function resolveHighlightClick(
+  plugin: EditorExtensionHost,
+  text: string,
+  id: string
+): HighlightClick {
+  if (plugin.isSidebarOpen() || !plugin.settings.commentPopover) return { kind: "sidebar" };
+  const target = popoverTargetFor(text, id);
+  return target ? { kind: "popover", target } : { kind: "sidebar" };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -302,16 +331,36 @@ function scheduleSelectionComment(view: EditorView, plugin: CommentsController):
   }, 0);
 }
 
-export function buildEditorExtension(plugin: CommentsController) {
+export function buildEditorExtension(plugin: CommentsController): Extension {
+  return [
+    buildAnchorViewPlugin(plugin),
+    commentPopoverExtension({
+      createHost: (id, close) => plugin.commentPopoverHost(id, close),
+      hoverEnabled: () => plugin.settings.commentPopover && plugin.settings.commentPopoverHover,
+    }),
+  ];
+}
+
+function buildAnchorViewPlugin(plugin: CommentsController) {
   return ViewPlugin.fromClass(editorAnchorTrackerClass(plugin), {
     decorations: (v) => v.decorations,
     eventHandlers: {
-      mousedown(e: MouseEvent) {
+      mousedown(e: MouseEvent, view: EditorView) {
         const target = e.target as HTMLElement;
         const el = target.closest?.(".tc-highlight");
-        if (!el) return false;
+        if (!el) {
+          // Clicking away from every highlight is how the popover is dismissed.
+          dismissCommentPopover(view);
+          return false;
+        }
         const id = el.getAttribute("data-tc-id");
-        if (id) void plugin.openSidebar(id);
+        if (!id) return false;
+        const click = resolveHighlightClick(plugin, view.state.doc.toString(), id);
+        if (click.kind === "popover") {
+          showCommentPopover(view, click.target);
+          return false;
+        }
+        void plugin.openSidebar(id);
         return false;
       },
       mouseup(_e: MouseEvent, view: EditorView) {

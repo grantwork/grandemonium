@@ -33,6 +33,11 @@ describe("sidebar preferences", () => {
     expect(shouldSubmitComment(key({ ctrlKey: true }), "mod-enter")).toBe(true);
   });
 
+  it("leaves Enter to dictation or an IME while it is still composing text", () => {
+    expect(shouldSubmitComment(key({ isComposing: true }), "enter")).toBe(false);
+    expect(shouldSubmitComment(key({ isComposing: true, metaKey: true }), "mod-enter")).toBe(false);
+  });
+
   it("sorts by document position or activity without mutating the input", () => {
     const old = comment("old", 20, "2026-08-10T10:00:00Z");
     const recent = comment("recent", 5, "2026-08-11T10:00:00Z");

@@ -28,8 +28,18 @@ export interface CommentsSettings {
   timestampDisplay: TimestampDisplay;
   confirmDestructiveActions: boolean;
   commentOnSelection: boolean;
+  commentPopover: boolean;
+  commentPopoverHover: boolean;
+  /** Card size in pixels, or 0 while the reader has never resized a popover. */
+  commentPopoverWidth: number;
+  commentPopoverHeight: number;
   reviewPrompt: string;
   implementPrompt: string;
+  /**
+   * Agent name every reply is addressed to, or "" for all enabled AIs. An
+   * "@name" in the reply still overrides it for that one reply.
+   */
+  replyTarget: string;
   reviewOnComment: boolean;
   showReadingViewIndicator: boolean;
   schemaHint: boolean;
@@ -53,8 +63,13 @@ export const DEFAULT_SETTINGS: CommentsSettings = {
   timestampDisplay: "full",
   confirmDestructiveActions: true,
   commentOnSelection: true,
+  commentPopover: true,
+  commentPopoverHover: false,
+  commentPopoverWidth: 0,
+  commentPopoverHeight: 0,
   reviewPrompt: DEFAULT_REVIEW_PROMPT,
   implementPrompt: DEFAULT_IMPLEMENT_PROMPT,
+  replyTarget: "",
   reviewOnComment: true,
   showReadingViewIndicator: true,
   schemaHint: true,
@@ -94,6 +109,17 @@ function stringSetting(value: unknown, fallback: string): string {
 
 function enumSetting<T extends string>(value: unknown, values: readonly T[], fallback: T): T {
   return typeof value === "string" && values.includes(value as T) ? (value as T) : fallback;
+}
+
+/** Sizes outside this range leave the popover unreadable or off screen. */
+export const MIN_POPOVER_WIDTH = 220;
+export const MIN_POPOVER_HEIGHT = 120;
+export const MAX_POPOVER_SIZE = 720;
+
+/** Zero means the reader has never resized a popover, so the CSS default wins. */
+function popoverSizeSetting(value: unknown, min: number, max: number): number {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return 0;
+  return Math.min(max, Math.max(min, Math.round(value)));
 }
 
 function opacitySetting(value: unknown): number {
@@ -156,8 +182,24 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
       DEFAULT_SETTINGS.confirmDestructiveActions
     ),
     commentOnSelection: booleanSetting(raw.commentOnSelection, DEFAULT_SETTINGS.commentOnSelection),
+    commentPopover: booleanSetting(raw.commentPopover, DEFAULT_SETTINGS.commentPopover),
+    commentPopoverHover: booleanSetting(
+      raw.commentPopoverHover,
+      DEFAULT_SETTINGS.commentPopoverHover
+    ),
+    commentPopoverWidth: popoverSizeSetting(
+      raw.commentPopoverWidth,
+      MIN_POPOVER_WIDTH,
+      MAX_POPOVER_SIZE
+    ),
+    commentPopoverHeight: popoverSizeSetting(
+      raw.commentPopoverHeight,
+      MIN_POPOVER_HEIGHT,
+      MAX_POPOVER_SIZE
+    ),
     reviewPrompt: stringSetting(raw.reviewPrompt, DEFAULT_SETTINGS.reviewPrompt).trim()
       || DEFAULT_REVIEW_PROMPT,
+    replyTarget: stringSetting(raw.replyTarget, DEFAULT_SETTINGS.replyTarget).trim(),
     implementPrompt: stringSetting(raw.implementPrompt, DEFAULT_SETTINGS.implementPrompt).trim()
       || DEFAULT_IMPLEMENT_PROMPT,
     reviewOnComment: booleanSetting(raw.reviewOnComment, DEFAULT_SETTINGS.reviewOnComment),
@@ -206,7 +248,8 @@ export function settingsEffects(previous: CommentsSettings, next: CommentsSettin
     refreshSidebar:
       resetResolvedVisibility ||
       previous.sidebarSortOrder !== next.sidebarSortOrder ||
-      previous.timestampDisplay !== next.timestampDisplay,
+      previous.timestampDisplay !== next.timestampDisplay ||
+      previous.replyTarget !== next.replyTarget,
     refreshReadingViewIndicator:
       previous.showReadingViewIndicator !== next.showReadingViewIndicator,
     resetResolvedVisibility,

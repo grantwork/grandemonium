@@ -6,6 +6,7 @@ import {
   TEST_CODEX_MODEL_LABEL,
 } from '@test/helpers/codexModels';
 
+import { ProviderExecutionLifecycleRegistry, type ProviderInteractionPort } from '@/core/execution';
 import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
 import { ProviderWorkspaceRegistry } from '@/core/providers/ProviderWorkspaceRegistry';
 import type {
@@ -236,6 +237,54 @@ describe('ProviderRegistry', () => {
       .toBe(`Codex: ${TEST_CODEX_MODEL_LABEL}`);
     expect(options.find(option => option.value === 'sonnet')?.label)
       .toBe('Claude: Sonnet');
+  });
+
+  describe('when a provider workspace has not started yet', () => {
+    const host = () => ({
+      app: { vault: { adapter: { basePath: '/vault' } } },
+      executionLifecycleRegistry: new ProviderExecutionLifecycleRegistry(),
+      settings: {},
+    }) as any;
+    const port: ProviderInteractionPort = {
+      askUserQuestion: async request => ({ answers: null, interactionId: request.interactionId }),
+      dismissInteraction: () => undefined,
+      requestApproval: async request => ({ decision: 'cancel', interactionId: request.interactionId }),
+    };
+    let started: ProviderId[];
+
+    beforeEach(() => {
+      ProviderWorkspaceRegistry.clear();
+      started = [];
+      jest.mocked(ProviderWorkspaceRegistry.ensureInitialized).mockImplementation(async (_host, providerId) => {
+        started.push(providerId);
+        throw new Error(`${providerId} could not start`);
+      });
+    });
+
+    it('opens a repository thread session and starts the workspace on its first turn', async () => {
+      const session = ProviderRegistry.createRepositoryThreadSession(host(), 'claude', port);
+      expect(started).toEqual([]);
+
+      const turn = session.send({ prompt: 'go' }, {
+        onActivity: () => undefined,
+        onText: () => undefined,
+        onUsage: () => undefined,
+      });
+
+      await expect(turn.done).resolves.toEqual({ kind: 'failed', message: 'claude could not start', text: '' });
+      expect(started).toEqual(['claude']);
+    });
+
+    it('creates a comment review runner and starts the workspace when a review runs', async () => {
+      const runner = ProviderRegistry.createCommentReviewRunner(host(), 'codex');
+      expect(started).toEqual([]);
+
+      await expect(runner.start('review this').done).resolves.toEqual({
+        kind: 'failed',
+        message: 'codex could not start',
+      });
+      expect(started).toEqual(['codex']);
+    });
   });
 
   it('returns the display name from provider registration metadata', () => {

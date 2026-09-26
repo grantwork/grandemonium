@@ -11,14 +11,29 @@
 }
 
 .tc-sidebar {
-  padding: 8px;
+  --tc-sidebar-pad: 8px;
+  --tc-panel-bg: var(--background-secondary);
+  /* The pinned file row is given exactly this height, and the pinned thread row
+     sits exactly this far down, so the two meet with no seam for content to
+     show through. Measuring instead would leave the offset guessing at the
+     theme's UI font. */
+  --tc-file-head-height: 26px;
+  /* No padding at the top: a sticky row pins to the scrollport's padding edge,
+     so any padding there leaves a band of scrolling content above the pinned
+     header. The panel's own top gap is carried by .tc-header instead. */
+  padding: 0 var(--tc-sidebar-pad) var(--tc-sidebar-pad);
   overflow-y: auto;
+  /* Painted explicitly, and reused by every pinned row, so a sticky bar is the
+     same colour as the panel behind it by construction rather than by both
+     happening to pick the same variable. */
+  background: var(--tc-panel-bg);
 }
 
 .tc-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: var(--tc-sidebar-pad);
   margin-bottom: 10px;
 }
 
@@ -62,9 +77,17 @@
   color: var(--text-normal);
 }
 
+/* Every entry carries its own author's colour as a left rail, so a thread reads
+   by who is speaking rather than by name alone. Only AI replies used to have
+   one, which left the reader's own entries unmarked. */
 .tc-entry {
-  margin: 0;
-  padding: 8px 0;
+  margin: 0 -8px;
+  padding: 8px;
+  border-left: 2px solid var(--tc-author-color-light, var(--text-faint));
+}
+
+.theme-dark .tc-entry {
+  border-left-color: var(--tc-author-color-dark, var(--text-faint));
 }
 
 /* Replies stack in one card, so each after the first is fenced off rather than
@@ -81,23 +104,125 @@
   padding-bottom: 0;
 }
 
-/* An AI reply is tinted and rail-marked so it reads apart from the user's own
-   text, which otherwise shares its colour and weight. */
+/* An AI reply is tinted as well as railed, so it reads apart from the reader's
+   own text even where two authors' colours are close. */
 .tc-entry-agent {
-  margin: 0 -8px;
-  padding-inline: 8px;
-  /* The rail carries the author's own colour, so a reply is identifiable by
-     its stripe alone. Falls back to the accent when author colours are off. */
-  border-left: 2px solid var(--tc-author-color-light, var(--interactive-accent));
   background: var(--background-secondary);
-}
-
-.theme-dark .tc-entry-agent {
-  border-left-color: var(--tc-author-color-dark, var(--interactive-accent));
 }
 
 .tc-entry-agent .tc-text {
   color: var(--text-muted);
+}
+
+/* A folded entry keeps its author's rail and one line of its text, so the
+   middle of a long thread stays scannable without taking the room. */
+.tc-card button.tc-entry-collapsed {
+  display: flex;
+  align-items: center;
+  /* Obsidian centres button content, which shows once a line is too short to fill the row. */
+  justify-content: flex-start;
+  gap: 6px;
+  width: calc(100% + 16px);
+  height: auto;
+  margin: 0 -8px;
+  padding: 4px 8px;
+  border: none;
+  border-left: 2px solid var(--tc-author-color-light, var(--text-faint));
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-dark .tc-card button.tc-entry-collapsed {
+  border-left-color: var(--tc-author-color-dark, var(--text-faint));
+}
+
+.tc-card button.tc-entry-collapsed:hover,
+.tc-card button.tc-entry-collapsed:focus-visible {
+  background: var(--background-modifier-hover);
+}
+
+.tc-entry + .tc-entry-collapsed,
+.tc-entry-collapsed + .tc-entry {
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.tc-entry-collapsed-icon {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.tc-entry-collapsed-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tc-entry-collapsed .tc-author {
+  flex: 0 0 auto;
+}
+
+.tc-entry-collapsed-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* An opened entry's author and time fold it back: a button that still reads
+   as the heading it stands in for. */
+.tc-meta button.tc-entry-fold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  box-shadow: none;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tc-meta button.tc-entry-fold .tc-entry-collapsed-icon {
+  margin-right: -2px;
+}
+
+.tc-meta button.tc-entry-fold:hover {
+  color: var(--text-normal);
+}
+
+.tc-meta button.tc-entry-fold:focus-visible {
+  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
+
+/* An AI's error, kept in the thread: the alert leads, the text reads as one. */
+.tc-entry-error-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--text-error);
+}
+
+.tc-entry-error-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tc-entry-error > .tc-text {
+  color: var(--text-error);
+  white-space: pre-wrap;
+}
+
+.tc-entry-collapsed.tc-entry-error .tc-entry-collapsed-text {
+  color: var(--text-error);
 }
 
 .tc-meta {
@@ -419,4 +544,699 @@
 /* Live Preview: tandem-comments-Block-Widget vollständig ausblenden. */
 .tc-lp-hidden {
   display: none;
+}
+
+/* Inline comment popover: the thread shown over its own highlight. */
+.cm-tooltip.tc-popover {
+  border: none;
+  background: transparent;
+}
+
+.tc-popover-card {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-width: 90vw;
+  max-height: 360px;
+  min-width: 220px;
+  min-height: 120px;
+  resize: both;
+  overflow: hidden;
+  padding: 10px 11px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 28%);
+  font-size: var(--font-ui-small);
+}
+
+.tc-popover-quote {
+  font-style: italic;
+  color: var(--text-muted);
+  border-left: 3px solid var(--tc-highlight-color, #ffd54a);
+  padding-left: 6px;
+  margin-bottom: 8px;
+  max-height: 3.2em;
+  overflow: hidden;
+}
+
+.tc-popover-thread {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 9px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.tc-popover-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.tc-popover-reply {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 9px;
+  /* One resize grip per popover: the card's, not this box's. */
+  resize: none;
+  flex: 0 0 auto;
+}
+
+.tc-popover-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.tc-popover-actions .tc-popover-button {
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-popover-primary {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.tc-popover-card.tc-popover-sized {
+  max-height: none;
+}
+
+/* The thread is there to be read and quoted, so it stays selectable even though
+   the surfaces around it suppress selection: the editor inside widgets, and
+   Obsidian in its view chrome. An AI reply asking questions is answered by
+   copying them out. */
+.tc-popover-card,
+.tc-popover-card *,
+.tc-text,
+.tc-quote,
+.tc-suggestion-original,
+.tc-suggestion-replacement,
+.tc-meta {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+
+.tc-popover-suggestion {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--background-secondary);
+}
+
+.tc-popover-suggestion-text {
+  margin-top: 3px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.tc-popover-button:disabled {
+  opacity: 60%;
+  cursor: not-allowed;
+}
+
+/* Vault-wide inbox: one line per file, one line per thread. The panel is a
+   queue to empty, so a row carries only what picks it out of a long list. */
+
+/* Who the next reply goes to, sitting on top of the box it applies to. Chips
+   rather than a dropdown: switching provider mid-thread is one click, and each
+   carries its author's colour so it matches the rail its reply will be drawn
+   with. Kept tight and flush to the box so it reads as part of the composer
+   rather than as another row of controls in the card. */
+.tc-reply-targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.tc-reply-targets + .tc-input {
+  margin-top: 2px;
+}
+
+button.tc-reply-chip {
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+button.tc-reply-chip:hover,
+button.tc-reply-chip:focus-visible {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+button.tc-reply-chip-on {
+  border-color: currentColor;
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.tc-reply-chip-colored.tc-reply-chip-on {
+  color: var(--tc-author-color-light);
+}
+
+.theme-dark .tc-reply-chip-colored.tc-reply-chip-on {
+  color: var(--tc-author-color-dark);
+}
+
+.tc-title-count {
+  padding: 0 6px;
+  border-radius: 9px;
+  background: var(--background-modifier-hover);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-running-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  color: var(--text-accent);
+  font-size: var(--font-ui-smaller);
+}
+
+.tc-running-icon {
+  display: inline-flex;
+}
+
+.tc-running-icon .svg-icon,
+.tc-file-running .svg-icon {
+  width: 12px;
+  height: 12px;
+  animation: tc-spin 1.4s linear infinite;
+}
+
+@keyframes tc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-running-icon .svg-icon,
+  .tc-file-running .svg-icon {
+    animation: none;
+  }
+}
+
+/* File row. One line, no wrapping: the name is what matters, the folder is
+   context, and a deep path is truncated rather than allowed to wrap. */
+/* Sticky rows bleed to the panel edges, which .tc-sidebar insets by 8px.
+   Without it a wider descendant such as .tc-entry-agent, which is deliberately
+   drawn past its column, scrolls out either side of the pinned bar. */
+.tc-file > .tc-file-group,
+.tc-inbox-expanded > .tc-inbox-item {
+  margin-inline: calc(-1 * var(--tc-sidebar-pad));
+  padding-inline: var(--tc-sidebar-pad);
+  background: var(--tc-panel-bg);
+}
+
+/* A pinned row must stay opaque in every state. --background-modifier-hover is
+   a translucent tint, so the plain hover rules below, which outrank the base by
+   specificity or by order, would let the discussion scroll straight through the
+   bar. Layering the tint over the panel colour keeps the feedback without it. */
+.tc-file > .tc-file-group:hover,
+.tc-file > .tc-file-group:focus-visible,
+.tc-inbox-expanded > .tc-inbox-item:hover,
+.tc-inbox-expanded > .tc-inbox-item:focus-within {
+  background:
+    linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover)),
+    var(--tc-panel-bg);
+}
+
+.tc-file > .tc-file-group {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  height: var(--tc-file-head-height);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+button.tc-file-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 0 4px 0 0;
+  line-height: 1.3;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+button.tc-file-group:hover,
+button.tc-file-group:focus-visible {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.tc-file-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+
+.tc-file-chevron .svg-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.tc-file-name {
+  flex-shrink: 0;
+  max-width: 60%;
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-file-folder {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-file-running {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-accent);
+}
+
+.tc-file-count {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 6px;
+  font-size: var(--font-ui-smaller);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+.tc-file-count-unread {
+  color: var(--text-accent);
+  font-weight: 700;
+}
+
+/* Threads sit under their file on a rail, so the two levels read apart without
+   either needing extra words. The rail is drawn per row rather than on the
+   list, so a sticky header sits flush with the panel and can bleed cleanly to
+   its edges. */
+.tc-file-threads {
+  margin-bottom: 6px;
+}
+
+.tc-inbox-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-left: 1px solid var(--background-modifier-border);
+  padding-left: 6px;
+}
+
+.tc-inbox-item:hover,
+.tc-inbox-item:focus-within {
+  background: var(--background-modifier-hover);
+}
+
+button.tc-inbox-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-grow: 1;
+  min-width: 0;
+  padding: 3px 4px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+button.tc-inbox-row:hover,
+button.tc-inbox-row:focus-visible {
+  color: var(--text-normal);
+}
+
+.tc-inbox-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--text-faint);
+}
+
+.tc-inbox-icon .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.tc-inbox-suggestion .tc-inbox-icon {
+  color: var(--text-success);
+}
+
+.tc-inbox-rewritten .tc-inbox-icon {
+  color: var(--tc-highlight-color, #ffd54a);
+}
+
+/* One line, clipped with an ellipsis. Anything longer belongs in the card. */
+.tc-inbox-blurb {
+  flex-grow: 1;
+  min-width: 0;
+  font-size: var(--font-ui-small);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-inbox-unread .tc-inbox-blurb {
+  color: var(--text-normal);
+  font-weight: 500;
+}
+
+/* The two things the reader is scanning for: has it come back, and is it still
+   out. A date answered neither, so it gave up the column. */
+.tc-inbox-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.tc-inbox-read-mark {
+  display: inline-flex;
+  color: var(--text-faint);
+}
+
+.tc-inbox-read-mark-new {
+  color: var(--text-accent);
+}
+
+.tc-inbox-working {
+  display: inline-flex;
+  color: var(--text-accent);
+}
+
+.tc-inbox-status .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.tc-inbox-working .svg-icon {
+  animation: tc-spin 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-inbox-working .svg-icon {
+    animation: none;
+  }
+}
+
+/* Quick resolve and open stay hidden until the row is reached for, so a long
+   list reads as text rather than as rows of controls. */
+.tc-inbox-actions {
+  display: flex;
+  gap: 0;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.tc-inbox-item:hover .tc-inbox-actions,
+.tc-inbox-item:focus-within .tc-inbox-actions {
+  opacity: 1;
+}
+
+.tc-inbox-actions .tc-entry-action {
+  width: 20px;
+  height: 20px;
+  padding: 3px;
+}
+
+/* An opened thread keeps its own line as the header, so the click that opened
+   it closes it again and the passage stays named the whole time. */
+.tc-inbox-expanded {
+  margin: 2px 0 6px;
+}
+
+/* The open thread's own line pins below its file's, so both the note and the
+   passage under debate stay named however far the discussion runs. It sticks
+   within .tc-inbox-expanded, so it releases of its own accord once that thread
+   scrolls past rather than stacking up with the next one. */
+.tc-inbox-expanded > .tc-inbox-item {
+  position: sticky;
+  top: var(--tc-file-head-height);
+  z-index: 2;
+  border-top: 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tc-inbox-expanded .tc-inbox-blurb {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.tc-inbox-collapse {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+
+.tc-inbox-collapse .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.tc-inbox-expanded .tc-inbox-actions {
+  opacity: 1;
+}
+
+.tc-inbox-expanded-body {
+  padding-left: 6px;
+}
+
+/* The header already names the passage, so the card's own quote of it is
+   duplication here, unlike in the standalone card the popover uses. */
+.tc-inbox-expanded-body > .tc-card > .tc-quote {
+  display: none;
+}
+
+.tc-inbox-expanded-body .tc-card {
+  border: 0;
+  border-radius: 0;
+  padding: 6px 0 0;
+  margin-bottom: 0;
+  background: none;
+}
+
+/* Repository section: comments about the whole vault, pinned above the files.
+   Its header pins like a file header, with the new-comment button on it. */
+.tc-repo .tc-repo-hidden {
+  display: none;
+}
+
+.tc-repo > .tc-repo-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--tc-file-head-height);
+  margin-inline: calc(-1 * var(--tc-sidebar-pad));
+  padding-inline: var(--tc-sidebar-pad);
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--tc-panel-bg);
+}
+
+.tc-repo-header > .tc-repo-toggle {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.tc-repo-header > .tc-repo-toggle > .tc-file-name {
+  flex-grow: 1;
+  max-width: none;
+}
+
+.tc-repo-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.tc-repo-icon .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.tc-repo-add {
+  flex-shrink: 0;
+}
+
+/* The chat composer, reused. Its container class brings the provider brand
+   colours; the layout it also sets is for a full-height view, not a box. */
+.tc-repo-composer.grandemonium-container {
+  height: auto;
+  overflow: visible;
+  margin: 8px 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+}
+
+.tc-repo-composer .tc-repo-input {
+  margin: 0;
+  min-height: 60px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  box-shadow: none;
+  resize: vertical;
+}
+
+.tc-repo-composer .tc-repo-input:focus {
+  box-shadow: none;
+}
+
+.tc-repo-composer:focus-within {
+  border-color: var(--interactive-accent);
+}
+
+/* The panel scrolls from the top, so toolbar menus open downward: opening up
+   from the first box would put them behind the view header. */
+.tc-repo-composer .grandemonium-model-dropdown,
+.tc-repo-composer .grandemonium-thinking-options {
+  top: 100%;
+  bottom: auto;
+}
+
+.tc-repo-list {
+  padding-top: 4px;
+}
+
+.tc-repo-item.tc-resolved .tc-inbox-blurb {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.tc-repo-expanded .tc-repo-composer {
+  margin-bottom: 0;
+}
+
+.tc-repo-streaming .tc-repo-stream-text {
+  white-space: pre-wrap;
+}
+
+.tc-typing {
+  display: flex;
+  gap: 4px;
+  padding: 6px 0 2px;
+}
+
+.tc-typing-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: tc-typing 1.2s ease-in-out infinite;
+}
+
+.tc-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.tc-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes tc-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-typing-dot {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.tc-repo-activity {
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-repo-waiting {
+  display: inline-flex;
+  color: var(--text-warning);
+}
+
+.tc-repo-waiting .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.tc-repo-approval {
+  margin: 6px 0;
+  padding: 8px;
+  border: 1px solid var(--text-warning);
+  border-radius: 6px;
+  background: var(--background-secondary);
+}
+
+.tc-repo-approval-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: var(--font-ui-small);
+}
+
+.tc-repo-approval-title .svg-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--text-warning);
+}
+
+.tc-repo-approval-detail {
+  margin-top: 4px;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 120px;
+  overflow: auto;
 }

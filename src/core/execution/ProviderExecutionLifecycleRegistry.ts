@@ -13,6 +13,8 @@ export type ProviderExecutionOwnerKind =
   | 'title'
   | 'instruction'
   | 'inline-edit'
+  | 'comment-review'
+  | 'repository-thread'
   | 'warmup';
 
 export type ProviderExecutionInvalidationReason =

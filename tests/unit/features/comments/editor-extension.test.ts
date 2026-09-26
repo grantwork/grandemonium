@@ -4,6 +4,7 @@ import type { EditorView, ViewUpdate } from "@codemirror/view";
 import {
   createEditorAnchorTracker,
   type EditorExtensionHost,
+  resolveHighlightClick,
 } from "@/features/comments/editor-extension";
 import { isFullReplace } from "@/features/comments/reanchor";
 import {
@@ -74,8 +75,9 @@ class ExtensionHarness {
   constructor(raw: string) {
     this.state = EditorState.create({ doc: raw });
     this.host = {
-      settings: { schemaHint: true },
+      settings: { schemaHint: true, commentPopover: false },
       isApplyingSuggestion: () => this.applyingSuggestion,
+      isSidebarOpen: () => false,
       openSidebar: jest.fn(),
     };
     this.view = {
@@ -200,5 +202,59 @@ describe("editor-extension pending anchors across acceptance history", () => {
     harness.apply({ changes: { from: 0, to: harness.text().length, insert: replacement } });
     expect(harness.tracker.anchors).toEqual([]);
     harness.tracker.destroy();
+  });
+});
+
+describe("resolveHighlightClick", () => {
+  const PROSE = "The quick brown fox jumps over the lazy dog.";
+  const QUOTE = "brown fox";
+  const QUOTE_FROM = PROSE.indexOf(QUOTE);
+
+  function commentedDoc(): string {
+    return serializeDocument(
+      {
+        prose: PROSE,
+        comments: {
+          c1: {
+            anchor: makeAnchor(PROSE, QUOTE_FROM, QUOTE_FROM + QUOTE.length),
+            status: "open",
+            thread: [{ author: "Grant", ts: TS, text: "Why?" }],
+          },
+        },
+      },
+      false
+    );
+  }
+
+  function host(commentPopover: boolean, sidebarOpen = false): EditorExtensionHost {
+    return {
+      settings: { schemaHint: false, commentPopover },
+      isApplyingSuggestion: () => false,
+      isSidebarOpen: () => sidebarOpen,
+      openSidebar: () => undefined,
+    };
+  }
+
+  it("pins the popover over the highlight when inline comments are on", () => {
+    expect(resolveHighlightClick(host(true), commentedDoc(), "c1")).toEqual({
+      kind: "popover",
+      target: { id: "c1", from: QUOTE_FROM, to: QUOTE_FROM + QUOTE.length },
+    });
+  });
+
+  it("expands the thread in the sidebar when the sidebar is already open", () => {
+    expect(resolveHighlightClick(host(true, true), commentedDoc(), "c1")).toEqual({
+      kind: "sidebar",
+    });
+  });
+
+  it("opens the sidebar when inline comments are off", () => {
+    expect(resolveHighlightClick(host(false), commentedDoc(), "c1")).toEqual({ kind: "sidebar" });
+  });
+
+  it("opens the sidebar when the passage can no longer be found", () => {
+    const orphaned = commentedDoc().replace(QUOTE, "grey wolf");
+
+    expect(resolveHighlightClick(host(true), orphaned, "c1")).toEqual({ kind: "sidebar" });
   });
 });

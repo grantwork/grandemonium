@@ -40,6 +40,7 @@ import {
 } from './app/settings/SettingsCoordinator';
 import { SharedStorageService } from './app/storage/SharedStorageService';
 import { TabWorkspaceMigrationCoordinator } from './app/storage/TabWorkspaceMigrationCoordinator';
+import type { CommentReviewRunner } from './core/auxiliary/CommentReviewRunner';
 import type { SessionMetadataReadResult } from './core/bootstrap/SessionStorage';
 import type { SharedAppStorage } from './core/bootstrap/storage';
 import {
@@ -52,6 +53,7 @@ import {
   ProviderExecutionLifecycleRegistry,
   type ProviderExecutionTransitionScope,
 } from './core/execution';
+import { resolveProviderDefaultModel } from './core/providers/conversationModel';
 import {
   getEnvironmentVariablesForScope as getScopedEnvironmentVariables,
   getRuntimeEnvironmentText,
@@ -88,6 +90,7 @@ import {
 } from './features/chat/execution/WarmExecutionPool';
 import { registerFileMenu } from './features/chat/fileMenu';
 import { GrandemoniumView } from './features/chat/GrandemoniumView';
+import { mountStandaloneComposerToolbar } from './features/chat/ui/StandaloneComposerToolbar';
 import {
   COLLAB_DETAIL_VIEW_TYPE,
   CollabDetailView,
@@ -103,7 +106,11 @@ import {
 } from './features/collab/navigation/ResponsiveCollabRouter';
 import { DeferredCollabSurfaceController } from './features/collab/sidebar/DeferredCollabSurfaceController';
 import type { GitSetupResolution } from './features/collab/sidebar/GitSetupPanel';
-import { type CommentReviewOutcome, CommentsController } from './features/comments';
+import {
+  type CommentReviewHandle,
+  CommentsController,
+  type RepositoryAgentPort,
+} from './features/comments';
 import type { CollabSidebarSurfaceFactory } from './features/FeatureHost';
 import { type InlineEditContext, InlineEditModal } from './features/inline-edit/ui/InlineEditModal';
 import { GrandemoniumSettingTab } from './features/settings/GrandemoniumSettings';
@@ -236,6 +243,7 @@ export default class GrandemoniumPlugin extends Plugin {
 
   /** Quote-anchored review comments. Loaded alongside the chat surface. */
   readonly comments = new CommentsController(this);
+  private readonly commentReviewRunners = new Map<ProviderId, CommentReviewRunner>();
 
   async onload() {
     StartupProfiler.startOnload();
@@ -284,8 +292,10 @@ export default class GrandemoniumPlugin extends Plugin {
         this.notifyConversationViewsChanged();
       }));
 
+      // The comments panel is the primary surface; the chat view stays
+      // reachable through the `open-view` command.
       this.addRibbonIcon('bot', 'Open Grandemonium', () => {
-        void this.activateView();
+        void this.comments.openSidebar();
       });
 
       this.addCommand({
@@ -454,8 +464,9 @@ export default class GrandemoniumPlugin extends Plugin {
         agentNames: () => ProviderRegistry
           .getEnabledProviderIds(this.settings)
           .map(providerId => ProviderRegistry.getAgentName(providerId, this.settings)),
-        request: (prompt, targetAgentName) => this.dispatchCommentReview(prompt, targetAgentName),
+        review: (prompt, targetAgentName) => this.startCommentReviews(prompt, targetAgentName),
       });
+      this.comments.setRepositoryPort(this.createRepositoryAgentPort());
       this.initializeCollabLayoutLifecycle();
       if (this.isCollabEnabled()) void this.startAgentRuntime();
       this.scheduleRemainingSessionMetadataLoad();
@@ -2333,23 +2344,88 @@ export default class GrandemoniumPlugin extends Plugin {
    * Routes a comment review request to one open chat view, which owns tab and
    * provider dispatch. Returns the agent names that accepted it.
    */
-  private async dispatchCommentReview(
-    prompt: string,
-    targetAgentName?: string,
-  ): Promise<CommentReviewOutcome> {
-    const view = this.getAllViews()[0];
-    if (!view) return { queued: [], sent: [] };
-    const targetProviderId = targetAgentName
-      ? ProviderRegistry.getEnabledProviderIds(this.settings).find(
-        providerId => ProviderRegistry.getAgentName(providerId, this.settings) === targetAgentName,
-      )
-      : undefined;
-    if (targetAgentName && !targetProviderId) return { queued: [], sent: [] };
-    const result = await view.broadcastPromptToProviderTabs(prompt, targetProviderId);
-    const toNames = (providerIds: ProviderId[]): string[] => providerIds.map(
-      providerId => ProviderRegistry.getAgentName(providerId, this.settings),
-    );
-    return { queued: toNames(result.queued), sent: toNames(result.sent) };
+  /**
+   * Starts one background review per AI reached. Each runs in a disposable
+   * session rather than in a chat tab, so no review inherits the context of
+   * every comment before it. One runner per provider, kept for the plugin's
+   * lifetime, so that provider's concurrency limit holds across reviews.
+   */
+  private startCommentReviews(prompt: string, targetAgentName?: string): CommentReviewHandle[] {
+    return ProviderRegistry.getEnabledProviderIds(this.settings)
+      .filter(providerId =>
+        !targetAgentName || ProviderRegistry.getAgentName(providerId, this.settings) === targetAgentName)
+      .map((providerId) => {
+        let runner = this.commentReviewRunners.get(providerId);
+        if (!runner) {
+          runner = ProviderRegistry.createCommentReviewRunner(this, providerId);
+          this.commentReviewRunners.set(providerId, runner);
+        }
+        const run = runner.start(prompt);
+        return {
+          agentName: ProviderRegistry.getAgentName(providerId, this.settings),
+          cancel: () => run.cancel(),
+          done: run.done,
+          startedAt: run.startedAt,
+        };
+      });
+  }
+
+  /**
+   * Repository comment threads: each one keeps a provider session per AI it
+   * reaches until the thread is resolved. Effort, permission mode and service
+   * tier are read from the provider's settings at send time, as a chat turn
+   * reads them, so the toolbar under a thread and a chat tab agree.
+   */
+  private createRepositoryAgentPort(): RepositoryAgentPort {
+    const enabled = () => ProviderRegistry.getEnabledProviderIds(this.settings);
+    const agentName = (providerId: ProviderId) => ProviderRegistry.getAgentName(providerId, this.settings);
+    const setting = (settings: Record<string, unknown>, key: string): string | undefined =>
+      typeof settings[key] === 'string' && settings[key] ? settings[key] : undefined;
+    return {
+      agents: () => enabled().map(providerId => ({ name: agentName(providerId), providerId })),
+      defaultSelection: (preferredAgentName) => {
+        const providerIds = enabled();
+        const wanted = preferredAgentName.trim().toLowerCase();
+        const providerId = providerIds.find(id => agentName(id).toLowerCase() === wanted) ?? providerIds[0];
+        if (!providerId) return null;
+        const model = resolveProviderDefaultModel(providerId, this.settings)
+          ?? setting(ProviderSettingsCoordinator.getProviderSettingsSnapshot(this.settings, providerId), 'model');
+        return model ? { model, providerId } : null;
+      },
+      generateTitle: text => new Promise((resolve) => {
+        void ProviderRegistry.createTitleGenerationService(this)
+          .generateTitle(`repository-${Date.now()}`, text, async (_id, result) => {
+            resolve(result.success ? result.title : null);
+          })
+          .catch(() => resolve(null));
+      }),
+      mountToolbar: (parent, binding) => mountStandaloneComposerToolbar(parent, this, {
+        getSelection: () => {
+          const selection = binding.getSelection();
+          return { model: selection.model, providerId: selection.providerId };
+        },
+        onSelectionChange: selection => binding.onSelectionChange(selection),
+      }),
+      openSession: (providerId, interactionPort) => {
+        const id = providerId;
+        const session = ProviderRegistry.createRepositoryThreadSession(this, id, interactionPort);
+        return {
+          dispose: () => session.dispose(),
+          isFresh: () => session.isFresh(),
+          isRunning: () => session.isRunning(),
+          send: (prompt, model, callbacks) => {
+            const settings = ProviderSettingsCoordinator.getProviderSettingsSnapshot(this.settings, id);
+            return session.send({
+              model: model ?? undefined,
+              permissionMode: setting(settings, 'permissionMode'),
+              prompt,
+              reasoning: setting(settings, 'effortLevel') ?? setting(settings, 'thinkingBudget'),
+              serviceTier: setting(settings, 'serviceTier'),
+            }, callbacks);
+          },
+        };
+      },
+    };
   }
 
   notifyProviderChatOptionsChanged(providerId: ProviderId): Promise<void> {

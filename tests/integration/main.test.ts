@@ -13,6 +13,7 @@ import { isVersionedRuntimeInputFingerprint } from '@/core/providers/settings/Ru
 import { TOOL_SUBAGENT } from '@/core/tools/toolNames';
 import { type Conversation, type SessionMetadata, VIEW_TYPE_GRANDEMONIUM } from '@/core/types';
 import { COLLAB_DETAIL_VIEW_TYPE } from '@/features/collab/detail/CollabDetailView';
+import { VIEW_TYPE_COMMENTS } from '@/features/comments';
 import * as sdkSession from '@/providers/claude/history/ClaudeHistoryStore';
 import { DEFAULT_SETTINGS } from '@/providers/claude/types/settings';
 import { CodexModelCatalogCoordinator } from '@/providers/codex/runtime/CodexModelCatalogCoordinator';
@@ -3298,15 +3299,24 @@ describe('GrandemoniumPlugin', () => {
   });
 
   describe('ribbon icon callback', () => {
-    it('reveals existing view when ribbon icon is clicked', async () => {
+    it('opens the comments panel, not the chat view, when none is open', async () => {
+      const mockRightLeaf = {
+        setViewState: jest.fn().mockResolvedValue(undefined),
+      };
+      mockApp.workspace.getLeavesOfType.mockReturnValue([]);
+      mockApp.workspace.getRightLeaf.mockReturnValue(mockRightLeaf);
       await plugin.onload();
-      const mockLeaf = { id: 'existing' };
-      mockApp.workspace.getLeavesOfType.mockReturnValue([mockLeaf]);
 
       const ribbonCallback = (plugin.addRibbonIcon as jest.Mock).mock.calls[0][2];
       await ribbonCallback();
 
-      expect(mockApp.workspace.revealLeaf).toHaveBeenCalledWith(mockLeaf);
+      expect(mockRightLeaf.setViewState).toHaveBeenCalledWith({
+        type: VIEW_TYPE_COMMENTS,
+        active: true,
+      });
+      expect(mockRightLeaf.setViewState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: VIEW_TYPE_GRANDEMONIUM }),
+      );
     });
   });
 
