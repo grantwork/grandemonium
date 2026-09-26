@@ -264,7 +264,7 @@ export class ThinkingBudgetSelector {
     effortLabel.setText('Effort:');
     this.effortGearsEl = this.effortEl.createDiv({ cls: 'grandemonium-thinking-gears' });
 
-    // Legacy budget selector (for custom models)
+    // Token budget selector (for models that take a thinking budget instead of effort)
     this.budgetEl = this.container.createDiv({ cls: 'grandemonium-thinking-budget' });
     const budgetLabel = this.budgetEl.createSpan({ cls: 'grandemonium-thinking-label-text' });
     budgetLabel.setText('Thinking:');

@@ -30,7 +30,7 @@ import { findRewindContext } from '../rewind';
 import type { SubagentManager } from '../services/SubagentManager';
 import {
   getLinkedContentTitle,
-  isLegacyProvisionalLinkedContent,
+  isProvisionalLinkedContent,
   organizeSessionList,
   type SessionListSection,
 } from '../session-manager/SessionListOrganizer';
@@ -1661,7 +1661,7 @@ export class ConversationController {
     const language = options.language ?? 'en';
     const linkedContentPath = conversation.linkedContentPath;
     const hasLinkedContent = !!linkedContentPath
-      && !isLegacyProvisionalLinkedContent(linkedContentPath, {
+      && !isProvisionalLinkedContent(linkedContentPath, {
         contentExists: options.contentExists,
         contentIsNote: options.contentIsNote,
         language,

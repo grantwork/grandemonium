@@ -48,12 +48,6 @@ import {
   type TabProviderCatalogContext,
 } from './types';
 
-function isTabManagerViewHost(value: unknown): value is TabManagerViewHost {
-  return !!value
-    && typeof value === 'object'
-    && 'getTabManager' in (value as Record<string, unknown>);
-}
-
 /** How long a background tab may spend initializing its provider for a broadcast. */
 const PROMPT_BROADCAST_PREPARE_TIMEOUT_MS = 10_000;
 
@@ -179,34 +173,12 @@ export class TabManager implements TabManagerInterface {
     plugin: FeatureHost,
     containerEl: HTMLElement,
     view: TabManagerViewHost,
-    callbacks?: TabManagerCallbacks,
-  );
-  constructor(
-    plugin: FeatureHost,
-    legacyArg: unknown,
-    containerEl: HTMLElement,
-    view: TabManagerViewHost,
-    callbacks?: TabManagerCallbacks,
-  );
-  constructor(
-    plugin: FeatureHost,
-    arg2: unknown,
-    arg3: HTMLElement | TabManagerViewHost,
-    arg4?: TabManagerViewHost | TabManagerCallbacks,
-    arg5: TabManagerCallbacks = {},
+    callbacks: TabManagerCallbacks = {},
   ) {
     this.plugin = plugin;
-
-    if (isTabManagerViewHost(arg3)) {
-      this.containerEl = arg2 as HTMLElement;
-      this.view = arg3;
-      this.callbacks = (arg4 as TabManagerCallbacks | undefined) ?? {};
-      return;
-    }
-
-    this.containerEl = arg3;
-    this.view = arg4 as TabManagerViewHost;
-    this.callbacks = arg5;
+    this.containerEl = containerEl;
+    this.view = view;
+    this.callbacks = callbacks;
   }
 
   // ============================================
@@ -1362,27 +1334,17 @@ export class TabManager implements TabManagerInterface {
   /**
    * Opens a conversation in a new tab or existing tab.
    * @param conversationId The conversation to open.
-   * @param options Controls tab creation behavior (backward-compatible with boolean).
+   * @param options Controls tab creation behavior.
    */
   async openConversation(
     conversationId: string,
-    options: boolean | OpenConversationOptions = false,
+    options: OpenConversationOptions = {},
   ): Promise<void> {
-    const preferNewTab = typeof options === 'boolean'
-      ? options
-      : options.preferNewTab ?? false;
-    const activate = typeof options === 'boolean'
-      ? true
-      : options.activate ?? true;
-    const provisional = typeof options === 'boolean'
-      ? false
-      : options.provisional ?? false;
-
     await this.enqueueConversationNavigation(
       conversationId,
-      preferNewTab,
-      activate,
-      provisional,
+      options.preferNewTab ?? false,
+      options.activate ?? true,
+      options.provisional ?? false,
       null,
     );
   }

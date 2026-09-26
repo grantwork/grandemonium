@@ -1813,7 +1813,7 @@ export class StreamController {
   private notifyApplyPatchFileChanges(input: Record<string, unknown>): void {
     const notified = new Set<string>();
 
-    // Legacy changes array
+    // Structured changes array (current Codex app-server fileChange input)
     const changes = input.changes;
     if (Array.isArray(changes)) {
       for (const change of changes) {

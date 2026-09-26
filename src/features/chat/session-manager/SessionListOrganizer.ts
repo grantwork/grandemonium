@@ -26,7 +26,7 @@ interface OrganizeSessionListOptions {
   contentIsNote?: (contentPath: string) => boolean;
 }
 
-export function isLegacyProvisionalLinkedContent(
+export function isProvisionalLinkedContent(
   contentPath: string,
   options: Pick<OrganizeSessionListOptions, 'contentExists' | 'contentIsNote' | 'language'>,
 ): boolean {
@@ -114,7 +114,7 @@ export function organizeSessionList(
   const ungrouped: ConversationMeta[] = [];
   for (const conversation of sortedConversations) {
     const contentPath = conversation.linkedContentPath;
-    if (!contentPath || isLegacyProvisionalLinkedContent(contentPath, options)) {
+    if (!contentPath || isProvisionalLinkedContent(contentPath, options)) {
       ungrouped.push(conversation);
       continue;
     }
