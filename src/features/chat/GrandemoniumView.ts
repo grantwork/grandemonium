@@ -26,7 +26,6 @@ import type {
   FeatureHost,
   FeatureTabManagerHost,
   ProviderBroadcastResult,
-  TabWorkspaceStateDeliveryRegistration,
 } from '../FeatureHost';
 import type { HistoryConversationStatus } from './controllers/ConversationController';
 import { MentionCacheCoordinator } from './services/MentionCacheCoordinator';
@@ -112,10 +111,9 @@ export class GrandemoniumView extends ItemView {
   // Debouncing for tab bar updates
   private pendingTabBarUpdate: ScheduledAnimationFrame | null = null;
   private tabStatePersistence: TabStatePersistenceCoordinator | null = null;
-  private hasTabWorkspaceViewState = false;
   private pendingTabWorkspaceState: AppTabManagerState | null = null;
   private finalizedTabWorkspaceState: AppTabManagerState | null = null;
-  private tabWorkspaceStateDelivery: TabWorkspaceStateDeliveryRegistration | null = null;
+  private tabWorkspaceStateDelivered = false;
   private initializedTabWorkspaceLifecycleRevision = -1;
   private tabWorkspaceInitialization: {
     lifecycleRevision: number;
@@ -181,34 +179,15 @@ export class GrandemoniumView extends ItemView {
     const record = state && typeof state === 'object' && !Array.isArray(state)
       ? state as Record<string, unknown>
       : null;
-    const hasTabWorkspaceViewState = record !== null
-      && TAB_WORKSPACE_VIEW_STATE_KEY in record;
-    this.hasTabWorkspaceViewState = hasTabWorkspaceViewState;
-    this.pendingTabWorkspaceState = null;
-
-    if (hasTabWorkspaceViewState && record) {
-      this.pendingTabWorkspaceState = decodeTabWorkspaceViewState(
-        record[TAB_WORKSPACE_VIEW_STATE_KEY],
-      );
-    }
-
-    const registration = this.plugin.registerTabWorkspaceStateDelivery(
-      this,
-      this.hasTabWorkspaceViewState,
-    );
-    this.tabWorkspaceStateDelivery = registration;
+    this.pendingTabWorkspaceState = record !== null && TAB_WORKSPACE_VIEW_STATE_KEY in record
+      ? decodeTabWorkspaceViewState(record[TAB_WORKSPACE_VIEW_STATE_KEY])
+      : null;
+    this.tabWorkspaceStateDelivered = true;
     const lifecycleRevision = this.viewLifecycleRevision ?? 0;
 
     if (this.initializedTabWorkspaceLifecycleRevision === lifecycleRevision) return;
 
-    if (registration.declarationsReady) {
-      await this.initializeTabWorkspace(lifecycleRevision);
-      return;
-    }
-
-    void registration.waitUntilDeclarationsReady
-      .then(() => this.initializeTabWorkspace(lifecycleRevision))
-      .catch(() => undefined);
+    await this.initializeTabWorkspace(lifecycleRevision);
   }
 
   /** Refreshes model-dependent UI across all tabs (used after settings/env changes). */
@@ -452,15 +431,9 @@ export class GrandemoniumView extends ItemView {
       return;
     }
 
-    const stateDelivery = this.tabWorkspaceStateDelivery;
-    if (!stateDelivery) return;
-    if (stateDelivery.declarationsReady) {
+    if (this.tabWorkspaceStateDelivered) {
       await this.initializeTabWorkspace(lifecycleRevision);
-      return;
     }
-    void stateDelivery.waitUntilDeclarationsReady
-      .then(() => this.initializeTabWorkspace(lifecycleRevision))
-      .catch(() => undefined);
   }
 
   async onClose() {
@@ -2299,18 +2272,7 @@ export class GrandemoniumView extends ItemView {
     const tabManager = this.tabManager;
     if (!tabManager) return;
 
-    let usedLegacyState = false;
-    let persistedState = reopeningState
-      ?? (this.hasTabWorkspaceViewState ? this.pendingTabWorkspaceState : null);
-    if (reopeningState === undefined && !this.hasTabWorkspaceViewState) {
-      persistedState = await this.plugin.claimLegacyTabManagerState();
-      usedLegacyState = persistedState !== null;
-    }
-    if (
-      !this.isViewLifecycleCurrent(lifecycleRevision)
-      || this.tabManager !== tabManager
-    ) return;
-
+    const persistedState = reopeningState ?? this.pendingTabWorkspaceState;
     const restorePlan = resolveTabRestorePlan(persistedState, {
       restoreTabsOnStartup: reopeningState === undefined
         ? this.plugin.settings.restoreTabsOnStartup
@@ -2339,17 +2301,7 @@ export class GrandemoniumView extends ItemView {
 
     this.tabBar?.setExpandedTitleTabIds(restorePlan.expandedTitleTabIds ?? []);
     this.pendingTabWorkspaceState = null;
-
-    if (usedLegacyState) {
-      try {
-        await this.flushTabWorkspaceState(tabManager, this.tabStatePersistence);
-        await this.plugin.completeLegacyTabManagerStateMigration();
-      } catch {
-        // Keep the legacy snapshot available when view-state persistence fails.
-      }
-    } else {
-      this.persistTabWorkspaceState(tabManager, this.tabStatePersistence);
-    }
+    this.persistTabWorkspaceState(tabManager, this.tabStatePersistence);
   }
 
   private persistTabWorkspaceState(

@@ -1,6 +1,5 @@
 import { TFile, TFolder } from 'obsidian';
 
-import { SharedStorageService } from '@/app/storage/SharedStorageService';
 import { ConversationPersistenceStore } from '@/core/bootstrap/ConversationPersistenceStore';
 import type { SessionMetadataReadResult } from '@/core/bootstrap/SessionStorage';
 import { SessionStorage } from '@/core/bootstrap/SessionStorage';
@@ -255,57 +254,6 @@ describe('GrandemoniumPlugin', () => {
       expect(plugin.registerEvent).toHaveBeenCalledWith({ id: 'workspace-event' });
     });
 
-    it('does not preload legacy tab metadata before a view claims migration', async () => {
-      type EmptyMetadataScan = {
-        metadata: [];
-        complete: true;
-        invalidMetadataCount: 0;
-      };
-      let finishHistoryScan!: (value: EmptyMetadataScan) => void;
-      const historyScan = new Promise<EmptyMetadataScan>((resolve) => {
-        finishHistoryScan = resolve;
-      });
-      const restoredMetadata = {
-        id: 'restored-conversation',
-        providerId: 'claude' as const,
-        title: 'Restored conversation',
-        createdAt: 1,
-        lastActivityAt: 2,
-      };
-      const listSpy = jest.spyOn(SessionStorage.prototype, 'scanMetadata')
-        .mockReturnValue(historyScan);
-      const loadSourceSpy = jest.spyOn(SessionStorage.prototype, 'load')
-        .mockResolvedValue({
-          metadata: restoredMetadata,
-          needsMigration: false,
-          source: 'device',
-        });
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          openTabs: [{ tabId: 'tab-1', conversationId: restoredMetadata.id }],
-          activeTabId: 'tab-1',
-        },
-      });
-
-      const onloadPromise = plugin.onload();
-      const completedBeforeHistoryScan = await Promise.race([
-        onloadPromise.then(() => true),
-        new Promise<boolean>(resolve => setTimeout(() => resolve(false), 20)),
-      ]);
-      finishHistoryScan({ metadata: [], complete: true, invalidMetadataCount: 0 });
-      await onloadPromise;
-      const cachedConversation = plugin.getCachedConversation(restoredMetadata.id);
-      const didLoadRestoredMetadata = loadSourceSpy.mock.calls.some(
-        ([id]) => id === restoredMetadata.id,
-      );
-      listSpy.mockRestore();
-      loadSourceSpy.mockRestore();
-
-      expect(completedBeforeHistoryScan).toBe(true);
-      expect(didLoadRestoredMetadata).toBe(false);
-      expect(cachedConversation).toBeNull();
-    });
-
     it('loads metadata requested by a view-scoped tab workspace', async () => {
       const restoredMetadata = {
         id: 'view-restored-conversation',
@@ -325,40 +273,6 @@ describe('GrandemoniumPlugin', () => {
         .toBe(restoredMetadata.title);
       expect(loadSourceSpy).toHaveBeenCalledWith(restoredMetadata.id);
       loadSourceSpy.mockRestore();
-    });
-
-    it('discards stale global tab state after a view-scoped restore succeeds', async () => {
-      const clearLegacyState = jest.spyOn(
-        SharedStorageService.prototype,
-        'clearTabManagerState',
-      ).mockResolvedValue(undefined);
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          activeTabId: 'legacy-tab',
-          openTabs: [{ conversationId: null, tabId: 'legacy-tab' }],
-        },
-      });
-      mockApp.workspace.getLeavesOfType.mockReturnValue([{
-        getViewState: jest.fn().mockReturnValue({
-          state: {
-            tabWorkspace: {
-              version: 1,
-              activeTabId: 'view-tab',
-              openTabs: [{ conversationId: null, tabId: 'view-tab' }],
-            },
-          },
-        }),
-      }]);
-      await plugin.onload();
-
-      expect(clearLegacyState).toHaveBeenCalledTimes(1);
-      await expect(plugin.claimLegacyTabManagerState()).resolves.toBeNull();
-      expect(clearLegacyState).toHaveBeenCalledTimes(1);
-
-      await plugin.completeLegacyTabManagerStateMigration();
-
-      expect(clearLegacyState).toHaveBeenCalledTimes(1);
-      clearLegacyState.mockRestore();
     });
 
     it('publishes the remaining conversation metadata after layout readiness', async () => {

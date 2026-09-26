@@ -16,12 +16,11 @@
 | Component | Authority |
 | --- | --- |
 | `ConversationRepository` | The canonical in-memory Grandemonium conversation collection, device-versus-unscoped metadata ownership and explicit assignment, hydration status, pin/archive and creation-only Linked content identity, deletion transactions, per-conversation persistence queues, input-ledger coordination, historical model recovery, selected-model availability reconciliation, and execution-snapshot binding |
-| `SharedStorageService` | Plugin-data and vault persistence I/O plus construction of shared persistence adapters |
+| `SharedStorageService` | Vault persistence I/O plus construction of shared persistence adapters |
 | `GrandemoniumSettingsStorage` | Settings persistence, normalization of stored values, and dropping stored keys that are not settings |
 | `SettingsCoordinator` | Serialization of settings mutations, rollback before failed persistence, and post-commit publication ordering |
 | `ChatModelSelectionCoordinator` | Application-wide ordering and durable settings commits for explicit future-tab model-seed intents |
 | `PinnedLinkedContentPathCoordinator` | Pinned Linked content path mutation, folder-descendant rewrite, deduplication, and deletion cleanup through ordered settings transactions |
-| `TabWorkspaceMigrationCoordinator` | Cross-leaf coordination of actual Obsidian view-state delivery and the one-time claim and cleanup of legacy plugin-global tab state |
 | `GrandemoniumProviderHost` | Typed delegation to application capabilities; it owns no duplicate settings, storage, view, or execution state |
 
 Storage adapters own I/O mechanics, not domain decisions. Callers decide what state is valid; adapters merge and persist it without inventing conversation, tab, provider, or settings semantics.
@@ -31,14 +30,10 @@ Storage adapters own I/O mechanics, not domain decisions. Callers decide what st
 - `ConversationRepository` is the source of truth for Grandemonium's current in-memory conversation projection. Feature code must request conversation mutations through `FeatureHost` instead of mutating cached conversations independently.
 - Grandemonium metadata and accepted-input ledgers are durable Grandemonium state.
 - Provider session IDs, resume checkpoints, and opaque `providerState` may be interpreted only by provider snapshots or typed provider history/state helpers. Generic app code may store those opaque values but must not infer or rewrite their fields.
-- Persisted tab workspaces are view-scoped shells owned by the chat feature. Application storage exposes the former plugin-global `AppTabManagerState` only as a one-time migration source; it must not become a second live tab-state authority.
-- Only `TabWorkspaceMigrationCoordinator` may read or retire the legacy global snapshot. Normal startup does not preload metadata from it; the claiming view loads metadata for the shells selected by its restore policy.
-- Legacy tab migration decisions use state actually delivered to live views. A live view's synthesized `getState()` output is not evidence that Obsidian restored a view-scoped snapshot; deferred leaves may contribute their serialized leaf state directly.
-- Once the aggregate leaf declarations include any view-scoped snapshot, including a deferred leaf, the migration coordinator retires the legacy global snapshot so it cannot become eligible again after that leaf is removed.
+- Persisted tab workspaces are view-scoped shells owned by the chat feature; application storage holds no tab state.
 - Before a view restores conversation-backed tab shells, the application conversation repository must adopt metadata for every conversation selected by the restore policy. Deferred history scanning remains responsible for all other sessions.
 - `Conversation.modelRecoverySource` is a read-only native locator used only to recover missing historical model metadata. It must never be treated as a resumable provider binding, and a successful recovery or fresh provider session retires it.
 - `Conversation.linkedContentPath` is an optional canonical Vault-relative file or folder path. The Vault root is not a valid Linked content target. It is creation-only identity: ordinary patches, live-object mutation, saves, forks after creation, and deletion must not replace or clear it. Only the repository's explicit Vault-rename rewrite may change it, including descendants for folder renames; deletion leaves the identity durable so presentation can report Missing content.
-- `SharedStorageService.setTabManagerState()` plus legacy tab-state reads and cleanup must preserve unrelated plugin data.
 - `GrandemoniumSettingsStorage` persists only the top-level keys of `DEFAULT_GRANDEMONIUM_SETTINGS`; any other stored key is dropped on the next load. A new setting needs a default there or it is never saved. Provider configuration inside `providerConfigs` is provider-owned and passes through.
 - Settings changes must go through `SettingsCoordinator` or the application mutation APIs so persistence, rollback, provider reconciliation, and publication remain ordered.
 - Provider model-option changes reconcile affected durable conversation selections through `ConversationRepository` before views refresh. Providers and features may publish the change but must not rewrite cached conversations themselves.

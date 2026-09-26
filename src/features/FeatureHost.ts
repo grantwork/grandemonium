@@ -2,7 +2,7 @@ import type { App } from 'obsidian';
 
 import type { SharedAppStorage } from '../core/bootstrap/storage';
 import type { ProviderHost } from '../core/providers/ProviderHost';
-import type { AppTabManagerState, ProviderId } from '../core/providers/types';
+import type { ProviderId } from '../core/providers/types';
 import type {
   Conversation,
   ConversationMeta,
@@ -14,11 +14,6 @@ import type { ChatExecutionPersistence } from './chat/execution/ChatExecutionCoo
 import type { WarmExecutionPool } from './chat/execution/WarmExecutionPool';
 import type { AssembledTabRuntime, TabId, TabManagerViewHost } from './chat/tabs/types';
 import type { CommentsController } from './comments';
-
-export interface TabWorkspaceStateDeliveryRegistration {
-  readonly declarationsReady: boolean;
-  readonly waitUntilDeclarationsReady: Promise<void>;
-}
 
 export interface FeatureTabManagerHost {
   canCreateTab(): boolean;
@@ -116,12 +111,6 @@ export interface FeatureHost {
   getConversationSync(id: string): Conversation | null;
   getConversationList(): ConversationMeta[];
   ensureConversationMetadataLoaded(conversationIds: readonly string[]): Promise<void>;
-  registerTabWorkspaceStateDelivery(
-    view: FeatureViewHost,
-    hasViewScopedState: boolean,
-  ): TabWorkspaceStateDeliveryRegistration;
-  claimLegacyTabManagerState(): Promise<AppTabManagerState | null>;
-  completeLegacyTabManagerStateMigration(): Promise<void>;
 
   getView(): FeatureViewHost | null;
   getAllViews(): FeatureViewHost[];

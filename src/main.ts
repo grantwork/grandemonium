@@ -25,7 +25,6 @@ import {
   SettingsPostCommitError,
 } from './app/settings/SettingsCoordinator';
 import { SharedStorageService } from './app/storage/SharedStorageService';
-import { TabWorkspaceMigrationCoordinator } from './app/storage/TabWorkspaceMigrationCoordinator';
 import type { CommentReviewRunner } from './core/auxiliary/CommentReviewRunner';
 import type { SessionMetadataReadResult } from './core/bootstrap/SessionStorage';
 import type { SharedAppStorage } from './core/bootstrap/storage';
@@ -46,7 +45,6 @@ import {
 } from './core/providers/ProviderSettingsCoordinator';
 import { ProviderWorkspaceRegistry } from './core/providers/ProviderWorkspaceRegistry';
 import type {
-  AppTabManagerState,
   ProviderCliResolutionContext,
   ProviderId,
 } from './core/providers/types';
@@ -157,7 +155,6 @@ export default class GrandemoniumPlugin extends Plugin {
   private providerChatOptionsChangeTail: Promise<void> = Promise.resolve();
   private isUnloading = false;
   private applicationShutdownPromise: Promise<void> | null = null;
-  private tabWorkspaceMigrationCoordinator!: TabWorkspaceMigrationCoordinator;
 
   get executionPersistence(): ChatExecutionPersistence {
     return this.conversationRepository;
@@ -462,11 +459,6 @@ export default class GrandemoniumPlugin extends Plugin {
     this.hasLoadedAllSessionMetadata = false;
     const sharedStorage = new SharedStorageService(this);
     this.storage = sharedStorage;
-    this.tabWorkspaceMigrationCoordinator = new TabWorkspaceMigrationCoordinator(
-      sharedStorage,
-      this.app.workspace,
-      isGrandemoniumView,
-    );
     const { grandemonium } = await sharedStorage.initialize();
     this.settings = {
       ...DEFAULT_GRANDEMONIUM_SETTINGS,
@@ -1599,24 +1591,6 @@ export default class GrandemoniumPlugin extends Plugin {
         .map(id => this.conversationRepository.getCachedConversation(id))
         .filter((conversation): conversation is Conversation => conversation !== null),
     );
-  }
-
-  registerTabWorkspaceStateDelivery(
-    view: GrandemoniumView,
-    hasViewScopedState: boolean,
-  ) {
-    return this.tabWorkspaceMigrationCoordinator.registerStateDelivery(
-      view,
-      hasViewScopedState,
-    );
-  }
-
-  async claimLegacyTabManagerState(): Promise<AppTabManagerState | null> {
-    return this.tabWorkspaceMigrationCoordinator.claimLegacyState();
-  }
-
-  async completeLegacyTabManagerStateMigration(): Promise<void> {
-    await this.tabWorkspaceMigrationCoordinator.completeMigration();
   }
 
   getView(): GrandemoniumView | null {

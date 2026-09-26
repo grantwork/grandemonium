@@ -24,13 +24,6 @@ function deferred<T>(): {
   return { promise, resolve };
 }
 
-function readyTabWorkspaceStateDelivery() {
-  return {
-    declarationsReady: true,
-    waitUntilDeclarationsReady: Promise.resolve(),
-  };
-}
-
 function createOwnershipSession() {
   return {
     claimUserOwnership: jest.fn(),
@@ -2134,15 +2127,8 @@ describe('GrandemoniumView runtime tab initialization', () => {
       containerEl: createMockEl(),
       contentEl,
       plugin: {
-        claimLegacyTabManagerState: jest.fn().mockResolvedValue(null),
-        completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
         ensureConversationMetadataLoaded: jest.fn().mockResolvedValue(undefined),
-        registerTabWorkspaceStateDelivery: jest.fn()
-          .mockReturnValue(readyTabWorkspaceStateDelivery()),
         settings: { restoreTabsOnStartup: true },
-        storage: {
-          getTabManagerState: jest.fn().mockResolvedValue(null),
-        },
       },
       sessionSidebarWidth: null,
       syncProviderBrandColor: jest.fn(),
@@ -2198,7 +2184,7 @@ describe('GrandemoniumView runtime tab initialization', () => {
   });
 
   it('abandons deferred restoration when view shutdown begins', async () => {
-    const persistedState = deferred<any>();
+    const metadataLoaded = deferred<void>();
     const createTab = jest.fn().mockResolvedValue({});
     const beginShutdown = jest.fn();
     const destroy = jest.fn().mockResolvedValue(undefined);
@@ -2238,15 +2224,8 @@ describe('GrandemoniumView runtime tab initialization', () => {
           vault: { offref: jest.fn() },
           workspace: { requestSaveLayout: jest.fn().mockResolvedValue(undefined) },
         },
-        claimLegacyTabManagerState: jest.fn(() => persistedState.promise),
-        completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
-        ensureConversationMetadataLoaded: jest.fn().mockResolvedValue(undefined),
-        registerTabWorkspaceStateDelivery: jest.fn()
-          .mockReturnValue(readyTabWorkspaceStateDelivery()),
+        ensureConversationMetadataLoaded: jest.fn(() => metadataLoaded.promise),
         settings: { restoreTabsOnStartup: true },
-        storage: {
-          getTabManagerState: jest.fn(() => persistedState.promise),
-        },
       },
       restoreActiveInputToTabContent: jest.fn(),
       startSessionSidebarLayoutObserver: jest.fn(),
@@ -2264,10 +2243,16 @@ describe('GrandemoniumView runtime tab initialization', () => {
     });
 
     await view.onOpenImpl();
-    const restoring = view.setState({}, { history: false });
+    const restoring = view.setState({
+      tabWorkspace: {
+        version: 1,
+        activeTabId: 'tab-1',
+        openTabs: [{ conversationId: 'conversation-1', tabId: 'tab-1' }],
+      },
+    }, { history: false });
     await Promise.resolve();
     const closing = view.onClose();
-    persistedState.resolve({ activeTabId: null, openTabs: [] });
+    metadataLoaded.resolve(undefined);
     await expect(Promise.all([restoring, closing])).resolves.toEqual([undefined, undefined]);
 
     expect(beginShutdown).toHaveBeenCalledTimes(1);
@@ -2287,7 +2272,6 @@ describe('GrandemoniumView runtime tab initialization', () => {
       flush: jest.fn(() => pendingFlush.promise),
       update: jest.fn(),
     };
-    const claimLegacyTabManagerState = jest.fn().mockResolvedValue(null);
     const createTab = jest.fn().mockResolvedValue({});
     const restoreState = jest.fn(async () => {
       await createTab();
@@ -2313,14 +2297,8 @@ describe('GrandemoniumView runtime tab initialization', () => {
       containerEl: createMockEl(),
       contentEl,
       plugin: {
-        claimLegacyTabManagerState,
-        completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
         ensureConversationMetadataLoaded: jest.fn().mockResolvedValue(undefined),
         settings: { restoreTabsOnStartup: true },
-        storage: {
-          getTabManagerState: jest.fn().mockResolvedValue(null),
-          setTabManagerState: jest.fn().mockResolvedValue(undefined),
-        },
       },
       notifyConversationNavigationChanged: jest.fn(),
       startSessionSidebarLayoutObserver: jest.fn(),
@@ -2346,14 +2324,12 @@ describe('GrandemoniumView runtime tab initialization', () => {
 
     expect(persistence.flush).toHaveBeenCalledTimes(1);
     expect(mockTabManagerConstructor).not.toHaveBeenCalled();
-    expect(claimLegacyTabManagerState).not.toHaveBeenCalled();
 
     pendingFlush.resolve(undefined);
     await opening;
 
     expect(persistence.dispose).not.toHaveBeenCalled();
     expect(view.tabStatePersistence).toBe(persistence);
-    expect(claimLegacyTabManagerState).not.toHaveBeenCalled();
     expect(restoreState).toHaveBeenCalledWith({
       activeTabId: 'closing-tab-2',
       openTabs: [
@@ -2370,7 +2346,6 @@ describe('GrandemoniumView runtime tab initialization', () => {
       flush: jest.fn().mockResolvedValue(undefined),
       update: jest.fn(),
     };
-    const claimLegacyTabManagerState = jest.fn().mockResolvedValue(null);
     const createTab = jest.fn().mockResolvedValue({});
     const restoreState = jest.fn(async () => {
       await createTab();
@@ -2397,14 +2372,8 @@ describe('GrandemoniumView runtime tab initialization', () => {
       containerEl: createMockEl(),
       contentEl: createMockEl(),
       plugin: {
-        claimLegacyTabManagerState,
-        completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
         ensureConversationMetadataLoaded: jest.fn().mockResolvedValue(undefined),
         settings: { restoreTabsOnStartup: false },
-        storage: {
-          getTabManagerState: jest.fn().mockResolvedValue(null),
-          setTabManagerState: jest.fn().mockResolvedValue(undefined),
-        },
       },
       notifyConversationNavigationChanged: jest.fn(),
       shutdownSnapshotPromise: shutdownSnapshot.promise,
@@ -2423,7 +2392,6 @@ describe('GrandemoniumView runtime tab initialization', () => {
     await Promise.resolve();
 
     expect(mockTabManagerConstructor).not.toHaveBeenCalled();
-    expect(claimLegacyTabManagerState).not.toHaveBeenCalled();
 
     view.finalizedTabWorkspaceState = {
       activeTabId: 'finalized-tab-2',
@@ -2435,7 +2403,6 @@ describe('GrandemoniumView runtime tab initialization', () => {
     shutdownSnapshot.resolve(undefined);
     await opening;
 
-    expect(claimLegacyTabManagerState).not.toHaveBeenCalled();
     expect(restoreState).toHaveBeenCalledWith({
       activeTabId: 'finalized-tab-2',
       openTabs: [
@@ -2503,8 +2470,6 @@ describe('GrandemoniumView tab workspace persistence', () => {
   it('accepts a valid persisted view workspace', async () => {
     const view = Object.create(GrandemoniumView.prototype) as any;
     view.plugin = {
-      registerTabWorkspaceStateDelivery: jest.fn()
-        .mockReturnValue(readyTabWorkspaceStateDelivery()),
     };
     await view.setState({
       tabWorkspace: {
@@ -2524,14 +2489,11 @@ describe('GrandemoniumView tab workspace persistence', () => {
         { conversationId: 'conversation-2', tabId: 'tab-2' },
       ],
     });
-    expect(view.hasTabWorkspaceViewState).toBe(true);
   });
 
   it('starts fresh from an unsupported view-state version', async () => {
     const view = Object.create(GrandemoniumView.prototype) as any;
     view.plugin = {
-      registerTabWorkspaceStateDelivery: jest.fn()
-        .mockReturnValue(readyTabWorkspaceStateDelivery()),
     };
 
     await view.setState({
@@ -2542,15 +2504,12 @@ describe('GrandemoniumView tab workspace persistence', () => {
       },
     }, { history: false });
 
-    expect(view.hasTabWorkspaceViewState).toBe(true);
     expect(view.pendingTabWorkspaceState).toBeNull();
   });
 
   it('starts fresh when any versioned view-state entry is malformed', async () => {
     const view = Object.create(GrandemoniumView.prototype) as any;
     view.plugin = {
-      registerTabWorkspaceStateDelivery: jest.fn()
-        .mockReturnValue(readyTabWorkspaceStateDelivery()),
     };
 
     await view.setState({
@@ -2564,7 +2523,6 @@ describe('GrandemoniumView tab workspace persistence', () => {
       },
     }, { history: false });
 
-    expect(view.hasTabWorkspaceViewState).toBe(true);
     expect(view.pendingTabWorkspaceState).toBeNull();
   });
 
@@ -2583,11 +2541,9 @@ describe('GrandemoniumView tab workspace persistence', () => {
       expandedTitleTabIds: ['tab-1'],
     };
     view.plugin = {
-      completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
       ensureConversationMetadataLoaded,
       settings: { restoreTabsOnStartup: true },
     };
-    view.hasTabWorkspaceViewState = true;
     view.pendingTabWorkspaceState = state;
     view.tabManager = { restoreState };
     view.tabBar = { setExpandedTitleTabIds };
@@ -2607,11 +2563,9 @@ describe('GrandemoniumView tab workspace persistence', () => {
     const restoreState = jest.fn().mockResolvedValue(undefined);
     const ensureConversationMetadataLoaded = jest.fn().mockResolvedValue(undefined);
     view.plugin = {
-      completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
       ensureConversationMetadataLoaded,
       settings: { restoreTabsOnStartup: true },
     };
-    view.hasTabWorkspaceViewState = true;
     view.isWideSessionLayout = true;
     const state = {
       activeTabId: 'preview-tab',
@@ -2639,11 +2593,9 @@ describe('GrandemoniumView tab workspace persistence', () => {
     const restoreState = jest.fn().mockResolvedValue(undefined);
     const ensureConversationMetadataLoaded = jest.fn().mockResolvedValue(undefined);
     view.plugin = {
-      completeLegacyTabManagerStateMigration: jest.fn().mockResolvedValue(undefined),
       ensureConversationMetadataLoaded,
       settings: { restoreTabsOnStartup: false },
     };
-    view.hasTabWorkspaceViewState = true;
     view.pendingTabWorkspaceState = {
       activeTabId: 'tab-1',
       openTabs: [{ conversationId: 'conversation-1', tabId: 'tab-1' }],
@@ -2657,32 +2609,6 @@ describe('GrandemoniumView tab workspace persistence', () => {
       activeTabId: null,
       openTabs: [],
     });
-  });
-
-  it('claims the legacy global snapshot only when view state is absent', async () => {
-    const legacyState = {
-      activeTabId: 'tab-1',
-      openTabs: [{ conversationId: 'conversation-1', tabId: 'tab-1' }],
-    };
-    const view = Object.create(GrandemoniumView.prototype) as any;
-    const restoreState = jest.fn().mockResolvedValue(undefined);
-    const claimLegacyTabManagerState = jest.fn().mockResolvedValue(legacyState);
-    const completeLegacyTabManagerStateMigration = jest.fn().mockResolvedValue(undefined);
-    view.plugin = {
-      claimLegacyTabManagerState,
-      completeLegacyTabManagerStateMigration,
-      ensureConversationMetadataLoaded: jest.fn().mockResolvedValue(undefined),
-      settings: { restoreTabsOnStartup: true },
-    };
-    view.hasTabWorkspaceViewState = false;
-    view.pendingTabWorkspaceState = null;
-    view.tabManager = { restoreState };
-
-    await view.restoreTabWorkspace();
-
-    expect(claimLegacyTabManagerState).toHaveBeenCalledTimes(1);
-    expect(restoreState).toHaveBeenCalledWith(legacyState);
-    expect(completeLegacyTabManagerStateMigration).toHaveBeenCalledTimes(1);
   });
 });
 
