@@ -14,7 +14,6 @@ import type {
   SubagentInfo,
   ToolCallInfo,
 } from '../../../core/types';
-import { isClaudeSubagentToolName } from '../subagentToolNames';
 import {
   type ClaudeProviderState,
   getClaudeConversationSessionIds,
@@ -28,7 +27,6 @@ import {
   loadSubagentToolCalls,
   locateSDKSession,
   locateSDKSessions,
-  readLegacyConversationSessionId,
   recoverSDKSessionIdByTime,
 } from './ClaudeHistoryStore';
 import type { SDKSessionLocation } from './sdkSessionPaths';
@@ -126,7 +124,7 @@ function ensureTaskToolCall(
 ): ToolCallInfo {
   msg.toolCalls = msg.toolCalls || [];
   let taskToolCall = msg.toolCalls.find(
-    tc => tc.id === subagentId && isClaudeSubagentToolName(tc.name),
+    tc => tc.id === subagentId && tc.name === TOOL_SUBAGENT,
   );
 
   if (!taskToolCall) {
@@ -146,8 +144,6 @@ function ensureTaskToolCall(
     msg.toolCalls.push(taskToolCall);
     return taskToolCall;
   }
-
-  taskToolCall.name = TOOL_SUBAGENT;
 
   if (!taskToolCall.input.description) {
     taskToolCall.input.description = subagent.description;
@@ -375,7 +371,7 @@ function buildPersistedSubagentData(messages: ChatMessage[]): Record<string, Sub
     if (msg.role !== 'assistant' || !msg.toolCalls) continue;
 
     for (const toolCall of msg.toolCalls) {
-      if (!isClaudeSubagentToolName(toolCall.name) || !toolCall.subagent) continue;
+      if (toolCall.name !== TOOL_SUBAGENT || !toolCall.subagent) continue;
       result[toolCall.subagent.id] = toolCall.subagent;
     }
   }
@@ -600,18 +596,6 @@ export class ClaudeConversationHistoryService implements ProviderConversationHis
   ): Promise<boolean> {
     if (!vaultPath || this.resolveSessionIdForConversation(conversation)) {
       return false;
-    }
-
-    const legacySessionId = await readLegacyConversationSessionId(
-      vaultPath,
-      conversation.id,
-    );
-    if (legacySessionId) {
-      conversation.providerState = sanitizeProviderState({
-        ...getClaudeState(conversation.providerState),
-        previousProviderSessionIds: [legacySessionId],
-      });
-      return true;
     }
 
     const fingerprint = {

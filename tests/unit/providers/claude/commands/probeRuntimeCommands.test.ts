@@ -53,7 +53,7 @@ describe('probeRuntimeCommands', () => {
     ]);
 
     const commands = await probeRuntimeCommands(createMockPlugin({
-      loadUserClaudeSettings: false,
+      providerConfigs: { claude: { loadUserSettings: false } },
     }));
 
     expect(commands).toEqual([{
@@ -74,8 +74,7 @@ describe('probeRuntimeCommands', () => {
     sdkMock.setMockSupportedCommands([]);
 
     await probeRuntimeCommands(createMockPlugin({
-      loadUserClaudeSettings: true,
-      enableChrome: true,
+      providerConfigs: { claude: { loadUserSettings: true, enableChrome: true } },
     }));
 
     const options = sdkMock.getLastOptions();

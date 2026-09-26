@@ -92,7 +92,7 @@ function createHost(): ProviderHost {
       mediaFolder: 'media',
       systemPrompt: '',
       userName: '',
-      loadUserClaudeSettings: false,
+      providerConfigs: { claude: { loadUserSettings: false } },
     },
     storage: {} as ProviderHost['storage'],
     getResolvedProviderCliPath: jest.fn().mockResolvedValue('/bin/claude'),

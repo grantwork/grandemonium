@@ -574,7 +574,7 @@ describe('SessionStorage', () => {
             toolCalls: [
               {
                 id: 'task-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Test subagent' },
                 status: 'completed',
                 result: 'Done',
@@ -638,7 +638,7 @@ describe('SessionStorage', () => {
             toolCalls: [
               {
                 id: 'task-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Background task', run_in_background: true },
                 status: 'completed',
                 result: 'Task running',

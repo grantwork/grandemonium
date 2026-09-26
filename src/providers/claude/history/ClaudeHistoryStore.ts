@@ -1,10 +1,7 @@
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
-
 import type { ProviderHistoryPathContext } from '../../../core/providers/types';
+import { TOOL_SUBAGENT } from '../../../core/tools/toolNames';
 import type { ChatMessage, SubagentInfo, ToolCallInfo } from '../../../core/types';
 import { ClaudeTaskToolNormalizer } from '../normalization/ClaudeTaskToolNormalizer';
-import { isClaudeSubagentToolName } from '../subagentToolNames';
 import { buildAsyncSubagentInfo } from './sdkAsyncSubagent';
 import { filterActiveBranch } from './sdkBranchFilter';
 import type { SDKNativeMessage, SDKSessionLoadResult } from './sdkHistoryTypes';
@@ -75,54 +72,6 @@ export {
   extractAgentIdFromToolUseResult,
   resolveToolUseResultStatus,
 } from './sdkAsyncSubagent';
-
-export function parseLegacyConversationSessionId(
-  content: string,
-  conversationId: string,
-): string | null {
-  const firstLine = content.split(/\r?\n/, 1)[0];
-  if (!firstLine) {
-    return null;
-  }
-
-  try {
-    const record = JSON.parse(firstLine) as {
-      type?: unknown;
-      id?: unknown;
-      sessionId?: unknown;
-    };
-    if (
-      record.type !== 'meta'
-      || record.id !== conversationId
-      || typeof record.sessionId !== 'string'
-      || !isValidSessionId(record.sessionId)
-    ) {
-      return null;
-    }
-    return record.sessionId;
-  } catch {
-    return null;
-  }
-}
-
-export async function readLegacyConversationSessionId(
-  vaultPath: string,
-  conversationId: string,
-): Promise<string | null> {
-  if (!isValidSessionId(conversationId)) {
-    return null;
-  }
-
-  try {
-    const content = await fs.readFile(
-      path.join(vaultPath, '.claude', 'sessions', `${conversationId}.jsonl`),
-      'utf8',
-    );
-    return parseLegacyConversationSessionId(content, conversationId);
-  } catch {
-    return null;
-  }
-}
 
 export async function loadSDKSessionMessages(
   vaultPath: string,
@@ -220,7 +169,7 @@ export async function loadSDKSessionMessages(
     for (const msg of chatMessages) {
       if (msg.role !== 'assistant' || !msg.toolCalls) continue;
       for (const toolCall of msg.toolCalls) {
-        if (!isClaudeSubagentToolName(toolCall.name)) continue;
+        if (toolCall.name !== TOOL_SUBAGENT) continue;
         if (toolCall.subagent) continue;
         if (toolCall.input?.run_in_background !== true) continue;
 

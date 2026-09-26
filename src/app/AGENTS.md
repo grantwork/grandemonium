@@ -9,7 +9,6 @@
 - `FeatureHost` is the feature-facing application boundary; user-facing features must not import `GrandemoniumPlugin` from `src/main.ts`.
 - `ProviderHost` is the provider-facing application boundary; provider runtime code must not reach through it to chat views or feature controllers.
 - Concrete provider imports are allowed only in composition and provider-default assembly. Do not introduce them into conversation, storage, or settings transaction logic.
-- Existing Claude compatibility imports of app settings or storage are migration seams. Do not use them as precedent; move a shared contract into `core/` before creating another provider-to-app dependency.
 
 ## Ownership
 

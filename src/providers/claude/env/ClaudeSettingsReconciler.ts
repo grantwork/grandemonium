@@ -4,10 +4,7 @@ import {
   hasCliPathFingerprintInputs,
 } from '../../../core/providers/cli/CliPathFingerprintInputs';
 import { getRuntimeEnvironmentText } from '../../../core/providers/providerEnvironment';
-import {
-  createRuntimeInputFingerprint,
-  isVersionedRuntimeInputFingerprint,
-} from '../../../core/providers/settings/RuntimeInputFingerprint';
+import { createRuntimeInputFingerprint } from '../../../core/providers/settings/RuntimeInputFingerprint';
 import type { ProviderSettingsReconciler } from '../../../core/providers/types';
 import type { Conversation } from '../../../core/types';
 import { getHostnameKey, parseEnvironmentVariables } from '../../../utils/env';
@@ -23,11 +20,7 @@ import { getClaudeProviderSettings, updateClaudeProviderSettings } from '../sett
 import { normalizeLegacyClaudeModelAlias } from '../types/models';
 import { clearClaudeResumeState } from '../types/providerState';
 import { claudeChatUIConfig } from '../ui/ClaudeChatUIConfig';
-import {
-  CLAUDE_MODEL_ENV_KEYS,
-  type ClaudeModelEnvType,
-  getModelsFromEnvironment,
-} from './claudeModelEnv';
+import { CLAUDE_MODEL_ENV_KEYS } from './claudeModelEnv';
 
 const ENV_HASH_PROVIDER_KEYS = ['ANTHROPIC_BASE_URL', 'PATH'];
 const ALL_FINGERPRINT_ENV_KEYS = [...CLAUDE_MODEL_ENV_KEYS, ...ENV_HASH_PROVIDER_KEYS];
@@ -62,67 +55,6 @@ function hasFingerprintInputs(settings: Record<string, unknown>, environmentText
     .some(key => Object.prototype.hasOwnProperty.call(environment, key));
 }
 
-function isCurrentLegacyFingerprint(
-  settings: Record<string, unknown>,
-  environmentText: string,
-  savedFingerprint: string,
-): boolean {
-  if (
-    !savedFingerprint
-    || isVersionedRuntimeInputFingerprint(savedFingerprint)
-    || hasCliPathFingerprintInputs(getConfiguredCliPathInputs(settings))
-  ) {
-    return false;
-  }
-
-  const environment = parseEnvironmentVariables(environmentText);
-  const legacyFingerprint = ALL_FINGERPRINT_ENV_KEYS
-    .filter(key => environment[key])
-    .map(key => `${key}=${environment[key]}`)
-    .sort()
-    .join('|');
-  return savedFingerprint === legacyFingerprint;
-}
-
-function getModelEnvironmentFromHash(environmentHash: string): Record<string, string> {
-  if (isVersionedRuntimeInputFingerprint(environmentHash)) {
-    return {};
-  }
-
-  const envVars: Record<string, string> = {};
-  for (const key of CLAUDE_MODEL_ENV_KEYS) {
-    const match = environmentHash.match(new RegExp(`(?:^|\\|)${key}=([^|]*)`));
-    if (match?.[1]) {
-      envVars[key] = match[1];
-    }
-  }
-  return envVars;
-}
-
-function inferPreviousModelEnvironmentType(
-  environmentHash: string,
-  currentModel: string,
-  lastModel: string = '',
-): ClaudeModelEnvType | undefined {
-  const runtimeModel = toClaudeRuntimeModelId(currentModel);
-  const previousOption = getModelsFromEnvironment(
-    getModelEnvironmentFromHash(environmentHash),
-  ).find(option => option.value === runtimeModel);
-  if (!previousOption) {
-    return undefined;
-  }
-
-  const normalizedLastModel = normalizeLegacyClaudeModelAlias(toClaudeRuntimeModelId(lastModel));
-  if (
-    isClaudeModelTier(normalizedLastModel)
-    && previousOption.environmentTypes.includes(normalizedLastModel)
-  ) {
-    return normalizedLastModel;
-  }
-
-  return previousOption.environmentTypes[0];
-}
-
 function invalidateClaudeConversationSessions(conversations: Conversation[]): Conversation[] {
   return conversations.filter(conv => (
     conv.providerId === 'claude' && clearClaudeResumeState(conv)
@@ -143,9 +75,6 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     if (!savedHash && !hasFingerprintInputs(settings, envText)) {
       return { changed: false, invalidatedConversations: [] };
     }
-    if (isCurrentLegacyFingerprint(settings, envText, savedHash)) {
-      return { changed: false, invalidatedConversations: [] };
-    }
     if (currentHash === savedHash) {
       return { changed: false, invalidatedConversations: [] };
     }
@@ -155,17 +84,7 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     const currentModel = typeof settings.model === 'string' ? settings.model : '';
     const claudeSettings = getClaudeProviderSettings(settings);
     const modelOptions = getClaudeModelOptions(settings);
-    const savedProviderModel = settings.savedProviderModel as Record<string, unknown> | undefined;
-    const historicalModel = settings.settingsProvider !== 'claude'
-      && typeof savedProviderModel?.claude === 'string'
-      ? savedProviderModel.claude
-      : currentModel;
-    const previousEnvironmentType = claudeSettings.modelEnvironmentType
-      || inferPreviousModelEnvironmentType(
-        savedHash,
-        historicalModel,
-        claudeSettings.lastModel,
-      );
+    const previousEnvironmentType = claudeSettings.modelEnvironmentType || undefined;
     const nextModel = resolveClaudeModelSelection(
       settings,
       currentModel,
@@ -190,10 +109,7 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     const titleModel = typeof settings.titleGenerationModel === 'string'
       ? settings.titleGenerationModel
       : '';
-    const previousTitleEnvironmentType = claudeSettings.titleModelEnvironmentType
-      || (titleModel
-        ? inferPreviousModelEnvironmentType(savedHash, titleModel)
-        : undefined);
+    const previousTitleEnvironmentType = claudeSettings.titleModelEnvironmentType || undefined;
     if (previousTitleEnvironmentType) {
       const titleOption = findClaudeModelOptionForEnvironmentType(
         modelOptions,
@@ -228,36 +144,14 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     const normalize = (model: string): string => claudeChatUIConfig.normalizeModelVariant(model, settings);
     const claudeSettings = getClaudeProviderSettings(settings);
     const modelOptions = getClaudeModelOptions(settings);
-    const environmentText = getRuntimeEnvironmentText(settings, 'claude');
-    const shouldMigrateLegacyFingerprint = isCurrentLegacyFingerprint(
-      settings,
-      environmentText,
-      claudeSettings.environmentHash,
-    );
-    const environmentChanged = (
-      Boolean(claudeSettings.environmentHash)
-      || hasFingerprintInputs(settings, environmentText)
-    )
-      && !shouldMigrateLegacyFingerprint
-      && computeRuntimeFingerprint(settings, environmentText) !== claudeSettings.environmentHash;
     const hasEnvironmentModelOptions = modelOptions.some(option => option.environmentTypes);
 
     const model = settings.model as string;
     const shouldInferPrimaryEnvironmentType = settings.settingsProvider === undefined
       || settings.settingsProvider === 'claude';
-    const historicalModelEnvironmentType = environmentChanged
-      ? inferPreviousModelEnvironmentType(
-        claudeSettings.environmentHash,
-        model,
-        claudeSettings.lastModel,
-      )
-      : undefined;
     const modelEnvironmentType = claudeSettings.modelEnvironmentType
-      || (shouldInferPrimaryEnvironmentType
-        ? historicalModelEnvironmentType
-          || (hasEnvironmentModelOptions
-            ? resolveClaudeModelEnvironmentTypePreference(modelOptions, model)
-            : null)
+      || (shouldInferPrimaryEnvironmentType && hasEnvironmentModelOptions
+        ? resolveClaudeModelEnvironmentTypePreference(modelOptions, model)
         : null);
     const normalizedModel = (
       modelEnvironmentType
@@ -272,15 +166,9 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     const titleModel = typeof settings.titleGenerationModel === 'string'
       ? settings.titleGenerationModel
       : '';
-    const historicalTitleModelEnvironmentType = environmentChanged && titleModel
-      ? inferPreviousModelEnvironmentType(claudeSettings.environmentHash, titleModel)
-      : undefined;
     const titleModelEnvironmentType = claudeSettings.titleModelEnvironmentType
-      || (titleModel
-        ? historicalTitleModelEnvironmentType
-          || (hasEnvironmentModelOptions
-            ? resolveClaudeModelEnvironmentTypePreference(modelOptions, titleModel)
-            : null)
+      || (titleModel && hasEnvironmentModelOptions
+        ? resolveClaudeModelEnvironmentTypePreference(modelOptions, titleModel)
         : null);
     const normalizedTitleModel = (
       titleModelEnvironmentType
@@ -309,12 +197,8 @@ export const claudeSettingsReconciler: ProviderSettingsReconciler = {
     if (
       claudeSettings.modelEnvironmentType !== (modelEnvironmentType ?? '')
       || claudeSettings.titleModelEnvironmentType !== (titleModelEnvironmentType ?? '')
-      || shouldMigrateLegacyFingerprint
     ) {
       updateClaudeProviderSettings(settings, {
-        ...(shouldMigrateLegacyFingerprint
-          ? { environmentHash: computeRuntimeFingerprint(settings, environmentText) }
-          : {}),
         modelEnvironmentType: modelEnvironmentType ?? '',
         titleModelEnvironmentType: titleModelEnvironmentType ?? '',
       });

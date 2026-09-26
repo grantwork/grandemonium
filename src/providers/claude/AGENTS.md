@@ -5,7 +5,6 @@
 ## Dependency Boundary
 
 - Native SDK events, options, transcript records, and provider state must be normalized before crossing into core or feature contracts.
-- Existing imports from provider compatibility storage/types into `src/app/` are migration seams. Do not add new ones; move a shared contract into `core/` when changing those seams materially.
 
 ## Ownership
 

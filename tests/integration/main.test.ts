@@ -1,5 +1,6 @@
 import { TFile, TFolder } from 'obsidian';
 
+import { DEFAULT_GRANDEMONIUM_SETTINGS as DEFAULT_SETTINGS } from '@/app/settings/defaultSettings';
 import { ConversationPersistenceStore } from '@/core/bootstrap/ConversationPersistenceStore';
 import type { SessionMetadataReadResult } from '@/core/bootstrap/SessionStorage';
 import { SessionStorage } from '@/core/bootstrap/SessionStorage';
@@ -11,8 +12,9 @@ import { isVersionedRuntimeInputFingerprint } from '@/core/providers/settings/Ru
 import { TOOL_SUBAGENT } from '@/core/tools/toolNames';
 import { type Conversation, type SessionMetadata, VIEW_TYPE_GRANDEMONIUM } from '@/core/types';
 import { VIEW_TYPE_COMMENTS } from '@/features/comments';
+import { claudeSettingsReconciler } from '@/providers/claude/env/ClaudeSettingsReconciler';
 import * as sdkSession from '@/providers/claude/history/ClaudeHistoryStore';
-import { DEFAULT_SETTINGS } from '@/providers/claude/types/settings';
+import { getClaudeProviderSettings } from '@/providers/claude/settings';
 import { CodexModelCatalogCoordinator } from '@/providers/codex/runtime/CodexModelCatalogCoordinator';
 import {
   getCodexProviderSettings,
@@ -37,6 +39,15 @@ import GrandemoniumPlugin from '@/main';
 
 function deviceSessionsPath(): string {
   return getDeviceSessionsPath(getHostnameKey());
+}
+
+/** The environment fingerprint Claude records for the given environment text. */
+function claudeEnvironmentHash(environmentVariables: string): string {
+  const settings: Record<string, unknown> = {
+    providerConfigs: { claude: { environmentVariables } },
+  };
+  claudeSettingsReconciler.reconcileModelWithEnvironment(settings, []);
+  return getClaudeProviderSettings(settings).environmentHash;
 }
 
 describe('GrandemoniumPlugin', () => {
@@ -481,7 +492,7 @@ describe('GrandemoniumPlugin', () => {
           return JSON.stringify({
             providerConfigs: {
               claude: {
-                environmentHash: 'ANTHROPIC_BASE_URL=https://old.example.com',
+                environmentHash: claudeEnvironmentHash('ANTHROPIC_BASE_URL=https://old.example.com'),
                 environmentVariables: 'ANTHROPIC_BASE_URL=https://new.example.com',
               },
             },
@@ -774,7 +785,7 @@ describe('GrandemoniumPlugin', () => {
           pendingProviderSessionInvalidations: { claude: pendingGeneration },
           providerConfigs: {
             claude: {
-              environmentHash: 'ANTHROPIC_BASE_URL=https://same.example.com',
+              environmentHash: claudeEnvironmentHash('ANTHROPIC_BASE_URL=https://same.example.com'),
               environmentVariables: 'ANTHROPIC_BASE_URL=https://same.example.com',
             },
           },
@@ -934,7 +945,7 @@ describe('GrandemoniumPlugin', () => {
         [settingsPath]: JSON.stringify({
           providerConfigs: {
             claude: {
-              environmentHash: 'ANTHROPIC_BASE_URL=https://old.example.com',
+              environmentHash: claudeEnvironmentHash('ANTHROPIC_BASE_URL=https://old.example.com'),
               environmentVariables: 'ANTHROPIC_BASE_URL=https://new.example.com',
             },
           },
@@ -1011,7 +1022,7 @@ describe('GrandemoniumPlugin', () => {
           pendingProviderSessionInvalidations: { claude: pendingGeneration },
           providerConfigs: {
             claude: {
-              environmentHash: 'ANTHROPIC_BASE_URL=https://same.example.com',
+              environmentHash: claudeEnvironmentHash('ANTHROPIC_BASE_URL=https://same.example.com'),
               environmentVariables: 'ANTHROPIC_BASE_URL=https://same.example.com',
             },
           },
@@ -3507,8 +3518,12 @@ describe('GrandemoniumPlugin', () => {
         if (path === '.grandemonium/grandemonium-settings.json') {
           // All these fields are now in grandemonium-settings.json
           return JSON.stringify({
-            lastEnvHash: 'old-hash',
-            environmentVariables: 'ANTHROPIC_BASE_URL=https://api.example.com',
+            providerConfigs: {
+              claude: {
+                environmentHash: claudeEnvironmentHash('ANTHROPIC_BASE_URL=https://old.example.com'),
+                environmentVariables: 'ANTHROPIC_BASE_URL=https://api.example.com',
+              },
+            },
           });
         }
         if (path === `${deviceSessionsPath()}/conv-saved-1.meta.json`) {
@@ -3807,7 +3822,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Do sub task' },
                 status: 'completed',
                 result: 'Task completed',
@@ -3881,7 +3896,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-merge-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Do sub task', run_in_background: true },
                 status: 'completed',
                 result: 'Full SDK result from queue-operation',
@@ -3950,7 +3965,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-merge-2',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'SDK async subagent', run_in_background: true },
                 status: 'completed',
                 result: 'Short SDK result',
@@ -4013,7 +4028,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-sync-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Do sync task' },
                 status: 'completed',
                 result: 'Sync result',
@@ -4074,7 +4089,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-async-sdk-terminal',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'SDK async subagent', run_in_background: true },
                 status: 'completed',
                 result: 'Full SDK final result',
@@ -4145,7 +4160,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-async-cache-terminal',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'SDK async subagent', run_in_background: true },
                 status: 'running',
                 result: 'Task launched in background.',
@@ -4210,7 +4225,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-async-1',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Do background task', run_in_background: true },
                 status: 'completed',
                 result: 'Task started',
@@ -4280,7 +4295,7 @@ describe('GrandemoniumPlugin', () => {
             toolCalls: [
               {
                 id: 'task-async-tools',
-                name: 'Task',
+                name: 'Agent',
                 input: { description: 'Do background task', run_in_background: true },
                 status: 'completed',
                 result: 'Task started',

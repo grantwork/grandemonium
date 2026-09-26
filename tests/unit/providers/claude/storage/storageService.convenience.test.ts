@@ -69,12 +69,6 @@ describe('StorageService convenience methods', () => {
     },
   });
 
-  const grandemoniumSettingsJson = JSON.stringify({
-    userName: 'Test',
-    model: 'haiku',
-    permissionMode: 'yolo',
-  });
-
   describe('getPermissions', () => {
     it('delegates to ccSettings.getPermissions', async () => {
       const { plugin } = createMockPlugin({
@@ -83,7 +77,7 @@ describe('StorageService convenience methods', () => {
         },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       const perms = await storage.getPermissions();
       expect(perms.allow).toContainEqual('Bash(git *)');
@@ -99,7 +93,7 @@ describe('StorageService convenience methods', () => {
         },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       await storage.updatePermissions({
         allow: [createPermissionRule('Read')],
@@ -120,7 +114,7 @@ describe('StorageService convenience methods', () => {
         },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       await storage.addAllowRule('Read(/vault/*)');
 
@@ -137,7 +131,7 @@ describe('StorageService convenience methods', () => {
         },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       await storage.addDenyRule('Write(/etc/*)');
 
@@ -159,7 +153,7 @@ describe('StorageService convenience methods', () => {
         initialFiles: { '.claude/settings.json': settings },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       await storage.removePermissionRule('Bash(git *)');
 
@@ -168,58 +162,6 @@ describe('StorageService convenience methods', () => {
       expect(perms.allow).not.toContainEqual('Bash(git *)');
       expect(perms.deny).not.toContainEqual('Bash(git *)');
       expect(perms.ask).not.toContainEqual('Bash(git *)');
-    });
-  });
-
-  describe('updateGrandemoniumSettings', () => {
-    it('updates partial grandemonium settings', async () => {
-      const { plugin, files } = createMockPlugin({
-        initialFiles: {
-          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
-        },
-      });
-      const storage = new StorageService(plugin);
-      await storage.initialize();
-
-      await storage.updateGrandemoniumSettings({ userName: 'NewUser' });
-
-      const saved = JSON.parse(files.get('.grandemonium/grandemonium-settings.json')!) as Record<string, unknown>;
-      expect(saved.userName).toBe('NewUser');
-    });
-  });
-
-  describe('saveGrandemoniumSettings', () => {
-    it('saves full grandemonium settings', async () => {
-      const { plugin, files } = createMockPlugin({
-        initialFiles: {
-          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
-        },
-      });
-      const storage = new StorageService(plugin);
-      await storage.initialize();
-
-      const existing = await storage.loadGrandemoniumSettings();
-      existing.userName = 'FullSave';
-      await storage.saveGrandemoniumSettings(existing);
-
-      const saved = JSON.parse(files.get('.grandemonium/grandemonium-settings.json')!) as Record<string, unknown>;
-      expect(saved.userName).toBe('FullSave');
-    });
-  });
-
-  describe('loadGrandemoniumSettings', () => {
-    it('loads grandemonium settings', async () => {
-      const { plugin } = createMockPlugin({
-        initialFiles: {
-          '.grandemonium/grandemonium-settings.json': grandemoniumSettingsJson,
-        },
-      });
-      const storage = new StorageService(plugin);
-      await storage.initialize();
-
-      const settings = await storage.loadGrandemoniumSettings();
-      expect(settings.userName).toBe('Test');
-      expect(settings.model).toBe('haiku');
     });
   });
 
@@ -244,7 +186,7 @@ describe('StorageService convenience methods', () => {
         },
       });
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       const commands = await storage.loadAllSlashCommands();
       expect(commands.length).toBeGreaterThanOrEqual(1);
@@ -254,7 +196,7 @@ describe('StorageService convenience methods', () => {
     it('returns empty array when no commands exist', async () => {
       const { plugin } = createMockPlugin({});
       const storage = new StorageService(plugin);
-      await storage.initialize();
+      await storage.ensureDirectories();
 
       const commands = await storage.loadAllSlashCommands();
       expect(commands).toEqual([]);

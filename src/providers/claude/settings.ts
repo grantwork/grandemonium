@@ -1,5 +1,4 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
-import { getProviderEnvironmentVariables } from '../../core/providers/providerEnvironment';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
 import {
   readStoredBoolean,
@@ -75,9 +74,7 @@ export function getClaudeProviderSettings(
   settings: Record<string, unknown>,
 ): ClaudeProviderSettings {
   const config = getProviderConfig(settings, 'claude');
-  const cliPathsByHost = normalizeHostnameStringMap(
-    config.cliPathsByHost ?? settings.claudeCliPathsByHost,
-  );
+  const cliPathsByHost = normalizeHostnameStringMap(config.cliPathsByHost);
 
   return {
     enabled: readStoredBoolean(
@@ -90,22 +87,16 @@ export function getClaudeProviderSettings(
     ),
     safeMode: readStoredClaudeSafeMode(
       config.safeMode,
-      readStoredClaudeSafeMode(
-        settings.claudeSafeMode,
-        DEFAULT_CLAUDE_PROVIDER_SETTINGS.safeMode,
-      ),
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.safeMode,
     ),
     cliPathsByHost,
     loadUserSettings: readStoredBoolean(
       config.loadUserSettings,
-      readStoredBoolean(
-        settings.loadUserClaudeSettings,
-        DEFAULT_CLAUDE_PROVIDER_SETTINGS.loadUserSettings,
-      ),
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.loadUserSettings,
     ),
     enableChrome: readStoredBoolean(
       config.enableChrome,
-      readStoredBoolean(settings.enableChrome, DEFAULT_CLAUDE_PROVIDER_SETTINGS.enableChrome),
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.enableChrome,
     ),
     customModels: readStoredString(
       config.customModels,
@@ -117,7 +108,7 @@ export function getClaudeProviderSettings(
     ),
     lastModel: readStoredString(
       config.lastModel,
-      readStoredString(settings.lastClaudeModel, DEFAULT_CLAUDE_PROVIDER_SETTINGS.lastModel),
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.lastModel,
     ),
     modelEnvironmentType: normalizeClaudeModelEnvironmentType(config.modelEnvironmentType),
     titleModelEnvironmentType: normalizeClaudeModelEnvironmentType(
@@ -125,12 +116,11 @@ export function getClaudeProviderSettings(
     ),
     environmentVariables: readStoredString(
       config.environmentVariables,
-      getProviderEnvironmentVariables(settings, 'claude')
-        ?? DEFAULT_CLAUDE_PROVIDER_SETTINGS.environmentVariables,
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.environmentVariables,
     ),
     environmentHash: readStoredString(
       config.environmentHash,
-      readStoredString(settings.lastEnvHash, DEFAULT_CLAUDE_PROVIDER_SETTINGS.environmentHash),
+      DEFAULT_CLAUDE_PROVIDER_SETTINGS.environmentHash,
     ),
   };
 }

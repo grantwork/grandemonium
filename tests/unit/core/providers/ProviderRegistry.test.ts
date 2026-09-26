@@ -109,7 +109,6 @@ describe('ProviderRegistry', () => {
     expect(ProviderRegistry.getSubagentAdapter('pi')).toBeNull();
 
     expect(claudeAdapter?.isSpawnTool('Agent')).toBe(true);
-    expect(claudeAdapter?.isSpawnTool('Task')).toBe(true);
     expect(opencodeAdapter?.isSpawnTool('Agent')).toBe(true);
     expect(opencodeAdapter?.isSpawnTool('Task')).toBe(false);
 

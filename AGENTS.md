@@ -82,7 +82,6 @@ providers -> ProviderHost + core contracts + shared provider and UI primitives
 - `core/` must not import feature code, app composition, or provider implementations.
 - Feature code must not import provider implementations. Resolve provider behavior through core registries and contracts.
 - Provider runtime and protocol code must not import chat views, feature controllers, or other feature orchestration.
-- Existing Claude compatibility re-exports that point into `src/app/` are migration seams, not an allowed general dependency direction. Do not add new provider-to-app imports; move shared contracts into `core/` when touching those seams materially.
 - `src/providers/acp/` may contain protocol primitives shared by ACP providers. Provider-specific launch policy, extensions, normalization, history, and state remain in the owning provider.
 - If a dependency does not fit these directions, introduce or extend an explicit contract at the owning boundary instead of reaching across layers.
 

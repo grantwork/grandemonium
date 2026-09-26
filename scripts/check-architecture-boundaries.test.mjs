@@ -168,20 +168,6 @@ const allowedAppProviderImports = new Set([
     path.join(providersRoot, 'defaultProviderConfigs'),
   ),
 ]);
-const allowedProviderAppImports = new Set([
-  resolvedImportKey(
-    path.join(providersRoot, 'claude', 'types', 'settings.ts'),
-    path.join(appRoot, 'settings', 'defaultSettings'),
-  ),
-  resolvedImportKey(
-    path.join(providersRoot, 'claude', 'storage', 'StorageService.ts'),
-    path.join(appRoot, 'settings', 'GrandemoniumSettingsStorage'),
-  ),
-  resolvedImportKey(
-    path.join(providersRoot, 'claude', 'storage', 'GrandemoniumSettingsStorage.ts'),
-    path.join(appRoot, 'settings', 'GrandemoniumSettingsStorage'),
-  ),
-]);
 
 test('repository paths use POSIX separators for stable cross-platform comparison', () => {
   assert.equal(normalizeRepositoryPath('src\\main.ts'), 'src/main.ts');
@@ -226,11 +212,10 @@ test('providers are independent from main and features', () => {
   assert.deepEqual(findMatches([path.join(sourceRoot, 'providers')], pattern), []);
 });
 
-test('providers avoid root app imports outside Claude compatibility seams', () => {
+test('providers are independent from root application adapters', () => {
   assert.deepEqual(findResolvedImportViolations(
     [providersRoot],
     target => isPathWithin(target, appRoot),
-    allowedProviderAppImports,
   ), []);
 });
 

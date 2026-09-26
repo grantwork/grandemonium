@@ -10,7 +10,6 @@ import {
   VIEW_TYPE_GRANDEMONIUM
 } from '@/core/types';
 import type { GrandemoniumSettings } from '@/core/types/settings';
-import { getClaudeProviderSettings } from '@/providers/claude/settings';
 import {
   CONTEXT_WINDOW_1M,
   CONTEXT_WINDOW_STANDARD,
@@ -22,7 +21,6 @@ import {
 } from '@/providers/claude/types/models';
 import {
   createPermissionRule,
-  DEFAULT_SETTINGS,
   parseCCPermissionRule,
 } from '@/providers/claude/types/settings';
 
@@ -30,63 +28,6 @@ describe('types.ts', () => {
   describe('VIEW_TYPE_GRANDEMONIUM', () => {
     it('should be defined as the correct view type', () => {
       expect(VIEW_TYPE_GRANDEMONIUM).toBe('grandemonium-view');
-    });
-  });
-
-  describe('DEFAULT_SETTINGS', () => {
-    it('should default to yolo permission mode', () => {
-      expect(DEFAULT_SETTINGS.permissionMode).toBe('yolo');
-    });
-
-    it('should have sharedEnvironmentVariables as empty string by default', () => {
-      expect(DEFAULT_SETTINGS.sharedEnvironmentVariables).toBe('');
-    });
-
-    it('should have envSnippets as empty array by default', () => {
-      expect(DEFAULT_SETTINGS.envSnippets).toEqual([]);
-    });
-
-    it('should have custom model aliases as an empty map by default', () => {
-      expect(DEFAULT_SETTINGS.customModelAliases).toEqual({});
-    });
-
-    it('should have lastClaudeModel set to haiku by default', () => {
-      expect(getClaudeProviderSettings(DEFAULT_SETTINGS).lastModel).toBe('haiku');
-    });
-
-    it('should have no Claude model environment source by default', () => {
-      expect(getClaudeProviderSettings(DEFAULT_SETTINGS).modelEnvironmentType).toBe('');
-      expect(getClaudeProviderSettings(DEFAULT_SETTINGS).titleModelEnvironmentType).toBe('');
-    });
-
-    it('should have empty custom Claude models by default', () => {
-      expect(getClaudeProviderSettings(DEFAULT_SETTINGS).customModels).toBe('');
-    });
-
-    it('should enable Claude by default for backward compatibility', () => {
-      expect(getClaudeProviderSettings(DEFAULT_SETTINGS).enabled).toBe(true);
-      expect(getClaudeProviderSettings({ providerConfigs: { claude: {} } }).enabled).toBe(true);
-    });
-
-    it('should have lastCustomModel as empty string by default', () => {
-      expect(DEFAULT_SETTINGS.lastCustomModel).toBe('');
-    });
-
-    it('should collapse file edits by default', () => {
-      expect(DEFAULT_SETTINGS.expandFileEditsByDefault).toBe(false);
-    });
-
-    it('should keep five agent processes warm by default', () => {
-      expect(DEFAULT_SETTINGS.maxWarmAgentProcesses).toBe(5);
-    });
-
-    it('should enable the right-side dual pane by default', () => {
-      expect(DEFAULT_SETTINGS.enableDualPane).toBe(true);
-      expect(DEFAULT_SETTINGS.dualPaneSide).toBe('right');
-    });
-
-    it('should restore tabs on startup by default', () => {
-      expect(DEFAULT_SETTINGS.restoreTabsOnStartup).toBe(true);
     });
   });
 
@@ -101,8 +42,6 @@ describe('types.ts', () => {
         thinkingBudget: 'off',
         serviceTier: 'default',
         permissionMode: 'yolo',
-        claudeSafeMode: 'acceptEdits',
-        codexSafeMode: 'workspace-write',
         excludedTags: [],
         mediaFolder: '',
         sharedEnvironmentVariables: '',
@@ -114,11 +53,7 @@ describe('types.ts', () => {
         requireCommandOrControlEnterToSend: false,
         locale: 'en',
         providerConfigs: {},
-        claudeCliPath: '',
-        claudeCliPathsByHost: {},
-        loadUserClaudeSettings: false,
         maxWarmAgentProcesses: 5,
-        enableChrome: false,
         enableAutoScroll: true,
         readAloudProvider: 'system',
         readAloudOpenAiVoice: 'fable',
@@ -137,7 +72,6 @@ describe('types.ts', () => {
         effortLevel: 'high',
       settingsProvider: 'claude',
       lastSelectedChatModel: null,
-        codexEnabled: false,
         savedProviderModel: {},
         savedProviderEffort: {},
         savedProviderServiceTier: {},
@@ -160,8 +94,6 @@ describe('types.ts', () => {
         thinkingBudget: 'medium',
         serviceTier: 'default',
         permissionMode: 'normal',
-        claudeSafeMode: 'acceptEdits',
-        codexSafeMode: 'workspace-write',
         excludedTags: ['private'],
         mediaFolder: 'attachments',
         sharedEnvironmentVariables: 'API_KEY=test',
@@ -173,11 +105,7 @@ describe('types.ts', () => {
         requireCommandOrControlEnterToSend: false,
         locale: 'zh-CN',
         providerConfigs: {},
-        claudeCliPath: '',
-        claudeCliPathsByHost: {},
-        loadUserClaudeSettings: false,
         maxWarmAgentProcesses: 5,
-        enableChrome: false,
         enableAutoScroll: true,
         readAloudProvider: 'system',
         readAloudOpenAiVoice: 'fable',
@@ -196,7 +124,6 @@ describe('types.ts', () => {
         effortLevel: 'high',
       settingsProvider: 'claude',
       lastSelectedChatModel: null,
-        codexEnabled: false,
         savedProviderModel: {},
         savedProviderEffort: {},
         savedProviderServiceTier: {},
@@ -208,20 +135,17 @@ describe('types.ts', () => {
       expect(settings.model).toBe('anthropic/custom-model-v1');
     });
 
-    it('should accept optional lastClaudeModel and lastCustomModel', () => {
+    it('should accept an optional lastCustomModel', () => {
       const settings: GrandemoniumSettings = {
         userName: '',
         model: 'sonnet',
         enableAutoTitleGeneration: true,
         titleGenerationLocale: '',
         titleGenerationModel: '',
-        lastClaudeModel: 'opus',
         lastCustomModel: 'custom/model',
         thinkingBudget: 'high',
         serviceTier: 'default',
         permissionMode: 'yolo',
-        claudeSafeMode: 'acceptEdits',
-        codexSafeMode: 'workspace-write',
         excludedTags: [],
         mediaFolder: '',
         sharedEnvironmentVariables: '',
@@ -233,11 +157,7 @@ describe('types.ts', () => {
         requireCommandOrControlEnterToSend: true,
         locale: 'en',
         providerConfigs: {},
-        claudeCliPath: '',
-        claudeCliPathsByHost: {},
-        loadUserClaudeSettings: false,
         maxWarmAgentProcesses: 5,
-        enableChrome: false,
         enableAutoScroll: false,
         readAloudProvider: 'system',
         readAloudOpenAiVoice: 'fable',
@@ -256,7 +176,6 @@ describe('types.ts', () => {
         effortLevel: 'high',
       settingsProvider: 'claude',
       lastSelectedChatModel: null,
-        codexEnabled: false,
         savedProviderModel: {},
         savedProviderEffort: {},
         savedProviderServiceTier: {},
@@ -265,7 +184,6 @@ describe('types.ts', () => {
         pendingProviderSessionInvalidations: {},
       };
 
-      expect(settings.lastClaudeModel).toBe('opus');
       expect(settings.lastCustomModel).toBe('custom/model');
     });
   });

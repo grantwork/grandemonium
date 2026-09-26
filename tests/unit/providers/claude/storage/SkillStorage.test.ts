@@ -45,7 +45,7 @@ describe('SkillStorage', () => {
       const adapter = createMockAdapter({
         '.claude/skills/my-skill/SKILL.md': `---
 description: A helpful skill
-userInvocable: true
+user-invocable: true
 ---
 Do the thing`,
       });
@@ -69,7 +69,7 @@ description: Skill A
 Prompt A`,
         '.claude/skills/skill-b/SKILL.md': `---
 description: Skill B
-disableModelInvocation: true
+disable-model-invocation: true
 ---
 Prompt B`,
       });
@@ -138,8 +138,8 @@ Prompt`,
       const adapter = createMockAdapter({
         '.claude/skills/full/SKILL.md': `---
 description: Full skill
-disableModelInvocation: true
-userInvocable: true
+disable-model-invocation: true
+user-invocable: true
 context: fork
 agent: code-reviewer
 model: sonnet

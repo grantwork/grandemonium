@@ -622,47 +622,6 @@ describe('ProviderSettingsCoordinator', () => {
         });
     });
 
-    it('migrates legacy inactive Fable state before provider projection replaces it', () => {
-      const settings: Record<string, unknown> = {
-        settingsProvider: 'codex',
-        model: TEST_CODEX_MODEL,
-        effortLevel: 'high',
-        serviceTier: 'default',
-        thinkingBudget: 'off',
-        savedProviderModel: {
-          claude: 'claude-code/fable-old',
-          codex: TEST_CODEX_MODEL,
-        },
-        providerConfigs: {
-          claude: {
-            ...DEFAULT_CLAUDE_PROVIDER_SETTINGS,
-            lastModel: 'fable',
-            modelEnvironmentType: '',
-            environmentVariables: [
-              'ANTHROPIC_DEFAULT_HAIKU_MODEL=haiku-new',
-              'ANTHROPIC_DEFAULT_FABLE_MODEL=fable-new',
-            ].join('\n'),
-            environmentHash: 'ANTHROPIC_DEFAULT_FABLE_MODEL=fable-old',
-          },
-          codex: {
-            enabled: true,
-            discoveredModels: TEST_CODEX_CATALOG,
-          },
-        },
-      };
-
-      ProviderSettingsCoordinator.reconcileProviders(settings, [], ['claude']);
-
-      expect(settings.savedProviderModel).toMatchObject({
-        claude: 'claude-code/fable-new',
-      });
-      expect((settings.providerConfigs as Record<string, Record<string, unknown>>).claude)
-        .toMatchObject({
-          lastModel: 'fable',
-          modelEnvironmentType: 'fable',
-        });
-    });
-
     it('restores a title model after its environment source returns', () => {
       const settings: Record<string, unknown> = {
         settingsProvider: 'claude',

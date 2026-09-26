@@ -1,6 +1,5 @@
 import type { App } from 'obsidian';
 
-import { GrandemoniumSettingsStorage, type StoredGrandemoniumSettings } from '../../../app/settings/GrandemoniumSettingsStorage';
 import { GRANDEMONIUM_STORAGE_PATH, SESSIONS_PATH } from '../../../core/bootstrap/storagePaths';
 import { VaultFileAdapter } from '../../../core/storage/VaultFileAdapter';
 import type {
@@ -8,7 +7,6 @@ import type {
 } from '../../../core/types';
 import {
   type CCPermissions,
-  type CCSettings,
   createPermissionRule,
 } from '../types/settings';
 import { AGENTS_PATH, AgentVaultStorage } from './AgentVaultStorage';
@@ -18,18 +16,12 @@ import { COMMANDS_PATH, SlashCommandStorage } from './SlashCommandStorage';
 
 export const CLAUDE_PATH = '.claude';
 
-export interface CombinedSettings {
-  cc: CCSettings;
-  grandemonium: StoredGrandemoniumSettings;
-}
-
 interface StorageServicePlugin {
   readonly app: App;
 }
 
 export class StorageService {
   readonly ccSettings: CCSettingsStorage;
-  readonly grandemoniumSettings: GrandemoniumSettingsStorage;
   readonly commands: SlashCommandStorage;
   readonly skills: SkillStorage;
   readonly agents: AgentVaultStorage;
@@ -41,19 +33,9 @@ export class StorageService {
     this.app = plugin.app;
     this.adapter = adapter ?? new VaultFileAdapter(this.app);
     this.ccSettings = new CCSettingsStorage(this.adapter);
-    this.grandemoniumSettings = new GrandemoniumSettingsStorage(this.adapter);
     this.commands = new SlashCommandStorage(this.adapter);
     this.skills = new SkillStorage(this.adapter);
     this.agents = new AgentVaultStorage(this.adapter);
-  }
-
-  async initialize(): Promise<CombinedSettings> {
-    await this.ensureDirectories();
-
-    const cc = await this.ccSettings.load();
-    const grandemonium = await this.grandemoniumSettings.load();
-
-    return { cc, grandemonium };
   }
 
   async ensureDirectories(): Promise<void> {
@@ -93,18 +75,6 @@ export class StorageService {
 
   async removePermissionRule(rule: string): Promise<void> {
     return this.ccSettings.removeRule(createPermissionRule(rule));
-  }
-
-  async updateGrandemoniumSettings(updates: Partial<StoredGrandemoniumSettings>): Promise<void> {
-    return this.grandemoniumSettings.update(updates);
-  }
-
-  async saveGrandemoniumSettings(settings: StoredGrandemoniumSettings): Promise<void> {
-    return this.grandemoniumSettings.save(settings);
-  }
-
-  async loadGrandemoniumSettings(): Promise<StoredGrandemoniumSettings> {
-    return this.grandemoniumSettings.load();
   }
 
 }

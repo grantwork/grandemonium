@@ -577,25 +577,6 @@ describe('GrandemoniumSettingsStorage', () => {
       expect(getCodexProviderSettings(result).wslDistroOverride).toBe('');
     });
 
-    it('should remove legacy Claude 1M toggles from provider settings', async () => {
-      storeSettings({
-        providerConfigs: {
-          claude: {
-            enableOpus1M: true,
-            enableSonnet1M: true,
-          },
-        },
-      });
-
-      await storage.load();
-      const persisted = lastWrittenSettings() as {
-        providerConfigs: { claude: Record<string, unknown> };
-      };
-
-      expect(persisted.providerConfigs.claude).not.toHaveProperty('enableOpus1M');
-      expect(persisted.providerConfigs.claude).not.toHaveProperty('enableSonnet1M');
-    });
-
     it('normalizes stale scoped mixed env snippets back to unscoped on load', async () => {
       storeSettings({
         envSnippets: [{
