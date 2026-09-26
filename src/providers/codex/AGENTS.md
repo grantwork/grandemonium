@@ -38,7 +38,7 @@ Live execution state and replay state are separate authorities. Do not fill gaps
 ## Design Rules
 
 - Native transcripts live under `~/.codex/sessions/` and may move to sibling `archived_sessions/`; resolve both through `CodexHistoryPathResolver` (WSL and home-dir aware).
-- An explicit enabled-model array is ordered user state and its first currently available model is the provider fallback, including when retargeting legacy global model/effort/service-tier projections. Legacy `visibleModels: null` derives native-default-first order from the current catalog until the user changes visibility or order; never collapse an explicit full-list order back to `null`.
+- An explicit enabled-model array is ordered user state and its first currently available model is the provider fallback, including when retargeting the top-level model/effort/service-tier projections. `visibleModels: null`, the default, derives native-default-first order from the current catalog until the user changes visibility or order; never collapse an explicit full-list order back to `null`.
 - `CodexSkillListingService` uses a separate short-lived app-server process for `skills/list`. Do not couple skill discovery to the active chat runtime.
 - Runtime fingerprint changes invalidate existing Codex sessions. The fingerprint includes `OPENAI_MODEL`, `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `PATH`, this device's CLI path, installation method, and WSL distro override.
 - Existing threads require `thread/resume` before operations in a new app-server process.
@@ -48,7 +48,6 @@ Live execution state and replay state are separate authorities. Do not fill gaps
 
 ## History Gotchas
 
-- A session file may contain legacy records and modern records. Prefer the modern path if any modern records are present.
 - Do not replay `type: 'compacted'` `replacement_history` as visible UI history. The durable visible marker is `event_msg:context_compacted`.
 - Session file names may include a date prefix. Keep DFS fallback in session-file lookup.
 - Historical selected-model recovery must honor the persisted rollback/fork checkpoint. For a materialized fork, validate the source segment before trusting the fork transcript, search trusted archived roots when the active session path no longer exists, and never make invalidated thread metadata resumable.

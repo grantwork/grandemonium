@@ -670,11 +670,9 @@ describe('CodexSettingsTab', () => {
           reasoningSummary: 'detailed',
           environmentVariables: '',
           environmentHash: '',
-          installationMethod: 'wsl',
           installationMethodsByHost: {
             'host-a': 'wsl',
           },
-          wslDistroOverride: 'Ubuntu',
           wslDistroOverridesByHost: {
             'host-a': 'Ubuntu',
           },

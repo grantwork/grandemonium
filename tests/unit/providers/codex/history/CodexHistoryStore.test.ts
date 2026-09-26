@@ -36,17 +36,6 @@ describe('CodexHistoryStore', () => {
     }
   });
 
-  it('restores completion time from legacy turn completion events', () => {
-    const content = [
-      { type: 'event', timestamp: '2026-09-07T10:00:00Z', event: { type: 'turn.started' } },
-      { type: 'event', timestamp: '2026-09-07T10:00:03Z', event: {
-        type: 'item.completed', item: { id: 'answer', type: 'agent_message', text: 'Done' },
-      } },
-      { type: 'event', timestamp: '2026-09-07T10:00:05Z', event: { type: 'turn.completed' } },
-    ].map(record => JSON.stringify(record)).join('\n');
-    expect(parseCodexSessionContent(content)[0].completedAt).toBe(Date.parse('2026-09-07T10:00:05Z'));
-  });
-
   describe('path helpers', () => {
     it('derives transcript and memories roots from POSIX session paths', () => {
       const sessionFilePath = '/home/user/.codex/sessions/2026/04/14/rollout-thread.jsonl';
@@ -70,27 +59,6 @@ describe('CodexHistoryStore', () => {
   });
 
   describe('parseCodexSessionFile - simple session', () => {
-    it('should parse a simple session with reasoning and agent message', () => {
-      const filePath = path.join(FIXTURES_DIR, 'codex-session-simple.jsonl');
-      const messages = parseCodexSessionFile(filePath);
-
-      expect(messages).toHaveLength(1);
-      expect(messages[0].role).toBe('assistant');
-      expect(messages[0].content).toBe('Hello! I can help you with that.');
-
-      // Should have thinking content block
-      const thinkingBlock = messages[0].contentBlocks?.find(b => b.type === 'thinking');
-      expect(thinkingBlock).toBeDefined();
-      expect(thinkingBlock).toMatchObject({
-        type: 'thinking',
-        content: 'Let me think about this request carefully.',
-      });
-
-      // Should have text content block
-      const textBlock = messages[0].contentBlocks?.find(b => b.type === 'text');
-      expect(textBlock).toBeDefined();
-    });
-
     it('should rebuild thinking text from persisted reasoning content blocks', () => {
       const content = [
         JSON.stringify({
@@ -343,94 +311,6 @@ describe('CodexHistoryStore', () => {
         }],
         role: 'user',
       });
-    });
-  });
-
-  describe('parseCodexSessionFile - tools session', () => {
-    it('should parse a session with command execution and file changes', () => {
-      const filePath = path.join(FIXTURES_DIR, 'codex-session-tools.jsonl');
-      const messages = parseCodexSessionFile(filePath);
-
-      expect(messages).toHaveLength(1);
-
-      const msg = messages[0];
-      expect(msg.toolCalls).toBeDefined();
-      expect(msg.toolCalls!.length).toBeGreaterThanOrEqual(2);
-
-      // Check command execution
-      const bashTool = msg.toolCalls!.find(tc => tc.name === 'Bash');
-      expect(bashTool).toBeDefined();
-      expect(bashTool!.input.command).toBe('cat src/main.ts');
-      expect(bashTool!.status).toBe('completed');
-
-      // Check file change
-      const patchTool = msg.toolCalls!.find(tc => tc.name === 'apply_patch');
-      expect(patchTool).toBeDefined();
-      expect(patchTool!.status).toBe('completed');
-    });
-
-    it('should preserve content blocks order', () => {
-      const filePath = path.join(FIXTURES_DIR, 'codex-session-tools.jsonl');
-      const messages = parseCodexSessionFile(filePath);
-
-      const blocks = messages[0].contentBlocks;
-      expect(blocks).toBeDefined();
-      expect(blocks!.length).toBeGreaterThanOrEqual(3);
-
-      // First block should be text (from initial agent message)
-      expect(blocks![0].type).toBe('text');
-      // Then tool_use blocks
-      const toolBlocks = blocks!.filter(b => b.type === 'tool_use');
-      expect(toolBlocks.length).toBeGreaterThanOrEqual(2);
-    });
-  });
-
-  describe('parseCodexSessionFile - abort session', () => {
-    it('should handle turn.failed and mark as interrupted', () => {
-      const filePath = path.join(FIXTURES_DIR, 'codex-session-abort.jsonl');
-      const messages = parseCodexSessionFile(filePath);
-
-      // Should have two messages: one interrupted, one successful
-      expect(messages).toHaveLength(2);
-      expect(messages[0].isInterrupt).toBe(true);
-      expect(messages[1].isInterrupt).toBeUndefined();
-      expect(messages[1].content).toBe('OK, what would you like me to do instead?');
-    });
-
-    it('keeps the latest streamed content for interrupted turns', () => {
-      const content = [
-        JSON.stringify({ type: 'event', event: { type: 'turn.started' } }),
-        JSON.stringify({ type: 'event', event: { type: 'item.started', item: { id: 'item_1', type: 'agent_message', text: '' } } }),
-        JSON.stringify({ type: 'event', event: { type: 'item.updated', item: { id: 'item_1', type: 'agent_message', text: 'Hello' } } }),
-        JSON.stringify({ type: 'event', event: { type: 'item.updated', item: { id: 'item_1', type: 'agent_message', text: 'Hello world' } } }),
-        JSON.stringify({ type: 'event', event: { type: 'turn.failed', error: { message: 'Cancelled' } } }),
-      ].join('\n');
-
-      const messages = parseCodexSessionContent(content);
-
-      expect(messages).toHaveLength(1);
-      expect(messages[0]).toMatchObject({
-        role: 'assistant',
-        content: 'Hello world',
-        isInterrupt: true,
-      });
-    });
-  });
-
-  describe('parseCodexSessionFile - web search session', () => {
-    it('should parse web search items', () => {
-      const filePath = path.join(FIXTURES_DIR, 'codex-session-websearch.jsonl');
-      const messages = parseCodexSessionFile(filePath);
-
-      expect(messages).toHaveLength(1);
-
-      const msg = messages[0];
-      expect(msg.toolCalls).toBeDefined();
-
-      const searchTool = msg.toolCalls!.find(tc => tc.name === 'WebSearch');
-      expect(searchTool).toBeDefined();
-      expect(searchTool!.input.query).toBe('obsidian plugin API documentation');
-      expect(searchTool!.status).toBe('completed');
     });
   });
 
@@ -2487,76 +2367,6 @@ describe('CodexHistoryStore', () => {
       expect(messages).toHaveLength(2);
       expect(messages[0].role).toBe('user');
       expect(messages[1].role).toBe('assistant');
-    });
-
-    it('preserves legacy item content inside mixed modern transcripts', () => {
-      const content = [
-        JSON.stringify({
-          timestamp: '2026-03-27T00:00:00.000Z',
-          type: 'event_msg',
-          payload: { type: 'task_started', turn_id: 'uuid-turn-mixed' },
-        }),
-        JSON.stringify({
-          timestamp: '2026-03-27T00:00:00.100Z',
-          type: 'event',
-          event: {
-            type: 'item.updated',
-            item: {
-              id: 'legacy-msg-1',
-              type: 'agent_message',
-              text: 'Legacy streamed answer',
-            },
-          },
-        }),
-        JSON.stringify({
-          timestamp: '2026-03-27T00:00:00.200Z',
-          type: 'event',
-          event: {
-            type: 'item.started',
-            item: {
-              id: 'legacy-cmd-1',
-              type: 'command_execution',
-              command: 'pwd',
-            },
-          },
-        }),
-        JSON.stringify({
-          timestamp: '2026-03-27T00:00:00.300Z',
-          type: 'event',
-          event: {
-            type: 'item.completed',
-            item: {
-              id: 'legacy-cmd-1',
-              type: 'command_execution',
-              aggregated_output: '/workspace',
-              exit_code: 0,
-            },
-          },
-        }),
-        JSON.stringify({
-          timestamp: '2026-03-27T00:00:01.000Z',
-          type: 'event_msg',
-          payload: { type: 'task_complete', turn_id: 'uuid-turn-mixed' },
-        }),
-      ].join('\n');
-
-      const turns = parseCodexSessionTurns(content);
-
-      expect(turns).toHaveLength(1);
-      expect(turns[0].turnId).toBe('uuid-turn-mixed');
-      expect(turns[0].messages).toHaveLength(1);
-      expect(turns[0].messages[0]).toMatchObject({
-        role: 'assistant',
-        content: 'Legacy streamed answer',
-      });
-      expect(turns[0].messages[0].toolCalls).toEqual([
-        expect.objectContaining({
-          id: 'legacy-cmd-1',
-          name: 'Bash',
-          status: 'completed',
-          result: '/workspace',
-        }),
-      ]);
     });
   });
 

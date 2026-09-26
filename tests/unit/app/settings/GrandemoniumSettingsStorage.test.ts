@@ -485,35 +485,6 @@ describe('GrandemoniumSettingsStorage', () => {
       }));
     });
 
-    it('strips legacy Codex installation scalar fields from non-Windows provider config', async () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
-      storeSettings({
-        providerConfigs: {
-          codex: {
-            enabled: true,
-            installationMethod: 'wsl',
-            wslDistroOverride: 'Ubuntu',
-            cliPathsByHost: {
-              'host-a': '/opt/homebrew/bin/codex',
-            },
-          },
-        },
-      });
-
-      const result = await storage.load();
-      const codexConfig = result.providerConfigs.codex as Record<string, unknown>;
-      const persisted = lastWrittenSettings() as {
-        providerConfigs: { codex: Record<string, unknown> };
-      };
-
-      expect(getCodexProviderSettings(result).installationMethod).toBe('native-windows');
-      expect(getCodexProviderSettings(result).wslDistroOverride).toBe('');
-      expect(codexConfig).not.toHaveProperty('installationMethod');
-      expect(codexConfig).not.toHaveProperty('wslDistroOverride');
-      expect(persisted.providerConfigs.codex).not.toHaveProperty('installationMethod');
-      expect(persisted.providerConfigs.codex).not.toHaveProperty('wslDistroOverride');
-    });
-
     it('defaults Codex installation method and WSL distro override when missing', async () => {
       storeSettings({});
 
@@ -539,22 +510,6 @@ describe('GrandemoniumSettingsStorage', () => {
 
       expect(codexSettings.discoveredModels).toEqual(TEST_CODEX_CATALOG);
       expect(codexSettings.visibleModels).toEqual(['gpt-5.4-mini']);
-    });
-
-    it('normalizes invalid Codex installation fields from provider config', async () => {
-      storeSettings({
-        providerConfigs: {
-          codex: {
-            installationMethod: 'auto',
-            wslDistroOverride: 42,
-          },
-        },
-      });
-
-      const result = await storage.load();
-
-      expect(getCodexProviderSettings(result).installationMethod).toBe('native-windows');
-      expect(getCodexProviderSettings(result).wslDistroOverride).toBe('');
     });
 
     it('does not inherit another host WSL selection from host-scoped provider config', async () => {

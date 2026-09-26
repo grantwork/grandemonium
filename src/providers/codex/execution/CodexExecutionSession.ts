@@ -101,7 +101,7 @@ import { CodexExecutionServerRequestRouter } from './CodexExecutionServerRequest
 
 const PASSIVE_INSTRUCTIONS =
   'Do not invoke tools. Complete the request only from the supplied input and context.';
-const LEGACY_WORKSPACE_DEPENDENCY_INSTRUCTIONS =
+const THREAD_WITHOUT_DEPENDENCY_TOOLS_INSTRUCTIONS =
   'This thread predates Grandemonium client-hosted workspace dependency tools. Do not emulate load_workspace_dependencies or install replacement dependencies.';
 const CODEX_SUPPORTS_EXACT_BUILT_IN_TOOL_ALLOW_LIST = false;
 const MISSED_TURN_COMPLETION_GRACE_MS = 1_000;
@@ -1122,7 +1122,7 @@ export class CodexExecutionSession
             settings,
           ),
           baseInstructions: this.workspaceDependencyToolVersion === null
-            ? `${baseInstructions}\n\n${LEGACY_WORKSPACE_DEPENDENCY_INSTRUCTIONS}`
+            ? `${baseInstructions}\n\n${THREAD_WITHOUT_DEPENDENCY_TOOLS_INSTRUCTIONS}`
             : baseInstructions,
           experimentalRawEvents: true,
           ...(persistExtendedHistory !== undefined
@@ -1258,7 +1258,7 @@ export class CodexExecutionSession
           model,
           settings,
         ),
-        baseInstructions: `${baseInstructions}\n\n${LEGACY_WORKSPACE_DEPENDENCY_INSTRUCTIONS}`,
+        baseInstructions: `${baseInstructions}\n\n${THREAD_WITHOUT_DEPENDENCY_TOOLS_INSTRUCTIONS}`,
         experimentalRawEvents: true,
         ...(persistExtendedHistory !== undefined
           ? { persistExtendedHistory }
