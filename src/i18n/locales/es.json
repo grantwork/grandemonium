@@ -260,10 +260,6 @@
       "name": "Restaurar pestañas al iniciar",
       "desc": "Volver a abrir todas las pestañas en el modo de panel único o solo la última pestaña activa en el modo de panel doble."
     },
-    "enableFilePane": {
-      "name": "Activar panel de archivos",
-      "desc": "Mostrar una pestaña Archivos en el gestor de sesiones del modo de panel doble."
-    },
     "dualPaneSide": {
       "name": "Lado del panel doble",
       "desc": "Elegir en qué lado del chat aparece el gestor de sesiones.",

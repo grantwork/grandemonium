@@ -260,10 +260,6 @@
       "name": "Restore tabs on startup",
       "desc": "Reopen all tabs in single-pane mode or the last active tab in dual-pane mode."
     },
-    "enableFilePane": {
-      "name": "Enable file pane",
-      "desc": "Show a Files tab in the dual-pane session manager."
-    },
     "dualPaneSide": {
       "name": "Dual-pane side",
       "desc": "Choose which side of the chat the session manager appears on.",

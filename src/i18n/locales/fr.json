@@ -260,10 +260,6 @@
       "name": "Restaurer les onglets au démarrage",
       "desc": "Rouvrir tous les onglets en mode volet unique, ou uniquement le dernier onglet actif en mode double volet."
     },
-    "enableFilePane": {
-      "name": "Activer le volet des fichiers",
-      "desc": "Afficher un onglet Fichiers dans le gestionnaire de sessions du mode double volet."
-    },
     "dualPaneSide": {
       "name": "Côté du double volet",
       "desc": "Choisir de quel côté du chat le gestionnaire de sessions apparaît.",

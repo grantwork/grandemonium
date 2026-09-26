@@ -13,7 +13,7 @@ import {
 
 describe('buildOpencodeManagedConfig', () => {
   it('pins OpenCode build, YOLO, and safe prompts to the managed prompt file', () => {
-    expect(buildOpencodeManagedConfig({}, '/vault/.grandemonium/opencode/system.md', 'Yishen')).toEqual({
+    expect(buildOpencodeManagedConfig({}, '/vault/.grandemonium/opencode/system.md', 'Sam')).toEqual({
       $schema: 'https://opencode.ai/config.json',
       agent: {
         plan: { disable: true },
@@ -39,7 +39,7 @@ describe('buildOpencodeManagedConfig', () => {
           prompt: '{file:/vault/.grandemonium/opencode/system.md}',
         },
       },
-      username: 'Yishen',
+      username: 'Sam',
     });
   });
 
@@ -189,7 +189,7 @@ describe('prepareOpencodeLaunchArtifacts', () => {
       settings: {
         customPrompt: '',
         mediaFolder: '',
-        userName: 'Yishen',
+        userName: 'Sam',
         vaultPath: tmpRoot,
       },
       workspaceRoot: tmpRoot,
@@ -206,7 +206,7 @@ describe('prepareOpencodeLaunchArtifacts', () => {
           api_key: 'anthropic-key',
         },
       },
-      username: 'Yishen',
+      username: 'Sam',
     });
     expect(generatedConfig.agent).toMatchObject({
       build: {

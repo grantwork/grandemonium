@@ -260,10 +260,6 @@
       "name": "Restaurar abas ao iniciar",
       "desc": "Reabrir todas as abas no modo de painel único ou apenas a última aba ativa no modo de painel duplo."
     },
-    "enableFilePane": {
-      "name": "Ativar painel de arquivos",
-      "desc": "Mostrar uma aba Arquivos no gerenciador de sessões do modo de painel duplo."
-    },
     "dualPaneSide": {
       "name": "Lado do painel duplo",
       "desc": "Escolher em qual lado do chat o gerenciador de sessões aparece.",

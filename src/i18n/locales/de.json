@@ -260,10 +260,6 @@
       "name": "Tabs beim Start wiederherstellen",
       "desc": "Im Einzelbereichsmodus alle Tabs, im Zwei-Spalten-Modus nur den zuletzt aktiven Tab erneut öffnen."
     },
-    "enableFilePane": {
-      "name": "Dateibereich aktivieren",
-      "desc": "Im Sitzungsmanager des Zwei-Spalten-Modus einen Tab „Dateien“ anzeigen."
-    },
     "dualPaneSide": {
       "name": "Seite der zweiten Spalte",
       "desc": "Auswählen, auf welcher Seite des Chats der Sitzungsmanager angezeigt wird.",
