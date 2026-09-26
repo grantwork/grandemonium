@@ -6,10 +6,7 @@ import {
   type ConversationInputRecord,
 } from '../../core/bootstrap/ConversationInputLedgerStorage';
 import type { ConversationPersistence } from '../../core/bootstrap/ConversationPersistenceStore';
-import type {
-  SessionMetadataAuthority,
-  SessionMetadataReadResult,
-} from '../../core/bootstrap/SessionStorage';
+import type { SessionMetadataReadResult } from '../../core/bootstrap/SessionStorage';
 import type { ProviderSessionSnapshot } from '../../core/execution';
 import {
   assertLinkedContentPath,
@@ -217,7 +214,6 @@ export class ConversationRepository {
   >();
   private readonly linkedContentPathRenames: LinkedContentPathRename[] = [];
   private readonly pendingLinkedContentPathCorrectionIds = new Set<string>();
-  private readonly metadataTargets = new Map<string, SessionMetadataAuthority>();
   private readonly persistence: ConversationPersistence;
 
   constructor(private readonly deps: ConversationRepositoryDeps) {
@@ -234,10 +230,6 @@ export class ConversationRepository {
     this.conversations = conversations.filter(
       ({ id }) => !this.deletedConversationIds.has(id),
     );
-    this.metadataTargets.clear();
-    for (const conversation of this.conversations) {
-      this.metadataTargets.set(conversation.id, 'device');
-    }
     this.linkedContentPathsByConversationId.clear();
     for (const conversation of this.conversations) {
       this.captureLinkedContentIdentity(conversation);
@@ -260,13 +252,8 @@ export class ConversationRepository {
     entries: ReadonlyArray<{
       conversation: Conversation;
       needsMigration: SessionMetadataReadResult['needsMigration'];
-      source: SessionMetadataReadResult['source'];
     }>,
   ): Promise<void> {
-    for (const { conversation, source } of entries) {
-      const target = source === 'legacy' ? 'unscoped' : source;
-      this.metadataTargets.set(conversation.id, target);
-    }
     const linkedContentPathCorrectedIds = new Set<string>();
     for (const { conversation } of entries) {
       const current = this.getSync(conversation.id);
@@ -290,7 +277,6 @@ export class ConversationRepository {
     }
     const added = this.mergeMetadataConversations(
       entries.map(({ conversation }) => conversation),
-      null,
     );
     const addedIds = new Set(added.map(({ id }) => id));
     const providerIds = new Set(entries
@@ -301,14 +287,14 @@ export class ConversationRepository {
     }
     const migrations = entries
       .filter(
-        ({ conversation, needsMigration, source }) =>
+        ({ conversation, needsMigration }) =>
           (
-            (source === 'legacy' || needsMigration)
+            needsMigration
             && (addedIds.has(conversation.id) || !!this.getSync(conversation.id))
           )
           || linkedContentPathCorrectedIds.has(conversation.id),
       )
-      .map(({ conversation, source }) => this.enqueuePersistence(
+      .map(({ conversation }) => this.enqueuePersistence(
         conversation.id,
         async () => {
           const current = this.getSync(conversation.id);
@@ -317,18 +303,12 @@ export class ConversationRepository {
             preserveProviderState: !this.hydratedConversationIds.has(current.id),
           });
           this.pendingLinkedContentPathCorrectionIds.delete(current.id);
-          if (source === 'legacy') {
-            await this.persistence.deleteLegacyMetadata(current.id);
-          }
         },
       ));
     await Promise.all(migrations);
   }
 
-  mergeMetadataConversations(
-    conversations: Conversation[],
-    metadataTarget: SessionMetadataAuthority | null = 'device',
-  ): Conversation[] {
+  mergeMetadataConversations(conversations: Conversation[]): Conversation[] {
     const existingIds = new Set(this.conversations.map(({ id }) => id));
     for (const conversation of conversations) {
       if (existingIds.has(conversation.id)) {
@@ -347,12 +327,6 @@ export class ConversationRepository {
     );
     if (added.length === 0) {
       return [];
-    }
-
-    if (metadataTarget) {
-      for (const conversation of added) {
-        this.metadataTargets.set(conversation.id, metadataTarget);
-      }
     }
 
     this.conversations.push(...added);
@@ -384,7 +358,6 @@ export class ConversationRepository {
       this.ledgerLoadPromises.delete(shell.id);
       this.executionBindings.delete(shell.id);
       this.linkedContentPathsByConversationId.delete(shell.id);
-      this.metadataTargets.delete(shell.id);
       this.invalidateConversation(shell.id);
     }
   }
@@ -434,7 +407,6 @@ export class ConversationRepository {
         : assertLinkedContentPath(options.linkedContentPath),
     };
 
-    this.metadataTargets.set(conversation.id, 'device');
     this.conversations.unshift(conversation);
     this.captureLinkedContentIdentity(conversation);
     if (!sessionId) {
@@ -453,24 +425,6 @@ export class ConversationRepository {
     return this.ensureHydrated(id);
   }
 
-  async assignToCurrentDevice(id: string): Promise<boolean> {
-    const conversation = this.getSync(id);
-    if (!conversation) return false;
-
-    return this.enqueuePersistence(id, async () => {
-      if (!await this.canWriteConversation(conversation)) return false;
-      const source = this.requireMetadataTarget(id);
-      if (source === 'device') return false;
-
-      await this.writeMetadata(conversation, {
-        preserveProviderState: !this.hydratedConversationIds.has(id),
-      });
-      await this.persistence.assignMetadataToDevice(id);
-      this.metadataTargets.set(id, 'device');
-      return true;
-    });
-  }
-
   async delete(id: string): Promise<void> {
     const index = this.conversations.findIndex(
       (conversation) => conversation.id === id,
@@ -478,7 +432,7 @@ export class ConversationRepository {
     if (index === -1) {
       if (
         this.deletedConversationIds.has(id)
-        || await this.isDeletedInAnyMetadataTarget(id)
+        || await this.persistence.isDeleted(id)
       ) {
         await this.retryDeletedConversationCleanup(id);
       }
@@ -506,11 +460,7 @@ export class ConversationRepository {
     let markerDurable = false;
     try {
       await this.enqueuePersistence(id, async () => {
-        await this.persistence.markDeleted(
-          id,
-          Date.now(),
-          this.requireMetadataTarget(id),
-        );
+        await this.persistence.markDeleted(id, Date.now());
         markerDurable = true;
         this.deletingConversationIds.delete(id);
         this.deletionStates.delete(id);
@@ -540,7 +490,7 @@ export class ConversationRepository {
   async retryDeletedConversationCleanup(id: string): Promise<void> {
     if (
       !this.deletedConversationIds.has(id)
-      && !await this.isDeletedInAnyMetadataTarget(id)
+      && !await this.persistence.isDeleted(id)
     ) {
       return;
     }
@@ -977,14 +927,9 @@ export class ConversationRepository {
     if (!conversation) {
       throw new ConversationInputStageRejectedError(conversationId);
     }
-    const target = this.requireMetadataTarget(conversationId);
-    if (!await this.canWriteConversation(conversation)) {
-      throw new ConversationInputStageRejectedError(conversationId);
-    }
-    await this.persistence.assertMetadataWriteAuthority(conversationId, target);
     if (
-      this.getSync(conversationId) !== conversation
-      || this.requireMetadataTarget(conversationId) !== target
+      !await this.canWriteConversation(conversation)
+      || this.getSync(conversationId) !== conversation
     ) {
       throw new ConversationInputStageRejectedError(conversationId);
     }
@@ -1143,7 +1088,6 @@ export class ConversationRepository {
       isPinned: conversation.isPinned,
       isArchived: conversation.isArchived,
       titleGenerationStatus: conversation.titleGenerationStatus,
-      isLegacySession: this.isLegacyMetadataTarget(id),
     };
   }
 
@@ -1237,7 +1181,6 @@ export class ConversationRepository {
       isPinned: conversation.isPinned,
       isArchived: conversation.isArchived,
       titleGenerationStatus: conversation.titleGenerationStatus,
-      isLegacySession: this.isLegacyMetadataTarget(conversation.id),
     }));
   }
 
@@ -1504,10 +1447,7 @@ export class ConversationRepository {
         this.getSync(conversation.id)
         || this.deletedConversationIds.has(conversation.id)
         || this.deletingConversationIds.has(conversation.id)
-        || await this.persistence.isDeleted(
-          conversation.id,
-          this.requireMetadataTarget(conversation.id),
-        )
+        || await this.persistence.isDeleted(conversation.id)
       ) {
         return false;
       }
@@ -1828,10 +1768,7 @@ export class ConversationRepository {
     };
     if (
       !isCurrent()
-      || await this.persistence.isDeleted(
-        conversationId,
-        this.requireMetadataTarget(conversationId),
-      )
+      || await this.persistence.isDeleted(conversationId)
     ) {
       return false;
     }
@@ -1901,10 +1838,7 @@ export class ConversationRepository {
       this.getSync(conversation.id) === conversation
       && !this.deletedConversationIds.has(conversation.id)
       && !this.deletingConversationIds.has(conversation.id)
-      && !await this.persistence.isDeleted(
-        conversation.id,
-        this.requireMetadataTarget(conversation.id),
-      )
+      && !await this.persistence.isDeleted(conversation.id)
     );
   }
 
@@ -1912,43 +1846,14 @@ export class ConversationRepository {
     conversation: Conversation,
     options: { preserveProviderState?: boolean } = {},
   ): Promise<void> {
-    const metadata = this.toSessionMetadata(conversation, options);
-    const target = this.requireMetadataTarget(conversation.id);
-    return target === 'device'
-      ? this.persistence.saveMetadata(metadata)
-      : this.persistence.saveMetadata(metadata, target);
+    return this.persistence.saveMetadata(this.toSessionMetadata(conversation, options));
   }
 
   private writeInputLedger(
     conversationId: string,
     ledger: ConversationInputLedger,
   ): Promise<void> {
-    const target = this.requireMetadataTarget(conversationId);
-    return target === 'device'
-      ? this.persistence.saveInputLedger(conversationId, ledger)
-      : this.persistence.saveInputLedger(conversationId, ledger, target);
-  }
-
-  private async isDeletedInAnyMetadataTarget(
-    conversationId: string,
-  ): Promise<boolean> {
-    const [deviceDeleted, unscopedDeleted] = await Promise.all([
-      this.persistence.isDeleted(conversationId, 'device'),
-      this.persistence.isDeleted(conversationId, 'unscoped'),
-    ]);
-    return deviceDeleted || unscopedDeleted;
-  }
-
-  private requireMetadataTarget(conversationId: string): SessionMetadataAuthority {
-    const authority = this.metadataTargets.get(conversationId);
-    if (!authority) {
-      throw new Error(`Conversation metadata ownership is unresolved: ${conversationId}`);
-    }
-    return authority;
-  }
-
-  private isLegacyMetadataTarget(conversationId: string): boolean {
-    return this.metadataTargets.get(conversationId) === 'unscoped';
+    return this.persistence.saveInputLedger(conversationId, ledger);
   }
 
   private toSessionMetadata(
@@ -1993,16 +1898,7 @@ export class ConversationRepository {
   }
 
   private async cleanupDeletedConversation(id: string): Promise<void> {
-    const target = this.metadataTargets.get(id);
-    if (target === 'device') {
-      await this.persistence.deleteCurrentMetadata(id);
-    } else if (target === 'unscoped') {
-      await this.persistence.deleteCurrentMetadata(id, target);
-    } else if (!target) {
-      await this.persistence.deleteCurrentMetadata(id, 'device');
-      await this.persistence.deleteCurrentMetadata(id, 'unscoped');
-    }
-    await this.persistence.deleteLegacyMetadata(id);
+    await this.persistence.deleteMetadata(id);
     await this.persistence.deleteInputLedger(id);
     this.ledgerStates.delete(id);
     this.ledgerLoadPromises.delete(id);
@@ -2021,7 +1917,6 @@ export class ConversationRepository {
     if (callbackError !== undefined) {
       throw toError(callbackError);
     }
-    this.metadataTargets.delete(id);
   }
 
   private enqueuePersistence<T>(

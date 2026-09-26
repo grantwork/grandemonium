@@ -1,11 +1,7 @@
 import '@/providers';
 
 import { ConversationRepository } from '@/app/conversations/ConversationRepository';
-import {
-  LEGACY_SESSIONS_PATH,
-  SESSIONS_PATH,
-  SessionStorage,
-} from '@/core/bootstrap/SessionStorage';
+import { SessionStorage } from '@/core/bootstrap/SessionStorage';
 import { getDeviceSessionsPath } from '@/core/bootstrap/storagePaths';
 import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
 import type { ProviderId } from '@/core/providers/types';
@@ -13,6 +9,7 @@ import type { VaultFileAdapter } from '@/core/storage/VaultFileAdapter';
 import type { Conversation, SessionMetadata, UsageInfo } from '@/core/types';
 
 const DEVICE_KEY = `device-${'a'.repeat(64)}`;
+const DEVICE_PATH = getDeviceSessionsPath(DEVICE_KEY);
 
 describe('SessionStorage', () => {
   let mockAdapter: jest.Mocked<VaultFileAdapter>;
@@ -44,12 +41,6 @@ describe('SessionStorage', () => {
     storage = new SessionStorage(mockAdapter, DEVICE_KEY);
   });
 
-  describe('SESSIONS_PATH', () => {
-    it('should be .grandemonium/sessions', () => {
-      expect(SESSIONS_PATH).toBe('.grandemonium/sessions');
-    });
-  });
-
   describe('getMetadataPath', () => {
     it('returns correct file path for session id', () => {
       const path = storage.getMetadataPath('session-abc');
@@ -65,61 +56,9 @@ describe('SessionStorage', () => {
   });
 
   describe('loadMetadata', () => {
-    it('migrates saved directory selections while preserving conversation identity and provider state', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${SESSIONS_PATH}/session-directories.meta.json`
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify({
-        id: 'session-directories',
-        title: 'Saved conversation',
-        createdAt: 100,
-        lastActivityAt: 200,
-        externalContextPaths: ['/old/project'],
-        providerState: { providerSessionId: 'native-session' },
-      }));
-
-      expect(await storage.load('session-directories')).toEqual({
-        metadata: {
-          id: 'session-directories',
-          title: 'Saved conversation',
-          createdAt: 100,
-          lastActivityAt: 200,
-          providerState: { providerSessionId: 'native-session' },
-        },
-        needsMigration: true,
-        source: 'unscoped',
-      });
-    });
-
-    it('normalizes legacy timestamps to a single activity timestamp', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${SESSIONS_PATH}/session-legacy-time.meta.json`
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify({
-        id: 'session-legacy-time',
-        title: 'Legacy Session',
-        createdAt: 100,
-        updatedAt: 900,
-        lastResponseAt: 700,
-      }));
-
-      const result = await storage.load('session-legacy-time');
-
-      expect(result).toEqual({
-        metadata: {
-          id: 'session-legacy-time',
-          title: 'Legacy Session',
-          createdAt: 100,
-          lastActivityAt: 700,
-        },
-        needsMigration: true,
-        source: 'unscoped',
-      });
-    });
-
     it('removes malformed model metadata and marks the record for migration', async () => {
       mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${SESSIONS_PATH}/session-malformed-model.meta.json`
+        path === `${DEVICE_PATH}/session-malformed-model.meta.json`
       ));
       mockAdapter.read.mockResolvedValue(JSON.stringify({
         id: 'session-malformed-model',
@@ -139,13 +78,12 @@ describe('SessionStorage', () => {
           lastActivityAt: 200,
         },
         needsMigration: true,
-        source: 'unscoped',
       });
     });
 
     it('loads a durable model recovery locator without making it active session state', async () => {
       mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${SESSIONS_PATH}/session-model-retry.meta.json`
+        path === `${DEVICE_PATH}/session-model-retry.meta.json`
       ));
       mockAdapter.read.mockResolvedValue(JSON.stringify({
         id: 'session-model-retry',
@@ -176,13 +114,12 @@ describe('SessionStorage', () => {
           },
         },
         needsMigration: false,
-        source: 'unscoped',
       });
     });
 
     it('drops a malformed model recovery locator and marks the record for migration', async () => {
       mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${SESSIONS_PATH}/session-malformed-model-retry.meta.json`
+        path === `${DEVICE_PATH}/session-malformed-model-retry.meta.json`
       ));
       mockAdapter.read.mockResolvedValue(JSON.stringify({
         id: 'session-malformed-model-retry',
@@ -204,7 +141,6 @@ describe('SessionStorage', () => {
           lastActivityAt: 200,
         },
         needsMigration: true,
-        source: 'unscoped',
       });
     });
 
@@ -214,60 +150,6 @@ describe('SessionStorage', () => {
       const result = await storage.loadMetadata('session-123');
 
       expect(result).toBeNull();
-    });
-
-    it('loads legacy metadata without migrating during the read', async () => {
-      const metadata = {
-        id: 'session-legacy',
-        title: 'Legacy Session',
-        createdAt: 1700000000,
-        lastActivityAt: 1700001000,
-      };
-
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${LEGACY_SESSIONS_PATH}/session-legacy.meta.json`
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify(metadata));
-
-      const result = await storage.loadMetadata('session-legacy');
-
-      expect(result).toEqual(metadata);
-      expect(mockAdapter.write).not.toHaveBeenCalled();
-      expect(mockAdapter.delete).not.toHaveBeenCalled();
-    });
-
-    it('keeps valid legacy metadata visible when migration fails', async () => {
-      const metadata = {
-        id: 'session-legacy',
-        title: 'Legacy Session',
-        createdAt: 1700000000,
-        lastActivityAt: 1700001000,
-      };
-
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${LEGACY_SESSIONS_PATH}/session-legacy.meta.json`
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify(metadata));
-      mockAdapter.write.mockRejectedValue(new Error('EEXIST: .grandemonium/sessions'));
-
-      await expect(storage.loadMetadata('session-legacy')).resolves.toEqual(metadata);
-      expect(mockAdapter.delete).not.toHaveBeenCalled();
-    });
-
-    it('skips mismatched legacy metadata without migrating or modifying it', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === `${LEGACY_SESSIONS_PATH}/session-requested.meta.json`
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify({
-        id: 'session-other',
-        title: 'Mismatched',
-        createdAt: 1,
-        lastActivityAt: 1,
-      }));
-
-      await expect(storage.loadMetadata('session-requested')).resolves.toBeNull();
-      expect(mockAdapter.write).not.toHaveBeenCalled();
-      expect(mockAdapter.delete).not.toHaveBeenCalled();
     });
 
     it('loads and parses metadata from JSON file', async () => {
@@ -369,7 +251,7 @@ describe('SessionStorage', () => {
       expect(codexMeta!.providerId).toBe('codex');
     });
 
-    it('defaults providerId to claude for legacy conversations', async () => {
+    it('defaults providerId to claude when metadata has none', async () => {
       mockAdapter.listFiles.mockResolvedValue([
         '.grandemonium/sessions/old.meta.json',
       ]);
@@ -474,10 +356,10 @@ describe('SessionStorage', () => {
 
     it('reports an incomplete scan when a metadata file cannot be read', async () => {
       mockAdapter.listFiles.mockImplementation(async (path: string) => (
-        path === SESSIONS_PATH
+        path === DEVICE_PATH
           ? [
-            `${SESSIONS_PATH}/good.meta.json`,
-            `${SESSIONS_PATH}/bad.meta.json`,
+            `${DEVICE_PATH}/good.meta.json`,
+            `${DEVICE_PATH}/bad.meta.json`,
           ]
           : []
       ));
@@ -502,8 +384,8 @@ describe('SessionStorage', () => {
 
     it('reports malformed metadata without making the I/O scan incomplete', async () => {
       mockAdapter.listFiles.mockImplementation(async (path: string) => (
-        path === SESSIONS_PATH
-          ? [`${SESSIONS_PATH}/malformed.meta.json`]
+        path === DEVICE_PATH
+          ? [`${DEVICE_PATH}/malformed.meta.json`]
           : []
       ));
       mockAdapter.read.mockResolvedValue('{"id":');
@@ -513,27 +395,6 @@ describe('SessionStorage', () => {
         complete: true,
         invalidMetadataCount: 1,
       });
-    });
-
-    it('keeps valid legacy metadata visible without migration writes', async () => {
-      mockAdapter.listFiles.mockImplementation(async (path: string) => (
-        path === LEGACY_SESSIONS_PATH
-          ? [`${LEGACY_SESSIONS_PATH}/legacy.meta.json`]
-          : []
-      ));
-      mockAdapter.read.mockResolvedValue(JSON.stringify({
-        id: 'legacy',
-        title: 'Legacy session',
-        createdAt: 1,
-        lastActivityAt: 2,
-      }));
-      mockAdapter.write.mockRejectedValue(new Error('EEXIST: .grandemonium/sessions'));
-
-      await expect(storage.listMetadata()).resolves.toEqual([
-        expect.objectContaining({ id: 'legacy', title: 'Legacy session' }),
-      ]);
-      expect(mockAdapter.write).not.toHaveBeenCalled();
-      expect(mockAdapter.delete).not.toHaveBeenCalled();
     });
 
     it('skips metadata whose JSON id does not match the filename without modifying it', async () => {
@@ -561,8 +422,8 @@ describe('SessionStorage', () => {
       let maxActiveReads = 0;
 
       mockAdapter.listFiles.mockImplementation(async (path: string) => (
-        path === SESSIONS_PATH
-          ? ids.map(id => `${SESSIONS_PATH}/${id}.meta.json`)
+        path === DEVICE_PATH
+          ? ids.map(id => `${DEVICE_PATH}/${id}.meta.json`)
           : []
       ));
       mockAdapter.read.mockImplementation(async (path: string) => {
@@ -590,8 +451,8 @@ describe('SessionStorage', () => {
       });
       const onBatch = jest.fn();
       mockAdapter.listFiles.mockImplementation(async (path: string) => (
-        path === SESSIONS_PATH
-          ? ids.map(id => `${SESSIONS_PATH}/${id}.meta.json`)
+        path === DEVICE_PATH
+          ? ids.map(id => `${DEVICE_PATH}/${id}.meta.json`)
           : []
       ));
       mockAdapter.read.mockImplementation(async (path: string) => {
@@ -629,8 +490,7 @@ describe('SessionStorage', () => {
             id: 'session-1',
             title: 'Session One',
             createdAt: 1700000000,
-            updatedAt: 1700001000,
-            lastResponseAt: 1700000900,
+            lastActivityAt: 1700000900,
             linkedContentPath: 'Notes/One.md',
             selectedModel: 'claude-sonnet-4-5',
             isPinned: true,
@@ -642,8 +502,7 @@ describe('SessionStorage', () => {
             id: 'session-2',
             title: 'Session Two',
             createdAt: 1700000000,
-            updatedAt: 1700002000,
-            lastResponseAt: 1700001500,
+            lastActivityAt: 1700001500,
           }));
         }
         return Promise.resolve('{}');

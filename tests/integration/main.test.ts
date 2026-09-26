@@ -35,6 +35,10 @@ jest.mock('fs');
 // Now import the plugin after mocking
 import GrandemoniumPlugin from '@/main';
 
+function deviceSessionsPath(): string {
+  return getDeviceSessionsPath(getHostnameKey());
+}
+
 describe('GrandemoniumPlugin', () => {
   let plugin: GrandemoniumPlugin;
   let pluginInstances: GrandemoniumPlugin[];
@@ -95,7 +99,6 @@ describe('GrandemoniumPlugin', () => {
     return metadata.map(item => ({
       metadata: item,
       needsMigration: false,
-      source: 'device',
     }));
   }
 
@@ -364,54 +367,6 @@ describe('GrandemoniumPlugin', () => {
       scanSpy.mockRestore();
       loadSourceSpy.mockRestore();
       saveSpy.mockRestore();
-    });
-
-    it('migrates very old metadata into the unscoped namespace after scanning', async () => {
-      const legacyMetadata = {
-        id: 'legacy-background-conversation',
-        providerId: 'claude' as const,
-        title: 'Legacy background conversation',
-        createdAt: 1,
-        lastActivityAt: 2,
-      };
-      await plugin.onload();
-      const scanSpy = jest.spyOn(SessionStorage.prototype, 'scan')
-        .mockResolvedValue({
-          records: [{
-            metadata: legacyMetadata,
-            needsMigration: false,
-            source: 'legacy',
-          }],
-          complete: true,
-          invalidMetadataCount: 0,
-        });
-      const loadSpy = jest.spyOn(SessionStorage.prototype, 'load')
-        .mockResolvedValue({
-          metadata: legacyMetadata,
-          needsMigration: false,
-          source: 'legacy',
-        });
-      const persistence = getConversationPersistence(plugin);
-      const events: string[] = [];
-      const saveSpy = jest.spyOn(persistence, 'saveMetadata')
-        .mockImplementation(async () => {
-          events.push('save-unscoped');
-        });
-      const deleteLegacySpy = jest.spyOn(persistence, 'deleteLegacyMetadata')
-        .mockImplementation(async () => {
-          events.push('delete-legacy');
-        });
-
-      await (plugin as any).loadRemainingSessionMetadata();
-
-      expect(events).toEqual(['save-unscoped', 'delete-legacy']);
-      expect(plugin.getCachedConversation(legacyMetadata.id)?.title)
-        .toBe(legacyMetadata.title);
-
-      scanSpy.mockRestore();
-      loadSpy.mockRestore();
-      saveSpy.mockRestore();
-      deleteLegacySpy.mockRestore();
     });
 
     it('recovers missing model metadata after the background session scan', async () => {
@@ -2808,7 +2763,7 @@ describe('GrandemoniumPlugin', () => {
       expect(result?.id).toBe(conversation.id);
       expect(plugin.getConversationList()).toHaveLength(1);
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.grandemonium/sessions/session-removed-after-startup.meta.json',
+        `${deviceSessionsPath()}/session-removed-after-startup.meta.json`,
       );
       availabilitySpy.mockRestore();
     });
@@ -2835,7 +2790,7 @@ describe('GrandemoniumPlugin', () => {
         previousProviderSessionIds: ['session-from-previous-vault-path'],
       }));
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.grandemonium/sessions/session-from-previous-vault-path.meta.json',
+        `${deviceSessionsPath()}/session-from-previous-vault-path.meta.json`,
       );
       availabilitySpy.mockRestore();
       loadSpy.mockRestore();
@@ -3377,7 +3332,7 @@ describe('GrandemoniumPlugin', () => {
   describe('loadSettings with conversations', () => {
     it('migrates a legacy Codex fingerprint before reconciling persisted sessions', async () => {
       const timestamp = Date.now();
-      const metadataPath = '.grandemonium/sessions/conv-codex-legacy.meta.json';
+      const metadataPath = `${deviceSessionsPath()}/conv-codex-legacy.meta.json`;
       const sessionMetadata = {
         id: 'conv-codex-legacy',
         providerId: 'codex',
@@ -3394,11 +3349,11 @@ describe('GrandemoniumPlugin', () => {
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
         path === '.grandemonium/grandemonium-settings.json'
-        || path === '.grandemonium/sessions'
+        || path === deviceSessionsPath()
         || path === metadataPath
       ));
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => (
-        path === '.grandemonium/sessions'
+        path === deviceSessionsPath()
           ? { files: [metadataPath], folders: [] }
           : { files: [], folders: [] }
       ));
@@ -3449,17 +3404,17 @@ describe('GrandemoniumPlugin', () => {
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
         return path === '.grandemonium/grandemonium-settings.json'
-          || path === '.grandemonium/sessions'
-          || path === '.grandemonium/sessions/conv-stale-1.meta.json';
+          || path === deviceSessionsPath()
+          || path === `${deviceSessionsPath()}/conv-stale-1.meta.json`;
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions') {
-          return { files: ['.grandemonium/sessions/conv-stale-1.meta.json'], folders: [] };
+        if (path === deviceSessionsPath()) {
+          return { files: [`${deviceSessionsPath()}/conv-stale-1.meta.json`], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions/conv-stale-1.meta.json') {
+        if (path === `${deviceSessionsPath()}/conv-stale-1.meta.json`) {
           return sessionMeta;
         }
         if (path === '.grandemonium/grandemonium-settings.json') {
@@ -3472,7 +3427,7 @@ describe('GrandemoniumPlugin', () => {
 
       expect(plugin.getConversationList()).toHaveLength(1);
       expect(mockApp.vault.adapter.remove).not.toHaveBeenCalledWith(
-        '.grandemonium/sessions/conv-stale-1.meta.json',
+        `${deviceSessionsPath()}/conv-stale-1.meta.json`,
       );
     });
 
@@ -3490,7 +3445,7 @@ describe('GrandemoniumPlugin', () => {
       // Mock files exist
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
         // Session files
-        if (path === '.grandemonium/sessions' || path === '.grandemonium/sessions/conv-saved-1.meta.json') {
+        if (path === deviceSessionsPath() || path === `${deviceSessionsPath()}/conv-saved-1.meta.json`) {
           return true;
         }
         // grandemonium-settings.json exists
@@ -3500,13 +3455,13 @@ describe('GrandemoniumPlugin', () => {
         return false;
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions') {
-          return { files: ['.grandemonium/sessions/conv-saved-1.meta.json'], folders: [] };
+        if (path === deviceSessionsPath()) {
+          return { files: [`${deviceSessionsPath()}/conv-saved-1.meta.json`], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions/conv-saved-1.meta.json') {
+        if (path === `${deviceSessionsPath()}/conv-saved-1.meta.json`) {
           return sessionMeta;
         }
         if (path === '.grandemonium/grandemonium-settings.json') {
@@ -3538,12 +3493,12 @@ describe('GrandemoniumPlugin', () => {
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
         return path === '.grandemonium/grandemonium-settings.json' ||
-          path === '.grandemonium/sessions' ||
-          path === '.grandemonium/sessions/conv-saved-1.meta.json';
+          path === deviceSessionsPath() ||
+          path === `${deviceSessionsPath()}/conv-saved-1.meta.json`;
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions') {
-          return { files: ['.grandemonium/sessions/conv-saved-1.meta.json'], folders: [] };
+        if (path === deviceSessionsPath()) {
+          return { files: [`${deviceSessionsPath()}/conv-saved-1.meta.json`], folders: [] };
         }
         return { files: [], folders: [] };
       });
@@ -3555,7 +3510,7 @@ describe('GrandemoniumPlugin', () => {
             environmentVariables: 'ANTHROPIC_BASE_URL=https://api.example.com',
           });
         }
-        if (path === '.grandemonium/sessions/conv-saved-1.meta.json') {
+        if (path === `${deviceSessionsPath()}/conv-saved-1.meta.json`) {
           return sessionMeta;
         }
         return '';
@@ -3570,7 +3525,7 @@ describe('GrandemoniumPlugin', () => {
       expect(loaded?.sessionId).toBeNull();
 
       const sessionWrite = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.grandemonium/sessions/conv-saved-1.meta.json'
+        ([path]) => path === `${deviceSessionsPath()}/conv-saved-1.meta.json`
       );
       expect(sessionWrite).toBeDefined();
       const meta = JSON.parse(sessionWrite?.[1] as string);
@@ -3599,17 +3554,17 @@ describe('GrandemoniumPlugin', () => {
 
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
         return path === '.grandemonium/grandemonium-settings.json' ||
-          path === '.grandemonium/sessions' ||
-          path === '.grandemonium/sessions/conv-multi-session.meta.json';
+          path === deviceSessionsPath() ||
+          path === `${deviceSessionsPath()}/conv-multi-session.meta.json`;
       });
       mockApp.vault.adapter.list.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions') {
-          return { files: ['.grandemonium/sessions/conv-multi-session.meta.json'], folders: [] };
+        if (path === deviceSessionsPath()) {
+          return { files: [`${deviceSessionsPath()}/conv-multi-session.meta.json`], folders: [] };
         }
         return { files: [], folders: [] };
       });
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/sessions/conv-multi-session.meta.json') {
+        if (path === `${deviceSessionsPath()}/conv-multi-session.meta.json`) {
           return sessionMeta;
         }
         if (path === '.grandemonium/grandemonium-settings.json') {

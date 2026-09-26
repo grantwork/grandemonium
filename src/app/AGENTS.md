@@ -15,7 +15,7 @@
 
 | Component | Authority |
 | --- | --- |
-| `ConversationRepository` | The canonical in-memory Grandemonium conversation collection, device-versus-unscoped metadata ownership and explicit assignment, hydration status, pin/archive and creation-only Linked content identity, deletion transactions, per-conversation persistence queues, input-ledger coordination, historical model recovery, selected-model availability reconciliation, and execution-snapshot binding |
+| `ConversationRepository` | The canonical in-memory Grandemonium conversation collection, hydration status, pin/archive and creation-only Linked content identity, deletion transactions, per-conversation persistence queues, input-ledger coordination, historical model recovery, selected-model availability reconciliation, and execution-snapshot binding |
 | `SharedStorageService` | Vault persistence I/O plus construction of shared persistence adapters |
 | `GrandemoniumSettingsStorage` | Settings persistence, normalization of stored values, and dropping stored keys that are not settings |
 | `SettingsCoordinator` | Serialization of settings mutations, rollback before failed persistence, and post-commit publication ordering |
@@ -46,6 +46,6 @@ Storage adapters own I/O mechanics, not domain decisions. Callers decide what st
 - Failed settings persistence restores the pre-mutation in-memory settings snapshot.
 - A post-commit publication failure is reported as committed state; it must not roll back data that was already persisted.
 - Conversation persistence for one conversation remains ordered, and stale execution snapshots must not overwrite newer provider state.
-- Deletion, hydration, input-ledger, and execution-snapshot writes must preserve their ownership, generation, and binding fences. `ConversationRepository` revalidates metadata authority for staged execution immediately before provider handoff.
+- Deletion, hydration, input-ledger, and execution-snapshot writes must preserve their deletion, generation, and binding fences. `ConversationRepository` revalidates that a staged conversation is still current and undeleted immediately before provider handoff.
 - Archiving clears pin state, cannot be inferred from tab closure, and never mutates provider-native history.
 - Historical model recovery is best-effort, concurrency-bounded, provider-owned, and must not overwrite a model selected or recovered by a newer operation.

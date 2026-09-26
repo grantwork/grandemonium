@@ -1966,7 +1966,7 @@ describe('ChatExecutionCoordinator', () => {
   it('does not hand off a durably deleted turn when held ledger loading meets rejected disposal', async () => {
     const ledgerLoad = deferred<ConversationInputLedgerReadResult>();
     let tombstoned = false;
-    let currentMetadataExists = true;
+    let metadataExists = true;
     let inputLedgerExists = true;
     const storage = {
       metadataReader: {
@@ -1979,10 +1979,9 @@ describe('ChatExecutionCoordinator', () => {
       loadInputLedger: jest.fn(() => ledgerLoad.promise),
       saveInputLedger: jest.fn(async () => undefined),
       saveMetadata: jest.fn(async () => undefined),
-      deleteCurrentMetadata: jest.fn(async () => {
-        currentMetadataExists = false;
+      deleteMetadata: jest.fn(async () => {
+        metadataExists = false;
       }),
-      deleteLegacyMetadata: jest.fn(async () => undefined),
       deleteInputLedger: jest.fn(async () => {
         inputLedgerExists = false;
       }),
@@ -2084,10 +2083,10 @@ describe('ChatExecutionCoordinator', () => {
     expect(backend.sessions).toHaveLength(1);
     expect(session.requests).toHaveLength(0);
     expect(storage.saveInputLedger).not.toHaveBeenCalled();
-    expect(storage.deleteCurrentMetadata).toHaveBeenCalledWith(conversation.id);
+    expect(storage.deleteMetadata).toHaveBeenCalledWith(conversation.id);
     expect(storage.deleteInputLedger).toHaveBeenCalledWith(conversation.id);
     expect(tombstoned).toBe(true);
-    expect(currentMetadataExists).toBe(false);
+    expect(metadataExists).toBe(false);
     expect(inputLedgerExists).toBe(false);
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
   });

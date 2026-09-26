@@ -506,15 +506,14 @@ export default class GrandemoniumPlugin extends Plugin {
         }
       : await StartupProfiler.runAsync(
           'session-metadata-load',
-          () => this.loadSessionMetadataWithSources(),
+          () => this.loadSessionMetadataRecords(),
         );
     const initialModelRecoverySources = initialMetadataScan.records.map(({ metadata }) => (
       this.createConversationMetadataShell(metadata)
     ));
-    const initialEntries = initialMetadataScan.records.map(({ metadata, needsMigration, source }) => ({
+    const initialEntries = initialMetadataScan.records.map(({ metadata, needsMigration }) => ({
       conversation: this.createConversationMetadataShell(metadata),
       needsMigration,
-      source,
     }));
     StartupProfiler.recordCount('initial-session-metadata-count', initialEntries.length);
     StartupProfiler.recordCount('session-metadata-count', initialEntries.length);
@@ -576,20 +575,20 @@ export default class GrandemoniumPlugin extends Plugin {
     this.pendingSessionMetadataScan = deferRemainingMetadata;
   }
 
-  private async loadSessionMetadataWithSources(): Promise<{
+  private async loadSessionMetadataRecords(): Promise<{
     records: SessionMetadataReadResult[];
     complete: boolean;
     invalidMetadataCount: number;
   }> {
     const scan = await this.storage.sessions.scanMetadata();
     return {
-      records: await this.resolveMetadataSources(scan.metadata),
+      records: await this.loadMetadataRecords(scan.metadata),
       complete: scan.complete,
       invalidMetadataCount: scan.invalidMetadataCount,
     };
   }
 
-  private async resolveMetadataSources(
+  private async loadMetadataRecords(
     metadata: SessionMetadata[],
   ): Promise<SessionMetadataReadResult[]> {
     const records = await Promise.all(
@@ -657,15 +656,11 @@ export default class GrandemoniumPlugin extends Plugin {
         const recoverySources = records.map(({ metadata }) => (
           this.createConversationMetadataShell(metadata)
         ));
-        const publishable = records
-          .map(record => ({
-            conversation: this.createConversationMetadataShell(record.metadata),
-            source: record.source,
-          }))
-          .filter(({ conversation }) => (
+        const shells = records
+          .map(({ metadata }) => this.createConversationMetadataShell(metadata))
+          .filter(conversation => (
             this.conversationRepository.isSelectedModelPublicationSafe(conversation)
           ));
-        const shells = publishable.map(({ conversation }) => conversation);
         const publishedIds = new Set(shells.map(({ id }) => id));
         const invalidatedShells = ProviderSettingsCoordinator
           .invalidateConversationSessions(
@@ -675,12 +670,7 @@ export default class GrandemoniumPlugin extends Plugin {
         const invalidatedIds = new Set(
           invalidatedShells.map(({ id }) => id),
         );
-        const added = publishable.flatMap(({ conversation, source }) => (
-          this.conversationRepository.mergeMetadataConversations(
-            [conversation],
-            source === 'legacy' ? 'unscoped' : source,
-          )
-        ));
+        const added = this.conversationRepository.mergeMetadataConversations(shells);
         this.conversationRepository.registerHistoricalModelRecoverySources(
           recoverySources.filter(({ id }) => publishedIds.has(id)),
         );
@@ -707,7 +697,7 @@ export default class GrandemoniumPlugin extends Plugin {
       const scannedShells = scan.records
         .map(({ metadata }) => this.conversationRepository.getCachedConversation(metadata.id))
         .filter((shell): shell is Conversation => shell !== null);
-      const records = await this.resolveMetadataSources(
+      const records = await this.loadMetadataRecords(
         scan.records.map(({ metadata }) => metadata),
       );
       const resolvedIds = new Set(records.map(({ metadata }) => metadata.id));
@@ -721,10 +711,9 @@ export default class GrandemoniumPlugin extends Plugin {
         didChangeConversationList = true;
       }
       publishBatch(records);
-      const entries = records.map(({ metadata, needsMigration, source }) => ({
+      const entries = records.map(({ metadata, needsMigration }) => ({
         conversation: this.createConversationMetadataShell(metadata),
         needsMigration,
-        source,
       }));
       const shells = entries.map(({ conversation }) => conversation);
       const invalidatedEntries = ProviderSettingsCoordinator
@@ -1292,12 +1281,6 @@ export default class GrandemoniumPlugin extends Plugin {
     return this.conversationRepository.switchTo(id);
   }
 
-  async assignConversationToCurrentDevice(id: string): Promise<boolean> {
-    const assigned = await this.conversationRepository.assignToCurrentDevice(id);
-    if (assigned) this.notifyConversationViewsChanged();
-    return assigned;
-  }
-
   async deleteConversation(id: string): Promise<void> {
     await this.conversationRepository.delete(id);
     this.notifyConversationViewsChanged();
@@ -1572,10 +1555,9 @@ export default class GrandemoniumPlugin extends Plugin {
     )).filter((record): record is SessionMetadataReadResult => record !== null);
     if (records.length === 0) return;
 
-    const entries = records.map(({ metadata, needsMigration, source }) => ({
+    const entries = records.map(({ metadata, needsMigration }) => ({
       conversation: this.createConversationMetadataShell(metadata),
       needsMigration,
-      source,
     }));
     const shells = entries.map(({ conversation }) => conversation);
     const invalidatedIds = new Set(

@@ -63,22 +63,11 @@ interface MockPersistence extends ConversationPersistence {
   loadInputLedger: jest.MockedFunction<ConversationPersistence['loadInputLedger']>;
   saveInputLedger: jest.MockedFunction<ConversationPersistence['saveInputLedger']>;
   saveMetadata: jest.MockedFunction<ConversationPersistence['saveMetadata']>;
-  deleteCurrentMetadata: jest.MockedFunction<
-    ConversationPersistence['deleteCurrentMetadata']
-  >;
-  deleteLegacyMetadata: jest.MockedFunction<
-    ConversationPersistence['deleteLegacyMetadata']
-  >;
+  deleteMetadata: jest.MockedFunction<ConversationPersistence['deleteMetadata']>;
   deleteInputLedger: jest.MockedFunction<
     ConversationPersistence['deleteInputLedger']
   >;
-  assignMetadataToDevice: jest.MockedFunction<
-    ConversationPersistence['assignMetadataToDevice']
-  >;
   isDeleted: jest.MockedFunction<ConversationPersistence['isDeleted']>;
-  assertMetadataWriteAuthority: jest.MockedFunction<
-    ConversationPersistence['assertMetadataWriteAuthority']
-  >;
   markDeleted: jest.MockedFunction<ConversationPersistence['markDeleted']>;
 }
 
@@ -97,12 +86,9 @@ function createPersistence(
     loadInputLedger: jest.fn().mockResolvedValue(ledgerResult),
     saveInputLedger: jest.fn().mockResolvedValue(undefined),
     saveMetadata: jest.fn().mockResolvedValue(undefined),
-    deleteCurrentMetadata: jest.fn().mockResolvedValue(undefined),
-    deleteLegacyMetadata: jest.fn().mockResolvedValue(undefined),
+    deleteMetadata: jest.fn().mockResolvedValue(undefined),
     deleteInputLedger: jest.fn().mockResolvedValue(undefined),
-    assignMetadataToDevice: jest.fn().mockResolvedValue(undefined),
     isDeleted: jest.fn().mockResolvedValue(false),
-    assertMetadataWriteAuthority: jest.fn().mockResolvedValue(undefined),
     markDeleted: jest.fn().mockResolvedValue(undefined),
   };
 }
@@ -1348,120 +1334,7 @@ describe('ConversationRepository persistence queue and binding fences', () => {
     );
   });
 
-  it('migrates very old metadata into the unscoped namespace', async () => {
-    const conversation = createConversation();
-    const persistence = createPersistence();
-    const calls: string[] = [];
-    persistence.saveMetadata.mockImplementation(async (_metadata, target) => {
-      calls.push(`save:${target}`);
-    });
-    persistence.deleteLegacyMetadata.mockImplementation(async () => {
-      calls.push('delete-legacy');
-    });
-    const { repository } = createRepository(conversation, persistence);
-
-    await repository.adoptMetadataConversations([
-      { conversation, needsMigration: false, source: 'legacy' },
-    ]);
-
-    expect(calls).toEqual(['save:unscoped', 'delete-legacy']);
-  });
-
-  it('keeps unscoped metadata writable without assigning it to the device', async () => {
-    const conversation = createConversation();
-    const persistence = createPersistence();
-    const { repository } = createRepository(conversation, persistence);
-
-    await repository.adoptMetadataConversations([
-      { conversation, needsMigration: false, source: 'unscoped' },
-    ]);
-    persistence.saveMetadata.mockClear();
-
-    await repository.rename(conversation.id, 'Still unscoped');
-
-    expect(persistence.saveMetadata).toHaveBeenCalledWith(
-      expect.objectContaining({ id: conversation.id, title: 'Still unscoped' }),
-      'unscoped',
-    );
-    expect(persistence.assignMetadataToDevice).not.toHaveBeenCalled();
-    expect(repository.getMetadata(conversation.id)).toMatchObject({
-      isLegacySession: true,
-    });
-
-    persistence.saveInputLedger.mockClear();
-    await repository.stageConversationInput(
-      conversation.id,
-      createInputRecord(),
-    );
-    expect(persistence.saveInputLedger).toHaveBeenCalledWith(
-      conversation.id,
-      expect.objectContaining({ conversationId: conversation.id }),
-      'unscoped',
-    );
-  });
-
-  it('exclusively assigns unscoped metadata before routing later writes to the device', async () => {
-    const conversation = createConversation();
-    const persistence = createPersistence();
-    const { repository } = createRepository(conversation, persistence);
-    await repository.adoptMetadataConversations([
-      { conversation, needsMigration: false, source: 'unscoped' },
-    ]);
-    persistence.saveMetadata.mockClear();
-
-    await expect(repository.assignToCurrentDevice(conversation.id)).resolves.toBe(true);
-
-    expect(persistence.saveMetadata).toHaveBeenCalledWith(
-      expect.objectContaining({ id: conversation.id }),
-      'unscoped',
-    );
-    expect(persistence.assignMetadataToDevice).toHaveBeenCalledWith(conversation.id);
-    expect(repository.getMetadata(conversation.id)).toMatchObject({
-      isLegacySession: false,
-    });
-
-    persistence.saveMetadata.mockClear();
-    await repository.rename(conversation.id, 'Device owned');
-    expect(persistence.saveMetadata).toHaveBeenCalledWith(
-      expect.objectContaining({ id: conversation.id, title: 'Device owned' }),
-    );
-
-    persistence.saveInputLedger.mockClear();
-    await repository.stageConversationInput(
-      conversation.id,
-      createInputRecord(),
-    );
-    expect(persistence.saveInputLedger).toHaveBeenCalledWith(
-      conversation.id,
-      expect.objectContaining({ conversationId: conversation.id }),
-    );
-  });
-
-  it('retains unscoped ownership when exclusive assignment fails', async () => {
-    const conversation = createConversation();
-    const persistence = createPersistence();
-    persistence.assignMetadataToDevice.mockRejectedValue(new Error('rename failed'));
-    const { repository } = createRepository(conversation, persistence);
-    await repository.adoptMetadataConversations([
-      { conversation, needsMigration: false, source: 'unscoped' },
-    ]);
-
-    await expect(repository.assignToCurrentDevice(conversation.id)).rejects.toThrow(
-      'rename failed',
-    );
-
-    expect(repository.getMetadata(conversation.id)).toMatchObject({
-      isLegacySession: true,
-    });
-    persistence.saveMetadata.mockClear();
-    await repository.rename(conversation.id, 'Legacy remains authoritative');
-    expect(persistence.saveMetadata).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'Legacy remains authoritative' }),
-      'unscoped',
-    );
-  });
-
-  it('rewrites current metadata after timestamp schema migration', async () => {
+  it('rewrites metadata that was normalized on read', async () => {
     const conversation: Conversation = {
       ...createConversation(),
       linkedContentPath: 'Notes/Architecture.md',
@@ -1471,7 +1344,7 @@ describe('ConversationRepository persistence queue and binding fences', () => {
     const { repository } = createRepository(conversation, persistence);
 
     await repository.adoptMetadataConversations([
-      { conversation, needsMigration: true, source: 'device' },
+      { conversation, needsMigration: true },
     ]);
 
     expect(persistence.saveMetadata).toHaveBeenCalledWith(expect.objectContaining({
@@ -1479,10 +1352,6 @@ describe('ConversationRepository persistence queue and binding fences', () => {
       lastActivityAt: 42,
       linkedContentPath: 'Notes/Architecture.md',
     }));
-    expect(persistence.saveMetadata.mock.calls[0][0]).not.toHaveProperty('updatedAt');
-    expect(persistence.saveMetadata.mock.calls[0][0]).not.toHaveProperty('lastResponseAt');
-    expect(persistence.saveMetadata.mock.calls[0][0]).not.toHaveProperty('currentNote');
-    expect(persistence.deleteLegacyMetadata).not.toHaveBeenCalled();
   });
 
   it('preserves provider state while migrating an unhydrated metadata shell', async () => {
@@ -1504,7 +1373,7 @@ describe('ConversationRepository persistence queue and binding fences', () => {
     const { repository } = createRepository(conversation, persistence);
 
     await repository.adoptMetadataConversations([
-      { conversation, needsMigration: true, source: 'device' },
+      { conversation, needsMigration: true },
     ]);
 
     expect(persistence.saveMetadata).toHaveBeenCalledWith(expect.objectContaining({
@@ -1526,7 +1395,7 @@ describe('ConversationRepository persistence queue and binding fences', () => {
     };
     repository.mergeMetadataConversations([deferredConversation]);
     await repository.adoptMetadataConversations([
-      { conversation: deferredConversation, needsMigration: false, source: 'device' },
+      { conversation: deferredConversation, needsMigration: false },
     ]);
 
     expect(deferredConversation.linkedContentPath).toBe('Notes/New.md');
@@ -1549,11 +1418,8 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     persistence.markDeleted.mockImplementation(async () => {
       calls.push('marker');
     });
-    persistence.deleteCurrentMetadata.mockImplementation(async () => {
-      calls.push('current');
-    });
-    persistence.deleteLegacyMetadata.mockImplementation(async () => {
-      calls.push('legacy');
+    persistence.deleteMetadata.mockImplementation(async () => {
+      calls.push('metadata');
     });
     persistence.deleteInputLedger.mockImplementation(async () => {
       calls.push('ledger');
@@ -1568,7 +1434,7 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
 
     await repository.delete(conversation.id);
 
-    expect(calls).toEqual(['marker', 'current', 'legacy', 'ledger']);
+    expect(calls).toEqual(['marker', 'metadata', 'ledger']);
     expect(onConversationDeleted).toHaveBeenCalledWith(conversation.id);
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
   });
@@ -1587,8 +1453,7 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     );
 
     expect(repository.getCachedConversation(conversation.id)).toBe(conversation);
-    expect(persistence.deleteCurrentMetadata).not.toHaveBeenCalled();
-    expect(persistence.deleteLegacyMetadata).not.toHaveBeenCalled();
+    expect(persistence.deleteMetadata).not.toHaveBeenCalled();
     expect(persistence.deleteInputLedger).not.toHaveBeenCalled();
     expect(onConversationDeleted).not.toHaveBeenCalled();
   });
@@ -1821,11 +1686,8 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     persistence.markDeleted.mockImplementation(async () => {
       calls.push('marker');
     });
-    persistence.deleteCurrentMetadata.mockImplementation(async () => {
-      calls.push('current');
-    });
-    persistence.deleteLegacyMetadata.mockImplementation(async () => {
-      calls.push('legacy');
+    persistence.deleteMetadata.mockImplementation(async () => {
+      calls.push('metadata');
     });
     persistence.deleteInputLedger.mockImplementation(async () => {
       calls.push('ledger');
@@ -1850,8 +1712,7 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     expect(calls).toEqual([
       'marker',
       'callback',
-      'current',
-      'legacy',
+      'metadata',
       'ledger',
     ]);
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
@@ -1864,12 +1725,10 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     expect(calls).toEqual([
       'marker',
       'callback',
-      'current',
-      'legacy',
+      'metadata',
       'ledger',
       'callback',
-      'current',
-      'legacy',
+      'metadata',
       'ledger',
     ]);
     expect(persistence.markDeleted).toHaveBeenCalledTimes(1);
@@ -1879,8 +1738,8 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
   it('keeps a tombstoned conversation invisible after cleanup failure and allows retry', async () => {
     const conversation = createConversation();
     const persistence = createPersistence();
-    persistence.deleteLegacyMetadata.mockRejectedValueOnce(
-      new Error('legacy cleanup failed'),
+    persistence.deleteInputLedger.mockRejectedValueOnce(
+      new Error('ledger cleanup failed'),
     );
     const { repository, onConversationDeleted } = createRepository(
       conversation,
@@ -1888,7 +1747,7 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     );
 
     await expect(repository.delete(conversation.id)).rejects.toThrow(
-      'legacy cleanup failed',
+      'ledger cleanup failed',
     );
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
     expect(repository.mergeMetadataConversations([
@@ -1897,11 +1756,10 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
 
     await repository.retryDeletedConversationCleanup(conversation.id);
     expect(onConversationDeleted).toHaveBeenCalledTimes(2);
-    expect(persistence.deleteCurrentMetadata).toHaveBeenCalledTimes(2);
-    expect(persistence.deleteLegacyMetadata).toHaveBeenCalledTimes(2);
-    expect(persistence.deleteInputLedger).toHaveBeenCalledTimes(1);
+    expect(persistence.deleteMetadata).toHaveBeenCalledTimes(2);
+    expect(persistence.deleteInputLedger).toHaveBeenCalledTimes(2);
     expect(onConversationDeleted.mock.invocationCallOrder[1]).toBeLessThan(
-      persistence.deleteCurrentMetadata.mock.invocationCallOrder[1],
+      persistence.deleteMetadata.mock.invocationCallOrder[1],
     );
   });
 
@@ -1937,13 +1795,13 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
     expect(laterMetadataWrite).toBeUndefined();
   });
 
-  it('fences legacy migration before writing the deletion marker', async () => {
+  it('fences a metadata rewrite before writing the deletion marker', async () => {
     const conversation = createConversation();
     const persistence = createPersistence();
     const { repository } = createRepository(conversation, persistence);
 
     const migration = repository.adoptMetadataConversations([
-      { conversation, needsMigration: false, source: 'legacy' },
+      { conversation, needsMigration: true },
     ]);
     const deletion = repository.delete(conversation.id);
     await Promise.all([migration, deletion]);
@@ -1954,15 +1812,10 @@ describe('ConversationRepository deletion, fork, and rewind persistence', () => 
         (order) => order > markerOrder,
       ),
     ).toBe(false);
-    expect(
-      persistence.deleteLegacyMetadata.mock.invocationCallOrder.some(
-        (order) => order > markerOrder,
-      ),
-    ).toBe(true);
   });
 
   it.each([
-    ['current metadata', 'deleteCurrentMetadata'],
+    ['metadata', 'deleteMetadata'],
     ['input ledger', 'deleteInputLedger'],
   ] as const)(
     'keeps deletion semantic and retryable when %s cleanup fails',

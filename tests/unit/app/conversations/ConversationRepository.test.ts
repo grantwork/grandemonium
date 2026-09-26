@@ -38,12 +38,9 @@ function createRepository(conversation = createConversation()) {
     loadInputLedger: jest.fn().mockResolvedValue({ status: 'missing' }),
     saveInputLedger: jest.fn().mockResolvedValue(undefined),
     saveMetadata: jest.fn().mockResolvedValue(undefined),
-    deleteCurrentMetadata: jest.fn().mockResolvedValue(undefined),
-    deleteLegacyMetadata: jest.fn().mockResolvedValue(undefined),
+    deleteMetadata: jest.fn().mockResolvedValue(undefined),
     deleteInputLedger: jest.fn().mockResolvedValue(undefined),
-    assignMetadataToDevice: jest.fn().mockResolvedValue(undefined),
     isDeleted: jest.fn().mockResolvedValue(false),
-    assertMetadataWriteAuthority: jest.fn().mockResolvedValue(undefined),
     markDeleted: jest.fn().mockResolvedValue(undefined),
   };
   const repository = new ConversationRepository({
@@ -618,7 +615,6 @@ describe('ConversationRepository hydration', () => {
     await repository.adoptMetadataConversations([{
       conversation: deferred,
       needsMigration: false,
-      source: 'device',
     }]);
 
     expect(repository.getCachedConversation(deferred.id)).toBe(deferred);
@@ -638,7 +634,6 @@ describe('ConversationRepository hydration', () => {
     await expect(repository.adoptMetadataConversations([{
       conversation: deferred,
       needsMigration: false,
-      source: 'device',
     }])).rejects.toThrow('disk full');
     expect(repository.getCachedConversation(deferred.id)).toBeNull();
     expect(deferred.selectedModel).toBe('claude-code/retired-model');
@@ -646,7 +641,6 @@ describe('ConversationRepository hydration', () => {
     await repository.adoptMetadataConversations([{
       conversation: deferred,
       needsMigration: false,
-      source: 'device',
     }]);
     expect(persistence.saveMetadata).toHaveBeenCalledTimes(2);
     expect(persistence.saveMetadata).toHaveBeenLastCalledWith(expect.objectContaining({
@@ -1008,7 +1002,7 @@ describe('ConversationRepository hydration', () => {
     await expect(hydration).resolves.toBeNull();
     await expect(deletion).resolves.toBeUndefined();
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
-    expect(persistence.deleteCurrentMetadata).toHaveBeenCalledWith(conversation.id);
+    expect(persistence.deleteMetadata).toHaveBeenCalledWith(conversation.id);
   });
 
   it('does not return an already hydrated conversation deleted while model reconciliation is in flight', async () => {
@@ -1036,7 +1030,7 @@ describe('ConversationRepository hydration', () => {
     await expect(hydration).resolves.toBeNull();
     await expect(deletion).resolves.toBeUndefined();
     expect(repository.getCachedConversation(conversation.id)).toBeNull();
-    expect(persistence.deleteCurrentMetadata).toHaveBeenCalledWith(conversation.id);
+    expect(persistence.deleteMetadata).toHaveBeenCalledWith(conversation.id);
   });
 
   it('restarts hydration when provider session identity changes in flight', async () => {
@@ -1138,8 +1132,7 @@ describe('ConversationRepository hydration', () => {
     expect(repository.getCachedConversation(shell.id)).toBeNull();
     expect(persistence.saveMetadata).not.toHaveBeenCalled();
     expect(persistence.markDeleted).not.toHaveBeenCalled();
-    expect(persistence.deleteCurrentMetadata).not.toHaveBeenCalled();
-    expect(persistence.deleteLegacyMetadata).not.toHaveBeenCalled();
+    expect(persistence.deleteMetadata).not.toHaveBeenCalled();
     expect(persistence.deleteInputLedger).not.toHaveBeenCalled();
   });
 
