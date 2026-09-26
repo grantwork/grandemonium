@@ -18,7 +18,7 @@ import {
   shouldPreservePendingAnchors,
   type TrackedAnchor,
 } from "./reanchor";
-import { makeAnchor, normalizeTrailingChanges, parseDocument, resolveAnchor, serializeDocument } from "./store";
+import { blockChanges, makeAnchor, normalizeChanges, parseDocument, resolveAnchor } from "./store";
 import { applyTableHighlights, rangesTouchTable } from "./table-highlight";
 
 /** Marks transactions dispatched by the plugin itself (block rewrite). */
@@ -242,9 +242,10 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
       }
 
       /**
-       * Folds content that sits after the block (typed prose, footnote
-       * definitions) back in front of it, so the block stays the last element of
-       * the file. Otherwise that text ends up in the non-commentable trailing region.
+       * Makes the note canonical: folds content that sits after the block (typed
+       * prose, footnote definitions) back in front of it, so that text does not
+       * end up in the non-commentable trailing region, and merges any extra
+       * blocks or an outdated fence name into the one current block.
        */
       performNormalize(): void {
         // Flush a pending reanchor first: otherwise syncFromDoc (via update())
@@ -252,7 +253,7 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
         // edited is lost, and the later reanchor becomes a no-op.
         if (this.dirty) this.performReanchor();
         const text = this.view.state.doc.toString();
-        const changes = normalizeTrailingChanges(text, parseDocument(text));
+        const changes = normalizeChanges(text, parseDocument(text), plugin.settings.schemaHint);
         if (!changes) return;
         this.view.dispatch({
           changes,
@@ -303,9 +304,8 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
           }
         }
         if (!changed) return;
-        const serialized = serializeDocument(doc, plugin.settings.schemaHint);
         this.view.dispatch({
-          changes: { from: doc.prose.length, to: text.length, insert: serialized.slice(doc.prose.length) },
+          changes: blockChanges(text, doc, plugin.settings.schemaHint),
           annotations: [selfEdit.of(true), Transaction.addToHistory.of(false)],
         });
       }

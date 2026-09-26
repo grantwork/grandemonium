@@ -1,7 +1,7 @@
 import { CommentIndex, type CommentIndexSource, type IndexedFile } from "@/features/comments/comment-index";
 
 function block(comments: Record<string, unknown>): string {
-  return "```tandem-comments\n" + JSON.stringify(comments) + "\n```\n";
+  return "```grandemonium-comments\n" + JSON.stringify(comments) + "\n```\n";
 }
 
 function thread(text: string): unknown {
@@ -136,7 +136,7 @@ describe("comment index", () => {
 
   it("leaves a file with a broken block out rather than reporting bad comments", async () => {
     const vault = new FakeVault();
-    vault.put("Broken.md", "anchored\n```tandem-comments\n{ not json\n```\n");
+    vault.put("Broken.md", "anchored\n```grandemonium-comments\n{ not json\n```\n");
     const index = new CommentIndex(vault);
 
     await index.refresh();

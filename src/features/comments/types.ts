@@ -47,8 +47,20 @@ export interface ParsedDoc {
    * definitions that Obsidian appends to the end of the file, Issue #2).
    */
   trailing?: string;
-  /** Set when a tandem-comments block exists but its JSON is broken. */
+  /**
+   * Comment blocks before the last one, as ranges of `prose`. Their comments
+   * are merged in; writing the note removes them.
+   */
+  strays?: TextRange[];
+  /** Set when the last block uses the previous fence name. */
+  outdatedFence?: true;
+  /** Set when a comment block exists but its JSON is broken or two blocks disagree. */
   error?: string;
+}
+
+export interface TextRange {
+  from: number;
+  to: number;
 }
 
 export type AnchorResolution =

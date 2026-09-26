@@ -369,7 +369,7 @@ export class CommentsSettingsSection {
     new Setting(containerEl)
       .setName("Include schema hints")
       .setDesc(
-        "Add format instructions to the tandem-comments block for tools that read the Markdown directly. " +
+        "Add format instructions to the comment block for tools that read the Markdown directly. " +
           "Existing blocks update the next time a review thread changes."
       )
       .addToggle((toggle) =>
@@ -381,7 +381,7 @@ export class CommentsSettingsSection {
     if (Platform.isDesktopApp) {
       new Setting(containerEl)
         .setName("Claude code skill")
-        .setDesc("Write the bundled skill to ~/.claude/skills/obsidian-tandem-comments/SKILL.md.")
+        .setDesc("Write the bundled skill to ~/.claude/skills/grandemonium-comments/SKILL.md.")
         .addButton((button) =>
           button.setButtonText("Export skill").onClick(() => {
             try {

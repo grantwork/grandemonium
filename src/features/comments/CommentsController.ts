@@ -670,7 +670,7 @@ export class CommentsController {
     const raw = await this.app.vault.read(file);
     const doc = parseDocument(raw);
     if (doc.error) {
-      new Notice("tandem-comments block is invalid — please fix the JSON: " + doc.error);
+      new Notice("The comments in this note cannot be read: " + doc.error);
       return false;
     }
     mutate(doc);
@@ -683,7 +683,7 @@ export class CommentsController {
   async exportComments(file: TFile): Promise<void> {
     const doc = await this.readDoc(file);
     if (doc.error) {
-      new Notice("tandem-comments block is invalid — please fix the JSON: " + doc.error);
+      new Notice("The comments in this note cannot be read: " + doc.error);
       return;
     }
     const now = new Date();

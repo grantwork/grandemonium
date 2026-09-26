@@ -1,4 +1,4 @@
-import { normalizeTrailingChanges, parseDocument, resolveAnchor, SCHEMA_HINT_LINES,serializeDocument } from "@/features/comments/store";
+import { normalizeChanges, parseDocument, resolveAnchor, SCHEMA_HINT_LINES, serializeDocument } from "@/features/comments/store";
 import type { CommentMap } from "@/features/comments/types";
 
 const COMMENTS: CommentMap = {
@@ -11,7 +11,7 @@ const COMMENTS: CommentMap = {
 
 function block(json: string, hint = true): string {
   const hintStr = hint ? SCHEMA_HINT_LINES.join("\n") + "\n" : "";
-  return "```tandem-comments\n" + hintStr + json + "\n```\n";
+  return "```grandemonium-comments\n" + hintStr + json + "\n```\n";
 }
 
 describe("parseDocument", () => {
@@ -40,7 +40,7 @@ describe("parseDocument", () => {
   });
 
   it("sets error and keeps raw as prose when JSON is broken", () => {
-    const raw = "Text.\n```tandem-comments\n{ kaputt\n```\n";
+    const raw = "Text.\n```grandemonium-comments\n{ kaputt\n```\n";
     const doc = parseDocument(raw);
     expect(doc.error).toBeTruthy();
     expect(doc.prose).toBe(raw);
@@ -82,7 +82,7 @@ describe("parseDocument", () => {
   });
 
   it("sets error (not silent blank) when JSON is broken and footnotes follow", () => {
-    const raw = "Text\n```tandem-comments\n{ kaputt\n```\n[^1]: Fußnote\n";
+    const raw = "Text\n```grandemonium-comments\n{ kaputt\n```\n[^1]: Fußnote\n";
     const doc = parseDocument(raw);
     expect(doc.error).toBeTruthy();
     expect(doc.prose).toBe(raw);
@@ -92,7 +92,7 @@ describe("parseDocument", () => {
   it("parses a hand-written block as Claude would author it", () => {
     const raw = [
       "Wir sollten den Preis aggressiv senken im Q3.",
-      "```tandem-comments",
+      "```grandemonium-comments",
       '// Schema: { "<id>": { anchor:{exact,prefix,suffix,pos?}, status:open|resolved, thread:[{author,ts,text}] } }',
       '// Anchor = quote from the prose. To locate: search for "exact", disambiguate via prefix/suffix.',
       "{",
@@ -173,7 +173,7 @@ describe("serializeDocument", () => {
   });
 });
 
-describe("normalizeTrailingChanges", () => {
+describe("normalizeChanges", () => {
   // Wendet CM-artige Simultan-Änderungen (Koordinaten im Original) auf einen String an.
   function applyChanges(raw: string, changes: { from: number; to: number; insert: string }[]): string {
     let out = raw;
@@ -184,7 +184,7 @@ describe("normalizeTrailingChanges", () => {
   }
 
   function normalize(raw: string): string | null {
-    const changes = normalizeTrailingChanges(raw, parseDocument(raw));
+    const changes = normalizeChanges(raw, parseDocument(raw), true);
     return changes ? applyChanges(raw, changes) : null;
   }
 
@@ -197,7 +197,7 @@ describe("normalizeTrailingChanges", () => {
     expect(doc.comments).toEqual(COMMENTS);
     expect(doc.trailing ?? "").toBe("");
     // Idempotent: das Ergebnis ist kanonisch.
-    expect(normalizeTrailingChanges(result, parseDocument(result))).toBeNull();
+    expect(normalizeChanges(result, parseDocument(result), true)).toBeNull();
   });
 
   it("folds trailing text that has no final newline", () => {
@@ -234,21 +234,118 @@ describe("normalizeTrailingChanges", () => {
 
   it("returns null when there is no trailing content", () => {
     const raw = "Prosa.\n" + block(JSON.stringify(COMMENTS, null, 2));
-    expect(normalizeTrailingChanges(raw, parseDocument(raw))).toBeNull();
+    expect(normalizeChanges(raw, parseDocument(raw), true)).toBeNull();
   });
 
   it("returns null for whitespace-only trailing", () => {
     const raw = "Prosa.\n" + block(JSON.stringify(COMMENTS, null, 2)) + "\n\n  \n";
-    expect(normalizeTrailingChanges(raw, parseDocument(raw))).toBeNull();
+    expect(normalizeChanges(raw, parseDocument(raw), true)).toBeNull();
   });
 
   it("returns null when the block has a parse error", () => {
-    const raw = "Prosa.\n```tandem-comments\n{ kaputt\n```\ntest\n";
-    expect(normalizeTrailingChanges(raw, parseDocument(raw))).toBeNull();
+    const raw = "Prosa.\n```grandemonium-comments\n{ kaputt\n```\ntest\n";
+    expect(normalizeChanges(raw, parseDocument(raw), true)).toBeNull();
   });
 
   it("returns null when there is no block at all", () => {
     const raw = "Nur Prosa.\n";
-    expect(normalizeTrailingChanges(raw, parseDocument(raw))).toBeNull();
+    expect(normalizeChanges(raw, parseDocument(raw), true)).toBeNull();
+  });
+});
+
+describe("notes with more than one comment block", () => {
+  const FIRST: CommentMap = {
+    c201: {
+      anchor: { exact: "cost falls on the licensee", prefix: "", suffix: "" },
+      status: "open",
+      thread: [{ author: "claude", ts: "2026-09-26T01:00:00Z", text: "Is this sound?" }],
+    },
+  };
+  const LAST: CommentMap = {
+    c101: {
+      anchor: { exact: "hosting is included", prefix: "", suffix: "" },
+      status: "open",
+      thread: [{ author: "gpt", ts: "2026-09-26T00:58:26Z", text: "Which costs?" }],
+    },
+  };
+  const json = (comments: CommentMap) => JSON.stringify(comments, null, 2);
+  // An agent put its comment in a block of its own under the passage, and
+  // another agent appended the usual block at the end.
+  const raw =
+    "The cost falls on the licensee.\n\n" +
+    block(json(FIRST), false) +
+    "\nHosting is included.\n" +
+    block(json(LAST));
+
+  function applyChanges(text: string, changes: { from: number; to: number; insert: string }[]): string {
+    let out = text;
+    for (const c of [...changes].sort((a, b) => b.from - a.from)) {
+      out = out.slice(0, c.from) + c.insert + out.slice(c.to);
+    }
+    return out;
+  }
+
+  it("reads the comments of every block, not only the last", () => {
+    const doc = parseDocument(raw);
+    expect(doc.error).toBeUndefined();
+    expect(doc.comments).toEqual({ ...FIRST, ...LAST });
+  });
+
+  it("keeps the earlier blocks in the prose so editor offsets stay true", () => {
+    const doc = parseDocument(raw);
+    expect(raw.startsWith(doc.prose)).toBe(true);
+    expect(doc.prose).toContain("c201");
+  });
+
+  it("writes one block at the end, with the earlier blocks removed", () => {
+    const expected = "The cost falls on the licensee.\n\nHosting is included.\n" + block(json({ ...FIRST, ...LAST }));
+    expect(serializeDocument(parseDocument(raw), true)).toBe(expected);
+  });
+
+  it("normalises the note to the same single block, and is then canonical", () => {
+    const changes = normalizeChanges(raw, parseDocument(raw), true);
+    expect(changes).not.toBeNull();
+    const result = applyChanges(raw, changes!);
+    expect(result).toBe(serializeDocument(parseDocument(raw), true));
+    expect(normalizeChanges(result, parseDocument(result), true)).toBeNull();
+  });
+
+  it("merges an id repeated with identical content", () => {
+    const repeated = "Text.\n\n" + block(json(LAST)) + "\nMore.\n" + block(json(LAST));
+    const doc = parseDocument(repeated);
+    expect(doc.error).toBeUndefined();
+    expect(doc.comments).toEqual(LAST);
+  });
+
+  it("reports an id that two blocks use for different comments", () => {
+    const clash: CommentMap = { c101: { ...LAST.c101, status: "resolved" } };
+    const conflicting = "Text.\n\n" + block(json(clash)) + "\nMore.\n" + block(json(LAST));
+    const doc = parseDocument(conflicting);
+    expect(doc.error).toContain("c101");
+    expect(doc.comments).toEqual({});
+    expect(doc.prose).toBe(conflicting);
+  });
+
+  it("ignores a block quoted inside a longer fence", () => {
+    const example = "The format looks like this:\n\n````markdown\n" + block(json(FIRST)) + "````\n\nEnd.\n";
+    expect(parseDocument(example)).toEqual({ prose: example, comments: {} });
+  });
+});
+
+describe("the previous fence name", () => {
+  const legacy = "Text.\n```tandem-comments\n" + JSON.stringify(COMMENTS, null, 2) + "\n```\n";
+
+  it("is still read", () => {
+    const doc = parseDocument(legacy);
+    expect(doc.prose).toBe("Text.");
+    expect(doc.comments).toEqual(COMMENTS);
+  });
+
+  it("is rewritten under the current name by normalisation", () => {
+    const changes = normalizeChanges(legacy, parseDocument(legacy), false);
+    expect(changes).not.toBeNull();
+    let out = legacy;
+    for (const c of [...changes!].sort((a, b) => b.from - a.from)) out = out.slice(0, c.from) + c.insert + out.slice(c.to);
+    expect(out).toBe("Text.\n" + block(JSON.stringify(COMMENTS, null, 2), false));
   });
 });

@@ -27,7 +27,7 @@ function noteWith(ids: string[]): string {
     ])
   );
   const prose = ids.map((id) => `The passage ${id} is here.`).join("\n");
-  return `${prose}\n\`\`\`tandem-comments\n${JSON.stringify(comments)}\n\`\`\`\n`;
+  return `${prose}\n\`\`\`grandemonium-comments\n${JSON.stringify(comments)}\n\`\`\`\n`;
 }
 
 function createController(notes: Record<string, string> = {}): CommentsController {

@@ -1,7 +1,7 @@
 import { MarkdownRenderChild, type Plugin } from "obsidian";
 
 import type { CommentsController } from "./CommentsController";
-import { parseBlockBody } from "./store";
+import { COMMENT_FENCE_NAMES, parseBlockBody } from "./store";
 
 /**
  * Live Preview hides the block entirely: comments show up only as highlights
@@ -9,11 +9,13 @@ import { parseBlockBody } from "./store";
  * Reading View renders a "comment count" pill that also opens the sidebar.
  */
 export function registerReadingView(plugin: Plugin, controller: CommentsController): void {
-  plugin.registerMarkdownCodeBlockProcessor("tandem-comments", (source, el, ctx) => {
-    // The Live Preview and Reading View check needs the attached DOM, so this
-    // runs as a render child whose onload fires after mounting.
-    ctx.addChild(new BlockPill(el, source, controller));
-  });
+  for (const name of COMMENT_FENCE_NAMES) {
+    plugin.registerMarkdownCodeBlockProcessor(name, (source, el, ctx) => {
+      // The Live Preview and Reading View check needs the attached DOM, so this
+      // runs as a render child whose onload fires after mounting.
+      ctx.addChild(new BlockPill(el, source, controller));
+    });
+  }
 }
 
 class BlockPill extends MarkdownRenderChild {
@@ -62,7 +64,7 @@ class BlockPill extends MarkdownRenderChild {
         else open++;
       }
     } catch {
-      el.createDiv({ text: "💬 tandem-comments — invalid JSON", cls: "tc-pill tc-pill-error" });
+      el.createDiv({ text: "💬 comments — invalid JSON", cls: "tc-pill tc-pill-error" });
       return;
     }
     // Only resolved history left, so stay completely invisible in Reading View.

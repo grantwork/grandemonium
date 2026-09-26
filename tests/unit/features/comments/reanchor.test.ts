@@ -68,7 +68,7 @@ describe("changesTouchCommentBlock", () => {
     const changes = ChangeSet.of(
       [
         { from: 4, to: 7, insert: "replacement" },
-        { from: 20, to: 40, insert: "\n```tandem-comments\n{}\n```\n" },
+        { from: 20, to: 40, insert: "\n```grandemonium-comments\n{}\n```\n" },
       ],
       40
     );
@@ -86,7 +86,7 @@ describe("pending anchors across comment-block transactions", () => {
     const changes = ChangeSet.of(
       [
         { from: 2, to: 5, insert: "edited passage" },
-        { from: 20, to: 100, insert: "\n```tandem-comments\n{}\n```\n" },
+        { from: 20, to: 100, insert: "\n```grandemonium-comments\n{}\n```\n" },
       ],
       100
     );
@@ -116,7 +116,7 @@ describe("pending anchors across comment-block transactions", () => {
     const changes = ChangeSet.of(
       [
         { from: 0, to: 1, insert: "long replacement" },
-        { from: 30, to: 100, insert: "\n```tandem-comments\n{}\n```\n" },
+        { from: 30, to: 100, insert: "\n```grandemonium-comments\n{}\n```\n" },
       ],
       100
     );

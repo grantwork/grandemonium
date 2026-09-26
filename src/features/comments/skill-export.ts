@@ -1,16 +1,16 @@
 const buildSkill = (agentName: string): string => `---
-name: obsidian-tandem-comments
-description: Read, write, reply to and resolve comments and edit suggestions in Markdown files that use the tandem-comments format (a \`\`\`tandem-comments fenced JSON block near the end of the file, quote-anchored via W3C TextQuoteSelector). Trigger whenever a Markdown file contains a tandem-comments block, or the user asks to comment on / annotate / review text in an Obsidian note, suggest an edit, reply to a comment, or resolve comments.
+name: grandemonium-comments
+description: Read, write, reply to and resolve comments and edit suggestions in Markdown files that use Grandemonium's comment format (a \`\`\`grandemonium-comments fenced JSON block at the end of the file, quote-anchored via W3C TextQuoteSelector). Trigger whenever a Markdown file contains a grandemonium-comments block, or the user asks to comment on / annotate / review text in an Obsidian note, suggest an edit, reply to a comment, or resolve comments.
 ---
 
-# Obsidian Tandem Comments — comments and edit suggestions in Markdown
+# Grandemonium comments: comments and edit suggestions in Markdown
 
-Comments live in a fenced block at the **end of the file** (footnote definitions
+Comments live in one fenced block at the **end of the file** (footnote definitions
 that Obsidian appends after the block are fine and must be preserved). The prose
-stays **100% untouched** — never write markers into the body text.
+stays **100% untouched**; never write markers into the body text.
 
 \`\`\`\`markdown
-\`\`\`tandem-comments
+\`\`\`grandemonium-comments
 // Schema: { "<id>": { anchor:{exact,prefix,suffix,pos?}, status:open|resolved, thread:[{author,ts,text}], suggestion?:{replacement,author,ts,result?} } }
 // Anchor = quote from the prose. To locate: search for "exact", disambiguate via prefix/suffix.
 {
@@ -18,7 +18,7 @@ stays **100% untouched** — never write markers into the body text.
     "anchor": { "exact": "cut prices hard", "prefix": "we should ", "suffix": " in Q3", "pos": 22 },
     "status": "open",
     "thread": [
-      { "author": "Leon", "ts": "2026-06-10T10:24:00Z", "text": "Too aggressive?" }
+      { "author": "Grant", "ts": "2026-06-10T10:24:00Z", "text": "Too aggressive?" }
     ]
   }
 }
@@ -27,6 +27,12 @@ stays **100% untouched** — never write markers into the body text.
 
 ## Rules
 
+- **One block per note:** a note has at most one \`\`\`grandemonium-comments block,
+  at the end. If one exists, add to it; never start a second block, and never put
+  a block next to the passage it discusses. If you find more than one, merge them
+  into the last one, keeping every entry.
+- **Timestamps:** \`ts\` is the actual current time in UTC; read it with
+  \`date -u +%Y-%m-%dT%H:%M:%SZ\`, never make one up.
 - **Locating a passage:** search the prose for \`anchor.exact\`; on multiple hits
   disambiguate via \`prefix\`/\`suffix\`, falling back to the hit closest to \`pos\`
   (character offset into the prose).
@@ -59,7 +65,7 @@ stays **100% untouched** — never write markers into the body text.
   clean. Only if history is explicitly requested, set \`status\` to \`"resolved"\` instead.
 - **Block lifecycle:** when no comments remain, **remove the block entirely**
   (including the single separating newline before it). If no block exists yet, append
-  it at the end of the file: exactly one \\n between prose and the \`\`\`tandem-comments line.
+  it at the end of the file: exactly one \\n between prose and the \`\`\`grandemonium-comments line.
 - **Content after the block:** anything following the closing \`\`\` (e.g. footnote
   definitions like \`[^1]: ...\` that Obsidian appends at the very end) is legitimate —
   keep it byte-exact and leave it after the block when rewriting. If removing the
@@ -90,7 +96,7 @@ export function buildSkillMarkdown(agentName: string): string {
 /** Default-identity skill text, retained for callers without a configured name. */
 export const SKILL_MARKDOWN = buildSkill("claude");
 
-/** Writes the skill file to ~/.claude/skills/obsidian-tandem-comments/SKILL.md (desktop only). */
+/** Writes the skill file to ~/.claude/skills/grandemonium-comments/SKILL.md (desktop only). */
 export function exportSkill(agentName = "claude"): string {
   if (typeof require !== "function") {
     throw new Error("Skill export is only available in the desktop app.");
@@ -98,7 +104,7 @@ export function exportSkill(agentName = "claude"): string {
   const fs = require("fs") as NodeFsLike;
   const os = require("os") as NodeOsLike;
   const path = require("path") as NodePathLike;
-  const dir = path.join(os.homedir(), ".claude", "skills", "obsidian-tandem-comments");
+  const dir = path.join(os.homedir(), ".claude", "skills", "grandemonium-comments");
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, "SKILL.md");
   fs.writeFileSync(file, buildSkill(agentName), "utf8");

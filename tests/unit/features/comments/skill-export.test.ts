@@ -47,6 +47,6 @@ describe("exported skill author identity", () => {
   it("keeps the sample thread distinct from the assistant's own name", () => {
     const skill = buildSkillMarkdown("gpt");
 
-    expect(skill).toContain('"author": "Leon"');
+    expect(skill).toContain('"author": "Grant"');
   });
 });

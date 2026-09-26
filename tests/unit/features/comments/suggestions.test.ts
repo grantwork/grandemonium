@@ -197,7 +197,7 @@ describe("atomic suggestion acceptance plan", () => {
   it("parses a hand-authored AI suggestion without modifying its prose", () => {
     const raw = [
       "We should cut prices hard in Q3.",
-      "```tandem-comments",
+      "```grandemonium-comments",
       "{",
       '  "7c2e": {',
       '    "anchor": { "exact": "cut prices hard", "prefix": "We should ", "suffix": " in Q3.", "pos": 10 },',
@@ -226,6 +226,24 @@ describe("atomic suggestion acceptance plan", () => {
     const output = applyChanges(raw, plan.changes);
     expect(output).toBe("We should reduce prices significantly in Q3.");
     expect(plan.cursor).toBe("We should reduce prices significantly".length);
+  });
+
+  it("accepts a suggestion in a note whose comments are split across blocks", () => {
+    const doc = suggestionDoc();
+    const split =
+      doc.prose +
+      "\n\n```grandemonium-comments\n" +
+      JSON.stringify({ b2c4: { anchor: { exact: "in Q3", prefix: "", suffix: "" }, status: "open", thread: [{ author: "gpt", ts: TS, text: "Which year?" }] } }) +
+      "\n```\n" +
+      serializeDocument({ prose: "", comments: doc.comments }, false);
+    const plan = planSuggestionAcceptance(split, "a1f3", "remove", false);
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    const output = applyChanges(split, plan.changes);
+    const result = parseDocument(output);
+    expect(result.prose).toBe("We should reduce prices significantly in Q3.");
+    expect(Object.keys(result.comments)).toEqual(["b2c4"]);
+    expect(output.match(/```grandemonium-comments/g)).toHaveLength(1);
   });
 
   it("applies and inverts the acceptance through CodeMirror as one change set", () => {
@@ -500,7 +518,7 @@ describe("atomic suggestion acceptance plan", () => {
   });
 
   it("returns no changes for invalid JSON, ambiguous anchors, and missing IDs", () => {
-    expect(planSuggestionAcceptance("Text\n```tandem-comments\n{bad\n```\n", "a", "remove", true)).toMatchObject({
+    expect(planSuggestionAcceptance("Text\n```grandemonium-comments\n{bad\n```\n", "a", "remove", true)).toMatchObject({
       ok: false,
       reason: "invalid-document",
     });

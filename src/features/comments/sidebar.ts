@@ -109,7 +109,7 @@ export function suggestionFailureMessage(reason: SuggestionFailureReason): strin
     case "no-editor":
       return "Open this file in a Markdown editor before accepting the suggestion.";
     case "invalid-document":
-      return "The tandem-comments block is invalid. Fix its JSON before accepting the suggestion.";
+      return "The comments in this note cannot be read. Fix the comment block before accepting the suggestion.";
     case "invalid-suggestion":
       return "The suggestion data is invalid. Its replacement must be text.";
     case "orphaned":

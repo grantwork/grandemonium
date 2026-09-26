@@ -25,7 +25,7 @@ describe("findTables", () => {
   });
 
   it("ignores text after the prose limit (e.g. the comment block)", () => {
-    const withBlock = TABLE + "\n\n```tandem-comments\n{}\n```\n";
+    const withBlock = TABLE + "\n\n```grandemonium-comments\n{}\n```\n";
     expect(findTables(withBlock, TABLE.length)).toHaveLength(1);
   });
 
