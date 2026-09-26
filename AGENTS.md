@@ -12,6 +12,7 @@ Do not assume provider parity. Check each provider's `capabilities.ts`, `registr
   - `src/app/AGENTS.md`
   - `src/core/AGENTS.md`
   - `src/features/chat/AGENTS.md`
+  - `src/features/comments/AGENTS.md`
   - `src/providers/claude/AGENTS.md`
   - `src/providers/codex/AGENTS.md`
   - `src/providers/grok/AGENTS.md`
@@ -61,7 +62,7 @@ Scoped guides define the source of truth and allowed mutators for state in their
 | `src/providers/acp/` | Shared ACP transport, interaction, and session primitives without provider policy |
 | `src/providers/*/` | Provider adaptors, provider-owned runtime protocol, history, storage, settings, and UI |
 | `src/features/chat/` | Sidebar chat orchestration against provider-neutral contracts |
-| `src/features/comments/` | Quote-anchored review comments, vendored from Tandem Comments |
+| `src/features/comments/` | Quote-anchored review comments, the vault-wide inbox, and repository threads |
 | `src/features/inline-edit/` | Inline edit modal and provider-backed edit services |
 | `src/features/settings/` | Shared settings shell and provider tab assembly |
 | `src/shared/` | Reusable UI components |
@@ -155,89 +156,3 @@ Reviews must enforce the dependency, ownership, provider-boundary, and state-lif
 ## Vault Deployment
 
 `vaults.json` registers the local Obsidian vaults the plugin is installed into. `npm run deploy` builds, then copies `main.js`, `styles.css`, and `manifest.json` into `.obsidian/plugins/<manifest id>/` of each registered vault, skipping with a warning any vault without a `.obsidian` folder; paths passed to `scripts/install-to-vault.mjs` replace the register for one run. `npm run dev` copies on each watch rebuild into every registered vault path that exists, creating the plugin folder if needed, and `OBSIDIAN_VAULT` (from the environment or `.env.local`) replaces the register with one vault for dev only.
-
-## Comments Feature
-
-`src/features/comments/` is vendored from the standalone Tandem Comments plugin
-(MIT, see `NOTICE.md`) and keeps that project's flat file layout and double-quote
-style, so upstream fixes stay easy to compare. Three adaptations matter:
-
-- `CommentsController` is constructed by `src/main.ts` and takes the host
-  `Plugin`. It is not a `Plugin` subclass, and `this.app` is a delegating getter,
-  which is why the vendored call sites read unchanged.
-- Settings persist under the `comments` key of the shared `data.json`.
-  Never call `plugin.saveData` with a bare settings object here; that would drop
-  the chat side's `tabManagerState`.
-- The settings surface renders as a lazily activated tab inside the shared
-  settings shell, not as its own `PluginSettingTab`.
-- Selection-triggered comment drafts (`selection-comment.ts`, the editor
-  extension's pointer handlers, and the `commentOnSelection` setting) are a
-  Grandemonium addition with no upstream counterpart.
-- The inline comment popover (`comment-popover.ts`, `resolveHighlightClick`, and
-  the `commentPopover` setting) is likewise Grandemonium-only. It covers the
-  CodeMirror editor surface: rendered tables paint highlights directly into
-  widget DOM and Reading view has no CodeMirror at all, so both still route
-  clicks to the sidebar.
-- The vault-wide inbox (`comment-index.ts`, `inbox-model.ts`, `read-marks.ts`,
-  `inbox-row.ts`) is Grandemonium-only. The panel exists to be emptied, so it is
-  one flat list: every file with open comments, every open comment under its
-  file, nothing filed behind a section the reader must remember to open. Unread
-  marks a row; it never moves one. The note being read is not singled out
-  either, so the list does not rearrange when the reader opens a different note.
-  A row is one line carrying only the passage it marks and its status (a new
-  reply, an AI working and for how long), because the discussion, the author
-  and the full timestamp are one click away in the expanded card and putting
-  them in the row is what made the list unreadable. Five
-  consequences bind:
-  - Comment text is Markdown and a row is plain prose, so `plainText` strips the
-    syntax rather than rendering it: raw `**bold**` and `[[long/wiki/link]]` in
-    a narrow row are the noise, not the content.
-  - `resolveHighlightClick` gives an open sidebar priority over the popover, so
-    a highlight click expands the thread in the list rather than showing it
-    twice at once. The popover covers the sidebar-closed case, and
-    `commentPopover` still disables it entirely.
-  - Read marks are per person and live in per-vault localStorage, never in the
-    shared comment block. They are keyed `path\u0000id`, so `vault.on("rename")`
-    must move them or every thread in a renamed note returns as unread.
-  - Obsidian's metadata cache does not record fence languages, so finding
-    commented notes means reading them. `CommentIndex` sweeps once on load and
-    afterwards re-reads only files whose `mtime` moved.
-  - Reviews do not run in chat tabs. `CommentAiPort.review` starts one
-    `CommentReviewRunner` session per AI reached, disposable and started clean,
-    because a shared tab accumulated every comment in every note until its
-    context degraded. Nothing needs carrying between reviews: the whole thread
-    lives in the note's comment block. Each run settles on its own, so a
-    thread's working state clears exactly when its own review ends. The cost is
-    visibility: there is no chat turn to watch, so the expanded thread shows
-    each AI still replying and any review error (`threadActivity`). Errors are
-    held in memory, never written into the note, because the AIs read and
-    follow the comment block's schema; a whole-note review has no thread, so
-    its failure is a `Notice` that stays until dismissed. Reconsider only if
-    reviews need interactive approval.
-- Repository threads (`repository-thread.ts`, `RepositoryThreadsController`,
-  `repository-panel.ts`) are Grandemonium-only: comments about the whole vault,
-  pinned above the file list. Unlike a file comment's review, each thread keeps
-  one `RepositoryThreadSession` per AI it reaches until it is resolved, because
-  the thread is the conversation and has no note to hold it. Consequences:
-  - Threads have no anchor, so they persist under the `repositoryThreads` key of
-    `data.json`, never in a note. Merge on write, as `comments` does.
-  - The agent's final text is posted as its reply by the controller; the agent
-    is told to leave its per-passage review points as ordinary file comments.
-  - Approvals are answered inline in the thread, since a reader is watching it.
-    Questions are still refused until the panel has a form for them.
-  - The composer toolbar is chat's `mountStandaloneComposerToolbar`, injected by
-    `src/main.ts` through `RepositoryAgentPort`, so comments never import chat.
-    Only the model belongs to the thread; effort, permission and service tier
-    are provider settings shared with chat tabs.
-  - A session lost to a failure, restart or reload is reopened on the next
-    reply and sent the thread so far (`isFresh`). Sessions are in memory only.
-  - An AI that cannot start or finish posts the error into the thread as an
-    entry marked `kind: "error"`, not a `Notice`, which fades before it is
-    read. Error entries are never replayed to a fresh session.
-  - The panel's root element is re-attached across sidebar redraws, never
-    rebuilt, so streaming never takes focus from a reply being typed.
-- The file sidebar rebuilds its whole DOM whenever a commented note changes or a review starts or ends, which parallel sessions and other comments' AIs cause while the reader is typing. Every textarea `CommentSidebar` builds must be bound to `UnsentInputs` under a stable key, and forgotten once sent or cancelled, or the next redraw empties it. `UnsentInputs` holds redraws while a composition is open, because replacing the box ends macOS dictation and IME input mid-sentence.
-- An orphaned anchor is usually an agent having rewritten the passage, not a
-  fault: `isFullReplace` treats an external `vault.modify` as unmappable, so
-  anchors re-resolve by quote search and stop matching. The inbox therefore
-  presents that state as `rewritten`, to confirm and resolve.
