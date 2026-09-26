@@ -25,7 +25,7 @@ describe('resolveClaudeCliPath', () => {
   it('resolves a configured CLI path that was pasted with surrounding quotes', () => {
     const cliPath = createExecutable('my tools', 'claude');
 
-    expect(resolveClaudeCliPath(`"${cliPath}"`, '', '')).toBe(cliPath);
+    expect(resolveClaudeCliPath(`"${cliPath}"`, '')).toBe(cliPath);
   });
 
   it('does not fall back to PATH discovery when the configured path is quoted', () => {
@@ -33,18 +33,12 @@ describe('resolveClaudeCliPath', () => {
     const discoverable = createExecutable('path dir', 'claude');
     const envText = `PATH=${path.dirname(discoverable)}`;
 
-    expect(resolveClaudeCliPath(`"${configured}"`, '', envText)).toBe(configured);
-  });
-
-  it('resolves a quoted legacy CLI path when no host-scoped path is set', () => {
-    const cliPath = createExecutable('legacy dir', 'claude');
-
-    expect(resolveClaudeCliPath('', `"${cliPath}"`, '')).toBe(cliPath);
+    expect(resolveClaudeCliPath(`"${configured}"`, envText)).toBe(configured);
   });
 
   it('still resolves an unquoted configured path', () => {
     const cliPath = createExecutable('plain', 'claude');
 
-    expect(resolveClaudeCliPath(cliPath, '', '')).toBe(cliPath);
+    expect(resolveClaudeCliPath(cliPath, '')).toBe(cliPath);
   });
 });

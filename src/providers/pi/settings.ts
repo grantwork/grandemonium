@@ -6,7 +6,6 @@ import {
   readStoredString,
 } from '../../core/providers/settings/storedSettings';
 import type { HostnameCliPaths } from '../../core/types/settings';
-import { getHostnameKey } from '../../utils/env';
 import { ensureProviderProjectionMap } from './internal/providerProjection';
 import {
   clampPiThinkingLevel,
@@ -23,7 +22,6 @@ import {
 export type PiToolMode = 'all' | 'readonly';
 
 export interface PersistedPiProviderSettings {
-  cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   discoveredModels: PiDiscoveredModel[];
   enabled: boolean;
@@ -39,7 +37,6 @@ export interface PersistedPiProviderSettings {
 export type PiProviderSettings = PersistedPiProviderSettings;
 
 export const DEFAULT_PI_PROVIDER_SETTINGS: Readonly<PersistedPiProviderSettings> = Object.freeze({
-  cliPath: '',
   cliPathsByHost: {},
   discoveredModels: [],
   enabled: false,
@@ -131,7 +128,6 @@ export function getPiProviderSettings(settings: Record<string, unknown>): PiProv
   const persistableIds = getPersistablePiModelIds(settings, visibleModels);
 
   return {
-    cliPath: readStoredString(config.cliPath, DEFAULT_PI_PROVIDER_SETTINGS.cliPath),
     cliPathsByHost,
     discoveredModels,
     enabled: readStoredBoolean(config.enabled, DEFAULT_PI_PROVIDER_SETTINGS.enabled),
@@ -165,7 +161,6 @@ export function updatePiProviderSettings(
   updates: Partial<PiProviderSettings>,
 ): PiProviderSettings {
   const current = getPiProviderSettings(settings);
-  const hostnameKey = getHostnameKey();
   const nextDiscoveredModels = normalizePiDiscoveredModels(
     updates.discoveredModels ?? current.discoveredModels,
   );
@@ -193,28 +188,10 @@ export function updatePiProviderSettings(
   const nextCliPathsByHost = 'cliPathsByHost' in updates
     ? normalizeHostnameStringMap(updates.cliPathsByHost)
     : { ...current.cliPathsByHost };
-  let nextCliPath = 'cliPathsByHost' in updates
-    ? (
-      typeof updates.cliPath === 'string'
-        ? updates.cliPath.trim()
-        : DEFAULT_PI_PROVIDER_SETTINGS.cliPath
-    )
-    : current.cliPath.trim();
-
-  if ('cliPath' in updates && !('cliPathsByHost' in updates)) {
-    const trimmedCliPath = typeof updates.cliPath === 'string' ? updates.cliPath.trim() : '';
-    if (trimmedCliPath) {
-      nextCliPathsByHost[hostnameKey] = trimmedCliPath;
-    } else {
-      delete nextCliPathsByHost[hostnameKey];
-    }
-    nextCliPath = DEFAULT_PI_PROVIDER_SETTINGS.cliPath;
-  }
 
   const next: PiProviderSettings = {
     ...current,
     ...updates,
-    cliPath: nextCliPath,
     cliPathsByHost: nextCliPathsByHost,
     discoveredModels: nextDiscoveredModels,
     modelAliases: nextModelAliases,
@@ -234,7 +211,6 @@ export function updatePiProviderSettings(
   }
 
   setProviderConfig(settings, 'pi', {
-    cliPath: next.cliPath,
     cliPathsByHost: next.cliPathsByHost,
     discoveredModels: next.discoveredModels,
     enabled: next.enabled,

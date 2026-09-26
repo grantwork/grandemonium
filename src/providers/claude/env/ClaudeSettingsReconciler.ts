@@ -38,7 +38,6 @@ function getConfiguredCliPathInputs(
   const claudeSettings = getClaudeProviderSettings(settings);
   return createCliPathFingerprintInputs(
     claudeSettings.cliPathsByHost[getHostnameKey()],
-    claudeSettings.cliPath,
   );
 }
 

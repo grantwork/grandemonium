@@ -120,7 +120,6 @@ function parsePathEntriesForPlatform(pathValue: string | undefined, platform: No
 
 export function resolveCodexCliPath(
   hostnamePath: string | undefined,
-  legacyPath: string | undefined,
   envText: string,
   options: {
     executionTarget?: CodexExecutionTarget;
@@ -134,20 +133,15 @@ export function resolveCodexCliPath(
     : hostPlatform === 'win32' && options.installationMethod === 'wsl';
 
   if (isWslTarget) {
-    const configuredCommand = [hostnamePath, legacyPath]
-      .map(value => stripSurroundingQuotes((value ?? '').trim()))
-      .find(value => value.length > 0 && !isWindowsStyleCliReference(value));
-    return configuredCommand || 'codex';
+    const configuredCommand = stripSurroundingQuotes((hostnamePath ?? '').trim());
+    return configuredCommand && !isWindowsStyleCliReference(configuredCommand)
+      ? configuredCommand
+      : 'codex';
   }
 
   const configuredHostnamePath = resolveConfiguredCliPath(hostnamePath);
   if (configuredHostnamePath) {
     return configuredHostnamePath;
-  }
-
-  const configuredLegacyPath = resolveConfiguredCliPath(legacyPath);
-  if (configuredLegacyPath) {
-    return configuredLegacyPath;
   }
 
   const customEnv = parseEnvironmentVariables(envText || '');

@@ -10,7 +10,6 @@ export class OpencodeCliResolver {
       return {
         cliPathsByHost: providerSettings.cliPathsByHost,
         environmentText: getRuntimeEnvironmentText(settings, 'opencode'),
-        legacyCliPath: providerSettings.cliPath,
       };
     },
     providerId: 'opencode',
@@ -18,18 +17,6 @@ export class OpencodeCliResolver {
 
   resolveFromSettings(settings: Record<string, unknown>): string | null {
     return this.resolver.resolveFromSettings(settings);
-  }
-
-  resolve(
-    hostnamePaths: Record<string, string> | undefined,
-    legacyPath: string,
-    envText: string,
-  ): string | null {
-    return this.resolver.resolve({
-      cliPathsByHost: hostnamePaths,
-      environmentText: envText,
-      legacyCliPath: legacyPath,
-    });
   }
 
   reset(): void {

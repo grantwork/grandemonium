@@ -108,20 +108,11 @@ describe('CodexBinaryLocator', () => {
     expect(findCodexBinaryPath('', 'linux')).toBe(localBinary);
   });
 
-  it('prefers a hostname-specific configured path', () => {
+  it('uses a hostname-specific configured path', () => {
     const hostnamePath = path.join(tempDir, 'hostname-codex');
-    const legacyPath = path.join(tempDir, 'legacy-codex');
     fs.writeFileSync(hostnamePath, '');
-    fs.writeFileSync(legacyPath, '');
 
-    expect(resolveCodexCliPath(hostnamePath, legacyPath, '')).toBe(hostnamePath);
-  });
-
-  it('falls back to a legacy configured path', () => {
-    const legacyPath = path.join(tempDir, 'legacy-codex');
-    fs.writeFileSync(legacyPath, '');
-
-    expect(resolveCodexCliPath('', legacyPath, '')).toBe(legacyPath);
+    expect(resolveCodexCliPath(hostnamePath, '')).toBe(hostnamePath);
   });
 
   it('falls back to PATH lookup when no configured file exists', () => {
@@ -130,13 +121,12 @@ describe('CodexBinaryLocator', () => {
     fs.mkdirSync(pathDir, { recursive: true });
     fs.writeFileSync(pathBinary, '');
 
-    expect(resolveCodexCliPath('', '', `PATH=${pathDir}`)).toBe(pathBinary);
+    expect(resolveCodexCliPath('', `PATH=${pathDir}`)).toBe(pathBinary);
   });
 
   it('uses the configured Linux command directly in WSL mode', () => {
     expect(resolveCodexCliPath(
       'codex',
-      '',
       '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('codex');
@@ -146,12 +136,10 @@ describe('CodexBinaryLocator', () => {
     expect(resolveCodexCliPath(
       '"/home/user/my tools/codex"',
       '',
-      '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('/home/user/my tools/codex');
     expect(resolveCodexCliPath(
       "'/home/user/codex'",
-      '',
       '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('/home/user/codex');
@@ -164,12 +152,10 @@ describe('CodexBinaryLocator', () => {
       expect(resolveCodexCliPath(
         '"~/tools/codex"',
         '',
-        '',
         { installationMethod: 'wsl', hostPlatform: 'win32' },
       )).toBe('~/tools/codex');
       expect(resolveCodexCliPath(
         '"$TEST_WSL_CODEX_ROOT/bin/codex"',
-        '',
         '',
         { installationMethod: 'wsl', hostPlatform: 'win32' },
       )).toBe('$TEST_WSL_CODEX_ROOT/bin/codex');
@@ -186,7 +172,6 @@ describe('CodexBinaryLocator', () => {
     expect(resolveCodexCliPath(
       '',
       '',
-      '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('codex');
   });
@@ -195,24 +180,13 @@ describe('CodexBinaryLocator', () => {
     expect(resolveCodexCliPath(
       'C:\\Users\\user\\AppData\\Roaming\\npm\\codex.exe',
       '',
-      '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('codex');
-  });
-
-  it('ignores a quoted Windows path and selects a quoted legacy Linux command in WSL mode', () => {
-    expect(resolveCodexCliPath(
-      '"C:\\Users\\user\\AppData\\Roaming\\npm\\codex.exe"',
-      '"/home/user/legacy tools/codex"',
-      '',
-      { installationMethod: 'wsl', hostPlatform: 'win32' },
-    )).toBe('/home/user/legacy tools/codex');
   });
 
   it('ignores a quoted Windows-native CLI path in WSL mode and uses the default command', () => {
     expect(resolveCodexCliPath(
       '"C:\\Users\\user\\AppData\\Roaming\\npm\\codex.exe"',
-      '',
       '',
       { installationMethod: 'wsl', hostPlatform: 'win32' },
     )).toBe('codex');

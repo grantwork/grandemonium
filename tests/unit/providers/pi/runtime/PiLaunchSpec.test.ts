@@ -2,7 +2,6 @@ import { buildPiLaunchSpec } from '@/providers/pi/runtime/PiLaunchSpec';
 import type { PiProviderSettings } from '@/providers/pi/settings';
 
 const baseSettings: PiProviderSettings = {
-  cliPath: '',
   cliPathsByHost: {},
   discoveredModels: [],
   agentName: 'pi',

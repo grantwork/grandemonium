@@ -514,26 +514,6 @@ describe('GrandemoniumSettingsStorage', () => {
       expect(persisted.providerConfigs.codex).not.toHaveProperty('wslDistroOverride');
     });
 
-    it('should preserve legacy codexCliPath field', async () => {
-      storeSettings({
-        codexCliPath: '/legacy/codex',
-      });
-
-      const result = await storage.load();
-
-      expect(getCodexProviderSettings(result).cliPath).toBe('/legacy/codex');
-    });
-
-    it('should preserve legacy claudeCliPath field', async () => {
-      storeSettings({
-        claudeCliPath: '/legacy/path',
-      });
-
-      const result = await storage.load();
-
-      expect(getClaudeProviderSettings(result).cliPath).toBe('/legacy/path');
-    });
-
     it('defaults Codex installation method and WSL distro override when missing', async () => {
       storeSettings({});
 

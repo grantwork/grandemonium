@@ -61,7 +61,6 @@ function getCodexRuntimeFingerprintState(settings: Record<string, unknown>): {
   const codexSettings = getCodexProviderSettings(settings);
   const cliPathInputs = createCliPathFingerprintInputs(
     codexSettings.cliPathsByHost[getHostnameKey()],
-    codexSettings.cliPath,
   );
   const additionalInputs = {
     ...cliPathInputs,

@@ -10,7 +10,6 @@ export class GrokCliResolver {
       return {
         cliPathsByHost: providerSettings.cliPathsByHost,
         environmentText: getRuntimeEnvironmentText(settings, 'grok'),
-        legacyCliPath: providerSettings.cliPath,
       };
     },
     providerId: 'grok',
@@ -18,18 +17,6 @@ export class GrokCliResolver {
 
   resolveFromSettings(settings: Record<string, unknown>): string | null {
     return this.resolver.resolveFromSettings(settings);
-  }
-
-  resolve(
-    hostnamePaths: Record<string, string> | undefined,
-    legacyPath: string,
-    environmentText: string,
-  ): string | null {
-    return this.resolver.resolve({
-      cliPathsByHost: hostnamePaths,
-      environmentText,
-      legacyCliPath: legacyPath,
-    });
   }
 
   reset(): void {

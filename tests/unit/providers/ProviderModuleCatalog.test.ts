@@ -30,7 +30,6 @@ describe('built-in ProviderModule catalog', () => {
       providerConfigs: Object.fromEntries(BUILT_IN_PROVIDER_MODULES.map(module => [
         module.id,
         {
-          cliPath: 7,
           enabled: 'false',
           environmentHash: false,
           environmentVariables: ['SECRET=not-a-string'],
@@ -80,7 +79,6 @@ describe('built-in ProviderModule catalog', () => {
       )).toBe(true);
       const config = getProviderConfig(normalizedSettings, module.id);
       expect(config.enabled).toBe(defaultEnabled[module.id]);
-      expect(config.cliPath).toEqual(expect.any(String));
       expect(config.environmentHash).toEqual(expect.any(String));
       expect(config.environmentVariables).toEqual(expect.any(String));
     }

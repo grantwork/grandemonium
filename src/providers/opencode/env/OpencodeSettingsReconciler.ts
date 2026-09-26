@@ -86,7 +86,6 @@ export const opencodeSettingsReconciler: ProviderSettingsReconciler = {
     const opencodeSettings = getOpencodeProviderSettings(settings);
     const cliPathInputs = createCliPathFingerprintInputs(
       opencodeSettings.cliPathsByHost[getHostnameKey()],
-      opencodeSettings.cliPath,
     );
     const currentHash = computeOpencodeRuntimeFingerprint(envText, cliPathInputs);
     const savedHash = opencodeSettings.environmentHash;

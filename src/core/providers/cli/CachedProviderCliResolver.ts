@@ -6,14 +6,12 @@ import { createCliPathFingerprintInputs } from './CliPathFingerprintInputs';
 export interface ProviderCliSettingsProjection {
   cliPathsByHost?: Readonly<Record<string, string>>;
   environmentText: string;
-  legacyCliPath?: string;
   resolutionInputs?: Readonly<Record<string, string | undefined>>;
 }
 
 export interface ProviderCliResolutionContext extends ProviderCliSettingsProjection {
   environmentVariables: Readonly<Record<string, string>>;
   hostnamePath: string;
-  legacyCliPath: string;
 }
 
 type ProviderCliResolution = (
@@ -52,7 +50,6 @@ export class CachedProviderCliResolver {
 
     const resolveDefault = (): string | null => (
       resolveConfiguredCliPath(context.hostnamePath)
-      ?? resolveConfiguredCliPath(context.legacyCliPath)
       ?? findCliBinaryPath(this.options.binaryName, context.environmentVariables.PATH)
     );
 
@@ -79,7 +76,6 @@ export class CachedProviderCliResolver {
       environmentText,
       environmentVariables: parseEnvironmentVariables(environmentText),
       hostnamePath: (projection.cliPathsByHost?.[this.hostnameKey] ?? '').trim(),
-      legacyCliPath: (projection.legacyCliPath ?? '').trim(),
     };
   }
 
@@ -87,7 +83,7 @@ export class CachedProviderCliResolver {
     const additionalInputs: Record<string, string | undefined> = {
       binaryName: this.options.binaryName,
       environmentText: context.environmentText,
-      ...createCliPathFingerprintInputs(context.hostnamePath, context.legacyCliPath),
+      ...createCliPathFingerprintInputs(context.hostnamePath),
       providerId: this.options.providerId,
     };
     for (const [key, value] of Object.entries(context.resolutionInputs ?? {})) {

@@ -34,7 +34,7 @@
 - Forking creates a new Pi session file by copying the source branch up to `resumeAt` without altering or truncating the source. Keep fork materialization provider-owned.
 - Historical selected-model recovery walks the active JSONL branch to `leafEntryId` and preserves the last native provider/model pair. A missing persisted leaf must fail closed instead of using another branch; never promote `previousSessions` or a recovery-only locator into the live binding.
 - Environment keys that affect Pi data or package locations invalidate existing Pi sessions.
-- The runtime fingerprint includes `PI_CODING_AGENT_DIR`, `PI_CODING_AGENT_SESSION_DIR`, `PI_PACKAGE_DIR`, `PI_OFFLINE`, `PI_SKIP_VERSION_CHECK`, `PI_TELEMETRY`, `PI_CACHE_RETENTION`, `PATH`, and explicit/host CLI-path inputs.
+- The runtime fingerprint includes `PI_CODING_AGENT_DIR`, `PI_CODING_AGENT_SESSION_DIR`, `PI_PACKAGE_DIR`, `PI_OFFLINE`, `PI_SKIP_VERSION_CHECK`, `PI_TELEMETRY`, `PI_CACHE_RETENTION`, `PATH`, and this device's CLI path.
 
 ## Commands and Models
 

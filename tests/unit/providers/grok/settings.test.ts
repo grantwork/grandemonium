@@ -54,7 +54,6 @@ describe('Grok settings', () => {
     expect(DEFAULT_GROK_PROVIDER_SETTINGS).toEqual({
       agentName: 'grok',
       catalogsByHost: {},
-      cliPath: '',
       cliPathsByHost: {},
       enabled: false,
       environmentHash: '',
@@ -250,14 +249,13 @@ describe('Grok settings', () => {
     };
 
     const next = updateGrokProviderSettings(settings, {
-      cliPath: ' /opt/bin/grok ',
+      cliPathsByHost: { 'device:current': ' /opt/bin/grok ' },
       enabled: true,
       modelAliases: { 'kimi-coding': ' Kimi ' },
       visibleModels: ['kimi-coding'],
     });
 
     expect(next).toMatchObject({
-      cliPath: '',
       cliPathsByHost: { 'device:current': '/opt/bin/grok' },
       enabled: true,
       modelAliases: { 'kimi-coding': 'Kimi' },

@@ -11,13 +11,23 @@ jest.mock('@/utils/env', () => ({
 
 const mockedStat = fs.statSync as jest.Mock;
 
+function settingsWith(
+  cliPathsByHost: Record<string, string>,
+  envText = '',
+): Record<string, unknown> {
+  return {
+    sharedEnvironmentVariables: envText,
+    providerConfigs: { pi: { cliPathsByHost } },
+  };
+}
+
 describe('PiCliResolver', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fs.existsSync as jest.Mock).mockReturnValue(false);
   });
 
-  it('resolves the current host path before the legacy Pi CLI path', () => {
+  it('resolves the current host path instead of another synced host path', () => {
     mockedStat.mockImplementation((filePath: string) => {
       if (filePath === '/current/pi') {
         return { isFile: () => true };
@@ -27,28 +37,10 @@ describe('PiCliResolver', () => {
 
     const resolver = new PiCliResolver();
 
-    expect(resolver.resolve({
+    expect(resolver.resolveFromSettings(settingsWith({
       'current-host': '/current/pi',
       'other-host': '/other/pi',
-    }, '/legacy/pi')).toBe('/current/pi');
-  });
-
-  it('falls back to cliPath and returns null for invalid paths', () => {
-    mockedStat.mockImplementation((filePath: string) => {
-      if (filePath === '/legacy/pi') {
-        return { isFile: () => true };
-      }
-      throw new Error(`ENOENT: ${filePath}`);
-    });
-
-    const resolver = new PiCliResolver();
-    expect(resolver.resolve({ 'other-host': '/other/pi' }, '/legacy/pi')).toBe('/legacy/pi');
-
-    mockedStat.mockImplementation(() => {
-      throw new Error('ENOENT');
-    });
-    resolver.reset();
-    expect(resolver.resolve({ 'other-host': '/other/pi' }, '/legacy/pi')).toBeNull();
+    }))).toBe('/current/pi');
   });
 
   it('falls back to PATH lookup when no Pi CLI path is configured', () => {
@@ -63,7 +55,7 @@ describe('PiCliResolver', () => {
 
     const resolver = new PiCliResolver();
 
-    expect(resolver.resolve({}, '', `PATH=${pathDir}`)).toBe(pathBinary);
+    expect(resolver.resolveFromSettings(settingsWith({}, `PATH=${pathDir}`))).toBe(pathBinary);
   });
 
   it('invalidates cached resolutions when provider environment changes', () => {

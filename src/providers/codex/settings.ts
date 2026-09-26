@@ -31,7 +31,6 @@ export interface CodexProviderConfig {
   enabled: boolean;
   agentName: string;
   safeMode: CodexSafeMode;
-  cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   customModels: string;
   discoveredModels: CodexDiscoveredModel[];
@@ -119,7 +118,6 @@ export interface CodexProviderSettings {
   enabled: CodexProviderConfig['enabled'];
   agentName: CodexProviderConfig['agentName'];
   safeMode: CodexProviderConfig['safeMode'];
-  cliPath: CodexProviderConfig['cliPath'];
   cliPathsByHost: CodexProviderConfig['cliPathsByHost'];
   customModels: CodexProviderConfig['customModels'];
   discoveredModels: CodexProviderConfig['discoveredModels'];
@@ -141,7 +139,6 @@ export const DEFAULT_CODEX_PROVIDER_CONFIG: Readonly<CodexProviderConfig> = Obje
   enabled: false,
   agentName: 'gpt',
   safeMode: 'workspace-write',
-  cliPath: '',
   cliPathsByHost: {},
   customModels: '',
   discoveredModels: [],
@@ -414,10 +411,6 @@ function getCodexStoredConfig(
       config.safeMode,
       readStoredCodexSafeMode(settings.codexSafeMode, DEFAULT_CODEX_PROVIDER_CONFIG.safeMode),
     ),
-    cliPath: readStoredString(
-      config.cliPath,
-      readStoredString(settings.codexCliPath, DEFAULT_CODEX_PROVIDER_CONFIG.cliPath),
-    ),
     cliPathsByHost,
     customModels: readStoredString(config.customModels, DEFAULT_CODEX_PROVIDER_CONFIG.customModels),
     discoveredModels,
@@ -633,7 +626,6 @@ export function updateCodexProviderSettings(
   setProviderConfig(settings, 'codex', {
     enabled: next.enabled,
     safeMode: next.safeMode,
-    cliPath: next.cliPath,
     cliPathsByHost: next.cliPathsByHost,
     customModels: next.customModels,
     discoveredModels: next.discoveredModels,

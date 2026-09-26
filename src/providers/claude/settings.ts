@@ -19,7 +19,6 @@ export interface ClaudeProviderSettings {
   enabled: boolean;
   agentName: string;
   safeMode: ClaudeSafeMode;
-  cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   loadUserSettings: boolean;
   enableChrome: boolean;
@@ -36,7 +35,6 @@ export const DEFAULT_CLAUDE_PROVIDER_SETTINGS: Readonly<ClaudeProviderSettings> 
   enabled: true,
   agentName: 'claude',
   safeMode: 'acceptEdits',
-  cliPath: '',
   cliPathsByHost: {},
   loadUserSettings: true,
   enableChrome: false,
@@ -96,10 +94,6 @@ export function getClaudeProviderSettings(
         settings.claudeSafeMode,
         DEFAULT_CLAUDE_PROVIDER_SETTINGS.safeMode,
       ),
-    ),
-    cliPath: readStoredString(
-      config.cliPath,
-      readStoredString(settings.claudeCliPath, DEFAULT_CLAUDE_PROVIDER_SETTINGS.cliPath),
     ),
     cliPathsByHost,
     loadUserSettings: readStoredBoolean(

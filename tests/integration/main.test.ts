@@ -1524,7 +1524,7 @@ describe('GrandemoniumPlugin', () => {
     it('refreshes an initialized Grok catalog through its owned CLI path while gated', async () => {
       await plugin.onload();
       updateGrokProviderSettings(plugin.settings, {
-        cliPath: process.execPath,
+        cliPathsByHost: { [getHostnameKey()]: process.execPath },
         enabled: true,
       });
       const runner = {

@@ -14,8 +14,8 @@ export class GrokCommandLoader implements ProviderCommandLoaderContract {
 
   getCacheFingerprint(settings: Record<string, unknown>): string {
     const providerSettings = getGrokProviderSettings(settings);
-    const hasConfiguredCli = providerSettings.cliPath.length > 0
-      || Object.values(providerSettings.cliPathsByHost).some(path => path.trim().length > 0);
+    const hasConfiguredCli = Object.values(providerSettings.cliPathsByHost)
+      .some(path => path.trim().length > 0);
     return [
       'grok:commands:v2',
       providerSettings.enabled ? 'enabled' : 'disabled',

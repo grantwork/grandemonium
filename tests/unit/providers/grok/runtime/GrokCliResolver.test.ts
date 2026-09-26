@@ -11,35 +11,37 @@ jest.mock('@/utils/env', () => ({
 
 const mockedStat = fs.statSync as jest.Mock;
 
+function settingsWith(
+  cliPathsByHost: Record<string, string>,
+  envText = '',
+): Record<string, unknown> {
+  return {
+    sharedEnvironmentVariables: envText,
+    providerConfigs: { grok: { cliPathsByHost } },
+  };
+}
+
 describe('GrokCliResolver', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fs.existsSync as jest.Mock).mockReturnValue(false);
   });
 
-  it('prefers the current host path over synced paths and the legacy path', () => {
+  it('prefers the current host path over synced paths', () => {
     mockedStat.mockImplementation((filePath: string) => {
-      if (filePath === '/current/grok' || filePath === '/legacy/grok') {
+      if (filePath === '/current/grok' || filePath === '/other/grok') {
         return { isFile: () => true };
       }
       throw new Error(`ENOENT: ${filePath}`);
     });
 
-    expect(new GrokCliResolver().resolve({
+    expect(new GrokCliResolver().resolveFromSettings(settingsWith({
       'current-host': '/current/grok',
       'other-host': '/other/grok',
-    }, '/legacy/grok', '')).toBe('/current/grok');
+    }))).toBe('/current/grok');
   });
 
-  it('falls back through the legacy path and PATH binary named grok', () => {
-    mockedStat.mockImplementation((filePath: string) => {
-      if (filePath === '/legacy/grok') {
-        return { isFile: () => true };
-      }
-      throw new Error(`ENOENT: ${filePath}`);
-    });
-    expect(new GrokCliResolver().resolve({}, '/legacy/grok', '')).toBe('/legacy/grok');
-
+  it('falls back to the PATH binary named grok', () => {
     const pathBinary = path.join('/provider/bin', 'grok');
     mockedStat.mockImplementation((filePath: string) => {
       if (filePath === pathBinary) {
@@ -47,7 +49,8 @@ describe('GrokCliResolver', () => {
       }
       throw new Error(`ENOENT: ${filePath}`);
     });
-    expect(new GrokCliResolver().resolve({}, '', 'PATH=/provider/bin')).toBe(pathBinary);
+    expect(new GrokCliResolver().resolveFromSettings(settingsWith({}, 'PATH=/provider/bin')))
+      .toBe(pathBinary);
   });
 
   it('uses merged provider settings, caches the result, and can be reset', () => {

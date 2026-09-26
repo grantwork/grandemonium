@@ -349,7 +349,6 @@ function createPlugin(overrides: Record<string, unknown> = {}): any {
       providerConfigs: {
         opencode: {
           availableModes: [],
-          cliPath: '',
           cliPathsByHost: {},
           discoveredModels: [],
           enabled: true,
@@ -699,7 +698,6 @@ describe('OpencodeSettingsTab', () => {
       providerConfigs: {
         opencode: {
           availableModes: [],
-          cliPath: '',
           cliPathsByHost: {},
           discoveredModels: [],
           enabled: true,
@@ -735,7 +733,6 @@ describe('OpencodeSettingsTab', () => {
       providerConfigs: {
         opencode: {
           availableModes: [],
-          cliPath: '',
           cliPathsByHost: {},
           discoveredModels: [],
           enabled: true,
@@ -768,7 +765,6 @@ describe('OpencodeSettingsTab', () => {
       providerConfigs: {
         opencode: {
           availableModes: [],
-          cliPath: '',
           cliPathsByHost: {},
           discoveredModels: [],
           enabled: true,
@@ -802,7 +798,6 @@ describe('OpencodeSettingsTab', () => {
       providerConfigs: {
         opencode: {
           availableModes: [],
-          cliPath: '',
           cliPathsByHost: {},
           discoveredModels: [
             { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },

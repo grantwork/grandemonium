@@ -666,7 +666,6 @@ describe('CodexSettingsTab', () => {
         codex: {
           enabled: true,
           safeMode: 'workspace-write',
-          cliPath: '',
           cliPathsByHost: {},
           reasoningSummary: 'detailed',
           environmentVariables: '',

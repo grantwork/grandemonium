@@ -22,16 +22,15 @@ describe('CachedProviderCliResolver', () => {
     mockedFindCliBinaryPath.mockReturnValue(null);
   });
 
-  it('preserves current-host, legacy, then runtime PATH lookup order', () => {
+  it('prefers the current-host path, then runtime PATH lookup', () => {
     mockedResolveConfiguredCliPath.mockImplementation((candidate) => (
       candidate === '/current/provider' ? '/resolved/current' : null
     ));
     const resolver = createResolver();
 
     expect(resolver.resolve({
-      cliPathsByHost: { current: '/current/provider' },
+      cliPathsByHost: { current: '/current/provider', other: '/other/provider' },
       environmentText: 'PATH=/provider/bin',
-      legacyCliPath: '/legacy/provider',
     })).toBe('/resolved/current');
     expect(mockedResolveConfiguredCliPath.mock.calls).toEqual([
       ['/current/provider'],
@@ -39,22 +38,11 @@ describe('CachedProviderCliResolver', () => {
     expect(mockedFindCliBinaryPath).not.toHaveBeenCalled();
 
     resolver.reset();
-    mockedResolveConfiguredCliPath.mockImplementation((candidate) => (
-      candidate === '/legacy/provider' ? '/resolved/legacy' : null
-    ));
-    expect(resolver.resolve({
-      cliPathsByHost: { current: '/missing/current' },
-      environmentText: 'PATH=/provider/bin',
-      legacyCliPath: '/legacy/provider',
-    })).toBe('/resolved/legacy');
-
-    resolver.reset();
     mockedResolveConfiguredCliPath.mockReturnValue(null);
     mockedFindCliBinaryPath.mockReturnValue('/provider/bin/provider');
     expect(resolver.resolve({
-      cliPathsByHost: {},
+      cliPathsByHost: { other: '/other/provider' },
       environmentText: 'PATH=/provider/bin',
-      legacyCliPath: '',
     })).toBe('/provider/bin/provider');
     expect(mockedFindCliBinaryPath).toHaveBeenCalledWith('provider', '/provider/bin');
   });
@@ -87,7 +75,6 @@ describe('CachedProviderCliResolver', () => {
     const baseline = createProjection();
 
     resolver.resolve(baseline);
-    resolver.resolve({ ...baseline, legacyCliPath: '/other/legacy' });
     resolver.resolve({
       ...baseline,
       cliPathsByHost: { current: '/other/current' },
@@ -98,7 +85,7 @@ describe('CachedProviderCliResolver', () => {
       resolutionInputs: { installationMethod: 'wsl' },
     });
 
-    expect(resolution).toHaveBeenCalledTimes(5);
+    expect(resolution).toHaveBeenCalledTimes(4);
   });
 
   it('projects settings before resolving and ignores unrelated settings fields', () => {
@@ -138,7 +125,6 @@ function createProjection(): ProviderCliSettingsProjection {
   return {
     cliPathsByHost: { current: '/current/provider' },
     environmentText: 'PATH=/provider/bin',
-    legacyCliPath: '/legacy/provider',
     resolutionInputs: { installationMethod: 'native' },
   };
 }

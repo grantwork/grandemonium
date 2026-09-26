@@ -17,7 +17,6 @@ export function computeGrokEnvironmentHash(settings: Record<string, unknown>): s
   const providerSettings = getGrokProviderSettings(settings);
   const cliPathInputs = createCliPathFingerprintInputs(
     providerSettings.cliPathsByHost[getHostnameKey()],
-    providerSettings.cliPath,
   );
   const environment = Object.entries(parseEnvironmentVariables(
     getRuntimeEnvironmentText(settings, 'grok'),

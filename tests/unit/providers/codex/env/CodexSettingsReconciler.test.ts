@@ -6,6 +6,7 @@ import {
   codexSettingsReconciler,
   computeCodexEnvHash,
 } from '@/providers/codex/env/CodexSettingsReconciler';
+import { getHostnameKey } from '@/utils/env';
 
 describe('codexSettingsReconciler', () => {
   it('finalizes an empty legacy fingerprint before later runtime inputs change', () => {
@@ -37,7 +38,9 @@ describe('codexSettingsReconciler', () => {
     expect(codexSettingsReconciler.reconcileModelWithEnvironment(settings, [conversation]))
       .toEqual({ changed: false, invalidatedConversations: [] });
 
-    (settings.providerConfigs as any).codex.cliPath = '/opt/codex/bin/codex';
+    (settings.providerConfigs as any).codex.cliPathsByHost = {
+      [getHostnameKey()]: '/opt/codex/bin/codex',
+    };
 
     expect(codexSettingsReconciler.normalizeModelVariantSettings(settings)).toBe(false);
     expect(codexSettingsReconciler.reconcileModelWithEnvironment(settings, [conversation]))

@@ -30,7 +30,7 @@
 
 - `prepareOpencodeLaunchArtifacts()` writes managed config and system prompt files under `.grandemonium/opencode/`.
 - Preserve user OpenCode config by loading `OPENCODE_CONFIG` and layering Grandemonium-managed agent config over it.
-- Runtime fingerprint changes invalidate OpenCode sessions. The fingerprint includes `OPENCODE_CONFIG`, `OPENCODE_DB`, `OPENCODE_DISABLE_PROJECT_CONFIG`, `XDG_DATA_HOME`, `PATH`, and explicit/host CLI-path inputs.
+- Runtime fingerprint changes invalidate OpenCode sessions. The fingerprint includes `OPENCODE_CONFIG`, `OPENCODE_DB`, `OPENCODE_DISABLE_PROJECT_CONFIG`, `XDG_DATA_HOME`, `PATH`, and this device's CLI path.
 - OpenCode mode IDs map to shared permission modes. Keep this mapping in `modes.ts`, not feature code.
 
 ## Commands and Agents

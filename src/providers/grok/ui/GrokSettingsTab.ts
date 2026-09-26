@@ -122,10 +122,7 @@ export const grokSettingsTabRenderer: ProviderSettingsTabRenderer = {
     renderHostnameCliPathSetting({
       container,
       description: 'Optional absolute path to the Grok CLI for this computer. Leave empty to prefer known installs, then `grok` from PATH.',
-      getValue: () => {
-        const current = getGrokProviderSettings(settingsBag);
-        return current.cliPathsByHost[hostnameKey] ?? current.cliPath ?? '';
-      },
+      getValue: () => getGrokProviderSettings(settingsBag).cliPathsByHost[hostnameKey] ?? '',
       name: 'CLI path',
       onChange: async (value) => {
         const cliPathsByHost = {
@@ -137,10 +134,7 @@ export const grokSettingsTabRenderer: ProviderSettingsTabRenderer = {
           delete cliPathsByHost[hostnameKey];
         }
         const mutation = (settings: GrandemoniumSettings): void => {
-          updateGrokProviderSettings(settings, {
-            cliPath: '',
-            cliPathsByHost,
-          });
+          updateGrokProviderSettings(settings, { cliPathsByHost });
           clearCurrentGrokCatalog(settings);
         };
         await context.plugin.applyProviderRuntimeSettings(

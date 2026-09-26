@@ -22,7 +22,6 @@ export interface GrokCatalogSnapshot {
 export interface PersistedGrokProviderSettings {
   enabled: boolean;
   agentName: string;
-  cliPath: string;
   cliPathsByHost: HostnameCliPaths;
   catalogsByHost: Record<string, GrokCatalogSnapshot>;
   environmentVariables: string;
@@ -39,7 +38,6 @@ export interface GrokProviderSettings extends PersistedGrokProviderSettings {
 export const DEFAULT_GROK_PROVIDER_SETTINGS: Readonly<PersistedGrokProviderSettings> = Object.freeze({
   agentName: 'grok',
   catalogsByHost: {},
-  cliPath: '',
   cliPathsByHost: {},
   enabled: false,
   environmentHash: '',
@@ -115,8 +113,6 @@ export function getGrokProviderSettings(
 
   return {
     catalogsByHost,
-    cliPath: readTrimmedString(config.cliPath)
-      || DEFAULT_GROK_PROVIDER_SETTINGS.cliPath,
     cliPathsByHost,
     currentCatalog,
     agentName: readTrimmedString(config.agentName)
@@ -153,19 +149,6 @@ export function updateGrokProviderSettings(
   const cliPathsByHost = updates.cliPathsByHost !== undefined
     ? normalizeHostnameStringMap(updates.cliPathsByHost)
     : { ...current.cliPathsByHost };
-  let cliPath = updates.cliPathsByHost !== undefined
-    ? readTrimmedString(updates.cliPath)
-    : current.cliPath;
-
-  if ('cliPath' in updates && updates.cliPathsByHost === undefined) {
-    const hostCliPath = readTrimmedString(updates.cliPath);
-    if (hostCliPath) {
-      cliPathsByHost[currentHostKey] = hostCliPath;
-    } else {
-      delete cliPathsByHost[currentHostKey];
-    }
-    cliPath = DEFAULT_GROK_PROVIDER_SETTINGS.cliPath;
-  }
 
   const catalogsByHost = updates.catalogsByHost !== undefined
     ? normalizeGrokCatalogsByHost(updates.catalogsByHost)
@@ -188,7 +171,6 @@ export function updateGrokProviderSettings(
 
   const next: PersistedGrokProviderSettings = {
     catalogsByHost,
-    cliPath,
     cliPathsByHost,
     agentName: updates.agentName ?? current.agentName,
     enabled: updates.enabled ?? current.enabled,

@@ -103,7 +103,6 @@ export const piSettingsReconciler: ProviderSettingsReconciler = {
     const piSettings = getPiProviderSettings(settings);
     const cliPathInputs = createCliPathFingerprintInputs(
       piSettings.cliPathsByHost[getHostnameKey()],
-      piSettings.cliPath,
     );
     const currentHash = computePiRuntimeFingerprint(envText, cliPathInputs);
     const savedHash = piSettings.environmentHash;
@@ -133,7 +132,6 @@ export const piSettingsReconciler: ProviderSettingsReconciler = {
     const envText = getRuntimeEnvironmentText(settings, 'pi');
     const cliPathInputs = createCliPathFingerprintInputs(
       piSettings.cliPathsByHost[getHostnameKey()],
-      piSettings.cliPath,
     );
     if (isCurrentLegacyPiFingerprint(
       envText,

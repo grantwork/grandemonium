@@ -10,7 +10,6 @@ export class PiCliResolver {
       return {
         cliPathsByHost: providerSettings.cliPathsByHost,
         environmentText: getRuntimeEnvironmentText(settings, 'pi'),
-        legacyCliPath: providerSettings.cliPath,
       };
     },
     providerId: 'pi',
@@ -18,18 +17,6 @@ export class PiCliResolver {
 
   resolveFromSettings(settings: Record<string, unknown>): string | null {
     return this.resolver.resolveFromSettings(settings);
-  }
-
-  resolve(
-    hostnamePaths: Record<string, string> | undefined,
-    legacyPath: string,
-    envText = '',
-  ): string | null {
-    return this.resolver.resolve({
-      cliPathsByHost: hostnamePaths,
-      environmentText: envText,
-      legacyCliPath: legacyPath,
-    });
   }
 
   reset(): void {

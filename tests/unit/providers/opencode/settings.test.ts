@@ -55,7 +55,6 @@ describe('OpenCode settings normalization', () => {
     expect(getOpencodeProviderSettings({
       providerConfigs: {
         opencode: {
-          cliPath: '/legacy/opencode',
           cliPathsByHost: {
             'host-a': '/host-a/opencode',
             'host-b': '/host-b/opencode',
@@ -74,7 +73,6 @@ describe('OpenCode settings normalization', () => {
       preferredThinkingByModel: {
         'anthropic/claude-sonnet-4': 'high',
       },
-      cliPath: '/legacy/opencode',
       cliPathsByHost: {
         'host-a': '/host-a/opencode',
         'host-b': '/host-b/opencode',
@@ -381,30 +379,10 @@ describe('OpenCode settings normalization', () => {
     }).selectedMode).toBe('grandemonium-yolo');
   });
 
-  it('preserves legacy cliPath when no host-scoped path exists', () => {
-    expect(getOpencodeProviderSettings({
-      providerConfigs: {
-        opencode: {
-          cliPath: '/legacy/opencode',
-          cliPathsByHost: {
-            'host-b': '/other-host/opencode',
-          },
-        },
-      },
-    })).toMatchObject({
-      cliPath: '/legacy/opencode',
-      cliPathsByHost: {
-        'host-b': '/other-host/opencode',
-      },
-    });
-  });
-
   it('writes host-scoped cli paths when updating provider settings', () => {
     const settings: Record<string, unknown> = {
       providerConfigs: {
-        opencode: {
-          cliPath: '/legacy/opencode',
-        },
+        opencode: {},
       },
     };
 
@@ -419,60 +397,6 @@ describe('OpenCode settings normalization', () => {
     });
     expect((settings.providerConfigs as Record<string, any>).opencode.cliPathsByHost).toEqual({
       'host-a': '/custom/opencode',
-    });
-  });
-
-  it('preserves legacy cliPath when applying a full settings snapshot', () => {
-    const settings: Record<string, unknown> = {
-      providerConfigs: {
-        opencode: {
-          cliPath: '/legacy/opencode',
-          cliPathsByHost: {
-            'host-b': '/other-host/opencode',
-          },
-        },
-      },
-    };
-
-    const snapshot = getOpencodeProviderSettings(settings);
-    const next = updateOpencodeProviderSettings(settings, snapshot);
-
-    expect(next.cliPath).toBe('/legacy/opencode');
-    expect((settings.providerConfigs as Record<string, any>).opencode).toMatchObject({
-      cliPath: '/legacy/opencode',
-      cliPathsByHost: {
-        'host-b': '/other-host/opencode',
-      },
-    });
-  });
-
-  it('drops the legacy cliPath once host-scoped paths are explicitly edited', () => {
-    const settings: Record<string, unknown> = {
-      providerConfigs: {
-        opencode: {
-          cliPath: '/legacy/opencode',
-        },
-      },
-    };
-
-    const next = updateOpencodeProviderSettings(settings, {
-      cliPathsByHost: {
-        'host-a': '/custom/opencode',
-      },
-    });
-
-    expect(next.cliPath).toBe('');
-    expect((settings.providerConfigs as Record<string, any>).opencode.cliPath).toBe('');
-
-    const cleared = updateOpencodeProviderSettings(settings, {
-      cliPathsByHost: {},
-    });
-
-    expect(cleared.cliPath).toBe('');
-    expect(cleared.cliPathsByHost).toEqual({});
-    expect((settings.providerConfigs as Record<string, any>).opencode).toMatchObject({
-      cliPath: '',
-      cliPathsByHost: {},
     });
   });
 });
