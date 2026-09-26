@@ -4,7 +4,7 @@ import { readMarkKey,type ReadMarks } from "./inbox-model";
  * Whether a thread has been read is personal and device-local, so it is kept
  * out of the shared comment block, beside the author override.
  */
-export const READ_MARKS_KEY = "tandem-comments:read-marks";
+export const READ_MARKS_KEY = "grandemonium.comments.readMarks";
 
 export interface ReadMarksStorage {
   load(key: string): unknown;

@@ -165,7 +165,7 @@ style, so upstream fixes stay easy to compare. Three adaptations matter:
 - `CommentsController` is constructed by `src/main.ts` and takes the host
   `Plugin`. It is not a `Plugin` subclass, and `this.app` is a delegating getter,
   which is why the vendored call sites read unchanged.
-- Settings persist under the `tandemComments` key of the shared `data.json`.
+- Settings persist under the `comments` key of the shared `data.json`.
   Never call `plugin.saveData` with a bare settings object here; that would drop
   the chat side's `tabManagerState`.
 - The settings surface renders as a lazily activated tab inside the shared
@@ -220,7 +220,7 @@ style, so upstream fixes stay easy to compare. Three adaptations matter:
   one `RepositoryThreadSession` per AI it reaches until it is resolved, because
   the thread is the conversation and has no note to hold it. Consequences:
   - Threads have no anchor, so they persist under the `repositoryThreads` key of
-    `data.json`, never in a note. Merge on write, as `tandemComments` does.
+    `data.json`, never in a note. Merge on write, as `comments` does.
   - The agent's final text is posted as its reply by the controller; the agent
     is told to leave its per-passage review points as ordinary file comments.
   - Approvals are answered inline in the thread, since a reader is watching it.

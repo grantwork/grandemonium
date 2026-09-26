@@ -12,9 +12,8 @@
  *   3. A generic fallback, so comments are never left unattributed.
  */
 
-/** localStorage keys for the per-vault, non-synced author override. */
-export const AUTHOR_OVERRIDE_KEY = "tandem-comments:author-name-override";
-export const LEGACY_AUTHOR_OVERRIDE_KEY = "author-name-override";
+/** localStorage key for the per-vault, non-synced author override. */
+export const AUTHOR_OVERRIDE_KEY = "grandemonium.comments.authorNameOverride";
 
 /** Used when neither an override nor an OS username is available (e.g. mobile). */
 export const FALLBACK_AUTHOR = "Me";

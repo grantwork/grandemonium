@@ -7,7 +7,6 @@ import {
   normalizeAuthorColorOverrides,
   renameAuthorColorOverride,
   resolveAuthorColor,
-  resolveAuthorHue,
 } from "@/features/comments/author-color";
 
 function hslContrast(css: string, background: [number, number, number]): number {
@@ -37,13 +36,6 @@ function hslContrast(css: string, background: [number, number, number]): number 
 }
 
 describe("authorHue", () => {
-  it("uses an exact author override and generates a hue for unknown authors", () => {
-    const overrides = { Claude: 42 };
-
-    expect(resolveAuthorHue("Claude", overrides)).toBe(42);
-    expect(resolveAuthorHue("ChatGPT", overrides)).toBe(authorHue("ChatGPT"));
-  });
-
   it("renders an exact override unchanged in both themes", () => {
     const overrides = { Claude: "#123456" };
 
@@ -54,18 +46,10 @@ describe("authorHue", () => {
     );
   });
 
-  it("migrates saved hue overrides to exact colors and discards invalid values", () => {
-    expect(
-      normalizeAuthorColorOverrides({ Claude: 210, ChatGPT: "#AABBCC", invalid: "red" })
-    ).toEqual({
-      Claude: "#2680d9",
+  it("keeps exact colors and discards invalid values", () => {
+    expect(normalizeAuthorColorOverrides({ Claude: 210, ChatGPT: "#AABBCC", invalid: "red" })).toEqual({
       ChatGPT: "#aabbcc",
     });
-  });
-
-  it("ignores invalid overrides and normalizes valid hues", () => {
-    expect(resolveAuthorHue("Claude", { Claude: Number.NaN })).toBe(authorHue("Claude"));
-    expect(resolveAuthorHue("Claude", { Claude: 725 })).toBe(5);
   });
 
   it("keeps every generated hue above 4.5:1 contrast in light and dark themes", () => {
@@ -87,35 +71,35 @@ describe("authorHue", () => {
     expect(authorColorReadability("#ffffff")?.lowContrastThemes).toEqual(["light"]);
   });
 
-  it("renames an override without changing its hue or other authors", () => {
-    const overrides = { Claude: 230, Gemini: 301 };
+  it("renames an override without changing its color or other authors", () => {
+    const overrides = { Claude: "#3355cc", Gemini: "#aa33aa" };
 
     expect(renameAuthorColorOverride(overrides, "Claude", "claude")).toEqual({
       ok: true,
-      overrides: { claude: 230, Gemini: 301 },
+      overrides: { claude: "#3355cc", Gemini: "#aa33aa" },
     });
-    expect(overrides).toEqual({ Claude: 230, Gemini: 301 });
+    expect(overrides).toEqual({ Claude: "#3355cc", Gemini: "#aa33aa" });
   });
 
   it("rejects a rename that would overwrite another author", () => {
-    const overrides = { Claude: 230, Gemini: 301 };
+    const overrides = { Claude: "#3355cc", Gemini: "#aa33aa" };
 
     expect(renameAuthorColorOverride(overrides, "Claude", "Gemini")).toEqual({
       ok: false,
       reason: "duplicate",
     });
-    expect(overrides).toEqual({ Claude: 230, Gemini: 301 });
+    expect(overrides).toEqual({ Claude: "#3355cc", Gemini: "#aa33aa" });
   });
 
   it("allows author names that match inherited object properties", () => {
-    expect(renameAuthorColorOverride({ Claude: 230 }, "Claude", "constructor")).toEqual({
+    expect(renameAuthorColorOverride({ Claude: "#3355cc" }, "Claude", "constructor")).toEqual({
       ok: true,
-      overrides: { constructor: 230 },
+      overrides: { constructor: "#3355cc" },
     });
   });
 
   it("rejects an empty author name", () => {
-    expect(renameAuthorColorOverride({ Claude: 230 }, "Claude", "   ")).toEqual({
+    expect(renameAuthorColorOverride({ Claude: "#3355cc" }, "Claude", "   ")).toEqual({
       ok: false,
       reason: "empty",
     });

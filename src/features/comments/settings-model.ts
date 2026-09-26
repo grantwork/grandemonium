@@ -1,6 +1,4 @@
-import { type AuthorColorOverrides,normalizeAuthorColorOverrides } from "./author-color";
-
-export const SETTINGS_VERSION = 1;
+import { type AuthorColorOverrides, normalizeAuthorColorOverrides } from "./author-color";
 
 /** Sent to every enabled AI when the review action is triggered. */
 export const DEFAULT_REVIEW_PROMPT =
@@ -17,7 +15,6 @@ export type SubmitShortcut = "enter" | "mod-enter";
 export type TimestampDisplay = "full" | "compact" | "relative" | "hidden";
 
 export interface CommentsSettings {
-  settingsVersion: number;
   highlightColor: string;
   highlightOpacity: number;
   colorAuthorNames: boolean;
@@ -52,7 +49,6 @@ export interface CommentsSettings {
 }
 
 export const DEFAULT_SETTINGS: CommentsSettings = {
-  settingsVersion: SETTINGS_VERSION,
   highlightColor: "#ffd54a",
   highlightOpacity: 30,
   colorAuthorNames: true,
@@ -83,7 +79,6 @@ export const DEFAULT_SETTINGS: CommentsSettings = {
 
 export interface ParsedCommentsSettings {
   settings: CommentsSettings;
-  legacyAuthorName?: string;
   changed: boolean;
 }
 
@@ -151,7 +146,6 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
     DEFAULT_SETTINGS.resolveBehavior
   );
   const settings: CommentsSettings = {
-    settingsVersion: SETTINGS_VERSION,
     highlightColor:
       typeof raw.highlightColor === "string" && /^#[0-9a-f]{6}$/i.test(raw.highlightColor)
         ? raw.highlightColor.toLowerCase()
@@ -222,10 +216,8 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
         : DEFAULT_SETTINGS.exportFolder,
     authorColorOverrides: normalizeAuthorColorOverrides(raw.authorColorOverrides),
   };
-  const legacyAuthorName = typeof raw.authorName === "string" ? raw.authorName.trim() : undefined;
   return {
     settings,
-    legacyAuthorName: legacyAuthorName || undefined,
     changed: JSON.stringify(value ?? {}) !== JSON.stringify(settings),
   };
 }

@@ -17,7 +17,7 @@ Copyright (c) 2026 Leon Pawelzik
 Provides the quote-anchored review comments: the comment sidebar, the editor highlight extension, re-anchoring, and comment export. Vendored into `src/features/comments/` at upstream version 0.5.2 and adapted to this repository, with these changes:
 
 - The plugin class became `CommentsController`, owned by this plugin's composition root instead of extending `Plugin` itself.
-- Settings persist under a `tandemComments` key in the shared `data.json` rather than owning the whole file. Settings written by the standalone plugin are still read from the document root.
+- Settings persist under a `comments` key in the shared `data.json` rather than owning the whole file.
 - The standalone settings tab became a section rendered inside this plugin's settings shell.
 - Styles moved into the modular CSS build; tests moved from vitest to jest.
 - German source comments were translated to English.

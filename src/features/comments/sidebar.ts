@@ -48,7 +48,7 @@ import { formatSidebarTimestamp } from "./timestamp";
 import type { Anchor, ResolvedComment, ThreadEntry } from "./types";
 import { UnsentInputs } from "./unsent-inputs";
 
-export const VIEW_TYPE_COMMENTS = "tandem-comments-sidebar";
+export const VIEW_TYPE_COMMENTS = "grandemonium-comments";
 
 /** Keys the draft's boxes are kept under; there is only ever one draft. */
 const DRAFT_INPUTS = ["draft comment", "draft replacement", "draft explanation"] as const;

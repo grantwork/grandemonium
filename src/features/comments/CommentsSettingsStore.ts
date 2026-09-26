@@ -4,13 +4,14 @@ import type { CommentsSettings } from './settings-model';
 
 /**
  * Reads and writes the comments settings inside the host plugin's shared
- * `data.json`, under a single namespaced key.
- *
- * The comments feature came from a standalone plugin that owned the whole
- * file. Here it shares `data.json` with the chat side of the plugin, so every
- * write merges into the existing document rather than replacing it.
+ * `data.json`, under a single namespaced key. The file is shared with the chat
+ * side of the plugin, so every write merges into the existing document rather
+ * than replacing it.
  */
-export const COMMENTS_SETTINGS_KEY = 'tandemComments';
+export const COMMENTS_SETTINGS_KEY = 'comments';
+
+/** The key the settings were saved under before the rename; moved on first read. */
+const PREVIOUS_SETTINGS_KEY = 'tandemComments';
 
 /** Repository threads are data, not settings, so they sit under their own key. */
 export const REPOSITORY_THREADS_KEY = 'repositoryThreads';
@@ -27,11 +28,13 @@ export class CommentsSettingsStore {
     const data: unknown = await this.plugin.loadData();
     if (!isRecord(data)) return null;
 
-    const namespaced = data[COMMENTS_SETTINGS_KEY];
-    if (namespaced !== undefined) return namespaced;
+    const current = data[COMMENTS_SETTINGS_KEY];
+    if (current !== undefined) return current;
 
-    // Settings written by the standalone plugin sat at the document root.
-    return 'schemaVersion' in data || 'highlightColor' in data ? data : null;
+    const previous = data[PREVIOUS_SETTINGS_KEY];
+    if (previous === undefined) return null;
+    await this.writeKey(COMMENTS_SETTINGS_KEY, previous);
+    return previous;
   }
 
   /** Merges the comments settings into `data.json`, leaving every other key intact. */
@@ -51,6 +54,7 @@ export class CommentsSettingsStore {
   private async writeKey(key: string, value: unknown): Promise<void> {
     const existing: unknown = await this.plugin.loadData();
     const document = isRecord(existing) ? { ...existing } : {};
+    delete document[PREVIOUS_SETTINGS_KEY];
     document[key] = value;
     await this.plugin.saveData(document);
   }

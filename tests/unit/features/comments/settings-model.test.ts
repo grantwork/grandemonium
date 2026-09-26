@@ -5,7 +5,6 @@ import {
   MIN_POPOVER_WIDTH,
   normalizeVaultFolderPath,
   parseCommentsSettings,
-  SETTINGS_VERSION,
   settingsEffects,
   validateExportNameTemplate,
   validateVaultFolderPath,
@@ -44,7 +43,6 @@ describe("settings model", () => {
     });
 
     expect(result.settings).toMatchObject({
-      settingsVersion: SETTINGS_VERSION,
       highlightColor: "#aabbcc",
       highlightOpacity: 45,
       colorAuthorNames: false,
@@ -93,18 +91,9 @@ describe("settings model", () => {
     expect("unknownSetting" in result.settings).toBe(false);
   });
 
-  it("clamps highlight opacity and migrates numeric author hues", () => {
+  it("clamps highlight opacity", () => {
     expect(parseCommentsSettings({ highlightOpacity: 2 }).settings.highlightOpacity).toBe(10);
     expect(parseCommentsSettings({ highlightOpacity: 100 }).settings.highlightOpacity).toBe(80);
-    expect(parseCommentsSettings({ authorColorOverrides: { Leon: 210 } }).settings.authorColorOverrides.Leon)
-      .toMatch(/^#[0-9a-f]{6}$/);
-  });
-
-  it("captures and removes the legacy synced author name", () => {
-    const result = parseCommentsSettings({ authorName: "  Leon  " });
-
-    expect(result.legacyAuthorName).toBe("Leon");
-    expect("authorName" in result.settings).toBe(false);
   });
 
   it("disables resolved visibility when resolved threads are not kept", () => {

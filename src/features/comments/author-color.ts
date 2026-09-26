@@ -7,7 +7,7 @@ export function authorHue(author: string): number {
   return Math.abs(hash) % 360;
 }
 
-export type AuthorColorOverrides = Record<string, string | number>;
+export type AuthorColorOverrides = Record<string, string>;
 export type AuthorColorTheme = "light" | "dark";
 export interface AuthorColorHsl {
   h: number;
@@ -33,11 +33,6 @@ function normalizeHue(hue: number): number {
   return Math.round(((hue % 360) + 360) % 360) % 360;
 }
 
-export function resolveAuthorHue(author: string, overrides: AuthorColorOverrides): number {
-  const override = overrides[author];
-  return typeof override === "number" && Number.isFinite(override) ? normalizeHue(override) : authorHue(author);
-}
-
 export function authorColorHsl(hue: number, theme: AuthorColorTheme): AuthorColorHsl {
   return {
     h: normalizeHue(hue),
@@ -58,40 +53,18 @@ export function resolveAuthorColor(
 ): string {
   const override = overrides[author];
   if (typeof override === "string" && /^#[0-9a-f]{6}$/i.test(override)) return override;
-  return authorColorCss(resolveAuthorHue(author, overrides), theme);
+  return authorColorCss(authorHue(author), theme);
 }
 
 export function hasAuthorColorOverride(overrides: AuthorColorOverrides, author: string): boolean {
   return Object.prototype.hasOwnProperty.call(overrides, author);
 }
 
-function hueOverrideHex(hue: number): string {
-  const normalized = normalizeHue(hue);
-  const saturation = 0.7;
-  const lightness = 0.5;
-  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
-  const x = chroma * (1 - Math.abs(((normalized / 60) % 2) - 1));
-  const offset = lightness - chroma / 2;
-  const rgbPrime: [number, number, number] =
-    normalized < 60 ? [chroma, x, 0] :
-    normalized < 120 ? [x, chroma, 0] :
-    normalized < 180 ? [0, chroma, x] :
-    normalized < 240 ? [0, x, chroma] :
-    normalized < 300 ? [x, 0, chroma] : [chroma, 0, x];
-  return "#" + rgbPrime
-    .map((channel) => Math.round((channel + offset) * 255).toString(16).padStart(2, "0"))
-    .join("");
-}
-
 export function normalizeAuthorColorOverrides(value: unknown): Record<string, string> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
   const normalized: Record<string, string> = {};
   for (const [author, color] of Object.entries(value)) {
-    if (typeof color === "string" && /^#[0-9a-f]{6}$/i.test(color)) {
-      normalized[author] = color.toLowerCase();
-    } else if (typeof color === "number" && Number.isFinite(color)) {
-      normalized[author] = hueOverrideHex(color);
-    }
+    if (typeof color === "string" && /^#[0-9a-f]{6}$/i.test(color)) normalized[author] = color.toLowerCase();
   }
   return normalized;
 }

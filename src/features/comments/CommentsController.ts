@@ -7,7 +7,6 @@ import {
   AUTHOR_OVERRIDE_KEY,
   detectOsUsername,
   FALLBACK_AUTHOR,
-  LEGACY_AUTHOR_OVERRIDE_KEY,
   resolveAuthorName,
 } from "./author";
 import { CommentIndex } from "./comment-index";
@@ -23,7 +22,7 @@ import {
 } from "./export";
 import { buildImplementMessage, type ImplementTarget } from "./implement-message";
 import { buildInbox, type InboxView, readMarkKey } from "./inbox-model";
-import { type ReadMark, ReadMarksStore } from "./read-marks";
+import { READ_MARKS_KEY, type ReadMark, ReadMarksStore } from "./read-marks";
 import { registerReadingView } from "./reading-view";
 import { type RepositoryAgentPort, RepositoryThreadsController } from "./RepositoryThreadsController";
 import { buildReviewMessage } from "./review-message";
@@ -54,6 +53,12 @@ import { formatSidebarTimestamp } from "./timestamp";
 import type { Anchor, ParsedDoc } from "./types";
 
 const DEFAULT_CLAUDE_AGENT_NAME = "claude";
+
+/** localStorage keys from before the rename, and the keys that replaced them. */
+const RENAMED_LOCAL_STORAGE_KEYS = [
+  ["tandem-comments:author-name-override", AUTHOR_OVERRIDE_KEY],
+  ["tandem-comments:read-marks", READ_MARKS_KEY],
+] as const;
 
 export type CommentReviewResult =
   | { readonly kind: "completed" }
@@ -528,7 +533,7 @@ export class CommentsController {
 
   async loadSettings(): Promise<void> {
     const parsed = parseCommentsSettings(await this.store.read());
-    this.migrateLegacyAuthorName(parsed.legacyAuthorName);
+    this.moveRenamedLocalStorage();
     this.settings = parsed.settings;
     if (parsed.changed) await this.store.write(this.settings);
   }
@@ -611,21 +616,16 @@ export class CommentsController {
   }
 
   /**
-   * One-time transition: the author name used to live in synced settings. Seed
-   * it as this device's local override (unless one already exists) and drop it
-   * from the settings object so it stops being synced.
+   * Moves this device's display name and read marks from the keys they were
+   * kept under before the rename. A value already under the new key wins.
    */
-  private migrateLegacyAuthorName(syncedAuthorName?: string): void {
-    const current: unknown = this.app.loadLocalStorage(AUTHOR_OVERRIDE_KEY);
-    const oldLocal: unknown = this.app.loadLocalStorage(LEGACY_AUTHOR_OVERRIDE_KEY);
-    const legacy =
-      typeof oldLocal === "string" && oldLocal.trim()
-        ? oldLocal.trim()
-        : syncedAuthorName?.trim();
-    if (typeof current !== "string" && legacy && legacy !== FALLBACK_AUTHOR) {
-      this.app.saveLocalStorage(AUTHOR_OVERRIDE_KEY, legacy);
+  private moveRenamedLocalStorage(): void {
+    for (const [previous, current] of RENAMED_LOCAL_STORAGE_KEYS) {
+      const value: unknown = this.app.loadLocalStorage(previous);
+      if (value === null) continue;
+      if (this.app.loadLocalStorage(current) === null) this.app.saveLocalStorage(current, value);
+      this.app.saveLocalStorage(previous, null);
     }
-    if (oldLocal !== null) this.app.saveLocalStorage(LEGACY_AUTHOR_OVERRIDE_KEY, null);
   }
 
   /** The main window plus every popout window. */
