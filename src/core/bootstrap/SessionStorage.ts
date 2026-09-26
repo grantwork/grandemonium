@@ -1,5 +1,5 @@
 import { mapWithConcurrency } from '../../utils/concurrency';
-import { decodeLinkedContentPathFields } from '../path/LinkedContentPath';
+import { normalizeLinkedContentPath } from '../path/LinkedContentPath';
 import {
   DEFAULT_CHAT_PROVIDER_ID,
   type SessionMetadataListOptions,
@@ -251,24 +251,23 @@ export class SessionStorage implements SessionMetadataReader {
     const {
       selectedModel: rawSelectedModel,
       modelRecoverySource: rawModelRecoverySource,
-      linkedContentPath: _rawLinkedContentPath,
-      currentNote: _rawCurrentNote,
+      linkedContentPath: rawLinkedContentPath,
       ...metadataFields
     } = rawMetadata;
     const selectedModel = typeof rawSelectedModel === 'string'
       ? rawSelectedModel
       : undefined;
     const modelRecoverySource = this.parseModelRecoverySource(rawModelRecoverySource);
-    const linkedContent = decodeLinkedContentPathFields(rawMetadata);
+    const linkedContentPath = normalizeLinkedContentPath(rawLinkedContentPath) ?? undefined;
     const metadata = {
       ...metadataFields,
       ...(selectedModel !== undefined ? { selectedModel } : {}),
       ...(modelRecoverySource ? { modelRecoverySource } : {}),
-      ...(linkedContent.path ? { linkedContentPath: linkedContent.path } : {}),
+      ...(linkedContentPath ? { linkedContentPath } : {}),
       lastActivityAt,
     } as unknown as SessionMetadata;
     const needsMigration = !Number.isFinite(rawMetadata.lastActivityAt)
-      || linkedContent.needsMigration
+      || (rawLinkedContentPath !== undefined && linkedContentPath !== rawLinkedContentPath)
       || (rawSelectedModel !== undefined && selectedModel === undefined)
       || (rawModelRecoverySource !== undefined && modelRecoverySource === undefined);
     return { metadata, needsMigration };

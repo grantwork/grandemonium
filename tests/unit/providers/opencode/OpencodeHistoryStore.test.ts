@@ -37,7 +37,7 @@ describe('mapOpencodeMessages', () => {
         parts: [
           {
             id: 'part-user',
-            text: 'Summarize this\n\n<current_note>\nnotes/today.md\n</current_note>',
+            text: 'Summarize this\n\n<linked_content path="notes/today.md" />',
             type: 'text',
           },
         ],

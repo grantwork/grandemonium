@@ -1,15 +1,3 @@
-export type LinkedContentPathSource =
-  | 'canonical'
-  | 'legacy'
-  | 'absent'
-  | 'invalid';
-
-export interface LinkedContentPathDecodeResult {
-  path: string | undefined;
-  needsMigration: boolean;
-  source: LinkedContentPathSource;
-}
-
 const WINDOWS_DRIVE_PATTERN = /^[A-Za-z]:[\\/]/;
 const WINDOWS_UNC_PATTERN = /^(?:\\\\|\/\/)/;
 
@@ -49,35 +37,4 @@ export function assertLinkedContentPath(value: unknown): string {
     throw new Error(`Invalid Linked content path: ${JSON.stringify(value)}`);
   }
   return normalized;
-}
-
-export function decodeLinkedContentPathFields(
-  value: Readonly<Record<string, unknown>>,
-  canonicalKey = 'linkedContentPath',
-  legacyKey = 'currentNote',
-): LinkedContentPathDecodeResult {
-  const hasCanonical = Object.prototype.hasOwnProperty.call(value, canonicalKey);
-  const hasLegacy = Object.prototype.hasOwnProperty.call(value, legacyKey);
-
-  if (hasCanonical) {
-    const raw = value[canonicalKey];
-    const path = normalizeLinkedContentPath(raw);
-    if (path === null) {
-      return { path: undefined, needsMigration: true, source: 'invalid' };
-    }
-    return {
-      path,
-      needsMigration: hasLegacy || path !== raw,
-      source: 'canonical',
-    };
-  }
-
-  if (hasLegacy) {
-    const path = normalizeLinkedContentPath(value[legacyKey]);
-    return path === null
-      ? { path: undefined, needsMigration: true, source: 'invalid' }
-      : { path, needsMigration: true, source: 'legacy' };
-  }
-
-  return { path: undefined, needsMigration: false, source: 'absent' };
 }

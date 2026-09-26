@@ -131,11 +131,9 @@ export function truncateToolResult(result: string, maxLength = 500): string {
 }
 
 export function formatContextLine(message: ChatMessage): string | null {
-  const linkedContentPath = message.linkedContentPath ?? message.currentNote;
-  if (!linkedContentPath) {
-    return null;
-  }
-  return formatLinkedContent(linkedContentPath);
+  return message.linkedContentPath
+    ? formatLinkedContent(message.linkedContentPath)
+    : null;
 }
 
 /**

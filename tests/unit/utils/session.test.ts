@@ -623,7 +623,7 @@ describe('session utilities', () => {
 
   describe('buildPromptWithHistoryContext', () => {
     it('returns prompt unchanged when historyContext is null', () => {
-      const prompt = '<query>\nhello\n</query>';
+      const prompt = 'hello\n\n<linked_content path="notes/today.md" />';
       const result = buildPromptWithHistoryContext(null, prompt, 'hello', []);
 
       expect(result).toBe(prompt);
@@ -635,7 +635,7 @@ describe('session utilities', () => {
         { id: 'msg-2', role: 'assistant', content: 'hi', timestamp: 2000 },
       ];
       const historyContext = 'User: hello\n\nAssistant: hi';
-      const prompt = '<query>\nhello\n</query>';
+      const prompt = 'hello\n\n<linked_content path="notes/today.md" />';
       const actualPrompt = 'hello';
 
       const result = buildPromptWithHistoryContext(historyContext, prompt, actualPrompt, messages);
@@ -650,19 +650,18 @@ describe('session utilities', () => {
         { id: 'msg-2', role: 'assistant', content: 'response', timestamp: 2000 },
       ];
       const historyContext = 'User: first message\n\nAssistant: response';
-      const prompt = '<query>\nsecond message\n</query>';
+      const prompt = 'second message\n\n<linked_content path="notes/today.md" />';
       const actualPrompt = 'second message';
 
       const result = buildPromptWithHistoryContext(historyContext, prompt, actualPrompt, messages);
 
       expect(result).toContain(historyContext);
-      expect(result).toContain('User: <query>');
-      expect(result).toContain('second message');
+      expect(result).toContain('User: second message\n\n<linked_content path="notes/today.md" />');
     });
 
     it('returns prompt unchanged when history context is empty string', () => {
       const historyContext = '';
-      const prompt = '<query>\nhello\n</query>';
+      const prompt = 'hello\n\n<linked_content path="notes/today.md" />';
 
       const result = buildPromptWithHistoryContext(historyContext, prompt, 'hello', []);
 
@@ -675,13 +674,13 @@ describe('session utilities', () => {
         { id: 'msg-1', role: 'assistant', content: 'welcome', timestamp: 1000 },
       ];
       const historyContext = 'Assistant: welcome';
-      const prompt = '<query>\nhello\n</query>';
+      const prompt = 'hello\n\n<linked_content path="notes/today.md" />';
       const actualPrompt = 'hello';
 
       const result = buildPromptWithHistoryContext(historyContext, prompt, actualPrompt, messages);
 
       expect(result).toContain(historyContext);
-      expect(result).toContain('User: <query>');
+      expect(result).toContain('User: hello\n\n<linked_content path="notes/today.md" />');
     });
 
     it('handles whitespace in comparison', () => {
@@ -689,7 +688,7 @@ describe('session utilities', () => {
         { id: 'msg-1', role: 'user', content: '  hello world  ', timestamp: 1000 },
       ];
       const historyContext = 'User: hello world';
-      const prompt = '<query>\nhello world\n</query>';
+      const prompt = 'hello world\n\n<linked_content path="notes/today.md" />';
       const actualPrompt = 'hello world';
 
       const result = buildPromptWithHistoryContext(historyContext, prompt, actualPrompt, messages);
@@ -698,52 +697,10 @@ describe('session utilities', () => {
       expect(result).toBe(historyContext);
     });
 
-    it('avoids duplication when legacy XML-wrapped content matches display content', () => {
-      const prompt = [
-        '<current_note>',
-        'notes/file.md',
-        '</current_note>',
-        '',
-        '<editor_selection path="notes/file.md">',
-        'selected text',
-        '</editor_selection>',
-        '',
-        '<query>',
-        'Follow up',
-        '</query>',
-      ].join('\n');
-
-      const actualPrompt = [
-        '<editor_selection path="notes/file.md">',
-        'selected text',
-        '</editor_selection>',
-        '',
-        '<query>',
-        'Follow up',
-        '</query>',
-      ].join('\n');
-
-      const messages: ChatMessage[] = [
-        {
-          id: 'msg-1',
-          role: 'user',
-          content: prompt,
-          displayContent: 'Follow up',
-          timestamp: 1000,
-        },
-      ];
-
-      const historyContext = 'User: Follow up';
-
-      const result = buildPromptWithHistoryContext(historyContext, prompt, actualPrompt, messages);
-
-      expect(result).toBe(historyContext);
-    });
-
     describe('new format (user content before XML context)', () => {
       it('avoids duplication when actualPrompt matches last user message', () => {
-        const prompt = 'Explain this\n\n<linked_note>\ntest.md\n</linked_note>';
-        const actualPrompt = 'Explain this\n\n<linked_note>\ntest.md\n</linked_note>';
+        const prompt = 'Explain this\n\n<linked_content path="test.md" />';
+        const actualPrompt = 'Explain this\n\n<linked_content path="test.md" />';
         const messages: ChatMessage[] = [
           {
             id: 'msg-1',
@@ -761,8 +718,8 @@ describe('session utilities', () => {
       });
 
       it('appends prompt when actualPrompt differs from last user message', () => {
-        const oldPrompt = 'First question\n\n<linked_note>\nold.md\n</linked_note>';
-        const newPrompt = 'Second question\n\n<linked_note>\nnew.md\n</linked_note>';
+        const oldPrompt = 'First question\n\n<linked_content path="old.md" />';
+        const newPrompt = 'Second question\n\n<linked_content path="new.md" />';
         const messages: ChatMessage[] = [
           {
             id: 'msg-1',
@@ -799,7 +756,7 @@ describe('session utilities', () => {
       });
 
       it('extracts user query from content with multiple XML context tags', () => {
-        const prompt = 'Update code\n\n<linked_note>\ntest.md\n</linked_note>\n\n<editor_selection path="test.md">\nselected\n</editor_selection>';
+        const prompt = 'Update code\n\n<linked_content path="test.md" />\n\n<editor_selection path="test.md">\nselected\n</editor_selection>';
         const messages: ChatMessage[] = [
           {
             id: 'msg-1',
@@ -817,7 +774,7 @@ describe('session utilities', () => {
       });
 
       it('falls back to extractUserQuery when displayContent is not available', () => {
-        const prompt = 'Help me\n\n<linked_note>\nfile.md\n</linked_note>';
+        const prompt = 'Help me\n\n<linked_content path="file.md" />';
         const messages: ChatMessage[] = [
           {
             id: 'msg-1',
@@ -988,14 +945,14 @@ describe('session utilities', () => {
       expect(result).toContain('[Thinking: 1 block(s), 10.0s total]');
     });
 
-    it('handles user message with currentNote but no content', () => {
+    it('handles user message with a Linked content path but no content', () => {
       const messages: ChatMessage[] = [
         {
           id: 'msg-1',
           role: 'user',
           content: '',
           timestamp: 1000,
-          currentNote: 'notes/active.md',
+          linkedContentPath: 'notes/active.md',
         },
       ];
 

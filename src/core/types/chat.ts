@@ -109,8 +109,6 @@ export interface ChatMessage {
   toolCalls?: ToolCallInfo[];
   contentBlocks?: ContentBlock[];
   linkedContentPath?: string;
-  /** Legacy replay-only field. New messages must use linkedContentPath. */
-  readonly currentNote?: string;
   images?: ImageAttachment[];
   /** Canonical submitted input correlated from Grandemonium-owned persistence. */
   executionInput?: ExecutionInputSnapshot;

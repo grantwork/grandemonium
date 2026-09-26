@@ -163,28 +163,7 @@ describe('SessionStorage read boundary', () => {
     expect(adapter.read).not.toHaveBeenCalled();
   });
 
-  it('normalizes legacy currentNote to canonical Linked content metadata', async () => {
-    const adapter = createAdapter();
-    const storage = new SessionStorage(adapter, DEVICE_KEY);
-    adapter.exists.mockImplementation(async (path) => (
-      path === `${DEVICE_PATH}/legacy-content.meta.json`
-    ));
-    adapter.read.mockResolvedValue(JSON.stringify({
-      ...createMetadata('legacy-content'),
-      currentNote: 'Notes\\Legacy.md',
-    }));
-
-    await expect(storage.load('legacy-content')).resolves.toEqual({
-      metadata: {
-        ...createMetadata('legacy-content'),
-        linkedContentPath: 'Notes/Legacy.md',
-      },
-      needsMigration: true,
-    });
-    expect(adapter.write).not.toHaveBeenCalled();
-  });
-
-  it('prefers canonical metadata and removes the legacy field', async () => {
+  it('normalizes a non-canonical Linked content path and flags a rewrite', async () => {
     const adapter = createAdapter();
     const storage = new SessionStorage(adapter, DEVICE_KEY);
     adapter.exists.mockImplementation(async (path) => (
@@ -193,7 +172,6 @@ describe('SessionStorage read boundary', () => {
     adapter.read.mockResolvedValue(JSON.stringify({
       ...createMetadata('canonical-content'),
       linkedContentPath: './Projects//Current',
-      currentNote: 'Notes/Legacy.md',
     }));
 
     await expect(storage.load('canonical-content')).resolves.toEqual({
@@ -205,7 +183,7 @@ describe('SessionStorage read boundary', () => {
     });
   });
 
-  it('fails closed when canonical metadata is invalid', async () => {
+  it('drops an invalid Linked content path and flags a rewrite', async () => {
     const adapter = createAdapter();
     const storage = new SessionStorage(adapter, DEVICE_KEY);
     adapter.exists.mockImplementation(async (path) => (
@@ -214,7 +192,6 @@ describe('SessionStorage read boundary', () => {
     adapter.read.mockResolvedValue(JSON.stringify({
       ...createMetadata('invalid-content'),
       linkedContentPath: '../escape',
-      currentNote: 'Notes/Legacy.md',
     }));
 
     await expect(storage.load('invalid-content')).resolves.toEqual({
@@ -252,32 +229,32 @@ describe('ConversationInputLedgerStorage', () => {
     });
   });
 
-  it('normalizes legacy Linked content context without rewriting the ledger', async () => {
+  it('normalizes a non-canonical Linked content path without rewriting the ledger', async () => {
     const adapter = createAdapter();
     const storage = new ConversationInputLedgerStorage(adapter);
-    const legacy = createLedger();
+    const ledger = createLedger();
     const raw = {
-      ...legacy,
+      ...ledger,
       records: [{
-        ...legacy.records[0],
+        ...ledger.records[0],
         context: {
-          currentNote: { path: 'Notes\\Legacy.md', content: 'body' },
+          linkedContent: { path: 'Notes\\Plan.md', content: 'body' },
         },
       }],
     };
     adapter.exists.mockResolvedValue(true);
     adapter.read.mockResolvedValue(JSON.stringify(raw));
 
-    const result = await storage.load(legacy.conversationId);
+    const result = await storage.load(ledger.conversationId);
 
     expect(result).toEqual({
       status: 'loaded',
       ledger: {
-        ...legacy,
+        ...ledger,
         records: [{
-          ...legacy.records[0],
+          ...ledger.records[0],
           context: {
-            linkedContent: { path: 'Notes/Legacy.md', content: 'body' },
+            linkedContent: { path: 'Notes/Plan.md', content: 'body' },
           },
         }],
       },
@@ -286,7 +263,7 @@ describe('ConversationInputLedgerStorage', () => {
     expect(adapter.write).not.toHaveBeenCalled();
   });
 
-  it('fails closed for invalid canonical context without falling back to legacy', async () => {
+  it('drops an invalid Linked content context', async () => {
     const adapter = createAdapter();
     const storage = new ConversationInputLedgerStorage(adapter);
     const ledger = createLedger();
@@ -296,7 +273,6 @@ describe('ConversationInputLedgerStorage', () => {
         ...ledger.records[0],
         context: {
           linkedContent: { path: '../escape' },
-          currentNote: { path: 'Notes/Legacy.md' },
           editorSelection: null,
         },
       }],

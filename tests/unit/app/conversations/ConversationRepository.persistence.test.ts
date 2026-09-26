@@ -190,8 +190,8 @@ describe('ConversationRepository input ledger', () => {
     });
   });
 
-  it('defers legacy ledger writeback until the next ordered ledger mutation', async () => {
-    const conversation = createConversation('legacy-ledger');
+  it('defers ledger normalization writeback until the next ordered ledger mutation', async () => {
+    const conversation = createConversation('normalized-ledger');
     const migratedRecord = createInputRecord({
       id: 'migrated-input',
       state: 'accepted',
@@ -223,7 +223,6 @@ describe('ConversationRepository input ledger', () => {
     expect(persistedLedger.records[0].context).toEqual({
       linkedContent: { path: 'Notes/Legacy.md' },
     });
-    expect(JSON.stringify(persistedLedger)).not.toContain('currentNote');
   });
 
   it('prefers a unique provider user-message ID, then requires ordinal and digest together', async () => {

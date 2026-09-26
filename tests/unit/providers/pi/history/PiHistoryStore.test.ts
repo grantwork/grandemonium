@@ -115,7 +115,7 @@ describe('PiHistoryStore', () => {
         type: 'entry',
         message: {
           role: 'user',
-          content: 'Summarize this\n\n<current_note>\nnotes/today.md\n</current_note>',
+          content: 'Summarize this\n\n<linked_content path="notes/today.md" />',
         },
       }),
     ].join('\n');
@@ -123,7 +123,7 @@ describe('PiHistoryStore', () => {
     const messages = parsePiSessionContent(content);
 
     expect(messages[0]).toMatchObject({
-      content: 'Summarize this\n\n<current_note>\nnotes/today.md\n</current_note>',
+      content: 'Summarize this\n\n<linked_content path="notes/today.md" />',
       role: 'user',
     });
     expect(messages[0].displayContent).toBeUndefined();
@@ -141,7 +141,7 @@ describe('PiHistoryStore', () => {
         '',
         'include untracked files',
         '',
-        '<linked_note path="notes/release.md" />',
+        '<linked_content path="notes/release.md" />',
       ].join('\n'),
     },
   ])('restores $displayContent from Pi-expanded skill prompts', ({

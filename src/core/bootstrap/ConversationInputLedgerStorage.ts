@@ -186,20 +186,17 @@ function normalizeInputContext(
   if (!isRecord(value)) return null;
 
   const raw = value;
-  const hasCanonical = Object.prototype.hasOwnProperty.call(raw, 'linkedContent');
-  const hasLegacy = Object.prototype.hasOwnProperty.call(raw, 'currentNote');
   const context = { ...raw };
   delete context.linkedContent;
-  delete context.currentNote;
 
-  if (!hasCanonical && !hasLegacy) {
+  if (!Object.prototype.hasOwnProperty.call(raw, 'linkedContent')) {
     return {
       context: context as unknown as ExecutionInputContextSnapshot,
       needsMigration: false,
     };
   }
 
-  const selected = hasCanonical ? raw.linkedContent : raw.currentNote;
+  const selected = raw.linkedContent;
   if (!isRecord(selected)) {
     return {
       context: context as unknown as ExecutionInputContextSnapshot,
@@ -221,7 +218,7 @@ function normalizeInputContext(
   };
   return {
     context: context as unknown as ExecutionInputContextSnapshot,
-    needsMigration: !hasCanonical || hasLegacy || path !== selected.path,
+    needsMigration: path !== selected.path,
   };
 }
 

@@ -88,7 +88,7 @@ describe('ConversationRepository hydration', () => {
     });
   });
 
-  it('creates normalized Linked content metadata without a legacy path field', async () => {
+  it('creates normalized Linked content metadata', async () => {
     const { repository, persistence } = createRepository();
 
     const conversation = await repository.create({
@@ -103,8 +103,6 @@ describe('ConversationRepository hydration', () => {
         linkedContentPath: 'Projects/Research/Plan.md',
       }),
     );
-    expect(persistence.saveMetadata.mock.calls.at(-1)?.[0])
-      .not.toHaveProperty('currentNote');
   });
 
   it('removes a new Conversation shell when its initial metadata write fails', async () => {

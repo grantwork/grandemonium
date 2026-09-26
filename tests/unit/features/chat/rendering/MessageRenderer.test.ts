@@ -341,7 +341,7 @@ describe('MessageRenderer', () => {
     const msg: ChatMessage = {
       id: 'u1',
       role: 'user',
-      content: 'Explain this\n\n<current_note>\nnotes/test.md\n</current_note>',
+      content: 'Explain this\n\n<linked_content path="notes/test.md" />',
       timestamp: Date.now(),
     };
 

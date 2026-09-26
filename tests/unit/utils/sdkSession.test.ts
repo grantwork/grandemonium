@@ -1037,20 +1037,20 @@ describe('sdkSession', () => {
       expect(chatMsg!.isRebuiltContext).toBeUndefined();
     });
 
-    it('extracts displayContent from user message with current_note tag', () => {
+    it('extracts displayContent from user message with linked_content tag', () => {
       const sdkMsg: SDKNativeMessage = {
         type: 'user',
         uuid: 'user-note',
         timestamp: '2024-01-15T10:30:00Z',
         message: {
-          content: 'Explain this file\n\n<current_note>\nnotes/test.md\n</current_note>',
+          content: 'Explain this file\n\n<linked_content path="notes/test.md" />',
         },
       };
 
       const chatMsg = parseSDKMessageToChat(sdkMsg);
 
       expect(chatMsg).not.toBeNull();
-      expect(chatMsg!.content).toBe('Explain this file\n\n<current_note>\nnotes/test.md\n</current_note>');
+      expect(chatMsg!.content).toBe('Explain this file\n\n<linked_content path="notes/test.md" />');
       expect(chatMsg!.displayContent).toBe('Explain this file');
     });
 
@@ -1076,7 +1076,7 @@ describe('sdkSession', () => {
         uuid: 'user-multi',
         timestamp: '2024-01-15T10:30:00Z',
         message: {
-          content: 'Update this\n\n<current_note>\ntest.md\n</current_note>\n\n<editor_selection path="test.md">\nselected\n</editor_selection>',
+          content: 'Update this\n\n<linked_content path="test.md" />\n\n<editor_selection path="test.md">\nselected\n</editor_selection>',
         },
       };
 

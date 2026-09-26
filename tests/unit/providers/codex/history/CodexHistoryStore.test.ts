@@ -1481,7 +1481,7 @@ describe('CodexHistoryStore', () => {
       expect(messages[1]).toMatchObject({ role: 'assistant', content: 'Done.' });
     });
 
-    it('should set displayContent stripping bracket context from user messages', () => {
+    it('should set displayContent stripping Linked content context from user messages', () => {
       const content = [
         JSON.stringify({
           timestamp: '2026-03-27T00:00:00.000Z',
@@ -1489,7 +1489,7 @@ describe('CodexHistoryStore', () => {
           payload: {
             type: 'message',
             role: 'user',
-            content: [{ type: 'input_text', text: 'Fix the bug\n[Current note: notes/bug.md]' }],
+            content: [{ type: 'input_text', text: 'Fix the bug\n\n<linked_content path="notes/bug.md" />' }],
           },
         }),
         JSON.stringify({
@@ -1508,7 +1508,7 @@ describe('CodexHistoryStore', () => {
       expect(messages).toHaveLength(2);
       expect(messages[0]).toMatchObject({
         role: 'user',
-        content: 'Fix the bug\n[Current note: notes/bug.md]',
+        content: 'Fix the bug\n\n<linked_content path="notes/bug.md" />',
         displayContent: 'Fix the bug',
       });
     });
@@ -1521,7 +1521,7 @@ describe('CodexHistoryStore', () => {
           payload: {
             type: 'message',
             role: 'user',
-            content: [{ type: 'input_text', text: 'Explain this\n[Editor selection from notes/code.md:\nconst x = 1;\n]' }],
+            content: [{ type: 'input_text', text: 'Explain this\n\n<editor_selection path="notes/code.md">\nconst x = 1;\n</editor_selection>' }],
           },
         }),
         JSON.stringify({
