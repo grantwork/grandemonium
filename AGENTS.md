@@ -34,18 +34,20 @@ Do not assume provider parity. Check each provider's `capabilities.ts`, `registr
 ```bash
 npm run dev
 npm run build
+npm run deploy
 npm run typecheck
 npm run lint
 npm run lint:fix
 npm run test
+npm run test:architecture
 npm run test:watch
 npm run test:coverage
 ```
 
-The default full check is:
+The default full check, which builds without installing into any vault (see Vault Deployment), is:
 
 ```bash
-npm run typecheck && npm run lint && npm run test && npm run build
+npm run typecheck && npm run lint && npm run test && OBSIDIAN_VAULT=/nonexistent-vault npm run build
 ```
 
 Tests mirror `src/` under `tests/unit/` and `tests/integration/`.
@@ -154,4 +156,4 @@ Reviews must enforce the dependency, ownership, provider-boundary, and state-lif
 
 ## Vault Deployment
 
-`vaults.json` registers the local Obsidian vaults the plugin is installed into. `npm run deploy` builds, then copies `main.js`, `styles.css`, and `manifest.json` into `.obsidian/plugins/<manifest id>/` of each registered vault, skipping with a warning any vault without a `.obsidian` folder; paths passed to `scripts/install-to-vault.mjs` replace the register for one run. `npm run dev` copies on each watch rebuild into every registered vault path that exists, creating the plugin folder if needed, and `OBSIDIAN_VAULT` (from the environment or `.env.local`) replaces the register with one vault for dev only.
+`vaults.json` registers the local Obsidian vaults the plugin is installed into. `npm run deploy` builds, then copies `main.js`, `styles.css`, and `manifest.json` into `.obsidian/plugins/<manifest id>/` of each registered vault, skipping with a warning any vault without a `.obsidian` folder; paths passed to `scripts/install-to-vault.mjs` replace the register for one run. `npm run dev` on each watch rebuild, and `npm run build` once, copy into every registered vault path that exists, creating the plugin folder if needed; `OBSIDIAN_VAULT` (from the environment or `.env.local`) replaces the register with one vault for both. Building is therefore installing into the owner's live vaults: to build for verification only, run `OBSIDIAN_VAULT=/nonexistent-vault npm run build`.
