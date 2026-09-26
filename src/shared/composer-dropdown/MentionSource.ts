@@ -24,15 +24,13 @@ export class MentionSource implements ComposerDropdownSource {
   readonly id = 'mentions';
   readonly inputLoadPolicy = 'debounced';
 
-  private readonly listeners = new Set<() => void>();
-
   constructor(
     private readonly callbacks: MentionSourceCallbacks,
     private readonly options: MentionSourceOptions = {},
   ) {}
 
   destroy(): void {
-    this.listeners.clear();
+    // Holds no subscriptions or timers; present so owners can dispose every source alike.
   }
 
   load(
@@ -65,15 +63,6 @@ export class MentionSource implements ComposerDropdownSource {
       kind: 'replace',
       text: item.replacement,
     };
-  }
-
-  invalidate(): void {
-    this.notify();
-  }
-
-  subscribeInvalidation(listener: () => void): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
   }
 
   private vaultItems(query: string): readonly ComposerDropdownValueItem[] {
@@ -154,9 +143,5 @@ export class MentionSource implements ComposerDropdownSource {
     return [...folders, ...fileItems]
       .sort(compare)
       .map(scored => scored.item);
-  }
-
-  private notify(): void {
-    for (const listener of this.listeners) listener();
   }
 }

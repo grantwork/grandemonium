@@ -51,22 +51,16 @@
   background: transparent;
 }
 
-.grandemonium-composer-dropdown-icon,
-.grandemonium-composer-dropdown-folder-icon {
+.grandemonium-composer-dropdown-icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   color: var(--text-muted);
 }
 
-.grandemonium-composer-dropdown-icon svg,
-.grandemonium-composer-dropdown-folder-icon svg {
+.grandemonium-composer-dropdown-icon svg {
   width: 14px;
   height: 14px;
-}
-
-.grandemonium-composer-dropdown-folder-icon {
-  margin-left: auto;
 }
 
 .grandemonium-composer-dropdown-copy {

@@ -70,10 +70,6 @@ export class ComposerDropdownView {
       if (item.detail) {
         copyEl.createDiv({ cls: 'grandemonium-composer-dropdown-detail', text: item.detail });
       }
-      if (item.kind === 'folder') {
-        const folderIcon = itemEl.createSpan({ cls: 'grandemonium-composer-dropdown-folder-icon' });
-        setIcon(folderIcon, 'chevron-right');
-      }
 
       if (selectable) {
         itemEl.addEventListener('mouseenter', () => this.options.onHover(index));
