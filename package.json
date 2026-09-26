@@ -13,7 +13,6 @@
     "build": "node scripts/build.mjs production",
     "install:vaults": "node scripts/install-to-vault.mjs",
     "deploy": "npm run build && node scripts/install-to-vault.mjs",
-    "check:lockfile": "bun install --frozen-lockfile --ignore-scripts",
     "check:open-handles": "node scripts/check-open-handles.mjs",
     "check:performance": "node scripts/check-startup-performance.mjs",
     "typecheck": "tsc --noEmit",
@@ -25,9 +24,7 @@
     "test:unit": "node scripts/run-jest.js",
     "test:architecture": "node --test scripts/check-architecture-boundaries.test.mjs",
     "test:watch": "node scripts/run-jest.js --watch",
-    "test:coverage": "node scripts/run-jest.js --coverage",
-    "preversion": "bun install --frozen-lockfile",
-    "version": "node scripts/sync-version.js && git add manifest.json"
+    "test:coverage": "node scripts/run-jest.js --coverage"
   },
   "keywords": [
     "claude-code",

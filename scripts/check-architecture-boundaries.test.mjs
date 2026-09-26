@@ -17,7 +17,6 @@ import {
 import {
   bundleCriticalRuntimeDependencies,
   inspectRuntimeDependencyParity,
-  parseBunLock,
 } from './runtimeDependencyParity.mjs';
 
 function listTypeScriptFiles(root) {
@@ -375,23 +374,18 @@ test('only TabRuntimeFactory can register runtime resource ownership', () => {
   ].sort());
 });
 
-test('CI gates releases, cross-platform behavior, and security', () => {
+test('CI gates cross-platform behavior and security', () => {
   const workflowsRoot = path.join(process.cwd(), '.github', 'workflows');
   const ci = fs.readFileSync(path.join(workflowsRoot, 'ci.yml'), 'utf8');
-  const release = fs.readFileSync(path.join(workflowsRoot, 'release.yml'), 'utf8');
   const nightly = fs.readFileSync(path.join(workflowsRoot, 'nightly.yml'), 'utf8');
   const codeql = fs.readFileSync(path.join(workflowsRoot, 'codeql.yml'), 'utf8');
 
-  assert.match(ci, /workflow_call:/);
   assert.match(ci, /rhysd\/actionlint:1\.7\.12/);
   assert.match(ci, /diff-hygiene:/);
   assert.match(ci, /dependency-review-action@v4/);
   assert.match(ci, /cross-platform-smoke:/);
   assert.match(ci, /windows-latest/);
   assert.match(ci, /macos-latest/);
-
-  assert.match(release, /uses:\s*\.\/\.github\/workflows\/ci\.yml/);
-  assert.match(release, /needs:\s*verify/);
 
   assert.match(nightly, /schedule:/);
   assert.match(nightly, /ubuntu-latest/);
@@ -436,22 +430,12 @@ test('bundle-critical runtime dependencies require exact manifest and lock agree
       'node_modules/smol-toml': { version: '1.7.1' },
     },
   };
-  const bunLock = {
-    workspaces: {
-      '': { dependencies: { ...packageJson.dependencies } },
-    },
-    packages: {
-      '@anthropic-ai/claude-agent-sdk': ['@anthropic-ai/claude-agent-sdk@0.3.226'],
-      'smol-toml': ['smol-toml@1.7.1'],
-    },
-  };
-
-  assert.deepEqual(inspectRuntimeDependencyParity({ bunLock, packageJson, packageLock }), []);
+  assert.deepEqual(inspectRuntimeDependencyParity({ packageJson, packageLock }), []);
 
   const rangedManifest = structuredClone(packageJson);
   rangedManifest.dependencies['@anthropic-ai/claude-agent-sdk'] = '^0.3.220';
   assert.deepEqual(
-    inspectRuntimeDependencyParity({ bunLock, packageJson: rangedManifest, packageLock }),
+    inspectRuntimeDependencyParity({ packageJson: rangedManifest, packageLock }),
     [{
       actual: '^0.3.220',
       dependency: '@anthropic-ai/claude-agent-sdk',
@@ -463,7 +447,7 @@ test('bundle-critical runtime dependencies require exact manifest and lock agree
   const staleNpmLock = structuredClone(packageLock);
   staleNpmLock.packages['node_modules/smol-toml'].version = '1.6.1';
   assert.deepEqual(
-    inspectRuntimeDependencyParity({ bunLock, packageJson, packageLock: staleNpmLock }),
+    inspectRuntimeDependencyParity({ packageJson, packageLock: staleNpmLock }),
     [{
       actual: '1.6.1',
       dependency: 'smol-toml',
@@ -472,33 +456,6 @@ test('bundle-critical runtime dependencies require exact manifest and lock agree
     }],
   );
 
-  const staleBunLock = structuredClone(bunLock);
-  staleBunLock.packages['@anthropic-ai/claude-agent-sdk'][0] = '@anthropic-ai/claude-agent-sdk@0.3.220';
-  assert.deepEqual(
-    inspectRuntimeDependencyParity({ bunLock: staleBunLock, packageJson, packageLock }),
-    [{
-      actual: '0.3.220',
-      dependency: '@anthropic-ai/claude-agent-sdk',
-      expected: '0.3.226',
-      source: 'bun.lock resolution',
-    }],
-  );
-});
-
-test('Bun lock parsing accepts the repository JSONC shape without weakening JSON validation', () => {
-  assert.deepEqual(parseBunLock(`{
-    "literal": "preserve ,} and escaped \\\"text\\\"",
-    "workspaces": { "": { "dependencies": { "smol-toml": "1.7.1", }, }, },
-    "packages": { "smol-toml": ["smol-toml@1.7.1",], },
-  }`), {
-    literal: 'preserve ,} and escaped "text"',
-    workspaces: { '': { dependencies: { 'smol-toml': '1.7.1' } } },
-    packages: { 'smol-toml': ['smol-toml@1.7.1'] },
-  });
-  assert.throws(
-    () => parseBunLock('{ "packages": /* unsupported */ {} }'),
-    /bun\.lock is not valid JSONC/,
-  );
 });
 
 test('production artifact entry rejects dependency drift before emitting main.js', () => {
@@ -522,16 +479,6 @@ test('production artifact entry rejects dependency drift before emitting main.js
         'node_modules/smol-toml': { version: '1.6.1' },
       },
     }));
-    fs.writeFileSync(path.join(fixtureRoot, 'bun.lock'), `{
-      "workspaces": { "": { "dependencies": {
-        "@anthropic-ai/claude-agent-sdk": "0.3.226",
-        "smol-toml": "1.7.1",
-      }, }, },
-      "packages": {
-        "@anthropic-ai/claude-agent-sdk": ["@anthropic-ai/claude-agent-sdk@0.3.226"],
-        "smol-toml": ["smol-toml@1.7.1"],
-      },
-    }`);
 
     const result = spawnSync(
       process.execPath,

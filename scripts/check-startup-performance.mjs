@@ -143,10 +143,7 @@ process.stdout.write(JSON.stringify({
 }));
 `;
 
-  const childNodePath = [
-    path.join(root, 'node_modules', '.bun', 'node_modules'),
-    process.env.NODE_PATH,
-  ].filter(candidate => candidate && existsSync(candidate)).join(path.delimiter);
+  const childNodePath = process.env.NODE_PATH;
   const samples = [];
   for (let index = 0; index < 7; index += 1) {
     const result = spawnSync(process.execPath, ['-e', childScript, mainPath], {

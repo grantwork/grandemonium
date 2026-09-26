@@ -13,56 +13,9 @@ function readJson(file) {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
-function bunResolutionVersion(resolution) {
-  if (!Array.isArray(resolution) || typeof resolution[0] !== 'string') return undefined;
-  const separator = resolution[0].lastIndexOf('@');
-  return separator < 0 ? undefined : resolution[0].slice(separator + 1);
-}
-
-export function parseBunLock(source) {
-  try {
-    let normalized = '';
-    let escaped = false;
-    let inString = false;
-    for (let index = 0; index < source.length; index += 1) {
-      const character = source[index];
-      if (inString) {
-        normalized += character;
-        if (escaped) escaped = false;
-        else if (character === '\\') escaped = true;
-        else if (character === '"') inString = false;
-        continue;
-      }
-      if (character === '"') {
-        inString = true;
-        normalized += character;
-        continue;
-      }
-      if (character === ',') {
-        let next = index + 1;
-        while (/\s/.test(source[next] ?? '')) next += 1;
-        if (source[next] === '}' || source[next] === ']') continue;
-      }
-      normalized += character;
-    }
-    return JSON.parse(normalized);
-  } catch (error) {
-    throw new Error('bun.lock is not valid JSONC.', { cause: error });
-  }
-}
-
-export function inspectRuntimeDependencyParity({ bunLock, packageJson, packageLock }) {
+export function inspectRuntimeDependencyParity({ packageJson, packageLock }) {
   const violations = [];
-  const sources = [
-    {
-      dependencies: packageLock.packages?.['']?.dependencies,
-      source: 'package-lock.json manifest',
-    },
-    {
-      dependencies: bunLock.workspaces?.['']?.dependencies,
-      source: 'bun.lock manifest',
-    },
-  ];
+  const lockManifest = packageLock.packages?.['']?.dependencies;
 
   for (const dependency of bundleCriticalRuntimeDependencies) {
     const expected = packageJson.dependencies?.[dependency];
@@ -75,11 +28,9 @@ export function inspectRuntimeDependencyParity({ bunLock, packageJson, packageLo
       });
       continue;
     }
-    for (const source of sources) {
-      const actual = source.dependencies?.[dependency];
-      if (actual !== expected) {
-        violations.push({ actual, dependency, expected, source: source.source });
-      }
+    const manifestActual = lockManifest?.[dependency];
+    if (manifestActual !== expected) {
+      violations.push({ actual: manifestActual, dependency, expected, source: 'package-lock.json manifest' });
     }
 
     const npmActual = packageLock.packages?.[`node_modules/${dependency}`]?.version;
@@ -89,16 +40,6 @@ export function inspectRuntimeDependencyParity({ bunLock, packageJson, packageLo
         dependency,
         expected,
         source: 'package-lock.json resolution',
-      });
-    }
-
-    const bunActual = bunResolutionVersion(bunLock.packages?.[dependency]);
-    if (bunActual !== expected) {
-      violations.push({
-        actual: bunActual,
-        dependency,
-        expected,
-        source: 'bun.lock resolution',
       });
     }
   }
@@ -111,7 +52,6 @@ export function assertRuntimeDependencyParity(root = path.resolve(
   '..',
 )) {
   const violations = inspectRuntimeDependencyParity({
-    bunLock: parseBunLock(readFileSync(path.join(root, 'bun.lock'), 'utf8')),
     packageJson: readJson(path.join(root, 'package.json')),
     packageLock: readJson(path.join(root, 'package-lock.json')),
   });
