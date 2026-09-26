@@ -8,7 +8,7 @@ export function authorHue(author: string): number {
 }
 
 export type AuthorColorOverrides = Record<string, string>;
-export type AuthorColorTheme = "light" | "dark";
+export type AuthorColorTheme = 'light' | 'dark';
 export interface AuthorColorHsl {
   h: number;
   s: number;
@@ -24,8 +24,8 @@ export interface AuthorColorReadability {
 const AUTHOR_COLOR_SATURATION = 55;
 const AUTHOR_COLOR_LIGHTNESS: Record<AuthorColorTheme, number> = { light: 28, dark: 72 };
 const STANDARD_THEME_BACKGROUNDS: Record<AuthorColorTheme, string> = {
-  light: "#ffffff",
-  dark: "#202020",
+  light: '#ffffff',
+  dark: '#202020',
 };
 const MINIMUM_TEXT_CONTRAST = 4.5;
 
@@ -52,7 +52,7 @@ export function resolveAuthorColor(
   theme: AuthorColorTheme
 ): string {
   const override = overrides[author];
-  if (typeof override === "string" && /^#[0-9a-f]{6}$/i.test(override)) return override;
+  if (typeof override === 'string' && /^#[0-9a-f]{6}$/i.test(override)) return override;
   return authorColorCss(authorHue(author), theme);
 }
 
@@ -61,10 +61,10 @@ export function hasAuthorColorOverride(overrides: AuthorColorOverrides, author: 
 }
 
 export function normalizeAuthorColorOverrides(value: unknown): Record<string, string> {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return {};
   const normalized: Record<string, string> = {};
   for (const [author, color] of Object.entries(value)) {
-    if (typeof color === "string" && /^#[0-9a-f]{6}$/i.test(color)) normalized[author] = color.toLowerCase();
+    if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) normalized[author] = color.toLowerCase();
   }
   return normalized;
 }
@@ -102,8 +102,8 @@ export function authorColorReadability(color: string): AuthorColorReadability | 
   const darkContrast = colorContrast(color, STANDARD_THEME_BACKGROUNDS.dark);
   if (lightContrast === null || darkContrast === null) return null;
   const lowContrastThemes: AuthorColorTheme[] = [];
-  if (lightContrast < MINIMUM_TEXT_CONTRAST) lowContrastThemes.push("light");
-  if (darkContrast < MINIMUM_TEXT_CONTRAST) lowContrastThemes.push("dark");
+  if (lightContrast < MINIMUM_TEXT_CONTRAST) lowContrastThemes.push('light');
+  if (darkContrast < MINIMUM_TEXT_CONTRAST) lowContrastThemes.push('dark');
   return { lightContrast, darkContrast, lowContrastThemes };
 }
 
@@ -111,11 +111,11 @@ export function renameAuthorColorOverride(
   overrides: AuthorColorOverrides,
   previousAuthor: string,
   nextAuthor: string
-): { ok: true; overrides: AuthorColorOverrides } | { ok: false; reason: "duplicate" | "empty" } {
+): { ok: true; overrides: AuthorColorOverrides } | { ok: false; reason: 'duplicate' | 'empty' } {
   const trimmed = nextAuthor.trim();
-  if (!trimmed) return { ok: false, reason: "empty" };
+  if (!trimmed) return { ok: false, reason: 'empty' };
   if (trimmed !== previousAuthor && hasAuthorColorOverride(overrides, trimmed)) {
-    return { ok: false, reason: "duplicate" };
+    return { ok: false, reason: 'duplicate' };
   }
   const renamed = { ...overrides, [trimmed]: overrides[previousAuthor] };
   delete renamed[previousAuthor];

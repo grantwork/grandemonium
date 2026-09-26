@@ -1,4 +1,4 @@
-import type { ChangeSet } from "@codemirror/state";
+import type { ChangeSet } from '@codemirror/state';
 
 export interface TrackedAnchor {
   id: string;
@@ -32,7 +32,7 @@ export function isFullReplace(changes: ChangeSet): boolean {
 }
 
 /**
- * Whether a transaction changes the tandem-comments region in either its old
+ * Whether a transaction changes the comment block region in either its old
  * or new coordinate space. Mixed prose + block transactions (such as accepting
  * a suggestion) must rebuild anchors from the resulting document instead of
  * retaining IDs that may have been removed from the block.

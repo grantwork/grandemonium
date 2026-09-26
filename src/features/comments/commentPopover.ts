@@ -1,9 +1,9 @@
-import { type Extension, StateEffect, StateField } from "@codemirror/state";
-import { type EditorView, hoverTooltip, keymap, showTooltip } from "@codemirror/view";
+import { type Extension, StateEffect, StateField } from '@codemirror/state';
+import { type EditorView, hoverTooltip, keymap, showTooltip } from '@codemirror/view';
 
-import { type AuthorColorOverrides, resolveAuthorColor } from "./authorColor";
-import { parseDocument, resolveAnchor } from "./store";
-import type { ResolvedComment } from "./types";
+import { type AuthorColorOverrides, resolveAuthorColor } from './authorColor';
+import { parseDocument, resolveAnchor } from './store';
+import type { ResolvedComment } from './types';
 
 /** The comment thread pinned open in the editor, tracked in document positions. */
 export interface CommentPopoverTarget {
@@ -69,7 +69,7 @@ export interface CommentPopoverOptions {
 /** A suggestion still waiting on the reader, rather than one already answered. */
 function undecidedSuggestion(resolved: ResolvedComment): boolean {
   const suggestion = resolved.comment.suggestion;
-  return !!suggestion && !suggestion.result && resolved.comment.status === "open";
+  return !!suggestion && !suggestion.result && resolved.comment.status === 'open';
 }
 
 /**
@@ -79,9 +79,9 @@ function undecidedSuggestion(resolved: ResolvedComment): boolean {
 function canAcceptSuggestion(resolved: ResolvedComment): boolean {
   const replacement = resolved.comment.suggestion?.replacement;
   return (
-    resolved.resolution.kind === "resolved" &&
+    resolved.resolution.kind === 'resolved' &&
     !resolved.resolution.ambiguous &&
-    typeof replacement === "string" &&
+    typeof replacement === 'string' &&
     replacement.length > 0
   );
 }
@@ -102,33 +102,33 @@ function applyPopoverSize(
     card.style.width = `${host.size.width}px`;
     card.style.height = `${host.size.height}px`;
     // The default cap keeps an unsized card modest; an explicit size replaces it.
-    card.addClass("tc-popover-sized");
+    card.addClass('grandemonium-comment-popover-sized');
   }
   let last = `${card.style.width}|${card.style.height}`;
-  card.addEventListener("mouseup", () => {
+  card.addEventListener('mouseup', () => {
     const next = `${card.style.width}|${card.style.height}`;
     if (next === last) return;
     last = next;
     const width = Number.parseFloat(card.style.width);
     const height = Number.parseFloat(card.style.height);
     if (!Number.isFinite(width) || !Number.isFinite(height)) return;
-    card.addClass("tc-popover-sized");
+    card.addClass('grandemonium-comment-popover-sized');
     host.onSizeChange({ width: Math.round(width), height: Math.round(height) });
   });
 }
 
 function paintAuthor(el: HTMLElement, author: string, host: CommentPopoverHost): void {
-  el.dataset.tcAuthor = author;
+  el.dataset.commentAuthor = author;
   if (!host.colorAuthorNames) return;
   el.style.setProperty(
-    "--tc-author-color-light",
-    resolveAuthorColor(author, host.authorColorOverrides, "light")
+    '--grandemonium-comment-author-color-light',
+    resolveAuthorColor(author, host.authorColorOverrides, 'light')
   );
   el.style.setProperty(
-    "--tc-author-color-dark",
-    resolveAuthorColor(author, host.authorColorOverrides, "dark")
+    '--grandemonium-comment-author-color-dark',
+    resolveAuthorColor(author, host.authorColorOverrides, 'dark')
   );
-  el.addClass("tc-author-colored");
+  el.addClass('grandemonium-comment-author-colored');
 }
 
 /**
@@ -142,98 +142,98 @@ export function renderCommentPopover(
   host: CommentPopoverHost,
   options: CommentPopoverOptions = {}
 ): HTMLElement {
-  const card = parent.createDiv({ cls: "tc-popover-card" });
+  const card = parent.createDiv({ cls: 'grandemonium-comment-popover-card' });
   // A click inside the card must not read as a click away from the highlight,
   // which is what dismisses the popover.
-  card.addEventListener("mousedown", (e) => e.stopPropagation());
+  card.addEventListener('mousedown', (e) => e.stopPropagation());
   applyPopoverSize(card, host, options);
 
-  card.createDiv({ cls: "tc-popover-quote", text: resolved.comment.anchor.exact });
+  card.createDiv({ cls: 'grandemonium-comment-popover-quote', text: resolved.comment.anchor.exact });
   if (undecidedSuggestion(resolved)) {
-    const block = card.createDiv({ cls: "tc-popover-suggestion" });
-    block.createSpan({ cls: "tc-suggestion-title", text: "Suggested edit" });
+    const block = card.createDiv({ cls: 'grandemonium-comment-popover-suggestion' });
+    block.createSpan({ cls: 'grandemonium-comment-suggestion-title', text: 'Suggested edit' });
     block.createDiv({
-      cls: "tc-popover-suggestion-text",
-      text: resolved.comment.suggestion?.replacement ?? "",
+      cls: 'grandemonium-comment-popover-suggestion-text',
+      text: resolved.comment.suggestion?.replacement ?? '',
     });
   }
 
-  const thread = card.createDiv({ cls: "tc-popover-thread" });
+  const thread = card.createDiv({ cls: 'grandemonium-comment-popover-thread' });
   for (const entry of resolved.comment.thread) {
-    const item = thread.createDiv({ cls: "tc-popover-entry" });
-    const meta = item.createDiv({ cls: "tc-meta" });
-    paintAuthor(meta.createSpan({ text: entry.author, cls: "tc-author" }), entry.author, host);
+    const item = thread.createDiv({ cls: 'grandemonium-comment-popover-entry' });
+    const meta = item.createDiv({ cls: 'grandemonium-comment-meta' });
+    paintAuthor(meta.createSpan({ text: entry.author, cls: 'grandemonium-comment-author' }), entry.author, host);
     const stamp = host.formatTimestamp(entry.ts);
-    if (stamp) meta.createSpan({ text: stamp, cls: "tc-time" });
-    item.createDiv({ cls: "tc-popover-text", text: entry.text });
+    if (stamp) meta.createSpan({ text: stamp, cls: 'grandemonium-comment-time' });
+    item.createDiv({ cls: 'grandemonium-comment-popover-text', text: entry.text });
   }
 
   if (options.compact) return card;
 
-  const isOpen = resolved.comment.status === "open";
+  const isOpen = resolved.comment.status === 'open';
   const box = isOpen
-    ? card.createEl("textarea", {
-        cls: "tc-popover-reply",
-        attr: { "aria-label": "Reply", placeholder: "Reply…", rows: "2" },
+    ? card.createEl('textarea', {
+        cls: 'grandemonium-comment-popover-reply',
+        attr: { 'aria-label': 'Reply', placeholder: 'Reply…', rows: '2' },
       })
     : null;
   if (box) {
     box.value = host.replyDraft;
-    box.addEventListener("input", () => host.onReplyDraftChange(box.value));
+    box.addEventListener('input', () => host.onReplyDraftChange(box.value));
   }
   const send = (): void => {
     if (!box) return;
     const text = box.value.trim();
     if (!text) return;
-    box.value = "";
-    host.onReplyDraftChange("");
+    box.value = '';
+    host.onReplyDraftChange('');
     host.onReply(text);
   };
-  box?.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter" || e.isComposing) return;
+  box?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.isComposing) return;
     const wantsSend = host.submitOnEnter ? !e.shiftKey : e.ctrlKey || e.metaKey;
     if (!wantsSend) return;
     e.preventDefault();
     send();
   });
 
-  const actions = card.createDiv({ cls: "tc-popover-actions" });
-  const open = actions.createEl("button", {
-    cls: "tc-popover-button",
-    text: "Open in sidebar",
-    attr: { type: "button" },
+  const actions = card.createDiv({ cls: 'grandemonium-comment-popover-actions' });
+  const open = actions.createEl('button', {
+    cls: 'grandemonium-comment-popover-button',
+    text: 'Open in sidebar',
+    attr: { type: 'button' },
   });
   open.onclick = () => host.onOpenSidebar();
   if (!isOpen) return card;
 
   if (undecidedSuggestion(resolved)) {
-    const decline = actions.createEl("button", {
-      cls: "tc-popover-button",
-      text: "Decline",
-      attr: { type: "button" },
+    const decline = actions.createEl('button', {
+      cls: 'grandemonium-comment-popover-button',
+      text: 'Decline',
+      attr: { type: 'button' },
     });
     decline.onclick = () => host.onDeclineSuggestion();
 
-    const accept = actions.createEl("button", {
-      cls: "tc-popover-button tc-popover-primary",
-      text: "Accept",
-      attr: { type: "button" },
+    const accept = actions.createEl('button', {
+      cls: 'grandemonium-comment-popover-button grandemonium-comment-popover-primary',
+      text: 'Accept',
+      attr: { type: 'button' },
     });
     accept.disabled = !canAcceptSuggestion(resolved);
     accept.onclick = () => host.onAcceptSuggestion();
   } else {
-    const resolve = actions.createEl("button", {
-      cls: "tc-popover-button",
-      text: "Resolve",
-      attr: { type: "button" },
+    const resolve = actions.createEl('button', {
+      cls: 'grandemonium-comment-popover-button',
+      text: 'Resolve',
+      attr: { type: 'button' },
     });
     resolve.onclick = () => host.onResolve();
   }
 
-  const reply = actions.createEl("button", {
-    cls: "tc-popover-button tc-popover-primary",
-    text: "Reply",
-    attr: { type: "button" },
+  const reply = actions.createEl('button', {
+    cls: 'grandemonium-comment-popover-button grandemonium-comment-popover-primary',
+    text: 'Reply',
+    attr: { type: 'button' },
   });
   reply.onclick = send;
   return card;
@@ -249,7 +249,7 @@ export function popoverTargetFor(text: string, id: string): CommentPopoverTarget
   const comment = doc.comments[id];
   if (!comment) return null;
   const resolution = resolveAnchor(doc.prose, comment.anchor);
-  return resolution.kind === "resolved"
+  return resolution.kind === 'resolved'
     ? { id, from: resolution.start, to: resolution.end }
     : null;
 }
@@ -262,9 +262,9 @@ export function popoverTargetAt(text: string, pos: number): CommentPopoverTarget
   const doc = parseDocument(text);
   if (doc.error) return null;
   for (const [id, comment] of Object.entries(doc.comments)) {
-    if (comment.status === "resolved") continue;
+    if (comment.status === 'resolved') continue;
     const resolution = resolveAnchor(doc.prose, comment.anchor);
-    if (resolution.kind !== "resolved") continue;
+    if (resolution.kind !== 'resolved') continue;
     if (pos >= resolution.start && pos <= resolution.end) {
       return { id, from: resolution.start, to: resolution.end };
     }
@@ -312,7 +312,7 @@ export function commentPopoverExtension(source: CommentPopoverSource): Extension
         above: false,
         arrow: false,
         create: (view: EditorView) => {
-          const dom = createDiv({ cls: "tc-popover" });
+          const dom = createDiv({ cls: 'grandemonium-comment-popover' });
           const resolved = resolvePopoverComment(view.state.doc.toString(), target.id);
           if (resolved) {
             renderCommentPopover(
@@ -325,7 +325,7 @@ export function commentPopoverExtension(source: CommentPopoverSource): Extension
         },
       };
     }),
-    keymap.of([{ key: "Escape", run: dismissCommentPopover }]),
+    keymap.of([{ key: 'Escape', run: dismissCommentPopover }]),
     hoverTooltip(
       (view, pos) => {
         if (!source.hoverEnabled()) return null;
@@ -341,7 +341,7 @@ export function commentPopoverExtension(source: CommentPopoverSource): Extension
           end: target.to,
           above: false,
           create: () => {
-            const dom = createDiv({ cls: "tc-popover" });
+            const dom = createDiv({ cls: 'grandemonium-comment-popover' });
             renderCommentPopover(
               dom,
               resolved,

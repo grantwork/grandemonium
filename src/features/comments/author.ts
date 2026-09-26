@@ -13,10 +13,10 @@
  */
 
 /** localStorage key for the per-vault, non-synced author override. */
-export const AUTHOR_OVERRIDE_KEY = "grandemonium.comments.authorNameOverride";
+export const AUTHOR_OVERRIDE_KEY = 'grandemonium.comments.authorNameOverride';
 
 /** Used when neither an override nor an OS username is available (e.g. mobile). */
-export const FALLBACK_AUTHOR = "Me";
+export const FALLBACK_AUTHOR = 'Me';
 
 // `require` is provided by Obsidian's desktop (Electron) runtime; absent on mobile.
 declare const require: ((module: string) => unknown) | undefined;
@@ -27,8 +27,8 @@ declare const require: ((module: string) => unknown) | undefined;
  */
 export function detectOsUsername(): string | null {
   try {
-    if (typeof require !== "function") return null;
-    const os = require("os") as { userInfo?: () => { username?: string } };
+    if (typeof require !== 'function') return null;
+    const os = require('os') as { userInfo?: () => { username?: string } };
     const name = os.userInfo?.().username?.trim();
     return name ? name : null;
   } catch {

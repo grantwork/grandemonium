@@ -1,10 +1,10 @@
-import { readMarkKey,type ReadMarks } from "./inboxModel";
+import { readMarkKey,type ReadMarks } from './inboxModel';
 
 /**
  * Whether a thread has been read is personal and device-local, so it is kept
  * out of the shared comment block, beside the author override.
  */
-export const READ_MARKS_KEY = "grandemonium.comments.readMarks";
+export const READ_MARKS_KEY = 'grandemonium.comments.readMarks';
 
 export interface ReadMarksStorage {
   load(key: string): unknown;
@@ -20,9 +20,9 @@ export interface ReadMark {
 
 function decode(stored: unknown): Map<string, number> {
   const marks = new Map<string, number>();
-  if (typeof stored !== "object" || stored === null || Array.isArray(stored)) return marks;
+  if (typeof stored !== 'object' || stored === null || Array.isArray(stored)) return marks;
   for (const [key, value] of Object.entries(stored as Record<string, unknown>)) {
-    if (typeof value === "number" && Number.isFinite(value)) marks.set(key, value);
+    if (typeof value === 'number' && Number.isFinite(value)) marks.set(key, value);
   }
   return marks;
 }
@@ -71,7 +71,7 @@ export class ReadMarksStore {
   prune(livePaths: ReadonlySet<string>): void {
     let changed = false;
     for (const key of [...this.entries().keys()]) {
-      const cut = key.indexOf("\u0000");
+      const cut = key.indexOf('\u0000');
       if (cut === -1 || livePaths.has(key.slice(0, cut))) continue;
       this.entries().delete(key);
       changed = true;

@@ -1,7 +1,7 @@
-import { MarkdownRenderChild, type Plugin } from "obsidian";
+import { MarkdownRenderChild, type Plugin } from 'obsidian';
 
-import type { CommentsController } from "./CommentsController";
-import { COMMENT_FENCE_NAMES, parseBlockBody } from "./store";
+import type { CommentsController } from './CommentsController';
+import { COMMENT_FENCE_NAMES, parseBlockBody } from './store';
 
 /**
  * Live Preview hides the block entirely: comments show up only as highlights
@@ -51,27 +51,27 @@ class BlockPill extends MarkdownRenderChild {
     // Only render the pill on positive evidence of Reading View; when in doubt
     // stay invisible, because a wrongly shown pill is obvious in Live Preview,
     // while a missing one in Reading View is healed on the next render.
-    if (!el.closest(".markdown-preview-view")) {
-      const widget = el.closest(".cm-embed-block");
-      if (widget instanceof HTMLElement) widget.addClass("tc-lp-hidden");
+    if (!el.closest('.markdown-preview-view')) {
+      const widget = el.closest('.cm-embed-block');
+      if (widget instanceof HTMLElement) widget.addClass('grandemonium-comment-lp-hidden');
       return;
     }
     let open = 0;
     let resolved = 0;
     try {
       for (const c of Object.values(parseBlockBody(this.source))) {
-        if (c.status === "resolved") resolved++;
+        if (c.status === 'resolved') resolved++;
         else open++;
       }
     } catch {
-      el.createDiv({ text: "💬 comments — invalid JSON", cls: "tc-pill tc-pill-error" });
+      el.createDiv({ text: '💬 comments — invalid JSON', cls: 'grandemonium-comment-pill grandemonium-comment-pill-error' });
       return;
     }
     // Only resolved history left, so stay completely invisible in Reading View.
     if (open === 0) return;
     const label =
-      resolved > 0 ? `💬 ${open} open · ${resolved} resolved` : `💬 ${open} thread${open === 1 ? "" : "s"}`;
-    const pill = el.createEl("button", { text: label, cls: "tc-pill" });
+      resolved > 0 ? `💬 ${open} open · ${resolved} resolved` : `💬 ${open} thread${open === 1 ? '' : 's'}`;
+    const pill = el.createEl('button', { text: label, cls: 'grandemonium-comment-pill' });
     pill.onclick = () => void this.plugin.openSidebar();
   }
 }

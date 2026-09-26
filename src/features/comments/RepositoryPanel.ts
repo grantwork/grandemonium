@@ -1,17 +1,17 @@
-import { type App, type Component, MarkdownRenderer, setIcon, setTooltip } from "obsidian";
+import { type App, type Component, MarkdownRenderer, setIcon, setTooltip } from 'obsidian';
 
-import { confirmAction } from "./confirmAction";
-import { formatWorkingAge } from "./inboxRow";
-import type { RepositorySelection, RepositoryThread } from "./RepositoryThread";
+import type { SubmitShortcut } from './CommentsSettings';
+import { confirmAction } from './confirmAction';
+import { formatWorkingAge } from './inboxRow';
+import type { RepositorySelection, RepositoryThread } from './RepositoryThread';
 import type {
   RepositoryComposerToolbar,
   RepositoryThreadsController,
   ThreadLiveState,
-} from "./RepositoryThreadsController";
-import type { SubmitShortcut } from "./CommentsSettings";
-import { shouldSubmitComment } from "./sidebarPreferences";
-import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from "./threadCollapse";
-import { renderErrorIcon, renderTypingDots } from "./threadStatus";
+} from './RepositoryThreadsController';
+import { shouldSubmitComment } from './sidebarPreferences';
+import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from './threadCollapse';
+import { renderErrorIcon, renderTypingDots } from './threadStatus';
 
 export interface RepositoryPanelHost {
   app: App;
@@ -60,16 +60,16 @@ export class RepositoryPanel {
   private readonly stopListening: () => void;
 
   constructor(private readonly host: RepositoryPanelHost) {
-    this.el = createDiv({ cls: "tc-file tc-repo" });
-    this.headerEl = this.el.createDiv({ cls: "tc-repo-header" });
+    this.el = createDiv({ cls: 'grandemonium-comment-file grandemonium-comment-repo' });
+    this.headerEl = this.el.createDiv({ cls: 'grandemonium-comment-repo-header' });
     this.newComposer = this.createComposer(
-      "Ask an AI to make changes across the vault…",
+      'Ask an AI to make changes across the vault…',
       (text) => this.submitNew(text),
       () => this.closeNewComposer()
     );
-    this.newComposer.el.addClass("tc-repo-new");
+    this.newComposer.el.addClass('grandemonium-comment-repo-new');
     this.el.appendChild(this.newComposer.el);
-    this.listEl = this.el.createDiv({ cls: "tc-file-threads tc-repo-list" });
+    this.listEl = this.el.createDiv({ cls: 'grandemonium-comment-file-threads grandemonium-comment-repo-list' });
     this.stopListening = host.controller.onChange((threadId) => {
       if (threadId !== null && threadId === this.expandedId) this.renderLive();
       else if (threadId === null) this.render();
@@ -96,7 +96,7 @@ export class RepositoryPanel {
   render(): void {
     this.renderHeader();
     const available = this.host.controller.isAvailable();
-    this.newComposer.el.toggleClass("tc-repo-hidden", !this.composing || this.collapsed || !available);
+    this.newComposer.el.toggleClass('grandemonium-comment-repo-hidden', !this.composing || this.collapsed || !available);
     if (this.composing && available) this.ensureToolbar(this.newComposer, {
       getSelection: () => this.draftSelectionOrDefault(),
       onSelectionChange: (selection) => {
@@ -107,30 +107,30 @@ export class RepositoryPanel {
   }
 
   private renderHeader(): void {
-    const open = this.visibleThreads().filter((thread) => thread.status === "open");
+    const open = this.visibleThreads().filter((thread) => thread.status === 'open');
     this.headerEl.empty();
-    const toggle = this.headerEl.createEl("button", {
-      cls: "tc-file-group tc-repo-toggle",
-      attr: { "aria-expanded": String(!this.collapsed), type: "button" },
+    const toggle = this.headerEl.createEl('button', {
+      cls: 'grandemonium-comment-file-group grandemonium-comment-repo-toggle',
+      attr: { 'aria-expanded': String(!this.collapsed), type: 'button' },
     });
-    setIcon(toggle.createSpan({ cls: "tc-file-chevron" }), this.collapsed ? "chevron-right" : "chevron-down");
-    setIcon(toggle.createSpan({ cls: "tc-repo-icon" }), "folder-git-2");
-    toggle.createSpan({ cls: "tc-file-name", text: "Repository" });
+    setIcon(toggle.createSpan({ cls: 'grandemonium-comment-file-chevron' }), this.collapsed ? 'chevron-right' : 'chevron-down');
+    setIcon(toggle.createSpan({ cls: 'grandemonium-comment-repo-icon' }), 'folder-git-2');
+    toggle.createSpan({ cls: 'grandemonium-comment-file-name', text: 'Repository' });
     if (open.some((thread) => this.host.controller.isWorking(thread.id))) {
-      setIcon(toggle.createSpan({ cls: "tc-file-running", attr: { "aria-label": "Agent working" } }), "loader");
+      setIcon(toggle.createSpan({ cls: 'grandemonium-comment-file-running', attr: { 'aria-label': 'Agent working' } }), 'loader');
     }
-    if (open.length) toggle.createSpan({ cls: "tc-file-count", text: String(open.length) });
+    if (open.length) toggle.createSpan({ cls: 'grandemonium-comment-file-count', text: String(open.length) });
     toggle.onclick = () => {
       this.collapsed = !this.collapsed;
       this.render();
     };
     if (!this.host.controller.isAvailable()) return;
-    const add = this.headerEl.createEl("button", {
-      cls: "clickable-icon tc-repo-add",
-      attr: { "aria-label": "New repository comment", type: "button" },
+    const add = this.headerEl.createEl('button', {
+      cls: 'clickable-icon grandemonium-comment-repo-add',
+      attr: { 'aria-label': 'New repository comment', type: 'button' },
     });
-    setIcon(add, "plus");
-    setTooltip(add, "New repository comment");
+    setIcon(add, 'plus');
+    setTooltip(add, 'New repository comment');
     add.onclick = () => {
       if (this.composing && !this.collapsed) this.closeNewComposer();
       else this.startComposing();
@@ -146,7 +146,7 @@ export class RepositoryPanel {
       : null;
     this.listEl.empty();
     this.liveEl = null;
-    this.listEl.toggleClass("tc-repo-hidden", this.collapsed);
+    this.listEl.toggleClass('grandemonium-comment-repo-hidden', this.collapsed);
     if (this.collapsed) return;
     this.renderHeaderStatusOnly();
     const threads = this.visibleThreads();
@@ -165,16 +165,16 @@ export class RepositoryPanel {
 
   /** The spinner and count follow every change without redrawing the button. */
   private renderHeaderStatusOnly(): void {
-    const toggle = this.headerEl.querySelector(".tc-repo-toggle");
+    const toggle = this.headerEl.querySelector('.grandemonium-comment-repo-toggle');
     if (!toggle) return;
     const working = this.visibleThreads().some(
-      (thread) => thread.status === "open" && this.host.controller.isWorking(thread.id)
+      (thread) => thread.status === 'open' && this.host.controller.isWorking(thread.id)
     );
-    const spinner = toggle.querySelector(".tc-file-running");
+    const spinner = toggle.querySelector('.grandemonium-comment-file-running');
     if (working && !spinner) {
-      const el = createSpan({ cls: "tc-file-running", attr: { "aria-label": "Agent working" } });
-      setIcon(el, "loader");
-      toggle.querySelector(".tc-file-name")?.after(el);
+      const el = createSpan({ cls: 'grandemonium-comment-file-running', attr: { 'aria-label': 'Agent working' } });
+      setIcon(el, 'loader');
+      toggle.querySelector('.grandemonium-comment-file-name')?.after(el);
     } else if (!working) {
       spinner?.remove();
     }
@@ -183,88 +183,88 @@ export class RepositoryPanel {
   private visibleThreads(): RepositoryThread[] {
     return this.host.controller
       .list()
-      .filter((thread) => thread.status === "open" || this.host.showResolved());
+      .filter((thread) => thread.status === 'open' || this.host.showResolved());
   }
 
   private renderRow(thread: RepositoryThread): void {
-    const wrapper = this.listEl.createDiv({ cls: "tc-inbox-item tc-repo-item" });
-    if (thread.status === "resolved") wrapper.addClass("tc-resolved");
-    const row = wrapper.createEl("button", {
-      cls: "tc-inbox-row",
-      attr: { "aria-expanded": "false", type: "button" },
+    const wrapper = this.listEl.createDiv({ cls: 'grandemonium-comment-inbox-item grandemonium-comment-repo-item' });
+    if (thread.status === 'resolved') wrapper.addClass('grandemonium-comment-resolved');
+    const row = wrapper.createEl('button', {
+      cls: 'grandemonium-comment-inbox-row',
+      attr: { 'aria-expanded': 'false', type: 'button' },
     });
-    setIcon(row.createSpan({ cls: "tc-inbox-icon" }), "folder-git-2");
-    row.createSpan({ cls: "tc-inbox-blurb", text: thread.title });
+    setIcon(row.createSpan({ cls: 'grandemonium-comment-inbox-icon' }), 'folder-git-2');
+    row.createSpan({ cls: 'grandemonium-comment-inbox-blurb', text: thread.title });
     this.renderStatus(row, thread);
     setTooltip(row, thread.thread.at(-1)?.text.slice(0, 300) ?? thread.title);
     row.onclick = () => this.expandThread(thread.id);
-    const actions = wrapper.createDiv({ cls: "tc-inbox-actions" });
+    const actions = wrapper.createDiv({ cls: 'grandemonium-comment-inbox-actions' });
     this.renderThreadActions(actions, thread);
   }
 
   private renderStatus(row: HTMLElement, thread: RepositoryThread): void {
-    const state = row.createSpan({ cls: "tc-inbox-status" });
+    const state = row.createSpan({ cls: 'grandemonium-comment-inbox-status' });
     const live = this.host.controller.live(thread.id);
     if (live.approvals.length) {
-      const waiting = state.createSpan({ cls: "tc-repo-waiting", attr: { "aria-label": "Waiting for approval" } });
-      setIcon(waiting, "shield-question");
+      const waiting = state.createSpan({ cls: 'grandemonium-comment-repo-waiting', attr: { 'aria-label': 'Waiting for approval' } });
+      setIcon(waiting, 'shield-question');
     }
     const since = this.host.controller.workingSince(thread.id);
     if (since === null) return;
-    const working = state.createSpan({ cls: "tc-inbox-working", attr: { "aria-label": "AI working on this" } });
-    setIcon(working.createSpan({ cls: "tc-inbox-working-icon" }), "loader");
-    const age = working.createSpan({ cls: "tc-inbox-working-age", text: formatWorkingAge(Date.now() - since) });
-    age.dataset.tcWorkingSince = String(since);
+    const working = state.createSpan({ cls: 'grandemonium-comment-inbox-working', attr: { 'aria-label': 'AI working on this' } });
+    setIcon(working.createSpan({ cls: 'grandemonium-comment-inbox-working-icon' }), 'loader');
+    const age = working.createSpan({ cls: 'grandemonium-comment-inbox-working-age', text: formatWorkingAge(Date.now() - since) });
+    age.dataset.commentWorkingSince = String(since);
   }
 
   private renderThreadActions(actions: HTMLElement, thread: RepositoryThread): void {
     if (this.host.controller.isWorking(thread.id)) {
-      const stop = actions.createEl("button", {
-        cls: "tc-entry-action clickable-icon tc-inbox-stop",
-        attr: { "aria-label": "Stop the AI", type: "button" },
+      const stop = actions.createEl('button', {
+        cls: 'grandemonium-comment-entry-action clickable-icon grandemonium-comment-inbox-stop',
+        attr: { 'aria-label': 'Stop the AI', type: 'button' },
       });
-      setIcon(stop, "square");
-      setTooltip(stop, "Stop the AI");
+      setIcon(stop, 'square');
+      setTooltip(stop, 'Stop the AI');
       stop.onclick = () => void this.confirmStop(thread.id);
     }
-    if (thread.status === "open") {
-      const resolve = actions.createEl("button", {
-        cls: "tc-entry-action clickable-icon",
-        attr: { "aria-label": "Resolve and end the AI session", type: "button" },
+    if (thread.status === 'open') {
+      const resolve = actions.createEl('button', {
+        cls: 'grandemonium-comment-entry-action clickable-icon',
+        attr: { 'aria-label': 'Resolve and end the AI session', type: 'button' },
       });
-      setIcon(resolve, "check");
-      setTooltip(resolve, "Resolve and end the AI session");
+      setIcon(resolve, 'check');
+      setTooltip(resolve, 'Resolve and end the AI session');
       resolve.onclick = () => void this.resolveThread(thread.id);
     } else {
-      const reopen = actions.createEl("button", {
-        cls: "tc-entry-action clickable-icon",
-        attr: { "aria-label": "Reopen", type: "button" },
+      const reopen = actions.createEl('button', {
+        cls: 'grandemonium-comment-entry-action clickable-icon',
+        attr: { 'aria-label': 'Reopen', type: 'button' },
       });
-      setIcon(reopen, "rotate-ccw");
-      setTooltip(reopen, "Reopen");
+      setIcon(reopen, 'rotate-ccw');
+      setTooltip(reopen, 'Reopen');
       reopen.onclick = () => this.host.controller.reopen(thread.id);
     }
   }
 
   private renderExpanded(thread: RepositoryThread): void {
-    const wrapper = this.listEl.createDiv({ cls: "tc-inbox-expanded tc-repo-expanded" });
-    const line = wrapper.createDiv({ cls: "tc-inbox-item" });
-    const head = line.createEl("button", {
-      cls: "tc-inbox-row tc-inbox-expanded-head",
-      attr: { "aria-expanded": "true", type: "button" },
+    const wrapper = this.listEl.createDiv({ cls: 'grandemonium-comment-inbox-expanded grandemonium-comment-repo-expanded' });
+    const line = wrapper.createDiv({ cls: 'grandemonium-comment-inbox-item' });
+    const head = line.createEl('button', {
+      cls: 'grandemonium-comment-inbox-row grandemonium-comment-inbox-expanded-head',
+      attr: { 'aria-expanded': 'true', type: 'button' },
     });
-    setIcon(head.createSpan({ cls: "tc-inbox-icon" }), "folder-git-2");
-    head.createSpan({ cls: "tc-inbox-blurb", text: thread.title });
+    setIcon(head.createSpan({ cls: 'grandemonium-comment-inbox-icon' }), 'folder-git-2');
+    head.createSpan({ cls: 'grandemonium-comment-inbox-blurb', text: thread.title });
     this.renderStatus(head, thread);
-    setIcon(head.createSpan({ cls: "tc-inbox-collapse" }), "chevron-up");
+    setIcon(head.createSpan({ cls: 'grandemonium-comment-inbox-collapse' }), 'chevron-up');
     head.onclick = () => {
       this.collapseThread();
       this.renderList();
     };
-    this.renderThreadActions(line.createDiv({ cls: "tc-inbox-actions" }), thread);
+    this.renderThreadActions(line.createDiv({ cls: 'grandemonium-comment-inbox-actions' }), thread);
 
-    const body = wrapper.createDiv({ cls: "tc-inbox-expanded-body" });
-    const card = body.createDiv({ cls: thread.status === "resolved" ? "tc-card tc-resolved" : "tc-card" });
+    const body = wrapper.createDiv({ cls: 'grandemonium-comment-inbox-expanded-body' });
+    const card = body.createDiv({ cls: thread.status === 'resolved' ? 'grandemonium-comment-card grandemonium-comment-resolved' : 'grandemonium-comment-card' });
     const kept = keptThreadEntries(thread.thread, (author) => this.host.isAgentAuthor(author));
     for (const [index, entry] of thread.thread.entries()) {
       const key = `${thread.id} ${index}`;
@@ -277,11 +277,11 @@ export class RepositoryPanel {
         continue;
       }
       const agent = this.host.isAgentAuthor(entry.author);
-      const row = card.createDiv({ cls: agent ? "tc-entry tc-entry-agent" : "tc-entry" });
-      const error = entry.kind === "error";
-      if (error) row.addClass("tc-entry-error");
+      const row = card.createDiv({ cls: agent ? 'grandemonium-comment-entry grandemonium-comment-entry-agent' : 'grandemonium-comment-entry' });
+      const error = entry.kind === 'error';
+      if (error) row.addClass('grandemonium-comment-entry-error');
       this.host.paintAuthor(row, entry.author, true);
-      const meta = row.createDiv({ cls: "tc-meta" });
+      const meta = row.createDiv({ cls: 'grandemonium-comment-meta' });
       const heading = kept[index]
         ? meta
         : renderEntryFoldToggle(meta, entry, () => {
@@ -289,17 +289,17 @@ export class RepositoryPanel {
             this.renderList();
           });
       if (error) renderErrorIcon(heading);
-      this.host.paintAuthor(heading.createSpan({ cls: "tc-author", text: entry.author }), entry.author, false);
+      this.host.paintAuthor(heading.createSpan({ cls: 'grandemonium-comment-author', text: entry.author }), entry.author, false);
       const ts = this.host.formatTimestamp(entry.ts);
-      if (ts) heading.createSpan({ cls: "tc-ts", text: ts });
-      const text = row.createDiv({ cls: "tc-text" });
+      if (ts) heading.createSpan({ cls: 'grandemonium-comment-ts', text: ts });
+      const text = row.createDiv({ cls: 'grandemonium-comment-text' });
       // An error is the provider's own words, not Markdown the AI wrote.
       if (error) text.setText(entry.text);
-      else void MarkdownRenderer.render(this.host.app, entry.text, text, "", this.host.component);
+      else void MarkdownRenderer.render(this.host.app, entry.text, text, '', this.host.component);
     }
-    this.liveEl = card.createDiv({ cls: "tc-repo-live" });
+    this.liveEl = card.createDiv({ cls: 'grandemonium-comment-repo-live' });
     this.renderLive();
-    if (thread.status === "open") card.appendChild(this.replyComposerFor(thread).el);
+    if (thread.status === 'open') card.appendChild(this.replyComposerFor(thread).el);
   }
 
   /** Only the part of the open thread that changes while an AI works. */
@@ -310,19 +310,19 @@ export class RepositoryPanel {
     const live = this.host.controller.live(threadId);
     el.empty();
     for (const turn of live.turns) {
-      const row = el.createDiv({ cls: "tc-entry tc-entry-agent tc-repo-streaming" });
+      const row = el.createDiv({ cls: 'grandemonium-comment-entry grandemonium-comment-entry-agent grandemonium-comment-repo-streaming' });
       this.host.paintAuthor(row, turn.agentName, true);
-      const meta = row.createDiv({ cls: "tc-meta" });
-      this.host.paintAuthor(meta.createSpan({ cls: "tc-author", text: turn.agentName }), turn.agentName, false);
-      const working = meta.createSpan({ cls: "tc-inbox-working" });
-      setIcon(working.createSpan({ cls: "tc-inbox-working-icon" }), "loader");
+      const meta = row.createDiv({ cls: 'grandemonium-comment-meta' });
+      this.host.paintAuthor(meta.createSpan({ cls: 'grandemonium-comment-author', text: turn.agentName }), turn.agentName, false);
+      const working = meta.createSpan({ cls: 'grandemonium-comment-inbox-working' });
+      setIcon(working.createSpan({ cls: 'grandemonium-comment-inbox-working-icon' }), 'loader');
       const age = working.createSpan({
-        cls: "tc-inbox-working-age",
+        cls: 'grandemonium-comment-inbox-working-age',
         text: formatWorkingAge(Date.now() - turn.startedAt),
       });
-      age.dataset.tcWorkingSince = String(turn.startedAt);
-      if (turn.activity) row.createDiv({ cls: "tc-repo-activity", text: turn.activity });
-      if (turn.text) row.createDiv({ cls: "tc-text tc-repo-stream-text", text: turn.text });
+      age.dataset.commentWorkingSince = String(turn.startedAt);
+      if (turn.activity) row.createDiv({ cls: 'grandemonium-comment-repo-activity', text: turn.activity });
+      if (turn.text) row.createDiv({ cls: 'grandemonium-comment-text grandemonium-comment-repo-stream-text', text: turn.text });
       else renderTypingDots(row, turn.agentName);
     }
     this.renderApprovals(el, live);
@@ -332,19 +332,19 @@ export class RepositoryPanel {
 
   private renderApprovals(el: HTMLElement, live: ThreadLiveState): void {
     for (const approval of live.approvals) {
-      const box = el.createDiv({ cls: "tc-repo-approval", attr: { role: "group", "aria-label": "Permission required" } });
-      const title = box.createDiv({ cls: "tc-repo-approval-title" });
-      setIcon(title.createSpan(), "shield-question");
+      const box = el.createDiv({ cls: 'grandemonium-comment-repo-approval', attr: { role: 'group', 'aria-label': 'Permission required' } });
+      const title = box.createDiv({ cls: 'grandemonium-comment-repo-approval-title' });
+      setIcon(title.createSpan(), 'shield-question');
       title.createSpan({ text: `${approval.agentName} wants to use ${approval.toolName}` });
       if (approval.description && approval.description !== approval.toolName) {
-        box.createDiv({ cls: "tc-repo-approval-detail", text: approval.description });
+        box.createDiv({ cls: 'grandemonium-comment-repo-approval-detail', text: approval.description });
       }
-      const buttons = box.createDiv({ cls: "tc-actions" });
+      const buttons = box.createDiv({ cls: 'grandemonium-comment-actions' });
       approval.choices.forEach((choice, index) => {
-        const button = buttons.createEl("button", {
-          cls: index === 0 ? "mod-cta" : "",
+        const button = buttons.createEl('button', {
+          cls: index === 0 ? 'mod-cta' : '',
           text: choice.label,
-          attr: { type: "button" },
+          attr: { type: 'button' },
         });
         if (choice.description) setTooltip(button, choice.description);
         button.onclick = () => this.host.controller.answerApproval(approval.id, choice.decision);
@@ -367,7 +367,7 @@ export class RepositoryPanel {
       },
     };
     const composer = this.createComposer(
-      "Reply, or @mention another AI…",
+      'Reply, or @mention another AI…',
       (text) => {
         this.host.controller.reply(thread.id, text);
         return true;
@@ -384,26 +384,26 @@ export class RepositoryPanel {
     submit: (text: string) => boolean,
     cancel: () => void
   ): Composer {
-    const el = createDiv({ cls: "tc-repo-composer grandemonium-container" });
-    const input = el.createEl("textarea", {
-      cls: "tc-input tc-repo-input",
+    const el = createDiv({ cls: 'grandemonium-comment-repo-composer grandemonium-container' });
+    const input = el.createEl('textarea', {
+      cls: 'grandemonium-comment-input grandemonium-comment-repo-input',
       attr: {
-        "aria-label": placeholder,
+        'aria-label': placeholder,
         placeholder:
-          this.host.submitShortcut() === "enter"
+          this.host.submitShortcut() === 'enter'
             ? `${placeholder} (Enter = send)`
             : `${placeholder} (Cmd/Ctrl+Enter = send)`,
-        rows: "3",
+        rows: '3',
       },
     });
     input.onkeydown = (event) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         event.preventDefault();
         cancel();
       } else if (shouldSubmitComment(event, this.host.submitShortcut())) {
         event.preventDefault();
         const text = input.value.trim();
-        if (text && submit(text)) input.value = "";
+        if (text && submit(text)) input.value = '';
       }
     };
     return { el, input, toolbar: null };
@@ -425,7 +425,7 @@ export class RepositoryPanel {
   private draftSelectionOrDefault(): RepositorySelection {
     const selection = this.draftSelection ?? this.host.controller.defaultSelection();
     // The toolbar is only mounted once a default exists, so this is a guard.
-    return selection ?? { model: "", providerId: "claude" };
+    return selection ?? { model: '', providerId: 'claude' };
   }
 
   private submitNew(text: string): boolean {
@@ -459,9 +459,9 @@ export class RepositoryPanel {
   /** Always confirms: a repository task has usually been running for minutes. */
   private async confirmStop(threadId: string): Promise<void> {
     const confirmed = await confirmAction(this.host.app, {
-      confirmLabel: "Stop",
-      message: "The AI is still working. Files it has already changed stay changed.",
-      title: "Stop the AI?",
+      confirmLabel: 'Stop',
+      message: 'The AI is still working. Files it has already changed stay changed.',
+      title: 'Stop the AI?',
     });
     if (confirmed) this.host.controller.stop(threadId);
   }
@@ -471,9 +471,9 @@ export class RepositoryPanel {
       this.host.confirmDestructive() &&
       this.host.controller.isWorking(threadId) &&
       !(await confirmAction(this.host.app, {
-        confirmLabel: "Resolve",
-        message: "The AI is still working. Resolving stops it and ends its session.",
-        title: "Resolve repository comment?",
+        confirmLabel: 'Resolve',
+        message: 'The AI is still working. Resolving stops it and ends its session.',
+        title: 'Resolve repository comment?',
       }))
     ) {
       return;

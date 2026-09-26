@@ -1,4 +1,4 @@
-import { escapePromptXmlAttribute } from "../../utils/promptXml";
+import { escapePromptXmlAttribute } from '@/utils/promptXml';
 
 /**
  * Builds the review request sent to the AIs.
@@ -13,10 +13,10 @@ export function buildReviewMessage(prompt: string, filePath: string | null): str
   if (!filePath) return text;
   return [
     text,
-    "",
+    '',
     `<review_target path="${escapePromptXmlAttribute(filePath)}" />`,
-    "",
-    "Review the comments in that file, whichever file this conversation is"
-      + " otherwise linked to.",
-  ].join("\n");
+    '',
+    'Review the comments in that file, whichever file this conversation is'
+      + ' otherwise linked to.',
+  ].join('\n');
 }

@@ -1,39 +1,40 @@
-import type { Editor} from "obsidian";
-import { type App, MarkdownView, normalizePath, Notice, type Plugin, type PluginManifest, TFile } from "obsidian";
+import type { Editor} from 'obsidian';
+import { type App, MarkdownView, normalizePath, Notice, type Plugin, type PluginManifest, TFile } from 'obsidian';
 
-import { ProviderRegistry } from "../../core/providers/ProviderRegistry";
-import { resolveReplyTarget } from "./agentMention";
+import { ProviderRegistry } from '@/core/providers/ProviderRegistry';
+
+import { resolveReplyTarget } from './agentMention';
 import {
   AUTHOR_OVERRIDE_KEY,
   detectOsUsername,
   FALLBACK_AUTHOR,
   resolveAuthorName,
-} from "./author";
-import { CommentIndex } from "./CommentIndex";
-import type { CommentPopoverHost } from "./commentPopover";
-import { CommentsSettingsStore } from "./CommentsSettingsStore";
-import { confirmAction } from "./confirmAction";
-import { buildEditorExtension } from "./editorExtension";
-import {
-  buildExportNote,
-  formatTs,
-  renderExportFileName,
-  resolveExportDirectory,
-} from "./export";
-import { buildImplementMessage, type ImplementTarget } from "./implementMessage";
-import { buildInbox, type InboxView, readMarkKey } from "./inboxModel";
-import { READ_MARKS_KEY, type ReadMark, ReadMarksStore } from "./ReadMarksStore";
-import { registerReadingView } from "./readingView";
-import { type RepositoryAgentPort, RepositoryThreadsController } from "./RepositoryThreadsController";
-import { buildReviewMessage } from "./reviewMessage";
-import { shouldStartSelectionComment } from "./selectionComment";
+} from './author';
+import { CommentIndex } from './CommentIndex';
+import type { CommentPopoverHost } from './commentPopover';
+import { CommentSidebar, suggestionFailureMessage, VIEW_TYPE_COMMENTS } from './CommentSidebar';
 import {
   type CommentsSettings,
   DEFAULT_SETTINGS,
   parseCommentsSettings,
   settingsEffects,
-} from "./CommentsSettings";
-import { CommentSidebar, suggestionFailureMessage, VIEW_TYPE_COMMENTS } from "./CommentSidebar";
+} from './CommentsSettings';
+import { CommentsSettingsStore } from './CommentsSettingsStore';
+import { confirmAction } from './confirmAction';
+import { buildEditorExtension } from './editorExtension';
+import {
+  buildExportNote,
+  formatTs,
+  renderExportFileName,
+  resolveExportDirectory,
+} from './export';
+import { buildImplementMessage, type ImplementTarget } from './implementMessage';
+import { buildInbox, type InboxView, readMarkKey } from './inboxModel';
+import { registerReadingView } from './readingView';
+import { READ_MARKS_KEY, type ReadMark, ReadMarksStore } from './ReadMarksStore';
+import { type RepositoryAgentPort, RepositoryThreadsController } from './RepositoryThreadsController';
+import { buildReviewMessage } from './reviewMessage';
+import { shouldStartSelectionComment } from './selectionComment';
 import {
   addReply,
   declineSuggestion,
@@ -46,24 +47,24 @@ import {
   serializeDocument,
   setStatus,
   type SuggestionAcceptancePlan,
-} from "./store";
-import { commitSuggestionAcceptance } from "./suggestionEditor";
-import type { ThreadActivity } from "./threadStatus";
-import { formatSidebarTimestamp } from "./timestamp";
-import type { Anchor, ParsedDoc } from "./types";
+} from './store';
+import { commitSuggestionAcceptance } from './suggestionEditor';
+import type { ThreadActivity } from './threadStatus';
+import { formatSidebarTimestamp } from './timestamp';
+import type { Anchor, ParsedDoc } from './types';
 
-const DEFAULT_CLAUDE_AGENT_NAME = "claude";
+const DEFAULT_CLAUDE_AGENT_NAME = 'claude';
 
 /** localStorage keys from before the rename, and the keys that replaced them. */
 const RENAMED_LOCAL_STORAGE_KEYS = [
-  ["tandem-comments:author-name-override", AUTHOR_OVERRIDE_KEY],
-  ["tandem-comments:read-marks", READ_MARKS_KEY],
+  ['tandem-comments:author-name-override', AUTHOR_OVERRIDE_KEY],
+  ['tandem-comments:read-marks', READ_MARKS_KEY],
 ] as const;
 
 export type CommentReviewResult =
-  | { readonly kind: "completed" }
-  | { readonly kind: "cancelled" }
-  | { readonly kind: "failed"; readonly message: string };
+  | { readonly kind: 'completed' }
+  | { readonly kind: 'cancelled' }
+  | { readonly kind: 'failed'; readonly message: string };
 
 /** One AI working on one review, running in a background session of its own. */
 export interface CommentReviewHandle {
@@ -76,7 +77,7 @@ export interface CommentReviewHandle {
 }
 
 /**
- * The AIs, as this vendored feature sees them. Supplied by the composition root
+ * The AIs, as the comments feature sees them. Supplied by the composition root
  * so comments never import chat or provider code.
  */
 export interface CommentAiPort {
@@ -129,7 +130,7 @@ export class CommentsController {
    */
   private readonly activeReviews = new Set<ActiveReview>();
   /** Failed reviews by thread key, until the thread is asked again. */
-  private readonly reviewErrors = new Map<string, ThreadActivity["errors"]>();
+  private readonly reviewErrors = new Map<string, ThreadActivity['errors']>();
   private indexSweep: Promise<void> | null = null;
 
   constructor(private readonly plugin: Plugin) {
@@ -228,19 +229,19 @@ export class CommentsController {
     try {
       handles = port.review(prompt, targetAgentName ?? undefined);
     } catch (error) {
-      new Notice("Review request failed: " + errorText(error));
+      new Notice('Review request failed: ' + errorText(error));
       return;
     }
     if (handles.length === 0) {
       new Notice(
         targetAgentName
           ? `${targetAgentName} is not available to review comments.`
-          : "No enabled AI could take the review."
+          : 'No enabled AI could take the review.'
       );
       return;
     }
     const threadKey = filePath && commentId ? readMarkKey(filePath, commentId) : null;
-    const subject = filePath ? filePath.split("/").pop() ?? filePath : "your comments";
+    const subject = filePath ? filePath.split('/').pop() ?? filePath : 'your comments';
     // Asking again supersedes whatever went wrong last time.
     if (threadKey) this.reviewErrors.delete(threadKey);
     for (const handle of handles) {
@@ -248,7 +249,7 @@ export class CommentsController {
       this.activeReviews.add(review);
       void handle.done.then((result) => {
         this.activeReviews.delete(review);
-        if (result.kind === "failed") {
+        if (result.kind === 'failed') {
           if (threadKey) {
             const error = { author: handle.agentName, text: `Couldn't finish: ${result.message}`, ts: this.nowTs() };
             this.reviewErrors.set(threadKey, [...(this.reviewErrors.get(threadKey) ?? []), error]);
@@ -280,7 +281,7 @@ export class CommentsController {
   }
 
   private async reindexFile(file: TFile): Promise<void> {
-    if (file.extension !== "md") return;
+    if (file.extension !== 'md') return;
     let changed: boolean;
     try {
       changed = await this.index.refreshFile(file.path, file.stat.mtime);
@@ -328,7 +329,7 @@ export class CommentsController {
    * Called after the user adds a comment or reply. Requests a review straight
    * away when that setting is on, so the review action need not be pressed.
    */
-  async notifyUserCommentAdded(filePath: string, text = "", commentId?: string): Promise<void> {
+  async notifyUserCommentAdded(filePath: string, text = '', commentId?: string): Promise<void> {
     const port = this.aiPort;
     if (!this.settings.reviewOnComment || !port) return;
     // "@gpt run your changes" addresses one AI; otherwise the standing choice
@@ -345,12 +346,12 @@ export class CommentsController {
   async requestImplementation(agentName: string, target: ImplementTarget): Promise<void> {
     const port = this.aiPort;
     if (!port) {
-      new Notice("No AI is available to make changes.");
+      new Notice('No AI is available to make changes.');
       return;
     }
     const prompt = this.settings.implementPrompt.trim();
     if (!prompt) {
-      new Notice("Set an implementation request in comments settings first.");
+      new Notice('Set an implementation request in comments settings first.');
       return;
     }
     this.dispatch(buildImplementMessage(prompt, target), agentName, target.filePath, target.commentId);
@@ -368,12 +369,12 @@ export class CommentsController {
   ): Promise<void> {
     const port = this.aiPort;
     if (!port) {
-      new Notice("No AI is available to review comments.");
+      new Notice('No AI is available to review comments.');
       return;
     }
     const prompt = this.settings.reviewPrompt.trim();
     if (!prompt) {
-      new Notice("Set a review request in comments settings first.");
+      new Notice('Set a review request in comments settings first.');
       return;
     }
     this.dispatch(buildReviewMessage(prompt, filePath), targetAgentName, filePath, commentId ?? null);
@@ -392,7 +393,7 @@ export class CommentsController {
   /**
    * The name Claude signs review comments with, so the exported skill matches
    * the identity the chat system prompt already gives it. Reads the host
-   * plugin's settings structurally: this vendored feature only holds `Plugin`.
+   * plugin's settings structurally, because the controller only holds `Plugin`.
    */
   claudeAgentName(): string {
     const settings = (this.plugin as Plugin & { settings?: unknown }).settings;
@@ -405,7 +406,7 @@ export class CommentsController {
   async load(): Promise<void> {
     await this.loadSettings();
     await this.repository.load().catch(() => {
-      new Notice("Repository comments could not be loaded.");
+      new Notice('Repository comments could not be loaded.');
     });
     this.applyHighlightAppearance();
     this.applyReadingViewPreference();
@@ -419,44 +420,44 @@ export class CommentsController {
     registerReadingView(this.plugin, this);
 
     this.plugin.addCommand({
-      id: "add-comment",
-      name: "Add comment",
-      icon: "message-square-plus",
+      id: 'add-comment',
+      name: 'Add comment',
+      icon: 'message-square-plus',
       editorCallback: (editor) => this.addCommentFromSelection(editor),
     });
     this.plugin.addCommand({
-      id: "suggest-edit",
-      name: "Suggest edit",
-      icon: "replace",
+      id: 'suggest-edit',
+      name: 'Suggest edit',
+      icon: 'replace',
       editorCallback: (editor) => this.addSuggestionFromSelection(editor),
     });
     this.plugin.addCommand({
-      id: "open-sidebar",
-      name: "Open comment sidebar",
-      icon: "message-square",
+      id: 'open-sidebar',
+      name: 'Open comment sidebar',
+      icon: 'message-square',
       callback: () => void this.openSidebar(),
     });
     this.plugin.addCommand({
-      id: "toggle-resolved",
-      name: "Toggle resolved threads",
-      icon: "check-check",
+      id: 'toggle-resolved',
+      name: 'Toggle resolved threads',
+      icon: 'check-check',
       callback: () => void this.openSidebar().then((v) => v?.toggleResolved()),
     });
     this.plugin.addCommand({
-      id: "purge-resolved",
-      name: "Remove resolved threads from file",
-      icon: "trash-2",
+      id: 'purge-resolved',
+      name: 'Remove resolved threads from file',
+      icon: 'trash-2',
       callback: () => void this.removeResolvedThreads(),
     });
 
     this.plugin.addCommand({
-      id: "export-comments",
-      name: "Export review threads of active file",
-      icon: "file-output",
+      id: 'export-comments',
+      name: 'Export review threads of active file',
+      icon: 'file-output',
       callback: () => {
         const file = this.app.workspace.getActiveFile();
-        if (!file || file.extension !== "md") {
-          new Notice("No active Markdown file.");
+        if (!file || file.extension !== 'md') {
+          new Notice('No active Markdown file.');
           return;
         }
         void this.exportComments(file);
@@ -464,23 +465,23 @@ export class CommentsController {
     });
 
     this.plugin.registerEvent(
-      this.app.vault.on("modify", (file) => {
+      this.app.vault.on('modify', (file) => {
         if (file instanceof TFile) void this.reindexFile(file);
       })
     );
     this.plugin.registerEvent(
-      this.app.vault.on("create", (file) => {
+      this.app.vault.on('create', (file) => {
         if (file instanceof TFile) void this.reindexFile(file);
       })
     );
     this.plugin.registerEvent(
-      this.app.vault.on("delete", (file) => {
+      this.app.vault.on('delete', (file) => {
         this.index.forget(file.path);
         this.refreshSidebars();
       })
     );
     this.plugin.registerEvent(
-      this.app.vault.on("rename", (file, oldPath) => {
+      this.app.vault.on('rename', (file, oldPath) => {
         // Read marks are keyed by path, so they have to follow the file or
         // every thread in it would come back as unread.
         this.index.rename(oldPath, file.path);
@@ -496,25 +497,25 @@ export class CommentsController {
     );
 
     this.plugin.registerEvent(
-      this.app.workspace.on("editor-menu", (menu, editor) => {
+      this.app.workspace.on('editor-menu', (menu, editor) => {
         if (!editor.somethingSelected()) return;
         menu.addItem((item) =>
           item
-            .setTitle("Add comment")
-            .setIcon("message-square")
+            .setTitle('Add comment')
+            .setIcon('message-square')
             .onClick(() => this.addCommentFromSelection(editor))
         );
         menu.addItem((item) =>
           item
-            .setTitle("Suggest edit")
-            .setIcon("replace")
+            .setTitle('Suggest edit')
+            .setIcon('replace')
             .onClick(() => this.addSuggestionFromSelection(editor))
         );
       })
     );
 
     this.plugin.registerEvent(
-      this.app.workspace.on("window-open", (win) => {
+      this.app.workspace.on('window-open', (win) => {
         this.applyHighlightAppearanceTo(win.doc);
         this.applyReadingViewPreferenceTo(win.doc);
       })
@@ -525,9 +526,9 @@ export class CommentsController {
     this.replyDrafts.clear();
     void this.repository.dispose();
     for (const doc of this.allDocuments()) {
-      doc.body.style.removeProperty("--tc-highlight-color");
-      doc.body.style.removeProperty("--tc-highlight-opacity");
-      doc.body.classList.remove("tc-hide-reading-indicator");
+      doc.body.style.removeProperty('--grandemonium-comment-highlight-color');
+      doc.body.style.removeProperty('--grandemonium-comment-highlight-opacity');
+      doc.body.classList.remove('grandemonium-comment-hide-reading-indicator');
     }
   }
 
@@ -562,13 +563,13 @@ export class CommentsController {
 
   private async removeResolvedThreads(): Promise<void> {
     const file = this.app.workspace.getActiveFile();
-    if (!file || file.extension !== "md") return;
+    if (!file || file.extension !== 'md') return;
     if (
       this.settings.confirmDestructiveActions &&
       !(await confirmAction(this.app, {
-        title: "Remove resolved threads?",
-        message: "This will permanently remove every resolved review thread from the active note.",
-        confirmLabel: "Remove threads",
+        title: 'Remove resolved threads?',
+        message: 'This will permanently remove every resolved review thread from the active note.',
+        confirmLabel: 'Remove threads',
       }))
     ) {
       return;
@@ -576,15 +577,15 @@ export class CommentsController {
     await this.updateDoc(file, (doc) => {
       let count = 0;
       for (const [id, comment] of Object.entries(doc.comments)) {
-        if (comment.status === "resolved") {
+        if (comment.status === 'resolved') {
           delete doc.comments[id];
           count++;
         }
       }
       new Notice(
         count > 0
-          ? `${count} resolved thread${count === 1 ? "" : "s"} removed.`
-          : "No resolved threads in this file."
+          ? `${count} resolved thread${count === 1 ? '' : 's'} removed.`
+          : 'No resolved threads in this file.'
       );
     });
   }
@@ -606,7 +607,7 @@ export class CommentsController {
   /** Device-local manual override for the author label ("" when unset). Never synced. */
   authorOverride(): string {
     const v: unknown = this.app.loadLocalStorage(AUTHOR_OVERRIDE_KEY);
-    return typeof v === "string" ? v : "";
+    return typeof v === 'string' ? v : '';
   }
 
   /** Persist the override to per-vault localStorage; an empty value clears it. */
@@ -642,8 +643,8 @@ export class CommentsController {
   }
 
   private applyHighlightAppearanceTo(doc: Document): void {
-    doc.body.style.setProperty("--tc-highlight-color", this.settings.highlightColor);
-    doc.body.style.setProperty("--tc-highlight-opacity", `${this.settings.highlightOpacity}%`);
+    doc.body.style.setProperty('--grandemonium-comment-highlight-color', this.settings.highlightColor);
+    doc.body.style.setProperty('--grandemonium-comment-highlight-opacity', `${this.settings.highlightOpacity}%`);
   }
 
   private applyReadingViewPreference(): void {
@@ -652,7 +653,7 @@ export class CommentsController {
 
   private applyReadingViewPreferenceTo(doc: Document): void {
     doc.body.classList.toggle(
-      "tc-hide-reading-indicator",
+      'grandemonium-comment-hide-reading-indicator',
       !this.settings.showReadingViewIndicator
     );
   }
@@ -670,7 +671,7 @@ export class CommentsController {
     const raw = await this.app.vault.read(file);
     const doc = parseDocument(raw);
     if (doc.error) {
-      new Notice("The comments in this note cannot be read: " + doc.error);
+      new Notice('The comments in this note cannot be read: ' + doc.error);
       return false;
     }
     mutate(doc);
@@ -683,18 +684,18 @@ export class CommentsController {
   async exportComments(file: TFile): Promise<void> {
     const doc = await this.readDoc(file);
     if (doc.error) {
-      new Notice("The comments in this note cannot be read: " + doc.error);
+      new Notice('The comments in this note cannot be read: ' + doc.error);
       return;
     }
     const now = new Date();
-    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const content = buildExportNote(file.basename, resolveAll(doc.prose, doc.comments), {
       scope: this.settings.exportScope,
       date,
       formatTs,
     });
     if (!content) {
-      new Notice("No review threads to export.");
+      new Notice('No review threads to export.');
       return;
     }
     const name = renderExportFileName(this.settings.exportNameTemplate, file.basename, date);
@@ -707,21 +708,21 @@ export class CommentsController {
       ? this.app.vault.getFolderByPath(normalizePath(folder))
       : this.app.vault.getRoot();
     if (!targetFolder) {
-      new Notice("The selected export folder no longer exists. Choose another folder in settings.");
+      new Notice('The selected export folder no longer exists. Choose another folder in settings.');
       return;
     }
-    const path = normalizePath((folder ? folder + "/" : "") + name + ".md");
+    const path = normalizePath((folder ? folder + '/' : '') + name + '.md');
     if (path === file.path) {
-      new Notice("Export name matches the source file — change the template in settings.");
+      new Notice('Export name matches the source file — change the template in settings.');
       return;
     }
     const existing = this.app.vault.getAbstractFileByPath(path);
     if (existing instanceof TFile) await this.app.vault.modify(existing, content);
     else if (existing) {
-      new Notice("Export target is a folder: " + path);
+      new Notice('Export target is a folder: ' + path);
       return;
     } else await this.app.vault.create(path, content);
-    new Notice("Review threads exported to " + path);
+    new Notice('Review threads exported to ' + path);
   }
 
   addCommentFromSelection(editor: Editor): void {
@@ -739,7 +740,7 @@ export class CommentsController {
    */
   startSelectionComment(text: string, from: number, to: number): void {
     const file = this.app.workspace.getActiveFile();
-    if (!file || file.extension !== "md") return;
+    if (!file || file.extension !== 'md') return;
     const doc = parseDocument(text);
     if (doc.error) return;
     const openDraftRange = this.openSidebarView()?.draftRange(file.path, doc.prose) ?? null;
@@ -766,13 +767,13 @@ export class CommentsController {
    */
   commentPopoverHost(id: string, close: () => void): CommentPopoverHost {
     const file = this.app.workspace.getActiveFile();
-    const draftKey = `${file?.path ?? ""}\u0000${id}`;
+    const draftKey = `${file?.path ?? ''}\u0000${id}`;
     return {
       authorColorOverrides: this.settings.authorColorOverrides,
       colorAuthorNames: this.settings.colorAuthorNames,
       formatTimestamp: (ts) => formatSidebarTimestamp(ts, this.settings.timestampDisplay),
-      submitOnEnter: this.settings.submitShortcut === "enter",
-      replyDraft: this.replyDrafts.get(draftKey) ?? "",
+      submitOnEnter: this.settings.submitShortcut === 'enter',
+      replyDraft: this.replyDrafts.get(draftKey) ?? '',
       size:
         this.settings.commentPopoverWidth && this.settings.commentPopoverHeight
           ? {
@@ -801,21 +802,21 @@ export class CommentsController {
       onResolve: () => {
         if (!file) return;
         void (async () => {
-          const removes = this.settings.resolveBehavior === "remove";
+          const removes = this.settings.resolveBehavior === 'remove';
           if (
             removes &&
             this.settings.confirmDestructiveActions &&
             !(await confirmAction(this.app, {
-              title: "Resolve?",
-              message: "This will permanently remove the comment thread from the note.",
-              confirmLabel: "Resolve",
+              title: 'Resolve?',
+              message: 'This will permanently remove the comment thread from the note.',
+              confirmLabel: 'Resolve',
             }))
           ) {
             return;
           }
           await this.updateDoc(file, (d) => {
             if (removes) removeComment(d.comments, id);
-            else setStatus(d.comments, id, "resolved");
+            else setStatus(d.comments, id, 'resolved');
           });
           close();
         })();
@@ -833,13 +834,13 @@ export class CommentsController {
         if (!file) return;
         void (async () => {
           if (
-            this.settings.resolveBehavior === "remove" &&
+            this.settings.resolveBehavior === 'remove' &&
             this.settings.confirmDestructiveActions &&
             !(await confirmAction(this.app, {
-              title: "Decline suggestion?",
+              title: 'Decline suggestion?',
               message:
-                "This will permanently remove the suggestion and its discussion from the note.",
-              confirmLabel: "Decline",
+                'This will permanently remove the suggestion and its discussion from the note.',
+              confirmLabel: 'Decline',
             }))
           ) {
             return;
@@ -881,14 +882,14 @@ export class CommentsController {
 
   private anchorFromSelection(editor: Editor): Anchor | null {
     if (!editor.somethingSelected()) {
-      new Notice("Select some text first.");
+      new Notice('Select some text first.');
       return null;
     }
-    const from = editor.posToOffset(editor.getCursor("from"));
-    const to = editor.posToOffset(editor.getCursor("to"));
+    const from = editor.posToOffset(editor.getCursor('from'));
+    const to = editor.posToOffset(editor.getCursor('to'));
     const doc = parseDocument(editor.getValue());
     if (to > doc.prose.length) {
-      new Notice("Only prose can be commented or suggested (not the comment block).");
+      new Notice('Only prose can be commented or suggested (not the comment block).');
       return null;
     }
     return makeAnchor(doc.prose, from, to);
@@ -898,7 +899,7 @@ export class CommentsController {
     const active = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (active?.file?.path === file.path) return active.editor;
     const leaf = this.app.workspace
-      .getLeavesOfType("markdown")
+      .getLeavesOfType('markdown')
       .find((l) => l.view instanceof MarkdownView && l.view.file?.path === file.path);
     return leaf ? (leaf.view as MarkdownView).editor : null;
   }
@@ -913,7 +914,7 @@ export class CommentsController {
 
   acceptEditSuggestion(file: TFile, id: string): SuggestionAcceptancePlan {
     const editor = this.editorForFile(file);
-    if (!editor) return { ok: false, reason: "no-editor" };
+    if (!editor) return { ok: false, reason: 'no-editor' };
     const raw = editor.getValue();
     const plan = planSuggestionAcceptance(
       raw,
@@ -936,8 +937,8 @@ export class CommentsController {
     const editor = this.editorForFile(file);
     if (!editor) return null;
     if (!editor.somethingSelected()) return null;
-    const from = editor.posToOffset(editor.getCursor("from"));
-    const to = editor.posToOffset(editor.getCursor("to"));
+    const from = editor.posToOffset(editor.getCursor('from'));
+    const to = editor.posToOffset(editor.getCursor('to'));
     const doc = parseDocument(editor.getValue());
     if (to > doc.prose.length || from === to) return null;
     return { anchor: makeAnchor(doc.prose, from, to) };
@@ -983,29 +984,29 @@ export class CommentsController {
    */
   async revealComment(file: TFile, id: string): Promise<void> {
     const open = this.app.workspace
-      .getLeavesOfType("markdown")
+      .getLeavesOfType('markdown')
       .find((leaf) => leaf.view instanceof MarkdownView && leaf.view.file?.path === file.path);
     if (open) await this.app.workspace.revealLeaf(open);
     else await this.app.workspace.getLeaf(false).openFile(file);
     const doc = await this.readDoc(file);
     const comment = doc.comments[id];
     if (!comment) {
-      new Notice("That comment is no longer in the note.");
+      new Notice('That comment is no longer in the note.');
       return;
     }
     // A rewritten passage has nothing left to scroll to, and saying so every
     // time would nag: opening the note is the useful half, and is why the
     // reader is being taken there at all.
-    if (resolveAnchor(doc.prose, comment.anchor).kind !== "resolved") return;
+    if (resolveAnchor(doc.prose, comment.anchor).kind !== 'resolved') return;
     this.revealAnchor(file, comment.anchor);
   }
 
   revealAnchor(file: TFile, anchor: Anchor): void {
     const leaf = this.app.workspace
-      .getLeavesOfType("markdown")
+      .getLeavesOfType('markdown')
       .find((l) => l.view instanceof MarkdownView && l.view.file?.path === file.path);
     if (!leaf) {
-      new Notice("File is not open in any editor.");
+      new Notice('File is not open in any editor.');
       return;
     }
     const view = leaf.view as MarkdownView;
@@ -1013,8 +1014,8 @@ export class CommentsController {
     const editor = view.editor;
     const doc = parseDocument(editor.getValue());
     const r = resolveAnchor(doc.prose, anchor);
-    if (r.kind !== "resolved") {
-      new Notice("Thread is orphaned — text passage not found.");
+    if (r.kind !== 'resolved') {
+      new Notice('Thread is orphaned — text passage not found.');
       return;
     }
     const fromPos = editor.offsetToPos(r.start);

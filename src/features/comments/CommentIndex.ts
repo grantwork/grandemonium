@@ -1,6 +1,6 @@
-import type { InboxFileInput } from "./inboxModel";
-import { parseDocument, resolveAll } from "./store";
-import type { ResolvedComment } from "./types";
+import type { InboxFileInput } from './inboxModel';
+import { parseDocument, resolveAll } from './store';
+import type { ResolvedComment } from './types';
 
 export interface IndexedFile {
   path: string;

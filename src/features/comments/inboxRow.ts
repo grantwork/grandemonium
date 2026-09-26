@@ -1,12 +1,12 @@
-import { setIcon, setTooltip } from "obsidian";
+import { setIcon, setTooltip } from 'obsidian';
 
-import type { InboxFileGroup, InboxItem, InboxItemKind } from "./inboxModel";
+import type { InboxFileGroup, InboxItem, InboxItemKind } from './inboxModel';
 
 /** What a collapsed row asks of the reader, at a glance. */
 export const INBOX_ICONS: Record<InboxItemKind, string> = {
-  comment: "message-square",
-  rewritten: "pencil-line",
-  suggestion: "replace",
+  comment: 'message-square',
+  rewritten: 'pencil-line',
+  suggestion: 'replace',
 };
 
 /** Everything a row needs from the plugin, kept narrow so it renders anywhere. */
@@ -41,20 +41,20 @@ export function formatWorkingAge(elapsedMs: number): string {
  * simply redraw on a timer: a redraw would throw away a reply being typed.
  */
 export function refreshWorkingAges(root: HTMLElement, now: number): void {
-  for (const el of Array.from(root.querySelectorAll<HTMLElement>("[data-tc-working-since]"))) {
-    const since = Number(el.dataset.tcWorkingSince);
+  for (const el of Array.from(root.querySelectorAll<HTMLElement>('[data-comment-working-since]'))) {
+    const since = Number(el.dataset.commentWorkingSince);
     if (Number.isFinite(since)) el.textContent = formatWorkingAge(now - since);
   }
 }
 
 /** Offered only while an AI is working on the thread; it confirms before acting. */
 export function renderStopButton(parent: HTMLElement, onStop: () => void): HTMLElement {
-  const stop = parent.createEl("button", {
-    cls: "tc-entry-action clickable-icon tc-inbox-stop",
-    attr: { "aria-label": "Stop the review", type: "button" },
+  const stop = parent.createEl('button', {
+    cls: 'grandemonium-comment-entry-action clickable-icon grandemonium-comment-inbox-stop',
+    attr: { 'aria-label': 'Stop the review', type: 'button' },
   });
-  setIcon(stop, "square");
-  setTooltip(stop, "Stop the review");
+  setIcon(stop, 'square');
+  setTooltip(stop, 'Stop the review');
   stop.onclick = () => onStop();
   return stop;
 }
@@ -70,36 +70,36 @@ export function renderInboxRow(
   item: InboxItem,
   host: InboxRowHost
 ): HTMLElement {
-  const wrapper = parent.createDiv({ cls: `tc-inbox-item tc-inbox-${item.kind}` });
-  if (item.unread) wrapper.addClass("tc-inbox-unread");
+  const wrapper = parent.createDiv({ cls: `grandemonium-comment-inbox-item grandemonium-comment-inbox-${item.kind}` });
+  if (item.unread) wrapper.addClass('grandemonium-comment-inbox-unread');
 
-  const row = wrapper.createEl("button", { cls: "tc-inbox-row", attr: { type: "button" } });
-  setIcon(row.createSpan({ cls: "tc-inbox-icon" }), INBOX_ICONS[item.kind]);
-  row.createSpan({ cls: "tc-inbox-blurb", text: item.title });
+  const row = wrapper.createEl('button', { cls: 'grandemonium-comment-inbox-row', attr: { type: 'button' } });
+  setIcon(row.createSpan({ cls: 'grandemonium-comment-inbox-icon' }), INBOX_ICONS[item.kind]);
+  row.createSpan({ cls: 'grandemonium-comment-inbox-blurb', text: item.title });
   renderThreadStatus(row, item, host.now());
   setTooltip(row, host.describe(item));
 
-  const actions = wrapper.createDiv({ cls: "tc-inbox-actions" });
+  const actions = wrapper.createDiv({ cls: 'grandemonium-comment-inbox-actions' });
   // A run in flight is the one thing on a row that may need stopping now, so
   // its control is always shown rather than waiting for the pointer.
   if (item.workingSince !== null) {
-    wrapper.addClass("tc-inbox-busy");
+    wrapper.addClass('grandemonium-comment-inbox-busy');
     renderStopButton(actions, () => host.onStop());
   }
-  const resolve = actions.createEl("button", {
-    cls: "tc-entry-action clickable-icon",
-    attr: { "aria-label": "Resolve", type: "button" },
+  const resolve = actions.createEl('button', {
+    cls: 'grandemonium-comment-entry-action clickable-icon',
+    attr: { 'aria-label': 'Resolve', type: 'button' },
   });
-  setIcon(resolve, "check");
-  setTooltip(resolve, "Resolve");
+  setIcon(resolve, 'check');
+  setTooltip(resolve, 'Resolve');
   resolve.onclick = () => host.onResolve();
 
-  const reveal = actions.createEl("button", {
-    cls: "tc-entry-action clickable-icon",
-    attr: { "aria-label": "Open in note", type: "button" },
+  const reveal = actions.createEl('button', {
+    cls: 'grandemonium-comment-entry-action clickable-icon',
+    attr: { 'aria-label': 'Open in note', type: 'button' },
   });
-  setIcon(reveal, "square-arrow-out-up-right");
-  setTooltip(reveal, "Open in note");
+  setIcon(reveal, 'square-arrow-out-up-right');
+  setTooltip(reveal, 'Open in note');
   reveal.onclick = () => host.onReveal();
 
   row.onclick = () => host.onExpand();
@@ -112,25 +112,25 @@ export function renderInboxRow(
  * wants to know which rows have come back, not when they were written.
  */
 function renderThreadStatus(row: HTMLElement, item: InboxItem, now: number): void {
-  const state = row.createSpan({ cls: "tc-inbox-status" });
+  const state = row.createSpan({ cls: 'grandemonium-comment-inbox-status' });
   const unread = state.createSpan({
-    cls: item.unread ? "tc-inbox-read-mark tc-inbox-read-mark-new" : "tc-inbox-read-mark",
-    attr: { "aria-label": item.unread ? "New reply" : "Read" },
+    cls: item.unread ? 'grandemonium-comment-inbox-read-mark grandemonium-comment-inbox-read-mark-new' : 'grandemonium-comment-inbox-read-mark',
+    attr: { 'aria-label': item.unread ? 'New reply' : 'Read' },
   });
-  setIcon(unread, item.unread ? "mail" : "mail-open");
+  setIcon(unread, item.unread ? 'mail' : 'mail-open');
   // Idle is the resting state of every row, so drawing it would say nothing and
   // cost a column; only work in flight earns a mark.
   if (item.workingSince === null) return;
   const working = state.createSpan({
-    cls: "tc-inbox-working",
-    attr: { "aria-label": "AI working on this" },
+    cls: 'grandemonium-comment-inbox-working',
+    attr: { 'aria-label': 'AI working on this' },
   });
-  setIcon(working.createSpan({ cls: "tc-inbox-working-icon" }), "loader");
+  setIcon(working.createSpan({ cls: 'grandemonium-comment-inbox-working-icon' }), 'loader');
   const age = working.createSpan({
-    cls: "tc-inbox-working-age",
+    cls: 'grandemonium-comment-inbox-working-age',
     text: formatWorkingAge(now - item.workingSince),
   });
-  age.dataset.tcWorkingSince = String(item.workingSince);
+  age.dataset.commentWorkingSince = String(item.workingSince);
 }
 
 /** The head of an opened thread: the same line, still clickable to close it. */
@@ -140,14 +140,14 @@ export function renderExpandedHeader(
   onCollapse: () => void,
   now: () => number = Date.now
 ): HTMLElement {
-  const head = parent.createEl("button", {
-    cls: "tc-inbox-row tc-inbox-expanded-head",
-    attr: { "aria-expanded": "true", type: "button" },
+  const head = parent.createEl('button', {
+    cls: 'grandemonium-comment-inbox-row grandemonium-comment-inbox-expanded-head',
+    attr: { 'aria-expanded': 'true', type: 'button' },
   });
-  setIcon(head.createSpan({ cls: "tc-inbox-icon" }), INBOX_ICONS[item.kind]);
-  head.createSpan({ cls: "tc-inbox-blurb", text: item.title });
+  setIcon(head.createSpan({ cls: 'grandemonium-comment-inbox-icon' }), INBOX_ICONS[item.kind]);
+  head.createSpan({ cls: 'grandemonium-comment-inbox-blurb', text: item.title });
   renderThreadStatus(head, item, now());
-  setIcon(head.createSpan({ cls: "tc-inbox-collapse" }), "chevron-up");
+  setIcon(head.createSpan({ cls: 'grandemonium-comment-inbox-collapse' }), 'chevron-up');
   head.onclick = () => onCollapse();
   return head;
 }
@@ -167,22 +167,22 @@ export function renderFileHeader(
   group: InboxFileGroup,
   host: InboxFileHeaderHost
 ): HTMLElement {
-  const head = parent.createEl("button", {
-    cls: "tc-file-group",
-    attr: { "aria-expanded": String(!host.collapsed), type: "button" },
+  const head = parent.createEl('button', {
+    cls: 'grandemonium-comment-file-group',
+    attr: { 'aria-expanded': String(!host.collapsed), type: 'button' },
   });
   setIcon(
-    head.createSpan({ cls: "tc-file-chevron" }),
-    host.collapsed ? "chevron-right" : "chevron-down"
+    head.createSpan({ cls: 'grandemonium-comment-file-chevron' }),
+    host.collapsed ? 'chevron-right' : 'chevron-down'
   );
-  head.createSpan({ cls: "tc-file-name", text: group.fileName.replace(/\.md$/, "") });
-  if (group.folder) head.createSpan({ cls: "tc-file-folder", text: group.folder });
+  head.createSpan({ cls: 'grandemonium-comment-file-name', text: group.fileName.replace(/\.md$/, '') });
+  if (group.folder) head.createSpan({ cls: 'grandemonium-comment-file-folder', text: group.folder });
   if (group.running) {
-    const spinner = head.createSpan({ cls: "tc-file-running", attr: { "aria-label": "Agent working" } });
-    setIcon(spinner, "loader");
+    const spinner = head.createSpan({ cls: 'grandemonium-comment-file-running', attr: { 'aria-label': 'Agent working' } });
+    setIcon(spinner, 'loader');
   }
-  const count = head.createSpan({ cls: "tc-file-count", text: String(group.items.length) });
-  if (group.unreadCount > 0) count.addClass("tc-file-count-unread");
+  const count = head.createSpan({ cls: 'grandemonium-comment-file-count', text: String(group.items.length) });
+  if (group.unreadCount > 0) count.addClass('grandemonium-comment-file-count-unread');
   setTooltip(head, group.folderPath ? `${group.folderPath}/${group.fileName}` : group.fileName);
   head.onclick = () => host.onToggle();
   return head;

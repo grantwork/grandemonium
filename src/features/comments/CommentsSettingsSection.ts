@@ -1,29 +1,29 @@
 import type {
   App,
-  TFolder} from "obsidian";
+  TFolder} from 'obsidian';
 import {
   AbstractInputSuggest,
   Notice,
   Platform,
   Setting
-} from "obsidian";
+} from 'obsidian';
 
 import {
   authorColorReadability,
   authorHue,
   hasAuthorColorOverride,
   renameAuthorColorOverride,
-} from "./authorColor";
-import type { CommentsController } from "./CommentsController";
-import { renderExportFileName } from "./export";
+} from './authorColor';
+import type { CommentsController } from './CommentsController';
 import {
   DEFAULT_SETTINGS,
   normalizeVaultFolderPath,
   validateExportNameTemplate,
   validateVaultFolderPath,
-} from "./CommentsSettings";
-import { DEFAULT_IMPLEMENT_PROMPT, DEFAULT_REVIEW_PROMPT } from "./CommentsSettings";
-import { exportSkill } from "./skillExport";
+} from './CommentsSettings';
+import { DEFAULT_IMPLEMENT_PROMPT, DEFAULT_REVIEW_PROMPT } from './CommentsSettings';
+import { renderExportFileName } from './export';
+import { exportSkill } from './skillExport';
 
 class VaultFolderSuggest extends AbstractInputSuggest<TFolder> {
   protected getSuggestions(query: string): TFolder[] {
@@ -31,45 +31,44 @@ class VaultFolderSuggest extends AbstractInputSuggest<TFolder> {
     return this.app.vault
       .getAllFolders(true)
       .filter((folder) => {
-        const label = folder.isRoot() ? "Vault root" : folder.path;
+        const label = folder.isRoot() ? 'Vault root' : folder.path;
         return label.toLocaleLowerCase().includes(normalizedQuery);
       });
   }
 
   renderSuggestion(folder: TFolder, element: HTMLElement): void {
-    element.setText(folder.isRoot() ? "Vault root" : folder.path);
+    element.setText(folder.isRoot() ? 'Vault root' : folder.path);
   }
 }
 
 function renderColorReadability(container: HTMLElement, color: string): void {
   container.empty();
-  const previews = container.createDiv({ cls: "tc-color-previews" });
-  for (const theme of ["light", "dark"] as const) {
+  const previews = container.createDiv({ cls: 'grandemonium-comment-color-previews' });
+  for (const theme of ['light', 'dark'] as const) {
     const preview = previews.createSpan({
-      text: theme === "light" ? "Aa Light" : "Aa Dark",
-      cls: `tc-color-preview tc-color-preview-${theme}`,
+      text: theme === 'light' ? 'Aa Light' : 'Aa Dark',
+      cls: `grandemonium-comment-color-preview grandemonium-comment-color-preview-${theme}`,
     });
     preview.style.color = color;
   }
   const readability = authorColorReadability(color);
   if (!readability || readability.lowContrastThemes.length === 0) {
     container.createDiv({
-      text: "Good contrast in standard light and dark themes.",
-      cls: "tc-setting-success",
+      text: 'Good contrast in standard light and dark themes.',
+      cls: 'grandemonium-comment-setting-success',
     });
     return;
   }
-  const themes = readability.lowContrastThemes.join(" and ");
+  const themes = readability.lowContrastThemes.join(' and ');
   container.createDiv({
-    text: `Low contrast in the standard ${themes} theme${readability.lowContrastThemes.length === 1 ? "" : "s"}.`,
-    cls: "tc-setting-warning",
+    text: `Low contrast in the standard ${themes} theme${readability.lowContrastThemes.length === 1 ? '' : 's'}.`,
+    cls: 'grandemonium-comment-setting-warning',
   });
 }
 
 /**
- * Renders the comments settings into a container supplied by the host settings
- * shell. This was a standalone `PluginSettingTab`; the plugin now owns a single
- * settings surface, so it renders as one tab inside that shell instead.
+ * Renders the comments settings as one tab inside the plugin's settings shell,
+ * into a container the shell supplies.
  */
 export class CommentsSettingsSection {
   private authorColorsExpanded = false;
@@ -84,29 +83,29 @@ export class CommentsSettingsSection {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName("Identity & appearance").setHeading();
+    new Setting(containerEl).setName('Identity & appearance').setHeading();
 
     const detected = this.plugin.detectedAuthor();
     new Setting(containerEl)
-      .setName("Display name")
+      .setName('Display name')
       .setDesc(
         `Name added to new comments on this device. Leave empty to use “${detected}”. ` +
-          "This value is not synced, so collaborators can use their own names."
+          'This value is not synced, so collaborators can use their own names.'
       )
       .addText((text) => {
         text
           .setPlaceholder(detected)
           .setValue(this.plugin.authorOverride())
           .onChange((value) => this.plugin.setAuthorOverride(value));
-        text.inputEl.name = "tandem-comments-display-name";
-        text.inputEl.autocomplete = "off";
+        text.inputEl.name = 'comments-display-name';
+        text.inputEl.autocomplete = 'off';
         text.inputEl.spellcheck = false;
-        text.inputEl.setAttr("aria-label", "Display name");
+        text.inputEl.setAttr('aria-label', 'Display name');
       });
 
     const highlightColorSetting = new Setting(containerEl)
-      .setName("Highlight color")
-      .setDesc("Color used for open review-thread highlights in the editor.")
+      .setName('Highlight color')
+      .setDesc('Color used for open review-thread highlights in the editor.')
       .addColorPicker((picker) => {
         picker.setValue(this.plugin.settings.highlightColor).onChange((value) =>
           this.plugin.updateSettings({ highlightColor: value })
@@ -114,13 +113,13 @@ export class CommentsSettingsSection {
       });
     highlightColorSetting.controlEl
       .querySelector<HTMLInputElement>('input[type="color"]')
-      ?.setAttr("aria-label", "Highlight color");
+      ?.setAttr('aria-label', 'Highlight color');
 
     new Setting(containerEl)
-      .setName("Highlight opacity")
-      .setDesc("Strength of the highlight background. The underline remains fully visible.")
+      .setName('Highlight opacity')
+      .setDesc('Strength of the highlight background. The underline remains fully visible.')
       .addSlider((slider) => {
-        slider.sliderEl.setAttr("aria-label", "Highlight opacity");
+        slider.sliderEl.setAttr('aria-label', 'Highlight opacity');
         slider
           .setLimits(10, 80, 5)
           .setValue(this.plugin.settings.highlightOpacity)
@@ -129,8 +128,8 @@ export class CommentsSettingsSection {
       });
 
     new Setting(containerEl)
-      .setName("Color author names")
-      .setDesc("Give authors stable, theme-aware colors in the comment sidebar.")
+      .setName('Color author names')
+      .setDesc('Give authors stable, theme-aware colors in the comment sidebar.')
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.colorAuthorNames).onChange(async (value) => {
           await this.plugin.updateSettings({ colorAuthorNames: value });
@@ -140,96 +139,96 @@ export class CommentsSettingsSection {
 
     if (this.plugin.settings.colorAuthorNames) this.renderAuthorColors(containerEl);
 
-    new Setting(containerEl).setName("Review workflow").setHeading();
+    new Setting(containerEl).setName('Review workflow').setHeading();
 
     new Setting(containerEl)
-      .setName("Resolved review threads")
-      .setDesc("Choose whether resolved comments and completed suggestions remain in the note as history.")
+      .setName('Resolved review threads')
+      .setDesc('Choose whether resolved comments and completed suggestions remain in the note as history.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("remove", "Remove immediately")
-          .addOption("keep", "Keep as history")
+          .addOption('remove', 'Remove immediately')
+          .addOption('keep', 'Keep as history')
           .setValue(this.plugin.settings.resolveBehavior)
           .onChange(async (value) => {
-            const resolveBehavior = value === "keep" ? "keep" : "remove";
+            const resolveBehavior = value === 'keep' ? 'keep' : 'remove';
             await this.plugin.updateSettings({
               resolveBehavior,
               showResolvedByDefault:
-                resolveBehavior === "keep" ? this.plugin.settings.showResolvedByDefault : false,
+                resolveBehavior === 'keep' ? this.plugin.settings.showResolvedByDefault : false,
             });
             this.redisplayPreservingScroll();
           })
       );
 
     const showResolved = new Setting(containerEl)
-      .setName("Show resolved by default")
+      .setName('Show resolved by default')
       .setDesc(
-        this.plugin.settings.resolveBehavior === "keep"
-          ? "Show retained review history when the sidebar opens."
-          : "Available when resolved review threads are kept as history."
+        this.plugin.settings.resolveBehavior === 'keep'
+          ? 'Show retained review history when the sidebar opens.'
+          : 'Available when resolved review threads are kept as history.'
       )
       .addToggle((toggle) => {
         toggle
           .setValue(this.plugin.settings.showResolvedByDefault)
-          .setDisabled(this.plugin.settings.resolveBehavior !== "keep")
+          .setDisabled(this.plugin.settings.resolveBehavior !== 'keep')
           .onChange((value) => this.plugin.updateSettings({ showResolvedByDefault: value }));
       });
-    if (this.plugin.settings.resolveBehavior !== "keep") showResolved.setDisabled(true);
+    if (this.plugin.settings.resolveBehavior !== 'keep') showResolved.setDisabled(true);
 
     new Setting(containerEl)
-      .setName("Sidebar order")
-      .setDesc("Order comments within the open, orphaned, and resolved sections.")
+      .setName('Sidebar order')
+      .setDesc('Order comments within the open, orphaned, and resolved sections.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("document", "Document position")
-          .addOption("newest", "Newest activity first")
-          .addOption("oldest", "Oldest activity first")
+          .addOption('document', 'Document position')
+          .addOption('newest', 'Newest activity first')
+          .addOption('oldest', 'Oldest activity first')
           .setValue(this.plugin.settings.sidebarSortOrder)
           .onChange((value) =>
             this.plugin.updateSettings({
               sidebarSortOrder:
-                value === "newest" || value === "oldest" ? value : "document",
+                value === 'newest' || value === 'oldest' ? value : 'document',
             })
           )
       );
 
     new Setting(containerEl)
-      .setName("Submit comments with")
-      .setDesc("Choose the keyboard shortcut used for comments, replies, suggestions, and edits.")
+      .setName('Submit comments with')
+      .setDesc('Choose the keyboard shortcut used for comments, replies, suggestions, and edits.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("enter", "Enter")
-          .addOption("mod-enter", "Cmd/Ctrl + Enter")
+          .addOption('enter', 'Enter')
+          .addOption('mod-enter', 'Cmd/Ctrl + Enter')
           .setValue(this.plugin.settings.submitShortcut)
           .onChange((value) =>
-            this.plugin.updateSettings({ submitShortcut: value === "mod-enter" ? "mod-enter" : "enter" })
+            this.plugin.updateSettings({ submitShortcut: value === 'mod-enter' ? 'mod-enter' : 'enter' })
           )
       );
 
     new Setting(containerEl)
-      .setName("Timestamp display")
-      .setDesc("Choose how timestamps appear in the sidebar. Copies and exports keep their full timestamps.")
+      .setName('Timestamp display')
+      .setDesc('Choose how timestamps appear in the sidebar. Copies and exports keep their full timestamps.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("full", "Full date and time")
-          .addOption("compact", "Compact date and time")
-          .addOption("relative", "Relative time")
-          .addOption("hidden", "Hidden")
+          .addOption('full', 'Full date and time')
+          .addOption('compact', 'Compact date and time')
+          .addOption('relative', 'Relative time')
+          .addOption('hidden', 'Hidden')
           .setValue(this.plugin.settings.timestampDisplay)
           .onChange((value) =>
             this.plugin.updateSettings({
               timestampDisplay:
-                value === "compact" || value === "relative" || value === "hidden"
+                value === 'compact' || value === 'relative' || value === 'hidden'
                   ? value
-                  : "full",
+                  : 'full',
             })
           )
       );
 
     new Setting(containerEl)
-      .setName("Comment on selection")
+      .setName('Comment on selection')
       .setDesc(
-        "Open the comment box as soon as a passage is selected in the editor, without using the right-click menu."
+        'Open the comment box as soon as a passage is selected in the editor, without using the right-click menu.'
       )
       .addToggle((toggle) =>
         toggle
@@ -238,9 +237,9 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("Comment popover")
+      .setName('Comment popover')
       .setDesc(
-        "Show a comment thread over its highlight in the editor. Turn this off to open the sidebar instead."
+        'Show a comment thread over its highlight in the editor. Turn this off to open the sidebar instead.'
       )
       .addToggle((toggle) =>
         toggle
@@ -249,9 +248,9 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("Comment popover on hover")
+      .setName('Comment popover on hover')
       .setDesc(
-        "Also preview a thread when the pointer rests on its highlight. The preview is read only; clicking still opens the full popover."
+        'Also preview a thread when the pointer rests on its highlight. The preview is read only; clicking still opens the full popover.'
       )
       .addToggle((toggle) =>
         toggle
@@ -260,9 +259,9 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("AI review request")
+      .setName('AI review request')
       .setDesc(
-        "Sent to every enabled AI when the review action on a comment is used. Each replies under its own agent name."
+        'Sent to every enabled AI when the review action on a comment is used. Each replies under its own agent name.'
       )
       .addTextArea((text) =>
         text
@@ -274,9 +273,9 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("Ask AI to review new comments")
+      .setName('Ask AI to review new comments')
       .setDesc(
-        "Send the review request automatically when you add a comment or reply, without using the review action."
+        'Send the review request automatically when you add a comment or reply, without using the review action.'
       )
       .addToggle((toggle) =>
         toggle
@@ -285,9 +284,9 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("AI implementation request")
+      .setName('AI implementation request')
       .setDesc(
-        "Sent to a single AI when the implement action on its reply is used, asking it to carry out what it proposed."
+        'Sent to a single AI when the implement action on its reply is used, asking it to carry out what it proposed.'
       )
       .addTextArea((text) =>
         text
@@ -301,19 +300,19 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("Confirm destructive actions")
-      .setDesc("Ask before permanently deleting a comment, reply, suggestion, or resolved thread.")
+      .setName('Confirm destructive actions')
+      .setDesc('Ask before permanently deleting a comment, reply, suggestion, or resolved thread.')
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.confirmDestructiveActions)
           .onChange((value) => this.plugin.updateSettings({ confirmDestructiveActions: value }))
       );
 
-    new Setting(containerEl).setName("Copy & export").setHeading();
+    new Setting(containerEl).setName('Copy & export').setHeading();
 
     new Setting(containerEl)
-      .setName("Include quote when copying")
-      .setDesc("Include the quoted passage when the copy menu action copies a review thread.")
+      .setName('Include quote when copying')
+      .setDesc('Include the quoted passage when the copy menu action copies a review thread.')
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.copyIncludeQuote)
@@ -323,43 +322,43 @@ export class CommentsSettingsSection {
     this.renderExportNameSetting(containerEl);
 
     new Setting(containerEl)
-      .setName("Export scope")
-      .setDesc("Choose which comments and suggestions are included in an exported review note.")
+      .setName('Export scope')
+      .setDesc('Choose which comments and suggestions are included in an exported review note.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("all", "Open, resolved, and orphaned")
-          .addOption("open", "Open and orphaned only")
+          .addOption('all', 'Open, resolved, and orphaned')
+          .addOption('open', 'Open and orphaned only')
           .setValue(this.plugin.settings.exportScope)
           .onChange((value) =>
-            this.plugin.updateSettings({ exportScope: value === "open" ? "open" : "all" })
+            this.plugin.updateSettings({ exportScope: value === 'open' ? 'open' : 'all' })
           )
       );
 
     new Setting(containerEl)
-      .setName("Export destination")
-      .setDesc("Choose where exported review notes are saved inside the vault.")
+      .setName('Export destination')
+      .setDesc('Choose where exported review notes are saved inside the vault.')
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("source", "Next to the source note")
-          .addOption("folder", "Selected vault folder")
+          .addOption('source', 'Next to the source note')
+          .addOption('folder', 'Selected vault folder')
           .setValue(this.plugin.settings.exportDestination)
           .onChange(async (value) => {
             await this.plugin.updateSettings({
-              exportDestination: value === "folder" ? "folder" : "source",
+              exportDestination: value === 'folder' ? 'folder' : 'source',
             });
             this.redisplayPreservingScroll();
           })
       );
 
-    if (this.plugin.settings.exportDestination === "folder") {
+    if (this.plugin.settings.exportDestination === 'folder') {
       this.renderExportFolderSetting(containerEl);
     }
 
-    new Setting(containerEl).setName("Advanced & integrations").setHeading();
+    new Setting(containerEl).setName('Advanced & integrations').setHeading();
 
     new Setting(containerEl)
-      .setName("Reading view indicator")
-      .setDesc("Show a comment-count pill below notes that contain open review threads.")
+      .setName('Reading view indicator')
+      .setDesc('Show a comment-count pill below notes that contain open review threads.')
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.showReadingViewIndicator)
@@ -367,10 +366,10 @@ export class CommentsSettingsSection {
       );
 
     new Setting(containerEl)
-      .setName("Include schema hints")
+      .setName('Include schema hints')
       .setDesc(
-        "Add format instructions to the comment block for tools that read the Markdown directly. " +
-          "Existing blocks update the next time a review thread changes."
+        'Add format instructions to the comment block for tools that read the Markdown directly. ' +
+          'Existing blocks update the next time a review thread changes.'
       )
       .addToggle((toggle) =>
         toggle
@@ -380,14 +379,14 @@ export class CommentsSettingsSection {
 
     if (Platform.isDesktopApp) {
       new Setting(containerEl)
-        .setName("Claude code skill")
-        .setDesc("Write the bundled skill to ~/.claude/skills/grandemonium-comments/SKILL.md.")
+        .setName('Claude code skill')
+        .setDesc('Write the bundled skill to ~/.claude/skills/grandemonium-comments/SKILL.md.')
         .addButton((button) =>
-          button.setButtonText("Export skill").onClick(() => {
+          button.setButtonText('Export skill').onClick(() => {
             try {
-              new Notice("Skill exported: " + exportSkill(this.plugin.claudeAgentName()));
+              new Notice('Skill exported: ' + exportSkill(this.plugin.claudeAgentName()));
             } catch (error) {
-              new Notice("Export failed: " + (error instanceof Error ? error.message : String(error)));
+              new Notice('Export failed: ' + (error instanceof Error ? error.message : String(error)));
             }
           })
         );
@@ -398,40 +397,40 @@ export class CommentsSettingsSection {
     const authorColorNames = Object.keys(this.plugin.settings.authorColorOverrides).sort((a, b) =>
       a.localeCompare(b)
     );
-    const authorColors = containerEl.createEl("details", { cls: "tc-author-colors-collapse" });
+    const authorColors = containerEl.createEl('details', { cls: 'grandemonium-comment-author-colors-collapse' });
     authorColors.open = this.authorColorsExpanded;
     authorColors.ontoggle = () => {
       this.authorColorsExpanded = authorColors.open;
     };
-    const summary = authorColors.createEl("summary", { cls: "tc-author-colors-summary" });
+    const summary = authorColors.createEl('summary', { cls: 'grandemonium-comment-author-colors-summary' });
     summary.createSpan({
-      text: `Author color overrides${authorColorNames.length ? ` (${authorColorNames.length})` : ""}`,
+      text: `Author color overrides${authorColorNames.length ? ` (${authorColorNames.length})` : ''}`,
     });
-    const content = authorColors.createDiv({ cls: "tc-author-colors-content" });
+    const content = authorColors.createDiv({ cls: 'grandemonium-comment-author-colors-content' });
     content.createDiv({
       text:
-        "Authors receive an automatic accessible color. Add an override only when you need a specific color, " +
-        "then use the previews to check it in light and dark themes.",
-      cls: "tc-author-colors-description",
+        'Authors receive an automatic accessible color. Add an override only when you need a specific color, ' +
+        'then use the previews to check it in light and dark themes.',
+      cls: 'grandemonium-comment-author-colors-description',
     });
 
-    let newAuthor = "";
-    let newColor = "#2680d9";
+    let newAuthor = '';
+    let newColor = '#2680d9';
     let authorInput: HTMLInputElement | null = null;
     let updateNewColorReadability = (_color: string): void => undefined;
     const addAuthorRow = new Setting(content)
-      .setName("Add author override")
-      .setDesc("Enter the exact author name used in comment threads.")
+      .setName('Add author override')
+      .setDesc('Enter the exact author name used in comment threads.')
       .addText((text) => {
         authorInput = text.inputEl;
-        text.setPlaceholder("Author name…").onChange((value) => {
+        text.setPlaceholder('Author name…').onChange((value) => {
           newAuthor = value;
           if (value.trim()) validationEl.empty();
         });
-        text.inputEl.name = "tandem-author-color-name";
-        text.inputEl.autocomplete = "off";
+        text.inputEl.name = 'comments-author-color-name';
+        text.inputEl.autocomplete = 'off';
         text.inputEl.spellcheck = false;
-        text.inputEl.setAttr("aria-label", "Author name for color override");
+        text.inputEl.setAttr('aria-label', 'Author name for color override');
       })
       .addColorPicker((picker) => {
         picker.setValue(newColor).onChange((value) => {
@@ -440,10 +439,10 @@ export class CommentsSettingsSection {
         });
       })
       .addButton((button) =>
-        button.setButtonText("Add override").setCta().onClick(async () => {
+        button.setButtonText('Add override').setCta().onClick(async () => {
           const author = newAuthor.trim();
           if (!author) {
-            validationEl.setText("Enter an author name before adding an override.");
+            validationEl.setText('Enter an author name before adding an override.');
             authorInput?.focus();
             return;
           }
@@ -462,27 +461,27 @@ export class CommentsSettingsSection {
         })
       );
     const validationEl = addAuthorRow.descEl.createDiv({
-      cls: "tc-setting-error",
-      attr: { "aria-live": "polite" },
+      cls: 'grandemonium-comment-setting-error',
+      attr: { 'aria-live': 'polite' },
     });
     const newColorReadabilityEl = addAuthorRow.descEl.createDiv({
-      cls: "tc-color-readability",
-      attr: { "aria-live": "polite" },
+      cls: 'grandemonium-comment-color-readability',
+      attr: { 'aria-live': 'polite' },
     });
     updateNewColorReadability = (color) => renderColorReadability(newColorReadabilityEl, color);
     updateNewColorReadability(newColor);
     addAuthorRow.controlEl
       .querySelector<HTMLInputElement>('input[type="color"]')
-      ?.setAttr("aria-label", "Color for new author override");
+      ?.setAttr('aria-label', 'Color for new author override');
 
     if (authorColorNames.length > 0) {
-      content.createDiv({ text: "Existing overrides", cls: "tc-author-colors-list-title" });
+      content.createDiv({ text: 'Existing overrides', cls: 'grandemonium-comment-author-colors-list-title' });
     }
     for (const author of authorColorNames) {
       const currentColor = String(this.plugin.settings.authorColorOverrides[author]);
       let updateReadability = (_color: string): void => undefined;
       const row = new Setting(content)
-        .setClass("tc-author-color-row")
+        .setClass('grandemonium-comment-author-color-row')
         .setDesc(`Automatic hue: ${authorHue(author)}°.`)
         .addColorPicker((picker) =>
           picker
@@ -499,7 +498,7 @@ export class CommentsSettingsSection {
         )
         .addButton((button) =>
           button
-            .setButtonText("Reset")
+            .setButtonText('Reset')
             .setTooltip(`Reset ${author} to its automatic color`)
             .onClick(async () => {
               const overrides = { ...this.plugin.settings.authorColorOverrides };
@@ -508,24 +507,24 @@ export class CommentsSettingsSection {
               this.redisplayPreservingScroll();
             })
         );
-      const nameInput = row.nameEl.createEl("input", {
-        cls: "tc-author-color-name",
+      const nameInput = row.nameEl.createEl('input', {
+        cls: 'grandemonium-comment-author-color-name',
         attr: {
-          type: "text",
-          name: `tandem-author-color-${author}`,
-          autocomplete: "off",
-          spellcheck: "false",
-          "aria-label": `Author name for ${author} color override`,
+          type: 'text',
+          name: `comments-author-color-${author}`,
+          autocomplete: 'off',
+          spellcheck: 'false',
+          'aria-label': `Author name for ${author} color override`,
         },
       });
       nameInput.value = author;
       const renameError = row.descEl.createDiv({
-        cls: "tc-setting-error",
-        attr: { "aria-live": "polite" },
+        cls: 'grandemonium-comment-setting-error',
+        attr: { 'aria-live': 'polite' },
       });
       const readabilityEl = row.descEl.createDiv({
-        cls: "tc-color-readability",
-        attr: { "aria-live": "polite" },
+        cls: 'grandemonium-comment-color-readability',
+        attr: { 'aria-live': 'polite' },
       });
       updateReadability = (color) => renderColorReadability(readabilityEl, color);
       updateReadability(currentColor);
@@ -538,8 +537,8 @@ export class CommentsSettingsSection {
         );
         if (!result.ok) {
           renameError.setText(
-            result.reason === "empty"
-              ? "Enter an author name."
+            result.reason === 'empty'
+              ? 'Enter an author name.'
               : `An override for ${nameInput.value.trim()} already exists.`
           );
           nameInput.focus();
@@ -550,10 +549,10 @@ export class CommentsSettingsSection {
         );
       };
       nameInput.onkeydown = (event) => {
-        if (event.key === "Enter") {
+        if (event.key === 'Enter') {
           event.preventDefault();
           nameInput.blur();
-        } else if (event.key === "Escape") {
+        } else if (event.key === 'Escape') {
           event.preventDefault();
           nameInput.value = author;
           renameError.empty();
@@ -562,15 +561,15 @@ export class CommentsSettingsSection {
       };
       row.controlEl
         .querySelector<HTMLInputElement>('input[type="color"]')
-        ?.setAttr("aria-label", `Color for ${author}`);
+        ?.setAttr('aria-label', `Color for ${author}`);
     }
   }
 
   private renderExportNameSetting(containerEl: HTMLElement): void {
     let draft = this.plugin.settings.exportNameTemplate;
     const row = new Setting(containerEl)
-      .setName("Export note name")
-      .setDesc("Use {{filename}} and {{date}} as placeholders. Tandem Comments adds the .md extension.")
+      .setName('Export note name')
+      .setDesc('Use {{filename}} and {{date}} as placeholders. Grandemonium adds the .md extension.')
       .addText((text) => {
         text
           .setPlaceholder(DEFAULT_SETTINGS.exportNameTemplate)
@@ -579,16 +578,16 @@ export class CommentsSettingsSection {
             draft = value;
             renderFeedback();
           });
-        text.inputEl.name = "tandem-comments-export-name";
-        text.inputEl.autocomplete = "off";
+        text.inputEl.name = 'comments-export-name';
+        text.inputEl.autocomplete = 'off';
         text.inputEl.spellcheck = false;
-        text.inputEl.setAttr("aria-label", "Export note name");
+        text.inputEl.setAttr('aria-label', 'Export note name');
         text.inputEl.onblur = () => void save();
         text.inputEl.onkeydown = (event) => {
-          if (event.key === "Enter") {
+          if (event.key === 'Enter') {
             event.preventDefault();
             text.inputEl.blur();
-          } else if (event.key === "Escape") {
+          } else if (event.key === 'Escape') {
             event.preventDefault();
             draft = this.plugin.settings.exportNameTemplate;
             text.setValue(draft);
@@ -597,22 +596,22 @@ export class CommentsSettingsSection {
           }
         };
       });
-    const errorEl = row.descEl.createDiv({ cls: "tc-setting-error", attr: { "aria-live": "polite" } });
-    const previewEl = row.descEl.createDiv({ cls: "tc-setting-preview", attr: { "aria-live": "polite" } });
+    const errorEl = row.descEl.createDiv({ cls: 'grandemonium-comment-setting-error', attr: { 'aria-live': 'polite' } });
+    const previewEl = row.descEl.createDiv({ cls: 'grandemonium-comment-setting-preview', attr: { 'aria-live': 'polite' } });
 
     const renderFeedback = (): void => {
       const error = validateExportNameTemplate(draft);
       const now = new Date();
       const date = [
         now.getFullYear(),
-        String(now.getMonth() + 1).padStart(2, "0"),
-        String(now.getDate()).padStart(2, "0"),
-      ].join("-");
-      errorEl.setText(error ?? "");
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0'),
+      ].join('-');
+      errorEl.setText(error ?? '');
       previewEl.setText(
         error
-          ? ""
-          : `Example: ${renderExportFileName(draft, "My note", date)}.md`
+          ? ''
+          : `Example: ${renderExportFileName(draft, 'My note', date)}.md`
       );
     };
     const save = async (): Promise<void> => {
@@ -633,11 +632,11 @@ export class CommentsSettingsSection {
     let draft = this.plugin.settings.exportFolder;
     let setInputValue = (_value: string): void => undefined;
     const row = new Setting(containerEl)
-      .setName("Export folder")
-      .setDesc("Choose an existing folder. Leave empty to use the vault root.")
+      .setName('Export folder')
+      .setDesc('Choose an existing folder. Leave empty to use the vault root.')
       .addText((text) => {
         text
-          .setPlaceholder("Vault root")
+          .setPlaceholder('Vault root')
           .setValue(draft)
           .onChange((value) => {
             draft = value;
@@ -646,16 +645,16 @@ export class CommentsSettingsSection {
         setInputValue = (value) => {
           text.setValue(value);
         };
-        text.inputEl.name = "tandem-comments-export-folder";
-        text.inputEl.autocomplete = "off";
+        text.inputEl.name = 'comments-export-folder';
+        text.inputEl.autocomplete = 'off';
         text.inputEl.spellcheck = false;
-        text.inputEl.setAttr("aria-label", "Export folder");
+        text.inputEl.setAttr('aria-label', 'Export folder');
         text.inputEl.onblur = () => void save();
         text.inputEl.onkeydown = (event) => {
-          if (event.key === "Enter") {
+          if (event.key === 'Enter') {
             event.preventDefault();
             text.inputEl.blur();
-          } else if (event.key === "Escape") {
+          } else if (event.key === 'Escape') {
             event.preventDefault();
             draft = this.plugin.settings.exportFolder;
             text.setValue(draft);
@@ -664,27 +663,27 @@ export class CommentsSettingsSection {
           }
         };
         new VaultFolderSuggest(this.app, text.inputEl).onSelect((folder) => {
-          draft = folder.isRoot() ? "" : folder.path;
+          draft = folder.isRoot() ? '' : folder.path;
           text.setValue(draft);
           renderFeedback();
           void save();
         });
       });
-    const errorEl = row.descEl.createDiv({ cls: "tc-setting-error", attr: { "aria-live": "polite" } });
-    const previewEl = row.descEl.createDiv({ cls: "tc-setting-preview", attr: { "aria-live": "polite" } });
+    const errorEl = row.descEl.createDiv({ cls: 'grandemonium-comment-setting-error', attr: { 'aria-live': 'polite' } });
+    const previewEl = row.descEl.createDiv({ cls: 'grandemonium-comment-setting-preview', attr: { 'aria-live': 'polite' } });
 
     const errorForDraft = (): string | null => {
       const pathError = validateVaultFolderPath(draft);
       if (pathError) return pathError;
       const path = normalizeVaultFolderPath(draft);
-      if (path && !this.app.vault.getFolderByPath(path)) return "Choose an existing vault folder.";
+      if (path && !this.app.vault.getFolderByPath(path)) return 'Choose an existing vault folder.';
       return null;
     };
     const renderFeedback = (): void => {
       const error = errorForDraft();
       const path = normalizeVaultFolderPath(draft);
-      errorEl.setText(error ?? "");
-      previewEl.setText(error ? "" : `Exports to: ${path || "Vault root"}`);
+      errorEl.setText(error ?? '');
+      previewEl.setText(error ? '' : `Exports to: ${path || 'Vault root'}`);
     };
     const save = async (): Promise<void> => {
       const error = errorForDraft();
@@ -705,7 +704,7 @@ export class CommentsSettingsSection {
 
   private redisplayPreservingScroll(): void {
     const scrollEl =
-      this.containerEl.closest<HTMLElement>(".vertical-tab-content-container") ?? this.containerEl;
+      this.containerEl.closest<HTMLElement>('.vertical-tab-content-container') ?? this.containerEl;
     const scrollTop = scrollEl.scrollTop;
     this.display();
     window.requestAnimationFrame(() => {

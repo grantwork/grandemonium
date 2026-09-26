@@ -1,4 +1,4 @@
-import { CommentsController } from "@/features/comments/CommentsController";
+import { CommentsController } from '@/features/comments/CommentsController';
 
 function controllerWithLocalStorage(entries: Record<string, unknown>): {
   controller: CommentsController;
@@ -15,7 +15,7 @@ function controllerWithLocalStorage(entries: Record<string, unknown>): {
       vault: { getMarkdownFiles: () => [] },
       workspace: { getLeavesOfType: () => [] },
     },
-    manifest: { id: "grandemonium", name: "Grandemonium" },
+    manifest: { id: 'grandemonium', name: 'Grandemonium' },
     loadData: async () => ({}),
     saveData: async () => undefined,
   };
@@ -23,17 +23,17 @@ function controllerWithLocalStorage(entries: Record<string, unknown>): {
 }
 
 it("keeps this device's display name and read marks across the storage rename", async () => {
-  const marks = { "Notes/Plan.md\u0000a1f3": 1_000 };
+  const marks = { 'Notes/Plan.md\u0000a1f3': 1_000 };
   const { controller, local } = controllerWithLocalStorage({
-    "tandem-comments:author-name-override": "Grant",
-    "tandem-comments:read-marks": marks,
+    'tandem-comments:author-name-override': 'Grant',
+    'tandem-comments:read-marks': marks,
   });
 
   await controller.loadSettings();
 
-  expect(controller.currentAuthor()).toBe("Grant");
+  expect(controller.currentAuthor()).toBe('Grant');
   expect(Object.fromEntries(local)).toEqual({
-    "grandemonium.comments.authorNameOverride": "Grant",
-    "grandemonium.comments.readMarks": marks,
+    'grandemonium.comments.authorNameOverride': 'Grant',
+    'grandemonium.comments.readMarks': marks,
   });
 });

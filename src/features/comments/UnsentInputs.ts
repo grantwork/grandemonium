@@ -2,7 +2,7 @@ interface Caret {
   key: string;
   start: number;
   end: number;
-  direction: "forward" | "backward" | "none";
+  direction: 'forward' | 'backward' | 'none';
 }
 
 /**
@@ -24,10 +24,10 @@ export class UnsentInputs {
     const kept = this.texts.get(key);
     if (kept !== undefined) input.value = kept;
     this.bound.set(key, input);
-    input.addEventListener("compositionstart", () => {
+    input.addEventListener('compositionstart', () => {
       this.composing = input;
     });
-    input.addEventListener("compositionend", () => {
+    input.addEventListener('compositionend', () => {
       if (this.composing !== input) return;
       this.composing = null;
       // Let the committed text land before the box it went into is replaced.
@@ -81,7 +81,7 @@ export class UnsentInputs {
           key,
           start: input.selectionStart,
           end: input.selectionEnd,
-          direction: input.selectionDirection ?? "none",
+          direction: input.selectionDirection ?? 'none',
         };
       }
     }

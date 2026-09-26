@@ -93,20 +93,17 @@ export function buildSkillMarkdown(agentName: string): string {
   return buildSkill(agentName);
 }
 
-/** Default-identity skill text, retained for callers without a configured name. */
-export const SKILL_MARKDOWN = buildSkill("claude");
-
 /** Writes the skill file to ~/.claude/skills/grandemonium-comments/SKILL.md (desktop only). */
-export function exportSkill(agentName = "claude"): string {
-  if (typeof require !== "function") {
-    throw new Error("Skill export is only available in the desktop app.");
+export function exportSkill(agentName: string): string {
+  if (typeof require !== 'function') {
+    throw new Error('Skill export is only available in the desktop app.');
   }
-  const fs = require("fs") as NodeFsLike;
-  const os = require("os") as NodeOsLike;
-  const path = require("path") as NodePathLike;
-  const dir = path.join(os.homedir(), ".claude", "skills", "grandemonium-comments");
+  const fs = require('fs') as NodeFsLike;
+  const os = require('os') as NodeOsLike;
+  const path = require('path') as NodePathLike;
+  const dir = path.join(os.homedir(), '.claude', 'skills', 'grandemonium-comments');
   fs.mkdirSync(dir, { recursive: true });
-  const file = path.join(dir, "SKILL.md");
-  fs.writeFileSync(file, buildSkill(agentName), "utf8");
+  const file = path.join(dir, 'SKILL.md');
+  fs.writeFileSync(file, buildSkill(agentName), 'utf8');
   return file;
 }

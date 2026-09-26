@@ -15,9 +15,9 @@ export interface ThreadEntry {
   text: string;
 }
 
-export type CommentStatus = "open" | "resolved";
+export type CommentStatus = 'open' | 'resolved';
 
-export type SuggestionResult = "accepted" | "declined";
+export type SuggestionResult = 'accepted' | 'declined';
 
 export interface EditSuggestion {
   /** Replacement text proposed for the anchored passage. */
@@ -44,7 +44,7 @@ export interface ParsedDoc {
   comments: CommentMap;
   /**
    * Content after the closing fence line, byte exact (for example footnote
-   * definitions that Obsidian appends to the end of the file, Issue #2).
+   * definitions that Obsidian appends to the end of the file).
    */
   trailing?: string;
   /**
@@ -64,8 +64,8 @@ export interface TextRange {
 }
 
 export type AnchorResolution =
-  | { kind: "resolved"; start: number; end: number; ambiguous?: boolean }
-  | { kind: "orphaned" };
+  | { kind: 'resolved'; start: number; end: number; ambiguous?: boolean }
+  | { kind: 'orphaned' };
 
 export interface ResolvedComment {
   id: string;

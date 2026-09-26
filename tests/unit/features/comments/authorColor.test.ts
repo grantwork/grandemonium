@@ -7,7 +7,7 @@ import {
   normalizeAuthorColorOverrides,
   renameAuthorColorOverride,
   resolveAuthorColor,
-} from "@/features/comments/authorColor";
+} from '@/features/comments/authorColor';
 
 function hslContrast(css: string, background: [number, number, number]): number {
   const match = css.match(/^hsl\((\d+) (\d+)% (\d+)%\)$/);
@@ -35,82 +35,82 @@ function hslContrast(css: string, background: [number, number, number]): number 
     (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
 }
 
-describe("authorHue", () => {
-  it("renders an exact override unchanged in both themes", () => {
-    const overrides = { Claude: "#123456" };
+describe('authorHue', () => {
+  it('renders an exact override unchanged in both themes', () => {
+    const overrides = { Claude: '#123456' };
 
-    expect(resolveAuthorColor("Claude", overrides, "light")).toBe("#123456");
-    expect(resolveAuthorColor("Claude", overrides, "dark")).toBe("#123456");
-    expect(resolveAuthorColor("ChatGPT", overrides, "light")).toBe(
-      authorColorCss(authorHue("ChatGPT"), "light")
+    expect(resolveAuthorColor('Claude', overrides, 'light')).toBe('#123456');
+    expect(resolveAuthorColor('Claude', overrides, 'dark')).toBe('#123456');
+    expect(resolveAuthorColor('ChatGPT', overrides, 'light')).toBe(
+      authorColorCss(authorHue('ChatGPT'), 'light')
     );
   });
 
-  it("keeps exact colors and discards invalid values", () => {
-    expect(normalizeAuthorColorOverrides({ Claude: 210, ChatGPT: "#AABBCC", invalid: "red" })).toEqual({
-      ChatGPT: "#aabbcc",
+  it('keeps exact colors and discards invalid values', () => {
+    expect(normalizeAuthorColorOverrides({ Claude: 210, ChatGPT: '#AABBCC', invalid: 'red' })).toEqual({
+      ChatGPT: '#aabbcc',
     });
   });
 
-  it("keeps every generated hue above 4.5:1 contrast in light and dark themes", () => {
+  it('keeps every generated hue above 4.5:1 contrast in light and dark themes', () => {
     for (let hue = 0; hue < 360; hue++) {
-      expect(hslContrast(authorColorCss(hue, "light"), [1, 1, 1])).toBeGreaterThanOrEqual(4.5);
-      expect(hslContrast(authorColorCss(hue, "dark"), [0.125, 0.125, 0.125])).toBeGreaterThanOrEqual(4.5);
+      expect(hslContrast(authorColorCss(hue, 'light'), [1, 1, 1])).toBeGreaterThanOrEqual(4.5);
+      expect(hslContrast(authorColorCss(hue, 'dark'), [0.125, 0.125, 0.125])).toBeGreaterThanOrEqual(4.5);
     }
   });
 
-  it("provides the actual theme shade for color-picker previews", () => {
-    expect(authorColorHsl(101, "light")).toEqual({ h: 101, s: 55, l: 28 });
-    expect(authorColorHsl(101, "dark")).toEqual({ h: 101, s: 55, l: 72 });
+  it('provides the actual theme shade for color-picker previews', () => {
+    expect(authorColorHsl(101, 'light')).toEqual({ h: 101, s: 55, l: 28 });
+    expect(authorColorHsl(101, 'dark')).toEqual({ h: 101, s: 55, l: 72 });
   });
 
-  it("reports custom-color contrast against standard light and dark backgrounds", () => {
-    expect(colorContrast("#000000", "#ffffff")).toBeCloseTo(21);
-    expect(colorContrast("invalid", "#ffffff")).toBeNull();
-    expect(authorColorReadability("#000000")?.lowContrastThemes).toEqual(["dark"]);
-    expect(authorColorReadability("#ffffff")?.lowContrastThemes).toEqual(["light"]);
+  it('reports custom-color contrast against standard light and dark backgrounds', () => {
+    expect(colorContrast('#000000', '#ffffff')).toBeCloseTo(21);
+    expect(colorContrast('invalid', '#ffffff')).toBeNull();
+    expect(authorColorReadability('#000000')?.lowContrastThemes).toEqual(['dark']);
+    expect(authorColorReadability('#ffffff')?.lowContrastThemes).toEqual(['light']);
   });
 
-  it("renames an override without changing its color or other authors", () => {
-    const overrides = { Claude: "#3355cc", Gemini: "#aa33aa" };
+  it('renames an override without changing its color or other authors', () => {
+    const overrides = { Claude: '#3355cc', Gemini: '#aa33aa' };
 
-    expect(renameAuthorColorOverride(overrides, "Claude", "claude")).toEqual({
+    expect(renameAuthorColorOverride(overrides, 'Claude', 'claude')).toEqual({
       ok: true,
-      overrides: { claude: "#3355cc", Gemini: "#aa33aa" },
+      overrides: { claude: '#3355cc', Gemini: '#aa33aa' },
     });
-    expect(overrides).toEqual({ Claude: "#3355cc", Gemini: "#aa33aa" });
+    expect(overrides).toEqual({ Claude: '#3355cc', Gemini: '#aa33aa' });
   });
 
-  it("rejects a rename that would overwrite another author", () => {
-    const overrides = { Claude: "#3355cc", Gemini: "#aa33aa" };
+  it('rejects a rename that would overwrite another author', () => {
+    const overrides = { Claude: '#3355cc', Gemini: '#aa33aa' };
 
-    expect(renameAuthorColorOverride(overrides, "Claude", "Gemini")).toEqual({
+    expect(renameAuthorColorOverride(overrides, 'Claude', 'Gemini')).toEqual({
       ok: false,
-      reason: "duplicate",
+      reason: 'duplicate',
     });
-    expect(overrides).toEqual({ Claude: "#3355cc", Gemini: "#aa33aa" });
+    expect(overrides).toEqual({ Claude: '#3355cc', Gemini: '#aa33aa' });
   });
 
-  it("allows author names that match inherited object properties", () => {
-    expect(renameAuthorColorOverride({ Claude: "#3355cc" }, "Claude", "constructor")).toEqual({
+  it('allows author names that match inherited object properties', () => {
+    expect(renameAuthorColorOverride({ Claude: '#3355cc' }, 'Claude', 'constructor')).toEqual({
       ok: true,
-      overrides: { constructor: "#3355cc" },
+      overrides: { constructor: '#3355cc' },
     });
   });
 
-  it("rejects an empty author name", () => {
-    expect(renameAuthorColorOverride({ Claude: "#3355cc" }, "Claude", "   ")).toEqual({
+  it('rejects an empty author name', () => {
+    expect(renameAuthorColorOverride({ Claude: '#3355cc' }, 'Claude', '   ')).toEqual({
       ok: false,
-      reason: "empty",
+      reason: 'empty',
     });
   });
 
-  it("is stable across calls for the same author", () => {
-    expect(authorHue("Leon")).toBe(authorHue("Leon"));
+  it('is stable across calls for the same author', () => {
+    expect(authorHue('Sam')).toBe(authorHue('Sam'));
   });
 
-  it("stays within the hue range for a variety of names", () => {
-    const names = ["Leon", "Claude", "ChatGPT", "Gemini", "", "a", "ä", "🙂", "x".repeat(500)];
+  it('stays within the hue range for a variety of names', () => {
+    const names = ['Sam', 'Claude', 'ChatGPT', 'Gemini', '', 'a', 'ä', '🙂', 'x'.repeat(500)];
     for (const name of names) {
       const hue = authorHue(name);
       expect(Number.isInteger(hue)).toBe(true);
@@ -119,17 +119,17 @@ describe("authorHue", () => {
     }
   });
 
-  it("gives the example authors from the request distinct hues", () => {
-    const hues = ["User", "Claude", "ChatGPT", "Gemini"].map(authorHue);
+  it('gives the example authors from the request distinct hues', () => {
+    const hues = ['User', 'Claude', 'ChatGPT', 'Gemini'].map(authorHue);
     expect(new Set(hues).size).toBe(hues.length);
   });
 
-  it("separates names differing only in case or trailing space", () => {
-    expect(authorHue("leon")).not.toBe(authorHue("Leon"));
-    expect(authorHue("Leon ")).not.toBe(authorHue("Leon"));
+  it('separates names differing only in case or trailing space', () => {
+    expect(authorHue('leon')).not.toBe(authorHue('Sam'));
+    expect(authorHue('Sam ')).not.toBe(authorHue('Sam'));
   });
 
-  it("spreads many authors across the wheel rather than clustering", () => {
+  it('spreads many authors across the wheel rather than clustering', () => {
     const hues = Array.from({ length: 200 }, (_, i) => authorHue(`author${i}`));
     // Twelve 30° buckets; a clustering hash would leave most of them empty.
     const buckets = new Set(hues.map((h) => Math.floor(h / 30)));

@@ -9,9 +9,9 @@
 export function findAgentMention(text: string, agentNames: readonly string[]): string | null {
   let found: { index: number; name: string } | null = null;
   for (const name of agentNames) {
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // (^|\s) keeps `grant@gpt.com` from matching; \b stops `@gpteroids`.
-    const pattern = new RegExp(`(?:^|\\s)@${escaped}\\b`, "i");
+    const pattern = new RegExp(`(?:^|\\s)@${escaped}\\b`, 'i');
     const match = pattern.exec(text);
     if (!match) continue;
     if (!found || match.index < found.index) {

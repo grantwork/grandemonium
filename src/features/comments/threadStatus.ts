@@ -1,4 +1,4 @@
-import { setIcon } from "obsidian";
+import { setIcon } from 'obsidian';
 
 /**
  * What a thread shows beyond its saved entries: the AIs still replying, and
@@ -18,36 +18,36 @@ export interface ThreadStatusHost {
 
 /** The alert that marks an AI's error, before its author's name. */
 export function renderErrorIcon(parent: HTMLElement): void {
-  const icon = parent.createSpan({ cls: "tc-entry-error-icon", attr: { "aria-label": "Error", role: "img" } });
-  setIcon(icon, "alert-triangle");
+  const icon = parent.createSpan({ cls: 'grandemonium-comment-entry-error-icon', attr: { 'aria-label': 'Error', role: 'img' } });
+  setIcon(icon, 'alert-triangle');
 }
 
 /** A placeholder reply, as a chat shows one, until the AI's first words arrive. */
 export function renderTypingDots(parent: HTMLElement, agentName: string): void {
   const dots = parent.createDiv({
-    cls: "tc-typing",
-    attr: { "aria-label": `${agentName} is replying`, role: "status" },
+    cls: 'grandemonium-comment-typing',
+    attr: { 'aria-label': `${agentName} is replying`, role: 'status' },
   });
-  for (let i = 0; i < 3; i++) dots.createSpan({ cls: "tc-typing-dot", attr: { "aria-hidden": "true" } });
+  for (let i = 0; i < 3; i++) dots.createSpan({ cls: 'grandemonium-comment-typing-dot', attr: { 'aria-hidden': 'true' } });
 }
 
 /** Below a thread's saved entries: errors from reviews that failed, then each AI still replying. */
 export function renderThreadActivity(parent: HTMLElement, activity: ThreadActivity, host: ThreadStatusHost): void {
   for (const error of activity.errors) {
-    const row = parent.createDiv({ cls: "tc-entry tc-entry-agent tc-entry-error" });
+    const row = parent.createDiv({ cls: 'grandemonium-comment-entry grandemonium-comment-entry-agent grandemonium-comment-entry-error' });
     host.paintAuthor(row, error.author, true);
-    const meta = row.createDiv({ cls: "tc-meta" });
+    const meta = row.createDiv({ cls: 'grandemonium-comment-meta' });
     renderErrorIcon(meta);
-    host.paintAuthor(meta.createSpan({ cls: "tc-author", text: error.author }), error.author, false);
+    host.paintAuthor(meta.createSpan({ cls: 'grandemonium-comment-author', text: error.author }), error.author, false);
     const ts = host.formatTimestamp(error.ts);
-    if (ts) meta.createSpan({ cls: "tc-ts", text: ts });
-    row.createDiv({ cls: "tc-text", text: error.text });
+    if (ts) meta.createSpan({ cls: 'grandemonium-comment-ts', text: ts });
+    row.createDiv({ cls: 'grandemonium-comment-text', text: error.text });
   }
   for (const agentName of activity.replying) {
-    const row = parent.createDiv({ cls: "tc-entry tc-entry-agent" });
+    const row = parent.createDiv({ cls: 'grandemonium-comment-entry grandemonium-comment-entry-agent' });
     host.paintAuthor(row, agentName, true);
-    const meta = row.createDiv({ cls: "tc-meta" });
-    host.paintAuthor(meta.createSpan({ cls: "tc-author", text: agentName }), agentName, false);
+    const meta = row.createDiv({ cls: 'grandemonium-comment-meta' });
+    host.paintAuthor(meta.createSpan({ cls: 'grandemonium-comment-author', text: agentName }), agentName, false);
     renderTypingDots(row, agentName);
   }
 }

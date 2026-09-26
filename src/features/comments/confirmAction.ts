@@ -1,5 +1,5 @@
-import type { App} from "obsidian";
-import { Modal, Setting } from "obsidian";
+import type { App} from 'obsidian';
+import { Modal, Setting } from 'obsidian';
 
 export interface ConfirmActionOptions {
   title: string;
@@ -18,9 +18,9 @@ export function confirmAction(app: App, options: ConfirmActionOptions): Promise<
     const modal = new (class extends Modal {
       onOpen(): void {
         this.setTitle(options.title);
-        this.contentEl.createEl("p", { text: options.message });
+        this.contentEl.createEl('p', { text: options.message });
         new Setting(this.contentEl)
-          .addButton((button) => button.setButtonText("Cancel").onClick(() => this.close()))
+          .addButton((button) => button.setButtonText('Cancel').onClick(() => this.close()))
           .addButton((button) =>
             button
               .setButtonText(options.confirmLabel)

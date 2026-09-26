@@ -52,17 +52,7 @@ export const fileNamingRule = {
               ? declaration.declarations.map((d) => d.id).filter((id) => id.type === 'Identifier')
               : declaration.id
                 ? [declaration.id]
-                : [  {
-    // The editor-extension suite drives a CodeMirror harness class whose
-    // assertion helpers run inside it.each cases, so expectations legitimately
-    // sit outside a test body and behind the parameterised debounce flag.
-    files: ['tests/unit/features/comments/editorExtension.test.ts'],
-    rules: {
-      'jest/no-standalone-expect': 'off',
-      'jest/no-conditional-expect': 'off',
-    },
-  },
-];
+                : [];
           if (declared.some((id) => id.name === concept)) {
             context.report({ node: statement, messageId: 'conceptMismatch', data: { name: base, concept } });
             return;
@@ -231,7 +221,7 @@ export default defineConfig([
     },
   },
   {
-    // The editor-extension suite drives a CodeMirror harness class whose
+    // The editor extension suite drives a CodeMirror harness class whose
     // assertion helpers run inside it.each cases, so expectations legitimately
     // sit outside a test body and behind the parameterised debounce flag.
     // Listed after the general test config so these two rules stay disabled.

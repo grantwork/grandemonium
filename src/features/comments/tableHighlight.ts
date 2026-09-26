@@ -1,13 +1,12 @@
-import type { EditorView } from "@codemirror/view";
+import type { EditorView } from '@codemirror/view';
 
-import type { TrackedAnchor } from "./reanchor";
+import type { TrackedAnchor } from './reanchor';
 
 /**
  * Live Preview renders tables as a widget, replacing the source text with a
  * <table>. CodeMirror `mark` decorations inside a replaced range are not drawn,
  * so the highlight disappears in tables. This module finds the cell an anchor
- * sits in and applies the highlight directly in the rendered table DOM (see
- * Issue #3).
+ * sits in and applies the highlight directly in the rendered table DOM.
  */
 
 /** Raw cell: source offsets of the content between two pipes, untrimmed. */
@@ -37,7 +36,7 @@ interface Line {
 function splitLines(text: string, limit: number): Line[] {
   const lines: Line[] = [];
   let from = 0;
-  for (const part of text.slice(0, limit).split("\n")) {
+  for (const part of text.slice(0, limit).split('\n')) {
     lines.push({ text: part, from });
     from += part.length + 1; // +1 for the removed "\n"
   }
@@ -53,23 +52,23 @@ function splitRow(line: Line): { from: number; to: number }[] {
   const segments: { start: number; end: number }[] = [];
   let start = 0;
   for (let i = 0; i < line.text.length; i++) {
-    if (line.text[i] === "\\") {
+    if (line.text[i] === '\\') {
       i++; // skip an escaped pipe (\|)
       continue;
     }
-    if (line.text[i] === "|") {
+    if (line.text[i] === '|') {
       segments.push({ start, end: i });
       start = i + 1;
     }
   }
   segments.push({ start, end: line.text.length });
   // Enclosing pipes produce empty edge segments, so discard them.
-  if (segments.length > 1 && line.text.slice(segments[0].start, segments[0].end).trim() === "") {
+  if (segments.length > 1 && line.text.slice(segments[0].start, segments[0].end).trim() === '') {
     segments.shift();
   }
   if (segments.length > 1) {
     const last = segments[segments.length - 1];
-    if (line.text.slice(last.start, last.end).trim() === "") segments.pop();
+    if (line.text.slice(last.start, last.end).trim() === '') segments.pop();
   }
   return segments.map((s) => ({ from: line.from + s.start, to: line.from + s.end }));
 }
@@ -81,7 +80,7 @@ export function findTables(text: string, limit: number = text.length): ParsedTab
   for (let i = 0; i < lines.length; i++) {
     const header = lines[i];
     const delim = lines[i + 1];
-    if (!delim || !header.text.includes("|") || !DELIMITER.test(delim.text)) continue;
+    if (!delim || !header.text.includes('|') || !DELIMITER.test(delim.text)) continue;
     // GFM requires the same column count in header and delimiter, which rules
     // out, for example, a Setext heading (`some | text` followed by `---`) that
     // would otherwise pass as a single-column table.
@@ -89,7 +88,7 @@ export function findTables(text: string, limit: number = text.length): ParsedTab
 
     let end = i; // last line belonging to the block
     for (let j = i + 2; j < lines.length; j++) {
-      if (lines[j].text.trim() === "" || !lines[j].text.includes("|")) break;
+      if (lines[j].text.trim() === '' || !lines[j].text.includes('|')) break;
       end = j;
     }
     if (end < i + 2) end = i; // header + delimiter only, no body, still valid
@@ -138,19 +137,19 @@ export function locateCell(table: ParsedTable, pos: number): Cell | null {
  */
 export function visibleText(md: string): string {
   return md
-    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, "$2") // [[target|alias]] to alias
-    .replace(/\[\[([^\]]+)\]\]/g, "$1") // [[target]] to target
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1") // [label](url) / ![alt](url) to label
-    .replace(/(\*\*|__)(.+?)\1/g, "$2") // **bold** / __bold__
-    .replace(/(\*|_)(.+?)\1/g, "$2") // *italic* / _italic_
-    .replace(/~~(.+?)~~/g, "$1") // ~~strikethrough~~
-    .replace(/==(.+?)==/g, "$1") // ==highlighted==
-    .replace(/`([^`]+)`/g, "$1"); // `code`
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2') // [[target|alias]] to alias
+    .replace(/\[\[([^\]]+)\]\]/g, '$1') // [[target]] to target
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // [label](url) / ![alt](url) to label
+    .replace(/(\*\*|__)(.+?)\1/g, '$2') // **bold** / __bold__
+    .replace(/(\*|_)(.+?)\1/g, '$2') // *italic* / _italic_
+    .replace(/~~(.+?)~~/g, '$1') // ~~strikethrough~~
+    .replace(/==(.+?)==/g, '$1') // ==highlighted==
+    .replace(/`([^`]+)`/g, '$1'); // `code`
 }
 
 /** Finds the DOM <table> whose source position falls within the table block's range. */
 function findDomTable(view: EditorView, table: ParsedTable): HTMLTableElement | null {
-  const tables = view.contentDOM.querySelectorAll("table");
+  const tables = view.contentDOM.querySelectorAll('table');
   for (const el of Array.from(tables)) {
     let pos: number;
     try {
@@ -173,7 +172,7 @@ function domCell(domTable: HTMLTableElement, cell: Cell): HTMLTableCellElement |
   return (body?.rows[cell.row - 2]?.cells[cell.col]) ?? null;
 }
 
-/** Wraps [start, start+len) in the element with <span class="tc-highlight">, across text nodes. */
+/** Wraps [start, start+len) in the element with <span class="grandemonium-comment-highlight">, across text nodes. */
 function wrapRange(
   root: HTMLElement,
   start: number,
@@ -204,10 +203,10 @@ function wrapRange(
     range.setStart(t.node, t.s);
     range.setEnd(t.node, t.e);
     // Detached span in the table's own document, so popout windows stay correct.
-    const span = doc.createElement("span");
-    span.className = "tc-highlight";
-    span.dataset.tcId = id;
-    span.dataset.tcTable = "1";
+    const span = doc.createElement('span');
+    span.className = 'grandemonium-comment-highlight';
+    span.dataset.commentId = id;
+    span.dataset.commentTable = '1';
     // CodeMirror eventHandlers do not fire inside the table's widget DOM, so
     // attach listeners directly to the span. The event is swallowed so the table
     // widget does NOT switch into interactive edit mode: the highlight would
@@ -217,12 +216,12 @@ function wrapRange(
       e.preventDefault();
       e.stopImmediatePropagation();
     };
-    span.addEventListener("pointerdown", (e) => {
+    span.addEventListener('pointerdown', (e) => {
       swallow(e);
       onClick(id);
     });
-    span.addEventListener("mousedown", swallow);
-    span.addEventListener("click", swallow);
+    span.addEventListener('mousedown', swallow);
+    span.addEventListener('click', swallow);
     try {
       range.surroundContents(span);
     } catch {
@@ -234,7 +233,7 @@ function wrapRange(
 
 /** Removes all table highlights we injected, before every re-apply. */
 export function clearTableHighlights(view: EditorView): void {
-  view.contentDOM.querySelectorAll<HTMLElement>("span.tc-highlight[data-tc-table]").forEach((span) => {
+  view.contentDOM.querySelectorAll<HTMLElement>('span.grandemonium-comment-highlight[data-comment-table]').forEach((span) => {
     const parent = span.parentNode;
     if (!parent) return;
     while (span.firstChild) parent.insertBefore(span.firstChild, span);

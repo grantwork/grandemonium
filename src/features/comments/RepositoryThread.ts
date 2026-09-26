@@ -1,5 +1,6 @@
-import { escapePromptXmlAttribute, formatPromptXmlCdata } from "../../utils/promptXml";
-import type { CommentStatus, ThreadEntry } from "./types";
+import { escapePromptXmlAttribute, formatPromptXmlCdata } from '@/utils/promptXml';
+
+import type { CommentStatus, ThreadEntry } from './types';
 
 /** Which AI and model a thread's replies go to unless one names another AI. */
 export interface RepositorySelection {
@@ -13,7 +14,7 @@ export interface RepositorySelection {
  * lets the panel flag it and keeps it out of what a new session is sent.
  */
 export interface RepositoryThreadEntry extends ThreadEntry {
-  kind?: "error";
+  kind?: 'error';
 }
 
 /**
@@ -36,20 +37,20 @@ export const REPOSITORY_THREADS_VERSION = 1;
 const TITLE_MAX = 60;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
+  return !!value && typeof value === 'object' && !Array.isArray(value);
 }
 
 function parseEntry(raw: unknown): RepositoryThreadEntry | null {
   if (!isRecord(raw)) return null;
   const { author, text, ts } = raw;
-  if (typeof author !== "string" || typeof text !== "string" || typeof ts !== "string") return null;
-  return raw.kind === "error" ? { author, kind: "error", text, ts } : { author, text, ts };
+  if (typeof author !== 'string' || typeof text !== 'string' || typeof ts !== 'string') return null;
+  return raw.kind === 'error' ? { author, kind: 'error', text, ts } : { author, text, ts };
 }
 
 function parseSelection(raw: unknown): RepositorySelection | null {
   if (!isRecord(raw)) return null;
   const { model, providerId } = raw;
-  if (typeof providerId !== "string" || !providerId || typeof model !== "string" || !model) {
+  if (typeof providerId !== 'string' || !providerId || typeof model !== 'string' || !model) {
     return null;
   }
   return { model, providerId };
@@ -58,9 +59,9 @@ function parseSelection(raw: unknown): RepositorySelection | null {
 function parseThread(raw: unknown): RepositoryThread | null {
   if (!isRecord(raw)) return null;
   const { createdAt, id, status, thread, title } = raw;
-  if (typeof id !== "string" || !id || typeof title !== "string") return null;
-  if (status !== "open" && status !== "resolved") return null;
-  if (typeof createdAt !== "string" || !Array.isArray(thread)) return null;
+  if (typeof id !== 'string' || !id || typeof title !== 'string') return null;
+  if (status !== 'open' && status !== 'resolved') return null;
+  if (typeof createdAt !== 'string' || !Array.isArray(thread)) return null;
   const entries = thread.map(parseEntry);
   if (entries.some((entry) => entry === null)) return null;
   return {
@@ -96,15 +97,15 @@ export function serializeRepositoryThreads(threads: readonly RepositoryThread[])
 
 /** The title a thread shows until, or unless, a generated one arrives. */
 export function fallbackThreadTitle(text: string): string {
-  const firstLine = text.trim().split("\n")[0]?.trim() ?? "";
-  if (firstLine.length <= TITLE_MAX) return firstLine || "Repository task";
-  return firstLine.slice(0, TITLE_MAX - 1) + "…";
+  const firstLine = text.trim().split('\n')[0]?.trim() ?? '';
+  if (firstLine.length <= TITLE_MAX) return firstLine || 'Repository task';
+  return firstLine.slice(0, TITLE_MAX - 1) + '…';
 }
 
 export function generateThreadId(existing: readonly RepositoryThread[]): string {
   const taken = new Set(existing.map((thread) => thread.id));
   for (;;) {
-    const id = "r" + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, "0");
+    const id = 'r' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0');
     if (!taken.has(id)) return id;
   }
 }
@@ -129,23 +130,23 @@ export function buildRepositoryMessage(input: RepositoryMessageInput): string {
   if (!input.fresh) return message;
   const lines = [
     `<repository_thread title="${escapePromptXmlAttribute(input.title)}">`,
-    ...input.history.filter((entry) => entry.kind !== "error").map(
+    ...input.history.filter((entry) => entry.kind !== 'error').map(
       (entry) =>
         `  <entry author="${escapePromptXmlAttribute(entry.author)}"` +
         ` ts="${escapePromptXmlAttribute(entry.ts)}">${formatPromptXmlCdata(entry.text)}</entry>`
     ),
-    "</repository_thread>",
-    "",
-    "This request comes from a repository comment thread: a task about the whole" +
-      " vault, not one note. Carry it out across whichever files it needs.",
-    "Your final message is posted to the thread as your reply, so end with a short" +
-      " summary of what you changed.",
+    '</repository_thread>',
+    '',
+    'This request comes from a repository comment thread: a task about the whole' +
+      ' vault, not one note. Carry it out across whichever files it needs.',
+    'Your final message is posted to the thread as your reply, so end with a short' +
+      ' summary of what you changed.',
     "Where a change needs the user's review or a decision, leave review comments on" +
-      " the relevant passages in the affected notes, signed with your name, rather" +
-      " than listing them in your reply. Those comments appear under their notes in" +
-      " the same panel.",
-    "",
+      ' the relevant passages in the affected notes, signed with your name, rather' +
+      ' than listing them in your reply. Those comments appear under their notes in' +
+      ' the same panel.',
+    '',
     message,
   ];
-  return lines.join("\n");
+  return lines.join('\n');
 }

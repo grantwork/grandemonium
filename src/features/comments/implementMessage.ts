@@ -1,4 +1,4 @@
-import { escapePromptXmlAttribute, formatPromptXmlCdata } from "../../utils/promptXml";
+import { escapePromptXmlAttribute, formatPromptXmlCdata } from '@/utils/promptXml';
 
 /** One entry of a comment's discussion. */
 export interface ImplementThreadEntry {
@@ -9,7 +9,7 @@ export interface ImplementThreadEntry {
 
 /** The one comment an implementation request is scoped to. */
 export interface ImplementTarget {
-  /** Key of the entry in the file's tandem-comments block. */
+  /** Key of the entry in the file's comment block. */
   commentId: string;
   /** Vault-relative path of the note holding the comment. */
   filePath: string;
@@ -24,12 +24,12 @@ export interface ImplementTarget {
 function formatThread(thread: readonly ImplementThreadEntry[]): string[] {
   if (thread.length === 0) return [];
   return [
-    "  <thread>",
+    '  <thread>',
     ...thread.map(entry =>
       `    <entry author="${escapePromptXmlAttribute(entry.author)}"`
       + ` ts="${escapePromptXmlAttribute(entry.ts)}">`
       + `${formatPromptXmlCdata(entry.text)}</entry>`),
-    "  </thread>",
+    '  </thread>',
   ];
 }
 
@@ -44,15 +44,15 @@ function formatThread(thread: readonly ImplementThreadEntry[]): string[] {
 export function buildImplementMessage(prompt: string, target: ImplementTarget): string {
   return [
     prompt.trim(),
-    "",
+    '',
     `<comment_target path="${escapePromptXmlAttribute(target.filePath)}"`
       + ` id="${escapePromptXmlAttribute(target.commentId)}">`,
     `  <quote>${formatPromptXmlCdata(target.quote)}</quote>`,
     ...formatThread(target.thread),
     `  <your_reply>${formatPromptXmlCdata(target.reply)}</your_reply>`,
-    "</comment_target>",
-    "",
-    "Act on only this comment. Do not review, reply to, resolve, or change any"
-      + " other comment in the file.",
-  ].join("\n");
+    '</comment_target>',
+    '',
+    'Act on only this comment. Do not review, reply to, resolve, or change any'
+      + ' other comment in the file.',
+  ].join('\n');
 }

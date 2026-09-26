@@ -1,6 +1,6 @@
-import { ChangeSet } from "@codemirror/state";
+import { ChangeSet } from '@codemirror/state';
 
-import { mapAnchors } from "./reanchor";
+import { mapAnchors } from './reanchor';
 import type {
   Anchor,
   AnchorResolution,
@@ -11,7 +11,7 @@ import type {
   SuggestionResult,
   TextRange,
   ThreadEntry,
-} from "./types";
+} from './types';
 
 export const SCHEMA_HINT_LINES = [
   '// Schema: { "<id>": { anchor:{exact,prefix,suffix,pos?}, status:open|resolved, thread:[{author,ts,text}], suggestion?:{replacement,author,ts,result?} } }',
@@ -19,24 +19,24 @@ export const SCHEMA_HINT_LINES = [
 ];
 
 /** The fenced code block language that marks a note's comment block. */
-export const FENCE_NAME = "grandemonium-comments";
+export const FENCE_NAME = 'grandemonium-comments';
 /**
  * The name blocks were written under before the rename. Still read, because an
  * agent that learned the format from an older note may write it, and rewritten
  * under {@link FENCE_NAME} by normalisation.
  */
-const PREVIOUS_FENCE_NAME = "tandem-comments";
+const PREVIOUS_FENCE_NAME = 'tandem-comments';
 /** Every fence name a comment block is recognised by. */
 export const COMMENT_FENCE_NAMES = [FENCE_NAME, PREVIOUS_FENCE_NAME] as const;
-const FENCE_OPEN = "```" + FENCE_NAME;
+const FENCE_OPEN = '```' + FENCE_NAME;
 const CONTEXT_LEN = 20;
 
 export function parseBlockBody(body: string): CommentMap {
-  const lines = body.split("\n");
+  const lines = body.split('\n');
   let i = 0;
-  while (i < lines.length && (lines[i].startsWith("//") || lines[i].trim() === "")) i++;
-  const data: unknown = JSON.parse(lines.slice(i).join("\n"));
-  if (typeof data !== "object" || data === null || Array.isArray(data)) {
+  while (i < lines.length && (lines[i].startsWith('//') || lines[i].trim() === '')) i++;
+  const data: unknown = JSON.parse(lines.slice(i).join('\n'));
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
     throw new Error("the comment block's top level must be an object");
   }
   return data as CommentMap;
@@ -62,21 +62,21 @@ function findBlocks(raw: string): BlockMatch[] {
   let outer: { char: string; length: number } | null = null;
   let pos = 0;
   while (pos < raw.length) {
-    const newline = raw.indexOf("\n", pos);
+    const newline = raw.indexOf('\n', pos);
     const lineEnd = newline < 0 ? raw.length : newline;
     const line = raw.slice(pos, lineEnd);
     let next = lineEnd + 1;
     if (outer) {
       const close = /^ {0,3}(`{3,}|~{3,})\s*$/.exec(line);
       if (close && close[1][0] === outer.char && close[1].length >= outer.length) outer = null;
-    } else if (newline >= 0 && (line === FENCE_OPEN || line === "```" + PREVIOUS_FENCE_NAME)) {
+    } else if (newline >= 0 && (line === FENCE_OPEN || line === '```' + PREVIOUS_FENCE_NAME)) {
       const bodyStart = lineEnd + 1;
       const rest = raw.slice(bodyStart);
       // The block's closing fence is the first complete ``` line; the body cannot
       // contain one (JSON escapes newlines and hint lines start with //).
-      let closeIdx = rest.indexOf("\n```");
-      while (closeIdx >= 0 && closeIdx + 4 < rest.length && rest[closeIdx + 4] !== "\n") {
-        closeIdx = rest.indexOf("\n```", closeIdx + 1);
+      let closeIdx = rest.indexOf('\n```');
+      while (closeIdx >= 0 && closeIdx + 4 < rest.length && rest[closeIdx + 4] !== '\n') {
+        closeIdx = rest.indexOf('\n```', closeIdx + 1);
       }
       if (closeIdx < 0) break;
       const end = bodyStart + Math.min(closeIdx + 5, rest.length);
@@ -93,7 +93,7 @@ function findBlocks(raw: string): BlockMatch[] {
 
 function sameValue(a: unknown, b: unknown): boolean {
   if (a === b) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   const aKeys = Object.keys(a);
   const bKeys = Object.keys(b);
@@ -115,8 +115,8 @@ function strayRanges(raw: string, blocks: BlockMatch[], proseEnd: number): TextR
     let from = block.start;
     let to = Math.min(block.end, proseEnd);
     if (to === proseEnd) {
-      while (from > floor && raw[from - 1] === "\n") from--;
-    } else if (from >= floor + 2 && raw[from - 1] === "\n" && raw[from - 2] === "\n" && raw[to] === "\n") {
+      while (from > floor && raw[from - 1] === '\n') from--;
+    } else if (from >= floor + 2 && raw[from - 1] === '\n' && raw[from - 2] === '\n' && raw[to] === '\n') {
       to++;
     }
     ranges.push({ from, to });
@@ -167,30 +167,30 @@ function applyTextChanges(text: string, changes: readonly SuggestionTextChange[]
 }
 
 function strayDeletions(doc: { strays?: TextRange[] }): SuggestionTextChange[] {
-  return (doc.strays ?? []).map(({ from, to }) => ({ from, to, insert: "" }));
+  return (doc.strays ?? []).map(({ from, to }) => ({ from, to, insert: '' }));
 }
 
 function blockText(comments: CommentMap, schemaHint: boolean): string {
-  const hint = schemaHint ? SCHEMA_HINT_LINES.join("\n") + "\n" : "";
-  return FENCE_OPEN + "\n" + hint + JSON.stringify(comments, null, 2) + "\n```\n";
+  const hint = schemaHint ? SCHEMA_HINT_LINES.join('\n') + '\n' : '';
+  return FENCE_OPEN + '\n' + hint + JSON.stringify(comments, null, 2) + '\n```\n';
 }
 
 /** Everything the note holds after `prose`: the block, if any comments remain, then the trailing content. */
 function serializeTail(prose: string, comments: CommentMap, trailing: string, schemaHint: boolean): string {
   if (Object.keys(comments).length === 0) {
-    const separator = prose && trailing && !prose.endsWith("\n") && !trailing.startsWith("\n") ? "\n" : "";
+    const separator = prose && trailing && !prose.endsWith('\n') && !trailing.startsWith('\n') ? '\n' : '';
     return separator + trailing;
   }
-  return "\n" + blockText(comments, schemaHint) + trailing;
+  return '\n' + blockText(comments, schemaHint) + trailing;
 }
 
 export function serializeDocument(
   doc: { prose: string; comments: CommentMap; trailing?: string; strays?: TextRange[]; error?: string },
   schemaHint: boolean
 ): string {
-  if (doc.error) throw new Error("refusing to serialize a document with a parse error: " + doc.error);
+  if (doc.error) throw new Error('refusing to serialize a document with a parse error: ' + doc.error);
   const prose = applyTextChanges(doc.prose, strayDeletions(doc));
-  return prose + serializeTail(prose, doc.comments, doc.trailing ?? "", schemaHint);
+  return prose + serializeTail(prose, doc.comments, doc.trailing ?? '', schemaHint);
 }
 
 /**
@@ -209,7 +209,7 @@ export function blockChanges(
   const prose = applyTextChanges(doc.prose, proseChanges);
   return [
     ...proseChanges,
-    { from: doc.prose.length, to: raw.length, insert: serializeTail(prose, doc.comments, doc.trailing ?? "", schemaHint) },
+    { from: doc.prose.length, to: raw.length, insert: serializeTail(prose, doc.comments, doc.trailing ?? '', schemaHint) },
   ];
 }
 
@@ -226,18 +226,18 @@ export function blockChanges(
  */
 export function normalizeChanges(raw: string, doc: ParsedDoc, schemaHint: boolean): SuggestionTextChange[] | null {
   if (doc.error || doc.prose.length === raw.length) return null;
-  const hasTrailing = !!doc.trailing && doc.trailing.trim() !== "";
+  const hasTrailing = !!doc.trailing && doc.trailing.trim() !== '';
   const rewrite = !!doc.strays || !!doc.outdatedFence;
   if (!rewrite && !hasTrailing) return null;
   const blockStart = doc.prose.length;
   const blockEnd = raw.length - (doc.trailing?.length ?? 0);
   if (rewrite && (!hasTrailing || Object.keys(doc.comments).length === 0)) return blockChanges(raw, doc, schemaHint);
   const block = raw.slice(blockStart, blockEnd);
-  const text = rewrite ? blockText(doc.comments, schemaHint) : block.startsWith("\n") ? block.slice(1) : block;
-  const sep = raw.endsWith("\n") ? "" : "\n";
+  const text = rewrite ? blockText(doc.comments, schemaHint) : block.startsWith('\n') ? block.slice(1) : block;
+  const sep = raw.endsWith('\n') ? '' : '\n';
   return [
     ...strayDeletions(doc),
-    { from: blockStart, to: blockEnd, insert: blockStart === 0 ? "" : "\n" },
+    { from: blockStart, to: blockEnd, insert: blockStart === 0 ? '' : '\n' },
     { from: raw.length, to: raw.length, insert: sep + text },
   ];
 }
@@ -257,26 +257,26 @@ function contextMatches(prose: string, at: number, len: number, anchor: Anchor):
 
 export function resolveAnchor(prose: string, anchor: Anchor): AnchorResolution {
   const exact = anchor.exact;
-  if (!exact) return { kind: "orphaned" };
+  if (!exact) return { kind: 'orphaned' };
   const matches: number[] = [];
   let i = prose.indexOf(exact);
   while (i !== -1) {
     matches.push(i);
     i = prose.indexOf(exact, i + 1);
   }
-  if (matches.length === 0) return { kind: "orphaned" };
+  if (matches.length === 0) return { kind: 'orphaned' };
   let cands = matches;
   if (cands.length > 1) {
     const filtered = cands.filter((m) => contextMatches(prose, m, exact.length, anchor));
     if (filtered.length > 0) cands = filtered;
   }
-  if (cands.length === 1) return { kind: "resolved", start: cands[0], end: cands[0] + exact.length };
+  if (cands.length === 1) return { kind: 'resolved', start: cands[0], end: cands[0] + exact.length };
   let best = cands[0];
   if (anchor.pos != null) {
     const pos = anchor.pos;
     best = cands.reduce((a, b) => (Math.abs(b - pos) < Math.abs(a - pos) ? b : a));
   }
-  return { kind: "resolved", start: best, end: best + exact.length, ambiguous: true };
+  return { kind: 'resolved', start: best, end: best + exact.length, ambiguous: true };
 }
 
 export function makeAnchor(prose: string, start: number, end: number): Anchor {
@@ -296,7 +296,7 @@ export function addComment(
   ts: string,
   text: string
 ): void {
-  comments[id] = { anchor, status: "open", thread: [{ author, ts, text }] };
+  comments[id] = { anchor, status: 'open', thread: [{ author, ts, text }] };
 }
 
 export function addSuggestion(
@@ -310,7 +310,7 @@ export function addSuggestion(
 ): void {
   comments[id] = {
     anchor,
-    status: "open",
+    status: 'open',
     thread: note ? [{ author, ts, text: note }] : [],
     suggestion: { replacement, author, ts },
   };
@@ -328,11 +328,11 @@ export function editThreadEntry(
   index: number,
   expected: ThreadEntry,
   text: string
-): { ok: true } | { ok: false; reason: "missing" | "conflict" } {
+): { ok: true } | { ok: false; reason: 'missing' | 'conflict' } {
   const entry = comments[id]?.thread[index];
-  if (!entry) return { ok: false, reason: "missing" };
+  if (!entry) return { ok: false, reason: 'missing' };
   if (entry.author !== expected.author || entry.ts !== expected.ts || entry.text !== expected.text) {
-    return { ok: false, reason: "conflict" };
+    return { ok: false, reason: 'conflict' };
   }
   entry.text = text;
   return { ok: true };
@@ -364,15 +364,15 @@ export function removeComment(comments: CommentMap, id: string): void {
 }
 
 export type SuggestionFailureReason =
-  | "missing"
-  | "no-editor"
-  | "invalid-document"
-  | "invalid-suggestion"
-  | "not-suggestion"
-  | "already-resolved"
-  | "empty-replacement"
-  | "orphaned"
-  | "ambiguous";
+  | 'missing'
+  | 'no-editor'
+  | 'invalid-document'
+  | 'invalid-suggestion'
+  | 'not-suggestion'
+  | 'already-resolved'
+  | 'empty-replacement'
+  | 'orphaned'
+  | 'ambiguous';
 
 export type AcceptSuggestionResult =
   | { ok: true; start: number; end: number; replacement: string }
@@ -395,23 +395,23 @@ export type SuggestionAcceptancePlan =
   | { ok: false; reason: SuggestionFailureReason; error?: string };
 
 function isSuggestionObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function finishSuggestion(
   comments: CommentMap,
   id: string,
   result: SuggestionResult,
-  behavior: "keep" | "remove"
+  behavior: 'keep' | 'remove'
 ): void {
-  if (behavior === "remove") {
+  if (behavior === 'remove') {
     delete comments[id];
     return;
   }
   const comment = comments[id];
   const suggestion: unknown = comment?.suggestion;
   if (!comment || !isSuggestionObject(suggestion)) return;
-  comment.status = "resolved";
+  comment.status = 'resolved';
   suggestion.result = result;
 }
 
@@ -423,32 +423,32 @@ function finishSuggestion(
 export function acceptSuggestion(
   doc: ParsedDoc,
   id: string,
-  behavior: "keep" | "remove"
+  behavior: 'keep' | 'remove'
 ): AcceptSuggestionResult {
   const comment = doc.comments[id];
-  if (!comment) return { ok: false, reason: "missing" };
+  if (!comment) return { ok: false, reason: 'missing' };
   const suggestion: unknown = comment.suggestion;
-  if (suggestion === undefined) return { ok: false, reason: "not-suggestion" };
-  if (!isSuggestionObject(suggestion)) return { ok: false, reason: "invalid-suggestion" };
-  if (comment.status !== "open" || suggestion.result) {
-    return { ok: false, reason: "already-resolved" };
+  if (suggestion === undefined) return { ok: false, reason: 'not-suggestion' };
+  if (!isSuggestionObject(suggestion)) return { ok: false, reason: 'invalid-suggestion' };
+  if (comment.status !== 'open' || suggestion.result) {
+    return { ok: false, reason: 'already-resolved' };
   }
   const replacement = suggestion.replacement;
-  if (typeof replacement !== "string") return { ok: false, reason: "invalid-suggestion" };
-  if (replacement.length === 0) return { ok: false, reason: "empty-replacement" };
+  if (typeof replacement !== 'string') return { ok: false, reason: 'invalid-suggestion' };
+  if (replacement.length === 0) return { ok: false, reason: 'empty-replacement' };
 
   const resolution = resolveAnchor(doc.prose, comment.anchor);
-  if (resolution.kind === "orphaned") return { ok: false, reason: "orphaned" };
-  if (resolution.ambiguous) return { ok: false, reason: "ambiguous" };
+  if (resolution.kind === 'orphaned') return { ok: false, reason: 'orphaned' };
+  if (resolution.ambiguous) return { ok: false, reason: 'ambiguous' };
   if (doc.prose.slice(resolution.start, resolution.end) !== comment.anchor.exact) {
-    return { ok: false, reason: "orphaned" };
+    return { ok: false, reason: 'orphaned' };
   }
 
   const oldProse = doc.prose;
   const survivingAnchors = Object.entries(doc.comments).flatMap(([otherId, other]) => {
-    if (otherId === id || other.status !== "open") return [];
+    if (otherId === id || other.status !== 'open') return [];
     const otherResolution = resolveAnchor(oldProse, other.anchor);
-    return otherResolution.kind === "resolved" && !otherResolution.ambiguous
+    return otherResolution.kind === 'resolved' && !otherResolution.ambiguous
       ? [{ id: otherId, from: otherResolution.start, to: otherResolution.end }]
       : [];
   });
@@ -463,24 +463,24 @@ export function acceptSuggestion(
       surviving.anchor = makeAnchor(doc.prose, mapped.from, mapped.to);
     }
   }
-  finishSuggestion(doc.comments, id, "accepted", behavior);
+  finishSuggestion(doc.comments, id, 'accepted', behavior);
   return { ok: true, start: resolution.start, end: resolution.end, replacement };
 }
 
 export function declineSuggestion(
   comments: CommentMap,
   id: string,
-  behavior: "keep" | "remove"
+  behavior: 'keep' | 'remove'
 ): DeclineSuggestionResult {
   const comment = comments[id];
-  if (!comment) return { ok: false, reason: "missing" };
+  if (!comment) return { ok: false, reason: 'missing' };
   const suggestion: unknown = comment.suggestion;
-  if (suggestion === undefined) return { ok: false, reason: "not-suggestion" };
-  if (!isSuggestionObject(suggestion)) return { ok: false, reason: "invalid-suggestion" };
-  if (comment.status !== "open" || suggestion.result) {
-    return { ok: false, reason: "already-resolved" };
+  if (suggestion === undefined) return { ok: false, reason: 'not-suggestion' };
+  if (!isSuggestionObject(suggestion)) return { ok: false, reason: 'invalid-suggestion' };
+  if (comment.status !== 'open' || suggestion.result) {
+    return { ok: false, reason: 'already-resolved' };
   }
-  finishSuggestion(comments, id, "declined", behavior);
+  finishSuggestion(comments, id, 'declined', behavior);
   return { ok: true };
 }
 
@@ -492,11 +492,11 @@ export function declineSuggestion(
 export function planSuggestionAcceptance(
   raw: string,
   id: string,
-  behavior: "keep" | "remove",
+  behavior: 'keep' | 'remove',
   schemaHint: boolean
 ): SuggestionAcceptancePlan {
   const doc = parseDocument(raw);
-  if (doc.error) return { ok: false, reason: "invalid-document", error: doc.error };
+  if (doc.error) return { ok: false, reason: 'invalid-document', error: doc.error };
   const prose = doc.prose;
   const result = acceptSuggestion(doc, id, behavior);
   if (!result.ok) return result;
@@ -518,7 +518,7 @@ export function generateId(existing: CommentMap): string {
   for (;;) {
     const id = Math.floor(Math.random() * 0xffff)
       .toString(16)
-      .padStart(4, "0");
+      .padStart(4, '0');
     if (!(id in existing)) return id;
   }
 }
@@ -526,15 +526,15 @@ export function generateId(existing: CommentMap): string {
 export function resolveAll(prose: string, comments: CommentMap): ResolvedComment[] {
   return Object.entries(comments).map(([id, comment]) => {
     const acceptedHistory =
-      comment.status === "resolved" &&
+      comment.status === 'resolved' &&
       isSuggestionObject(comment.suggestion) &&
-      comment.suggestion.result === "accepted";
+      comment.suggestion.result === 'accepted';
     return {
       id,
       comment,
       // The retained anchor describes the text that was replaced, not a safe
       // navigation target in the resulting prose.
-      resolution: acceptedHistory ? { kind: "orphaned" } : resolveAnchor(prose, comment.anchor),
+      resolution: acceptedHistory ? { kind: 'orphaned' } : resolveAnchor(prose, comment.anchor),
     };
   });
 }

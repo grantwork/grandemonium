@@ -2,14 +2,16 @@ import type {
   RepositoryTurn,
   RepositoryTurnCallbacks,
   RepositoryTurnResult,
-} from "../../core/auxiliary/RepositoryThreadSession";
+} from '@/core/auxiliary/RepositoryThreadSession';
 import type {
   ProviderApprovalInteractionRequest,
   ProviderApprovalInteractionResponse,
   ProviderInteractionPort,
-} from "../../core/execution";
-import type { ApprovalDecision, UsageInfo } from "../../core/types";
-import { findAgentMention } from "./agentMention";
+} from '@/core/execution';
+import type { ApprovalDecision, UsageInfo } from '@/core/types';
+
+import { findAgentMention } from './agentMention';
+import type { ResolveBehavior } from './CommentsSettings';
 import {
   buildRepositoryMessage,
   fallbackThreadTitle,
@@ -19,8 +21,7 @@ import {
   type RepositoryThread,
   type RepositoryThreadEntry,
   serializeRepositoryThreads,
-} from "./RepositoryThread";
-import type { ResolveBehavior } from "./CommentsSettings";
+} from './RepositoryThread';
 
 /** One agent's side of one thread, kept for as long as the thread is open. */
 export interface RepositoryAgentSession {
@@ -116,12 +117,12 @@ interface ApprovalWaiter extends PendingApproval {
 }
 
 const DEFAULT_CHOICES: readonly ApprovalChoice[] = [
-  { decision: "allow", label: "Allow" },
-  { decision: "allow-always", label: "Always allow" },
-  { decision: "deny", label: "Deny" },
+  { decision: 'allow', label: 'Allow' },
+  { decision: 'allow-always', label: 'Always allow' },
+  { decision: 'deny', label: 'Deny' },
 ];
 
-const EMPTY_REPLY = "_Finished without a reply._";
+const EMPTY_REPLY = '_Finished without a reply._';
 
 /**
  * Repository threads: comments about the whole vault, each a conversation with
@@ -210,7 +211,7 @@ export class RepositoryThreadsController {
       createdAt: this.deps.now(),
       id: generateThreadId(this.threads),
       selection,
-      status: "open",
+      status: 'open',
       thread: [{ author: this.deps.author(), text: message, ts: this.deps.now() }],
       title: fallbackThreadTitle(message),
     };
@@ -225,7 +226,7 @@ export class RepositoryThreadsController {
   reply(threadId: string, text: string): void {
     const message = text.trim();
     const thread = this.get(threadId);
-    if (!message || !thread || thread.status !== "open") return;
+    if (!message || !thread || thread.status !== 'open') return;
     this.update(threadId, (current) => ({
       ...current,
       thread: [...current.thread, { author: this.deps.author(), text: message, ts: this.deps.now() }],
@@ -249,17 +250,17 @@ export class RepositoryThreadsController {
   /** Resolving ends every agent conversation the thread started. */
   async resolve(threadId: string): Promise<void> {
     await this.closeSessions(threadId);
-    if (this.deps.resolveBehavior() === "remove") {
+    if (this.deps.resolveBehavior() === 'remove') {
       this.threads = this.threads.filter((thread) => thread.id !== threadId);
       this.persist();
       this.emit(null);
       return;
     }
-    this.update(threadId, (current) => ({ ...current, status: "resolved" }), null);
+    this.update(threadId, (current) => ({ ...current, status: 'resolved' }), null);
   }
 
   reopen(threadId: string): void {
-    this.update(threadId, (current) => ({ ...current, status: "open" }), null);
+    this.update(threadId, (current) => ({ ...current, status: 'open' }), null);
   }
 
   async remove(threadId: string): Promise<void> {
@@ -275,7 +276,7 @@ export class RepositoryThreadsController {
 
   /** Ends every conversation and flushes pending writes, for plugin unload. */
   async dispose(): Promise<void> {
-    for (const approval of [...this.approvals.values()]) approval.settle("cancel");
+    for (const approval of [...this.approvals.values()]) approval.settle('cancel');
     for (const threadId of [...this.running.keys()]) this.stop(threadId);
     await Promise.all([...this.sessions.values()].map((session) => session.dispose().catch(() => undefined)));
     this.sessions.clear();
@@ -287,7 +288,7 @@ export class RepositoryThreadsController {
     const thread = this.get(threadId);
     if (!thread) return;
     if (!port) {
-      this.deps.notify("No AI is available for repository comments.");
+      this.deps.notify('No AI is available for repository comments.');
       return;
     }
     const agents = port.agents();
@@ -299,7 +300,7 @@ export class RepositoryThreadsController {
       ? agents.find((agent) => agent.name === mentioned)
       : agents.find((agent) => agent.providerId === selection?.providerId);
     if (!target) {
-      this.deps.notify("The AI this thread was using is not enabled. Pick another model below.");
+      this.deps.notify('The AI this thread was using is not enabled. Pick another model below.');
       return;
     }
     const model = !mentioned && selection?.providerId === target.providerId ? selection.model : null;
@@ -329,7 +330,7 @@ export class RepositoryThreadsController {
       activity: null,
       agentName: target.name,
       startedAt: Date.now(),
-      text: "",
+      text: '',
       turn: null,
     };
     let turns = this.running.get(threadId);
@@ -370,7 +371,7 @@ export class RepositoryThreadsController {
   }
 
   private errorEntry(agentName: string, text: string): RepositoryThreadEntry {
-    return { author: agentName, kind: "error", text, ts: this.deps.now() };
+    return { author: agentName, kind: 'error', text, ts: this.deps.now() };
   }
 
   private appendEntries(threadId: string, entries: RepositoryThreadEntry[]): void {
@@ -387,7 +388,7 @@ export class RepositoryThreadsController {
     if (turns?.size === 0) this.running.delete(threadId);
     const reply = replyText(result);
     const entries: RepositoryThreadEntry[] = reply ? [{ author: agentName, text: reply, ts: this.deps.now() }] : [];
-    if (result.kind === "failed") entries.push(this.errorEntry(agentName, `Couldn't finish: ${result.message}`));
+    if (result.kind === 'failed') entries.push(this.errorEntry(agentName, `Couldn't finish: ${result.message}`));
     this.appendEntries(threadId, entries);
   }
 
@@ -400,7 +401,7 @@ export class RepositoryThreadsController {
       },
       dismissInteraction: (interactionId) => {
         for (const approval of this.approvals.values()) {
-          if (approval.id.endsWith(`:${interactionId}`)) approval.settle("cancel");
+          if (approval.id.endsWith(`:${interactionId}`)) approval.settle('cancel');
         }
       },
       requestApproval: (request, signal) => this.awaitApproval(threadId, agentName, request, signal),
@@ -417,12 +418,12 @@ export class RepositoryThreadsController {
       const id = `${++this.approvalSequence}:${request.interactionId}`;
       const choices: ApprovalChoice[] = request.decisionOptions?.length
         ? request.decisionOptions.map((option) => ({
-            decision: option.decision ?? { type: "select-option", value: option.value },
+            decision: option.decision ?? { type: 'select-option', value: option.value },
             label: option.label,
             ...(option.description ? { description: option.description } : {}),
           }))
         : [...DEFAULT_CHOICES];
-      const onAbort = (): void => waiter.settle("cancel");
+      const onAbort = (): void => waiter.settle('cancel');
       const waiter: ApprovalWaiter = {
         agentName,
         choices,
@@ -430,7 +431,7 @@ export class RepositoryThreadsController {
         id,
         settle: (decision) => {
           if (!this.approvals.delete(id)) return;
-          signal.removeEventListener("abort", onAbort);
+          signal.removeEventListener('abort', onAbort);
           resolve({ decision, interactionId: request.interactionId });
           this.emit(threadId);
         },
@@ -439,10 +440,10 @@ export class RepositoryThreadsController {
       };
       this.approvals.set(id, waiter);
       if (signal.aborted) {
-        waiter.settle("cancel");
+        waiter.settle('cancel');
         return;
       }
-      signal.addEventListener("abort", onAbort);
+      signal.addEventListener('abort', onAbort);
       this.emit(threadId);
     });
   }
@@ -456,7 +457,7 @@ export class RepositoryThreadsController {
 
   private async closeSessions(threadId: string): Promise<void> {
     for (const approval of [...this.approvals.values()]) {
-      if (approval.threadId === threadId) approval.settle("cancel");
+      if (approval.threadId === threadId) approval.settle('cancel');
     }
     this.stop(threadId);
     const closing: Promise<void>[] = [];
@@ -491,7 +492,7 @@ export class RepositoryThreadsController {
       .catch(() => undefined)
       .then(() => this.deps.storage.write(snapshot))
       .catch(() => {
-        this.deps.notify("Repository comments could not be saved.");
+        this.deps.notify('Repository comments could not be saved.');
       });
   }
 
@@ -521,11 +522,11 @@ function sessionKey(threadId: string, providerId: string): string {
 function replyText(result: RepositoryTurnResult): string | null {
   const text = result.text.trim();
   switch (result.kind) {
-    case "completed":
+    case 'completed':
       return text || EMPTY_REPLY;
-    case "cancelled":
+    case 'cancelled':
       return text ? `${text}\n\n_Stopped._` : null;
-    case "failed":
+    case 'failed':
       // The error follows as its own entry.
       return text || null;
   }

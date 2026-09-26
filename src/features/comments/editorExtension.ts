@@ -1,6 +1,6 @@
-import { Annotation, type Extension, RangeSetBuilder, Transaction } from "@codemirror/state";
-import type { DecorationSet, EditorView, ViewUpdate } from "@codemirror/view";
-import { Decoration, ViewPlugin } from "@codemirror/view";
+import { Annotation, type Extension, RangeSetBuilder, Transaction } from '@codemirror/state';
+import type { DecorationSet, EditorView, ViewUpdate } from '@codemirror/view';
+import { Decoration, ViewPlugin } from '@codemirror/view';
 
 import {
   commentPopoverExtension,
@@ -8,8 +8,8 @@ import {
   dismissCommentPopover,
   popoverTargetFor,
   showCommentPopover,
-} from "./commentPopover";
-import type { CommentsController } from "./CommentsController";
+} from './commentPopover';
+import type { CommentsController } from './CommentsController';
 import {
   changesTouchCommentBlock,
   isFullReplace,
@@ -17,9 +17,9 @@ import {
   mergePendingAnchors,
   shouldPreservePendingAnchors,
   type TrackedAnchor,
-} from "./reanchor";
-import { blockChanges, makeAnchor, normalizeChanges, parseDocument, resolveAnchor } from "./store";
-import { applyTableHighlights, rangesTouchTable } from "./tableHighlight";
+} from './reanchor';
+import { blockChanges, makeAnchor, normalizeChanges, parseDocument, resolveAnchor } from './store';
+import { applyTableHighlights, rangesTouchTable } from './tableHighlight';
 
 /** Marks transactions dispatched by the plugin itself (block rewrite). */
 export const selfEdit = Annotation.define<boolean>();
@@ -36,8 +36,8 @@ export interface EditorExtensionHost {
 }
 
 export type HighlightClick =
-  | { kind: "popover"; target: CommentPopoverTarget }
-  | { kind: "sidebar" };
+  | { kind: 'popover'; target: CommentPopoverTarget }
+  | { kind: 'sidebar' };
 
 /**
  * Where a click on a highlight sends the reader. An open sidebar wins: showing
@@ -50,25 +50,25 @@ export function resolveHighlightClick(
   text: string,
   id: string
 ): HighlightClick {
-  if (plugin.isSidebarOpen() || !plugin.settings.commentPopover) return { kind: "sidebar" };
+  if (plugin.isSidebarOpen() || !plugin.settings.commentPopover) return { kind: 'sidebar' };
   const target = popoverTargetFor(text, id);
-  return target ? { kind: "popover", target } : { kind: "sidebar" };
+  return target ? { kind: 'popover', target } : { kind: 'sidebar' };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function isOpenSuggestion(value: unknown): boolean {
-  if (!isObject(value) || value.status !== "open") return false;
+  if (!isObject(value) || value.status !== 'open') return false;
   const suggestion = value.suggestion;
   return isObject(suggestion) && suggestion.result == null;
 }
 
 function isAcceptedSuggestion(value: unknown): boolean {
-  if (!isObject(value) || value.status !== "resolved") return false;
+  if (!isObject(value) || value.status !== 'resolved') return false;
   const suggestion = value.suggestion;
-  return isObject(suggestion) && suggestion.result === "accepted";
+  return isObject(suggestion) && suggestion.result === 'accepted';
 }
 
 /**
@@ -77,7 +77,7 @@ function isAcceptedSuggestion(value: unknown): boolean {
  * coalesced into a single large range, indistinguishable from a full replace.
  */
 export function isSuggestionAcceptanceHistoryUpdate(u: ViewUpdate, oldText: string, text: string): boolean {
-  if (!u.transactions.some((tr) => tr.isUserEvent("undo") || tr.isUserEvent("redo"))) return false;
+  if (!u.transactions.some((tr) => tr.isUserEvent('undo') || tr.isUserEvent('redo'))) return false;
   const oldDoc = parseDocument(oldText);
   const newDoc = parseDocument(text);
   if (oldDoc.error || newDoc.error || oldDoc.prose === newDoc.prose) return false;
@@ -122,9 +122,9 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
         this.dirty = false;
         if (doc.error) return;
         for (const [id, c] of Object.entries(doc.comments)) {
-          if (c.status === "resolved") continue;
+          if (c.status === 'resolved') continue;
           const r = resolveAnchor(doc.prose, c.anchor);
-          if (r.kind === "resolved") this.anchors.push({ id, from: r.start, to: r.end });
+          if (r.kind === 'resolved') this.anchors.push({ id, from: r.start, to: r.end });
         }
         this.anchors.sort((a, b) => a.from - b.from);
       }
@@ -161,8 +161,8 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
                 Object.entries(doc.comments)
                   .filter(
                     ([, comment]) =>
-                      comment.status === "open" &&
-                      resolveAnchor(doc.prose, comment.anchor).kind === "orphaned"
+                      comment.status === 'open' &&
+                      resolveAnchor(doc.prose, comment.anchor).kind === 'orphaned'
                   )
                   .map(([id]) => id)
               );
@@ -190,9 +190,9 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
             this.anchors = mapped;
             const doc = parseDocument(text);
             for (const [id, c] of Object.entries(doc.comments)) {
-              if (c.status === "resolved" || survived.has(id)) continue;
+              if (c.status === 'resolved' || survived.has(id)) continue;
               const r = resolveAnchor(doc.prose, c.anchor);
-              if (r.kind === "resolved") this.anchors.push({ id, from: r.start, to: r.end });
+              if (r.kind === 'resolved') this.anchors.push({ id, from: r.start, to: r.end });
             }
             this.anchors.sort((a, b) => a.from - b.from);
             this.dirty = true;
@@ -211,7 +211,7 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
         const len = this.view.state.doc.length;
         for (const a of this.anchors) {
           if (a.from >= a.to || a.to > len) continue;
-          b.add(a.from, a.to, Decoration.mark({ class: "tc-highlight", attributes: { "data-tc-id": a.id } }));
+          b.add(a.from, a.to, Decoration.mark({ class: 'grandemonium-comment-highlight', attributes: { 'data-comment-id': a.id } }));
         }
         return b.finish();
       }
@@ -223,7 +223,7 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
        */
       scheduleTableHighlight(): void {
         this.view.requestMeasure({
-          key: "tc-table-highlight",
+          key: 'grandemonium-comment-table-highlight',
           read: () => null,
           write: () => {
             const text = this.view.state.doc.toString();
@@ -283,14 +283,14 @@ function editorAnchorTrackerClass(plugin: EditorExtensionHost) {
         let changed = false;
         for (const t of this.anchors) {
           const c = doc.comments[t.id];
-          if (!c || c.status === "resolved") continue;
+          if (!c || c.status === 'resolved') continue;
           if (t.to > doc.prose.length) continue;
           const cur = c.anchor;
           // Only rewrite when the previous exact text can no longer be found,
           // meaning the quote itself was edited. If it is still there, the change
           // was only around it (for example Obsidian's table reformatting), and a
           // rewrite from possibly shifted positions would corrupt the anchor.
-          if (resolveAnchor(doc.prose, cur).kind === "resolved") continue;
+          if (resolveAnchor(doc.prose, cur).kind === 'resolved') continue;
           const next = makeAnchor(doc.prose, t.from, t.to);
           if (
             next.exact &&
@@ -347,16 +347,16 @@ function buildAnchorViewPlugin(plugin: CommentsController) {
     eventHandlers: {
       mousedown(e: MouseEvent, view: EditorView) {
         const target = e.target as HTMLElement;
-        const el = target.closest?.(".tc-highlight");
+        const el = target.closest?.('.grandemonium-comment-highlight');
         if (!el) {
           // Clicking away from every highlight is how the popover is dismissed.
           dismissCommentPopover(view);
           return false;
         }
-        const id = el.getAttribute("data-tc-id");
+        const id = el.getAttribute('data-comment-id');
         if (!id) return false;
         const click = resolveHighlightClick(plugin, view.state.doc.toString(), id);
-        if (click.kind === "popover") {
+        if (click.kind === 'popover') {
           showCommentPopover(view, click.target);
           return false;
         }

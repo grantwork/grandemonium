@@ -1,47 +1,47 @@
-/* Tandem Comments */
+/* Comments */
 
-.tc-highlight {
+.grandemonium-comment-highlight {
   background-color: color-mix(
     in srgb,
-    var(--tc-highlight-color, #ffd54a) var(--tc-highlight-opacity, 30%),
+    var(--grandemonium-comment-highlight-color, #ffd54a) var(--grandemonium-comment-highlight-opacity, 30%),
     transparent
   );
-  border-bottom: 2px solid var(--tc-highlight-color, #ffd54a);
+  border-bottom: 2px solid var(--grandemonium-comment-highlight-color, #ffd54a);
   cursor: pointer;
 }
 
-.tc-sidebar {
-  --tc-sidebar-pad: 8px;
-  --tc-panel-bg: var(--background-secondary);
+.grandemonium-comment-sidebar {
+  --grandemonium-comment-sidebar-pad: 8px;
+  --grandemonium-comment-panel-bg: var(--background-secondary);
   /* The pinned file row is given exactly this height, and the pinned thread row
      sits exactly this far down, so the two meet with no seam for content to
      show through. Measuring instead would leave the offset guessing at the
      theme's UI font. */
-  --tc-file-head-height: 26px;
+  --grandemonium-comment-file-head-height: 26px;
   /* No padding at the top: a sticky row pins to the scrollport's padding edge,
      so any padding there leaves a band of scrolling content above the pinned
-     header. The panel's own top gap is carried by .tc-header instead. */
-  padding: 0 var(--tc-sidebar-pad) var(--tc-sidebar-pad);
+     header. The panel's own top gap is carried by .grandemonium-comment-header instead. */
+  padding: 0 var(--grandemonium-comment-sidebar-pad) var(--grandemonium-comment-sidebar-pad);
   overflow-y: auto;
   /* Painted explicitly, and reused by every pinned row, so a sticky bar is the
      same colour as the panel behind it by construction rather than by both
      happening to pick the same variable. */
-  background: var(--tc-panel-bg);
+  background: var(--grandemonium-comment-panel-bg);
 }
 
-.tc-header {
+.grandemonium-comment-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: var(--tc-sidebar-pad);
+  padding-top: var(--grandemonium-comment-sidebar-pad);
   margin-bottom: 10px;
 }
 
-.tc-title {
+.grandemonium-comment-title {
   font-weight: 600;
 }
 
-.tc-card {
+.grandemonium-comment-card {
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
   padding: 8px;
@@ -49,74 +49,74 @@
   background: var(--background-primary);
 }
 
-.tc-card.tc-focused {
+.grandemonium-comment-card.grandemonium-comment-focused {
   border-color: var(--interactive-accent);
 }
 
-.tc-card.tc-orphan {
+.grandemonium-comment-card.grandemonium-comment-orphan {
   border-style: dashed;
 }
 
-.tc-card.tc-ambiguous {
+.grandemonium-comment-card.grandemonium-comment-ambiguous {
   border-style: dashed;
 }
 
-.tc-quote {
+.grandemonium-comment-quote {
   font-style: italic;
   color: var(--text-muted);
-  border-left: 3px solid var(--tc-highlight-color, #ffd54a);
+  border-left: 3px solid var(--grandemonium-comment-highlight-color, #ffd54a);
   padding-left: 6px;
   margin-bottom: 6px;
 }
 
-.tc-quote-link {
+.grandemonium-comment-quote-link {
   cursor: pointer;
 }
 
-.tc-quote-link:hover {
+.grandemonium-comment-quote-link:hover {
   color: var(--text-normal);
 }
 
 /* Every entry carries its own author's colour as a left rail, so a thread reads
    by who is speaking rather than by name alone. Only AI replies used to have
    one, which left the reader's own entries unmarked. */
-.tc-entry {
+.grandemonium-comment-entry {
   margin: 0 -8px;
   padding: 8px;
-  border-left: 2px solid var(--tc-author-color-light, var(--text-faint));
+  border-left: 2px solid var(--grandemonium-comment-author-color-light, var(--text-faint));
 }
 
-.theme-dark .tc-entry {
-  border-left-color: var(--tc-author-color-dark, var(--text-faint));
+.theme-dark .grandemonium-comment-entry {
+  border-left-color: var(--grandemonium-comment-author-color-dark, var(--text-faint));
 }
 
 /* Replies stack in one card, so each after the first is fenced off rather than
    relying on the author name alone to separate them. */
-.tc-entry + .tc-entry {
+.grandemonium-comment-entry + .grandemonium-comment-entry {
   border-top: 1px solid var(--background-modifier-border);
 }
 
-.tc-entry:first-child {
+.grandemonium-comment-entry:first-child {
   padding-top: 0;
 }
 
-.tc-entry:last-child {
+.grandemonium-comment-entry:last-child {
   padding-bottom: 0;
 }
 
 /* An AI reply is tinted as well as railed, so it reads apart from the reader's
    own text even where two authors' colours are close. */
-.tc-entry-agent {
+.grandemonium-comment-entry-agent {
   background: var(--background-secondary);
 }
 
-.tc-entry-agent .tc-text {
+.grandemonium-comment-entry-agent .grandemonium-comment-text {
   color: var(--text-muted);
 }
 
 /* A folded entry keeps its author's rail and one line of its text, so the
    middle of a long thread stays scannable without taking the room. */
-.tc-card button.tc-entry-collapsed {
+.grandemonium-comment-card button.grandemonium-comment-entry-collapsed {
   display: flex;
   align-items: center;
   /* Obsidian centres button content, which shows once a line is too short to fill the row. */
@@ -127,7 +127,7 @@
   margin: 0 -8px;
   padding: 4px 8px;
   border: none;
-  border-left: 2px solid var(--tc-author-color-light, var(--text-faint));
+  border-left: 2px solid var(--grandemonium-comment-author-color-light, var(--text-faint));
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -137,35 +137,35 @@
   cursor: pointer;
 }
 
-.theme-dark .tc-card button.tc-entry-collapsed {
-  border-left-color: var(--tc-author-color-dark, var(--text-faint));
+.theme-dark .grandemonium-comment-card button.grandemonium-comment-entry-collapsed {
+  border-left-color: var(--grandemonium-comment-author-color-dark, var(--text-faint));
 }
 
-.tc-card button.tc-entry-collapsed:hover,
-.tc-card button.tc-entry-collapsed:focus-visible {
+.grandemonium-comment-card button.grandemonium-comment-entry-collapsed:hover,
+.grandemonium-comment-card button.grandemonium-comment-entry-collapsed:focus-visible {
   background: var(--background-modifier-hover);
 }
 
-.tc-entry + .tc-entry-collapsed,
-.tc-entry-collapsed + .tc-entry {
+.grandemonium-comment-entry + .grandemonium-comment-entry-collapsed,
+.grandemonium-comment-entry-collapsed + .grandemonium-comment-entry {
   border-top: 1px solid var(--background-modifier-border);
 }
 
-.tc-entry-collapsed-icon {
+.grandemonium-comment-entry-collapsed-icon {
   display: flex;
   flex: 0 0 auto;
 }
 
-.tc-entry-collapsed-icon svg {
+.grandemonium-comment-entry-collapsed-icon svg {
   width: 12px;
   height: 12px;
 }
 
-.tc-entry-collapsed .tc-author {
+.grandemonium-comment-entry-collapsed .grandemonium-comment-author {
   flex: 0 0 auto;
 }
 
-.tc-entry-collapsed-text {
+.grandemonium-comment-entry-collapsed-text {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -174,7 +174,7 @@
 
 /* An opened entry's author and time fold it back: a button that still reads
    as the heading it stands in for. */
-.tc-meta button.tc-entry-fold {
+.grandemonium-comment-meta button.grandemonium-comment-entry-fold {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -191,41 +191,41 @@
   cursor: pointer;
 }
 
-.tc-meta button.tc-entry-fold .tc-entry-collapsed-icon {
+.grandemonium-comment-meta button.grandemonium-comment-entry-fold .grandemonium-comment-entry-collapsed-icon {
   margin-right: -2px;
 }
 
-.tc-meta button.tc-entry-fold:hover {
+.grandemonium-comment-meta button.grandemonium-comment-entry-fold:hover {
   color: var(--text-normal);
 }
 
-.tc-meta button.tc-entry-fold:focus-visible {
+.grandemonium-comment-meta button.grandemonium-comment-entry-fold:focus-visible {
   box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 /* An AI's error, kept in the thread: the alert leads, the text reads as one. */
-.tc-entry-error-icon {
+.grandemonium-comment-entry-error-icon {
   display: inline-flex;
   flex: 0 0 auto;
   align-self: center;
   color: var(--text-error);
 }
 
-.tc-entry-error-icon svg {
+.grandemonium-comment-entry-error-icon svg {
   width: 12px;
   height: 12px;
 }
 
-.tc-entry-error > .tc-text {
+.grandemonium-comment-entry-error > .grandemonium-comment-text {
   color: var(--text-error);
   white-space: pre-wrap;
 }
 
-.tc-entry-collapsed.tc-entry-error .tc-entry-collapsed-text {
+.grandemonium-comment-entry-collapsed.grandemonium-comment-entry-error .grandemonium-comment-entry-collapsed-text {
   color: var(--text-error);
 }
 
-.tc-meta {
+.grandemonium-comment-meta {
   display: flex;
   gap: 8px;
   align-items: baseline;
@@ -233,20 +233,20 @@
   color: var(--text-muted);
 }
 
-.tc-author {
+.grandemonium-comment-author {
   font-weight: 600;
   color: var(--text-normal);
 }
 
-.tc-author-colored {
-  color: var(--tc-author-color-light);
+.grandemonium-comment-author-colored {
+  color: var(--grandemonium-comment-author-color-light);
 }
 
-.theme-dark .tc-author-colored {
-  color: var(--tc-author-color-dark);
+.theme-dark .grandemonium-comment-author-colored {
+  color: var(--grandemonium-comment-author-color-dark);
 }
 
-.tc-entry-controls {
+.grandemonium-comment-entry-controls {
   margin-left: auto;
   flex: 0 0 auto;
   display: flex;
@@ -254,61 +254,61 @@
   gap: 2px;
 }
 
-.tc-entry-menu-trigger,
-.tc-entry-action {
+.grandemonium-comment-entry-menu-trigger,
+.grandemonium-comment-entry-action {
   width: 24px;
   height: 24px;
   padding: 4px;
 }
 
-.tc-entry-menu-trigger svg,
-.tc-entry-action svg {
+.grandemonium-comment-entry-menu-trigger svg,
+.grandemonium-comment-entry-action svg {
   width: 14px;
   height: 14px;
 }
 
-.tc-text {
+.grandemonium-comment-text {
   overflow-wrap: anywhere;
 }
 
-.tc-text p {
+.grandemonium-comment-text p {
   margin: 0.7em 0;
 }
 
-.tc-text > :first-child {
+.grandemonium-comment-text > :first-child {
   margin-top: 0;
 }
 
-.tc-text > :last-child {
+.grandemonium-comment-text > :last-child {
   margin-bottom: 0;
 }
 
-.tc-text-editable {
+.grandemonium-comment-text-editable {
   cursor: text;
   border-radius: 4px;
 }
 
-.tc-text-editable:hover {
+.grandemonium-comment-text-editable:hover {
   background: var(--background-modifier-hover);
 }
 
-.tc-text-editable:focus-visible {
+.grandemonium-comment-text-editable:focus-visible {
   outline: 2px solid var(--interactive-accent);
   outline-offset: 2px;
 }
 
-.tc-field-label {
+.grandemonium-comment-field-label {
   margin-top: 8px;
   font-size: var(--font-ui-smaller);
   font-weight: 600;
   color: var(--text-muted);
 }
 
-.tc-suggestion-card {
+.grandemonium-comment-suggestion-card {
   border-left: 3px solid var(--interactive-accent);
 }
 
-.tc-suggestion-heading {
+.grandemonium-comment-suggestion-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -316,28 +316,28 @@
   margin-bottom: 3px;
 }
 
-.tc-suggestion-title {
+.grandemonium-comment-suggestion-title {
   font-weight: 600;
 }
 
-.tc-suggestion-result {
+.grandemonium-comment-suggestion-result {
   border-radius: 999px;
   padding: 1px 7px;
   font-size: var(--font-ui-smaller);
   font-weight: 600;
 }
 
-.tc-suggestion-accepted {
+.grandemonium-comment-suggestion-accepted {
   color: var(--text-success);
   background: color-mix(in srgb, var(--text-success) 12%, transparent);
 }
 
-.tc-suggestion-declined {
+.grandemonium-comment-suggestion-declined {
   color: var(--text-muted);
   background: var(--background-secondary);
 }
 
-.tc-suggestion-change {
+.grandemonium-comment-suggestion-change {
   display: grid;
   gap: 3px;
   margin: 7px 0;
@@ -345,58 +345,58 @@
   font-size: var(--font-ui-small);
 }
 
-.tc-suggestion-original,
-.tc-suggestion-replacement {
+.grandemonium-comment-suggestion-original,
+.grandemonium-comment-suggestion-replacement {
   padding: 5px 7px;
   border-radius: 4px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.tc-suggestion-original {
+.grandemonium-comment-suggestion-original {
   color: var(--text-muted);
   background: var(--background-secondary);
   text-decoration: line-through;
 }
 
-.tc-suggestion-replacement {
+.grandemonium-comment-suggestion-replacement {
   color: var(--text-normal);
   background: color-mix(in srgb, var(--interactive-accent) 10%, var(--background-primary));
 }
 
-.tc-suggestion-arrow {
+.grandemonium-comment-suggestion-arrow {
   padding-left: 7px;
   color: var(--text-muted);
 }
 
-.tc-suggestion-warning {
+.grandemonium-comment-suggestion-warning {
   margin: 5px 0;
   color: var(--text-warning);
   font-size: var(--font-ui-smaller);
 }
 
-.tc-actions {
+.grandemonium-comment-actions {
   display: flex;
   gap: 6px;
   margin-top: 6px;
   flex-wrap: wrap;
 }
 
-.tc-input {
+.grandemonium-comment-input {
   width: 100%;
   margin-top: 6px;
   resize: vertical;
 }
 
-.tc-edit-input {
+.grandemonium-comment-edit-input {
   min-height: 64px;
 }
 
-.tc-edit-actions {
+.grandemonium-comment-edit-actions {
   justify-content: flex-end;
 }
 
-.tc-section {
+.grandemonium-comment-section {
   margin: 14px 0 6px;
   font-weight: 600;
   font-size: var(--font-ui-smaller);
@@ -405,91 +405,91 @@
   color: var(--text-muted);
 }
 
-.tc-empty,
-.tc-error {
+.grandemonium-comment-empty,
+.grandemonium-comment-error {
   color: var(--text-muted);
   padding: 12px 4px;
 }
 
-.tc-error {
+.grandemonium-comment-error {
   color: var(--text-error);
 }
 
-.tc-setting-error {
+.grandemonium-comment-setting-error {
   color: var(--text-error);
   margin-top: 4px;
 }
 
-.tc-author-colors-collapse {
+.grandemonium-comment-author-colors-collapse {
   margin: 14px 0;
   border-top: 1px solid var(--background-modifier-border);
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.tc-author-colors-summary {
+.grandemonium-comment-author-colors-summary {
   padding: 12px 0;
   cursor: pointer;
   touch-action: manipulation;
   font-weight: 400;
 }
 
-.tc-author-colors-summary:hover {
+.grandemonium-comment-author-colors-summary:hover {
   color: var(--text-accent);
 }
 
-.tc-author-colors-summary:focus-visible {
+.grandemonium-comment-author-colors-summary:focus-visible {
   outline: 2px solid var(--interactive-accent);
   outline-offset: 2px;
 }
 
-.tc-author-colors-content {
+.grandemonium-comment-author-colors-content {
   padding: 0 0 8px 20px;
 }
 
-.tc-author-colors-description {
+.grandemonium-comment-author-colors-description {
   margin-bottom: 6px;
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
 }
 
-.tc-author-colors-list-title {
+.grandemonium-comment-author-colors-list-title {
   margin-top: 12px;
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
   font-weight: 600;
 }
 
-.tc-setting-preview {
+.grandemonium-comment-setting-preview {
   margin-top: 4px;
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
 }
 
-.tc-setting-warning,
-.tc-setting-success {
+.grandemonium-comment-setting-warning,
+.grandemonium-comment-setting-success {
   margin-top: 4px;
   font-size: var(--font-ui-smaller);
 }
 
-.tc-setting-warning {
+.grandemonium-comment-setting-warning {
   color: var(--text-warning);
 }
 
-.tc-setting-success {
+.grandemonium-comment-setting-success {
   color: var(--text-success);
 }
 
-.tc-color-readability {
+.grandemonium-comment-color-readability {
   margin-top: 6px;
 }
 
-.tc-color-previews {
+.grandemonium-comment-color-previews {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.tc-color-preview {
+.grandemonium-comment-color-preview {
   min-width: 74px;
   padding: 4px 8px;
   border: 1px solid var(--background-modifier-border);
@@ -498,30 +498,30 @@
   text-align: center;
 }
 
-.tc-color-preview-light {
+.grandemonium-comment-color-preview-light {
   background: #ffffff;
 }
 
-.tc-color-preview-dark {
+.grandemonium-comment-color-preview-dark {
   background: #202020;
 }
 
-.tc-author-color-row .setting-item-info {
+.grandemonium-comment-author-color-row .setting-item-info {
   min-width: 0;
 }
 
-.tc-author-color-name {
+.grandemonium-comment-author-color-name {
   width: min(220px, 100%);
   font-weight: 500;
 }
 
 @media (max-width: 500px) {
-  .tc-author-colors-content {
+  .grandemonium-comment-author-colors-content {
     padding-left: 0;
   }
 }
 
-.tc-pill {
+.grandemonium-comment-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -533,26 +533,26 @@
   cursor: pointer;
 }
 
-.tc-pill-error {
+.grandemonium-comment-pill-error {
   color: var(--text-error);
 }
 
-.tc-hide-reading-indicator .tc-pill:not(.tc-pill-error) {
+.grandemonium-comment-hide-reading-indicator .grandemonium-comment-pill:not(.grandemonium-comment-pill-error) {
   display: none;
 }
 
-/* Live Preview: tandem-comments-Block-Widget vollständig ausblenden. */
-.tc-lp-hidden {
+/* Live Preview hides the comment block widget entirely. */
+.grandemonium-comment-lp-hidden {
   display: none;
 }
 
 /* Inline comment popover: the thread shown over its own highlight. */
-.cm-tooltip.tc-popover {
+.cm-tooltip.grandemonium-comment-popover {
   border: none;
   background: transparent;
 }
 
-.tc-popover-card {
+.grandemonium-comment-popover-card {
   display: flex;
   flex-direction: column;
   width: 320px;
@@ -570,17 +570,17 @@
   font-size: var(--font-ui-small);
 }
 
-.tc-popover-quote {
+.grandemonium-comment-popover-quote {
   font-style: italic;
   color: var(--text-muted);
-  border-left: 3px solid var(--tc-highlight-color, #ffd54a);
+  border-left: 3px solid var(--grandemonium-comment-highlight-color, #ffd54a);
   padding-left: 6px;
   margin-bottom: 8px;
   max-height: 3.2em;
   overflow: hidden;
 }
 
-.tc-popover-thread {
+.grandemonium-comment-popover-thread {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -589,12 +589,12 @@
   overflow-y: auto;
 }
 
-.tc-popover-text {
+.grandemonium-comment-popover-text {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.tc-popover-reply {
+.grandemonium-comment-popover-reply {
   width: 100%;
   min-height: 48px;
   margin-top: 9px;
@@ -603,23 +603,23 @@
   flex: 0 0 auto;
 }
 
-.tc-popover-actions {
+.grandemonium-comment-popover-actions {
   display: flex;
   gap: 6px;
   justify-content: flex-end;
   margin-top: 8px;
 }
 
-.tc-popover-actions .tc-popover-button {
+.grandemonium-comment-popover-actions .grandemonium-comment-popover-button {
   font-size: var(--font-ui-smaller);
 }
 
-.tc-popover-primary {
+.grandemonium-comment-popover-primary {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
 }
 
-.tc-popover-card.tc-popover-sized {
+.grandemonium-comment-popover-card.grandemonium-comment-popover-sized {
   max-height: none;
 }
 
@@ -627,32 +627,32 @@
    the surfaces around it suppress selection: the editor inside widgets, and
    Obsidian in its view chrome. An AI reply asking questions is answered by
    copying them out. */
-.tc-popover-card,
-.tc-popover-card *,
-.tc-text,
-.tc-quote,
-.tc-suggestion-original,
-.tc-suggestion-replacement,
-.tc-meta {
+.grandemonium-comment-popover-card,
+.grandemonium-comment-popover-card *,
+.grandemonium-comment-text,
+.grandemonium-comment-quote,
+.grandemonium-comment-suggestion-original,
+.grandemonium-comment-suggestion-replacement,
+.grandemonium-comment-meta {
   user-select: text;
   -webkit-user-select: text;
 }
 
 
-.tc-popover-suggestion {
+.grandemonium-comment-popover-suggestion {
   margin-bottom: 8px;
   padding: 6px 8px;
   border-radius: 6px;
   background: var(--background-secondary);
 }
 
-.tc-popover-suggestion-text {
+.grandemonium-comment-popover-suggestion-text {
   margin-top: 3px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.tc-popover-button:disabled {
+.grandemonium-comment-popover-button:disabled {
   opacity: 60%;
   cursor: not-allowed;
 }
@@ -665,18 +665,18 @@
    carries its author's colour so it matches the rail its reply will be drawn
    with. Kept tight and flush to the box so it reads as part of the composer
    rather than as another row of controls in the card. */
-.tc-reply-targets {
+.grandemonium-comment-reply-targets {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
   margin-top: 6px;
 }
 
-.tc-reply-targets + .tc-input {
+.grandemonium-comment-reply-targets + .grandemonium-comment-input {
   margin-top: 2px;
 }
 
-button.tc-reply-chip {
+button.grandemonium-comment-reply-chip {
   padding: 0 5px;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -688,27 +688,27 @@ button.tc-reply-chip {
   cursor: pointer;
 }
 
-button.tc-reply-chip:hover,
-button.tc-reply-chip:focus-visible {
+button.grandemonium-comment-reply-chip:hover,
+button.grandemonium-comment-reply-chip:focus-visible {
   color: var(--text-normal);
   background: var(--background-modifier-hover);
 }
 
-button.tc-reply-chip-on {
+button.grandemonium-comment-reply-chip-on {
   border-color: currentColor;
   color: var(--text-normal);
   font-weight: 600;
 }
 
-.tc-reply-chip-colored.tc-reply-chip-on {
-  color: var(--tc-author-color-light);
+.grandemonium-comment-reply-chip-colored.grandemonium-comment-reply-chip-on {
+  color: var(--grandemonium-comment-author-color-light);
 }
 
-.theme-dark .tc-reply-chip-colored.tc-reply-chip-on {
-  color: var(--tc-author-color-dark);
+.theme-dark .grandemonium-comment-reply-chip-colored.grandemonium-comment-reply-chip-on {
+  color: var(--grandemonium-comment-author-color-dark);
 }
 
-.tc-title-count {
+.grandemonium-comment-title-count {
   padding: 0 6px;
   border-radius: 9px;
   background: var(--background-modifier-hover);
@@ -716,7 +716,7 @@ button.tc-reply-chip-on {
   font-size: var(--font-ui-smaller);
 }
 
-.tc-running-pill {
+.grandemonium-comment-running-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -725,65 +725,65 @@ button.tc-reply-chip-on {
   font-size: var(--font-ui-smaller);
 }
 
-.tc-running-icon {
+.grandemonium-comment-running-icon {
   display: inline-flex;
 }
 
-.tc-running-icon .svg-icon,
-.tc-file-running .svg-icon {
+.grandemonium-comment-running-icon .svg-icon,
+.grandemonium-comment-file-running .svg-icon {
   width: 12px;
   height: 12px;
-  animation: tc-spin 1.4s linear infinite;
+  animation: grandemonium-comment-spin 1.4s linear infinite;
 }
 
-@keyframes tc-spin {
+@keyframes grandemonium-comment-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tc-running-icon .svg-icon,
-  .tc-file-running .svg-icon {
+  .grandemonium-comment-running-icon .svg-icon,
+  .grandemonium-comment-file-running .svg-icon {
     animation: none;
   }
 }
 
 /* File row. One line, no wrapping: the name is what matters, the folder is
    context, and a deep path is truncated rather than allowed to wrap. */
-/* Sticky rows bleed to the panel edges, which .tc-sidebar insets by 8px.
-   Without it a wider descendant such as .tc-entry-agent, which is deliberately
+/* Sticky rows bleed to the panel edges, which .grandemonium-comment-sidebar insets by 8px.
+   Without it a wider descendant such as .grandemonium-comment-entry-agent, which is deliberately
    drawn past its column, scrolls out either side of the pinned bar. */
-.tc-file > .tc-file-group,
-.tc-inbox-expanded > .tc-inbox-item {
-  margin-inline: calc(-1 * var(--tc-sidebar-pad));
-  padding-inline: var(--tc-sidebar-pad);
-  background: var(--tc-panel-bg);
+.grandemonium-comment-file > .grandemonium-comment-file-group,
+.grandemonium-comment-inbox-expanded > .grandemonium-comment-inbox-item {
+  margin-inline: calc(-1 * var(--grandemonium-comment-sidebar-pad));
+  padding-inline: var(--grandemonium-comment-sidebar-pad);
+  background: var(--grandemonium-comment-panel-bg);
 }
 
 /* A pinned row must stay opaque in every state. --background-modifier-hover is
    a translucent tint, so the plain hover rules below, which outrank the base by
    specificity or by order, would let the discussion scroll straight through the
    bar. Layering the tint over the panel colour keeps the feedback without it. */
-.tc-file > .tc-file-group:hover,
-.tc-file > .tc-file-group:focus-visible,
-.tc-inbox-expanded > .tc-inbox-item:hover,
-.tc-inbox-expanded > .tc-inbox-item:focus-within {
+.grandemonium-comment-file > .grandemonium-comment-file-group:hover,
+.grandemonium-comment-file > .grandemonium-comment-file-group:focus-visible,
+.grandemonium-comment-inbox-expanded > .grandemonium-comment-inbox-item:hover,
+.grandemonium-comment-inbox-expanded > .grandemonium-comment-inbox-item:focus-within {
   background:
     linear-gradient(var(--background-modifier-hover), var(--background-modifier-hover)),
-    var(--tc-panel-bg);
+    var(--grandemonium-comment-panel-bg);
 }
 
-.tc-file > .tc-file-group {
+.grandemonium-comment-file > .grandemonium-comment-file-group {
   position: sticky;
   top: 0;
   z-index: 3;
   box-sizing: border-box;
-  height: var(--tc-file-head-height);
+  height: var(--grandemonium-comment-file-head-height);
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-button.tc-file-group {
+button.grandemonium-comment-file-group {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -798,24 +798,24 @@ button.tc-file-group {
   cursor: pointer;
 }
 
-button.tc-file-group:hover,
-button.tc-file-group:focus-visible {
+button.grandemonium-comment-file-group:hover,
+button.grandemonium-comment-file-group:focus-visible {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.tc-file-chevron {
+.grandemonium-comment-file-chevron {
   display: inline-flex;
   flex-shrink: 0;
   color: var(--text-faint);
 }
 
-.tc-file-chevron .svg-icon {
+.grandemonium-comment-file-chevron .svg-icon {
   width: 12px;
   height: 12px;
 }
 
-.tc-file-name {
+.grandemonium-comment-file-name {
   flex-shrink: 0;
   max-width: 60%;
   font-size: var(--font-ui-small);
@@ -826,7 +826,7 @@ button.tc-file-group:focus-visible {
   white-space: nowrap;
 }
 
-.tc-file-folder {
+.grandemonium-comment-file-folder {
   flex-grow: 1;
   min-width: 0;
   font-size: var(--font-ui-smaller);
@@ -836,13 +836,13 @@ button.tc-file-group:focus-visible {
   white-space: nowrap;
 }
 
-.tc-file-running {
+.grandemonium-comment-file-running {
   display: inline-flex;
   flex-shrink: 0;
   color: var(--text-accent);
 }
 
-.tc-file-count {
+.grandemonium-comment-file-count {
   flex-shrink: 0;
   margin-left: auto;
   padding-left: 6px;
@@ -851,7 +851,7 @@ button.tc-file-group:focus-visible {
   color: var(--text-faint);
 }
 
-.tc-file-count-unread {
+.grandemonium-comment-file-count-unread {
   color: var(--text-accent);
   font-weight: 700;
 }
@@ -860,11 +860,11 @@ button.tc-file-group:focus-visible {
    either needing extra words. The rail is drawn per row rather than on the
    list, so a sticky header sits flush with the panel and can bleed cleanly to
    its edges. */
-.tc-file-threads {
+.grandemonium-comment-file-threads {
   margin-bottom: 6px;
 }
 
-.tc-inbox-item {
+.grandemonium-comment-inbox-item {
   display: flex;
   align-items: center;
   gap: 2px;
@@ -872,12 +872,12 @@ button.tc-file-group:focus-visible {
   padding-left: 6px;
 }
 
-.tc-inbox-item:hover,
-.tc-inbox-item:focus-within {
+.grandemonium-comment-inbox-item:hover,
+.grandemonium-comment-inbox-item:focus-within {
   background: var(--background-modifier-hover);
 }
 
-button.tc-inbox-row {
+button.grandemonium-comment-inbox-row {
   display: flex;
   align-items: baseline;
   gap: 6px;
@@ -892,33 +892,33 @@ button.tc-inbox-row {
   cursor: pointer;
 }
 
-button.tc-inbox-row:hover,
-button.tc-inbox-row:focus-visible {
+button.grandemonium-comment-inbox-row:hover,
+button.grandemonium-comment-inbox-row:focus-visible {
   color: var(--text-normal);
 }
 
-.tc-inbox-icon {
+.grandemonium-comment-inbox-icon {
   display: inline-flex;
   flex-shrink: 0;
   align-self: center;
   color: var(--text-faint);
 }
 
-.tc-inbox-icon .svg-icon {
+.grandemonium-comment-inbox-icon .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.tc-inbox-suggestion .tc-inbox-icon {
+.grandemonium-comment-inbox-suggestion .grandemonium-comment-inbox-icon {
   color: var(--text-success);
 }
 
-.tc-inbox-rewritten .tc-inbox-icon {
-  color: var(--tc-highlight-color, #ffd54a);
+.grandemonium-comment-inbox-rewritten .grandemonium-comment-inbox-icon {
+  color: var(--grandemonium-comment-highlight-color, #ffd54a);
 }
 
 /* One line, clipped with an ellipsis. Anything longer belongs in the card. */
-.tc-inbox-blurb {
+.grandemonium-comment-inbox-blurb {
   flex-grow: 1;
   min-width: 0;
   font-size: var(--font-ui-small);
@@ -927,14 +927,14 @@ button.tc-inbox-row:focus-visible {
   white-space: nowrap;
 }
 
-.tc-inbox-unread .tc-inbox-blurb {
+.grandemonium-comment-inbox-unread .grandemonium-comment-inbox-blurb {
   color: var(--text-normal);
   font-weight: 500;
 }
 
 /* The two things the reader is scanning for: has it come back, and is it still
    out. A date answered neither, so it gave up the column. */
-.tc-inbox-status {
+.grandemonium-comment-inbox-status {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -942,50 +942,50 @@ button.tc-inbox-row:focus-visible {
   align-self: center;
 }
 
-.tc-inbox-read-mark {
+.grandemonium-comment-inbox-read-mark {
   display: inline-flex;
   color: var(--text-faint);
 }
 
-.tc-inbox-read-mark-new {
+.grandemonium-comment-inbox-read-mark-new {
   color: var(--text-accent);
 }
 
-.tc-inbox-working {
+.grandemonium-comment-inbox-working {
   display: inline-flex;
   color: var(--text-accent);
 }
 
-.tc-inbox-status .svg-icon {
+.grandemonium-comment-inbox-status .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.tc-inbox-working .svg-icon {
-  animation: tc-spin 1.4s linear infinite;
+.grandemonium-comment-inbox-working .svg-icon {
+  animation: grandemonium-comment-spin 1.4s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tc-inbox-working .svg-icon {
+  .grandemonium-comment-inbox-working .svg-icon {
     animation: none;
   }
 }
 
 /* Quick resolve and open stay hidden until the row is reached for, so a long
    list reads as text rather than as rows of controls. */
-.tc-inbox-actions {
+.grandemonium-comment-inbox-actions {
   display: flex;
   gap: 0;
   flex-shrink: 0;
   opacity: 0;
 }
 
-.tc-inbox-item:hover .tc-inbox-actions,
-.tc-inbox-item:focus-within .tc-inbox-actions {
+.grandemonium-comment-inbox-item:hover .grandemonium-comment-inbox-actions,
+.grandemonium-comment-inbox-item:focus-within .grandemonium-comment-inbox-actions {
   opacity: 1;
 }
 
-.tc-inbox-actions .tc-entry-action {
+.grandemonium-comment-inbox-actions .grandemonium-comment-entry-action {
   width: 20px;
   height: 20px;
   padding: 3px;
@@ -993,53 +993,53 @@ button.tc-inbox-row:focus-visible {
 
 /* An opened thread keeps its own line as the header, so the click that opened
    it closes it again and the passage stays named the whole time. */
-.tc-inbox-expanded {
+.grandemonium-comment-inbox-expanded {
   margin: 2px 0 6px;
 }
 
 /* The open thread's own line pins below its file's, so both the note and the
    passage under debate stay named however far the discussion runs. It sticks
-   within .tc-inbox-expanded, so it releases of its own accord once that thread
+   within .grandemonium-comment-inbox-expanded, so it releases of its own accord once that thread
    scrolls past rather than stacking up with the next one. */
-.tc-inbox-expanded > .tc-inbox-item {
+.grandemonium-comment-inbox-expanded > .grandemonium-comment-inbox-item {
   position: sticky;
-  top: var(--tc-file-head-height);
+  top: var(--grandemonium-comment-file-head-height);
   z-index: 2;
   border-top: 0;
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.tc-inbox-expanded .tc-inbox-blurb {
+.grandemonium-comment-inbox-expanded .grandemonium-comment-inbox-blurb {
   color: var(--text-normal);
   font-weight: 600;
 }
 
-.tc-inbox-collapse {
+.grandemonium-comment-inbox-collapse {
   display: inline-flex;
   flex-shrink: 0;
   color: var(--text-faint);
 }
 
-.tc-inbox-collapse .svg-icon {
+.grandemonium-comment-inbox-collapse .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.tc-inbox-expanded .tc-inbox-actions {
+.grandemonium-comment-inbox-expanded .grandemonium-comment-inbox-actions {
   opacity: 1;
 }
 
-.tc-inbox-expanded-body {
+.grandemonium-comment-inbox-expanded-body {
   padding-left: 6px;
 }
 
 /* The header already names the passage, so the card's own quote of it is
    duplication here, unlike in the standalone card the popover uses. */
-.tc-inbox-expanded-body > .tc-card > .tc-quote {
+.grandemonium-comment-inbox-expanded-body > .grandemonium-comment-card > .grandemonium-comment-quote {
   display: none;
 }
 
-.tc-inbox-expanded-body .tc-card {
+.grandemonium-comment-inbox-expanded-body .grandemonium-comment-card {
   border: 0;
   border-radius: 0;
   padding: 6px 0 0;
@@ -1049,53 +1049,53 @@ button.tc-inbox-row:focus-visible {
 
 /* Repository section: comments about the whole vault, pinned above the files.
    Its header pins like a file header, with the new-comment button on it. */
-.tc-repo .tc-repo-hidden {
+.grandemonium-comment-repo .grandemonium-comment-repo-hidden {
   display: none;
 }
 
-.tc-repo > .tc-repo-header {
+.grandemonium-comment-repo > .grandemonium-comment-repo-header {
   position: sticky;
   top: 0;
   z-index: 3;
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  height: var(--tc-file-head-height);
-  margin-inline: calc(-1 * var(--tc-sidebar-pad));
-  padding-inline: var(--tc-sidebar-pad);
+  height: var(--grandemonium-comment-file-head-height);
+  margin-inline: calc(-1 * var(--grandemonium-comment-sidebar-pad));
+  padding-inline: var(--grandemonium-comment-sidebar-pad);
   border-bottom: 1px solid var(--background-modifier-border);
-  background: var(--tc-panel-bg);
+  background: var(--grandemonium-comment-panel-bg);
 }
 
-.tc-repo-header > .tc-repo-toggle {
+.grandemonium-comment-repo-header > .grandemonium-comment-repo-toggle {
   flex: 1;
   min-width: 0;
   height: 100%;
 }
 
-.tc-repo-header > .tc-repo-toggle > .tc-file-name {
+.grandemonium-comment-repo-header > .grandemonium-comment-repo-toggle > .grandemonium-comment-file-name {
   flex-grow: 1;
   max-width: none;
 }
 
-.tc-repo-icon {
+.grandemonium-comment-repo-icon {
   display: inline-flex;
   flex-shrink: 0;
   color: var(--text-muted);
 }
 
-.tc-repo-icon .svg-icon {
+.grandemonium-comment-repo-icon .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.tc-repo-add {
+.grandemonium-comment-repo-add {
   flex-shrink: 0;
 }
 
 /* The chat composer, reused. Its container class brings the provider brand
    colours; the layout it also sets is for a full-height view, not a box. */
-.tc-repo-composer.grandemonium-container {
+.grandemonium-comment-repo-composer.grandemonium-container {
   height: auto;
   overflow: visible;
   margin: 8px 0;
@@ -1104,7 +1104,7 @@ button.tc-inbox-row:focus-visible {
   background: var(--background-primary);
 }
 
-.tc-repo-composer .tc-repo-input {
+.grandemonium-comment-repo-composer .grandemonium-comment-repo-input {
   margin: 0;
   min-height: 60px;
   border: 0;
@@ -1114,62 +1114,62 @@ button.tc-inbox-row:focus-visible {
   resize: vertical;
 }
 
-.tc-repo-composer .tc-repo-input:focus {
+.grandemonium-comment-repo-composer .grandemonium-comment-repo-input:focus {
   box-shadow: none;
 }
 
-.tc-repo-composer:focus-within {
+.grandemonium-comment-repo-composer:focus-within {
   border-color: var(--interactive-accent);
 }
 
 /* The panel scrolls from the top, so toolbar menus open downward: opening up
    from the first box would put them behind the view header. */
-.tc-repo-composer .grandemonium-model-dropdown,
-.tc-repo-composer .grandemonium-thinking-options {
+.grandemonium-comment-repo-composer .grandemonium-model-dropdown,
+.grandemonium-comment-repo-composer .grandemonium-thinking-options {
   top: 100%;
   bottom: auto;
 }
 
-.tc-repo-list {
+.grandemonium-comment-repo-list {
   padding-top: 4px;
 }
 
-.tc-repo-item.tc-resolved .tc-inbox-blurb {
+.grandemonium-comment-repo-item.grandemonium-comment-resolved .grandemonium-comment-inbox-blurb {
   color: var(--text-faint);
   text-decoration: line-through;
 }
 
-.tc-repo-expanded .tc-repo-composer {
+.grandemonium-comment-repo-expanded .grandemonium-comment-repo-composer {
   margin-bottom: 0;
 }
 
-.tc-repo-streaming .tc-repo-stream-text {
+.grandemonium-comment-repo-streaming .grandemonium-comment-repo-stream-text {
   white-space: pre-wrap;
 }
 
-.tc-typing {
+.grandemonium-comment-typing {
   display: flex;
   gap: 4px;
   padding: 6px 0 2px;
 }
 
-.tc-typing-dot {
+.grandemonium-comment-typing-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: var(--text-muted);
-  animation: tc-typing 1.2s ease-in-out infinite;
+  animation: grandemonium-comment-typing 1.2s ease-in-out infinite;
 }
 
-.tc-typing-dot:nth-child(2) {
+.grandemonium-comment-typing-dot:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.tc-typing-dot:nth-child(3) {
+.grandemonium-comment-typing-dot:nth-child(3) {
   animation-delay: 0.4s;
 }
 
-@keyframes tc-typing {
+@keyframes grandemonium-comment-typing {
   0%,
   60%,
   100% {
@@ -1183,13 +1183,13 @@ button.tc-inbox-row:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tc-typing-dot {
+  .grandemonium-comment-typing-dot {
     animation: none;
     opacity: 0.6;
   }
 }
 
-.tc-repo-activity {
+.grandemonium-comment-repo-activity {
   font-family: var(--font-monospace);
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
@@ -1198,17 +1198,17 @@ button.tc-inbox-row:focus-visible {
   white-space: nowrap;
 }
 
-.tc-repo-waiting {
+.grandemonium-comment-repo-waiting {
   display: inline-flex;
   color: var(--text-warning);
 }
 
-.tc-repo-waiting .svg-icon {
+.grandemonium-comment-repo-waiting .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.tc-repo-approval {
+.grandemonium-comment-repo-approval {
   margin: 6px 0;
   padding: 8px;
   border: 1px solid var(--text-warning);
@@ -1216,7 +1216,7 @@ button.tc-inbox-row:focus-visible {
   background: var(--background-secondary);
 }
 
-.tc-repo-approval-title {
+.grandemonium-comment-repo-approval-title {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1224,13 +1224,13 @@ button.tc-inbox-row:focus-visible {
   font-size: var(--font-ui-small);
 }
 
-.tc-repo-approval-title .svg-icon {
+.grandemonium-comment-repo-approval-title .svg-icon {
   width: 14px;
   height: 14px;
   color: var(--text-warning);
 }
 
-.tc-repo-approval-detail {
+.grandemonium-comment-repo-approval-detail {
   margin-top: 4px;
   font-family: var(--font-monospace);
   font-size: var(--font-ui-smaller);

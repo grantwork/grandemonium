@@ -1,4 +1,4 @@
-import { type AuthorColorOverrides, normalizeAuthorColorOverrides } from "./authorColor";
+import { type AuthorColorOverrides, normalizeAuthorColorOverrides } from './authorColor';
 
 /** Sent to every enabled AI when the review action is triggered. */
 export const DEFAULT_REVIEW_PROMPT =
@@ -7,12 +7,12 @@ export const DEFAULT_REVIEW_PROMPT =
 /** Sent to one AI when asked to carry out what it proposed in a reply. */
 export const DEFAULT_IMPLEMENT_PROMPT = 'Implement your suggested changes';
 
-export type ResolveBehavior = "keep" | "remove";
-export type ExportScope = "all" | "open";
-export type ExportDestination = "source" | "folder";
-export type SidebarSortOrder = "document" | "newest" | "oldest";
-export type SubmitShortcut = "enter" | "mod-enter";
-export type TimestampDisplay = "full" | "compact" | "relative" | "hidden";
+export type ResolveBehavior = 'keep' | 'remove';
+export type ExportScope = 'all' | 'open';
+export type ExportDestination = 'source' | 'folder';
+export type SidebarSortOrder = 'document' | 'newest' | 'oldest';
+export type SubmitShortcut = 'enter' | 'mod-enter';
+export type TimestampDisplay = 'full' | 'compact' | 'relative' | 'hidden';
 
 export interface CommentsSettings {
   highlightColor: string;
@@ -49,14 +49,14 @@ export interface CommentsSettings {
 }
 
 export const DEFAULT_SETTINGS: CommentsSettings = {
-  highlightColor: "#ffd54a",
+  highlightColor: '#ffd54a',
   highlightOpacity: 30,
   colorAuthorNames: true,
   showResolvedByDefault: false,
-  resolveBehavior: "remove",
-  sidebarSortOrder: "document",
-  submitShortcut: "enter",
-  timestampDisplay: "full",
+  resolveBehavior: 'remove',
+  sidebarSortOrder: 'document',
+  submitShortcut: 'enter',
+  timestampDisplay: 'full',
   confirmDestructiveActions: true,
   commentOnSelection: true,
   commentPopover: true,
@@ -65,15 +65,15 @@ export const DEFAULT_SETTINGS: CommentsSettings = {
   commentPopoverHeight: 0,
   reviewPrompt: DEFAULT_REVIEW_PROMPT,
   implementPrompt: DEFAULT_IMPLEMENT_PROMPT,
-  replyTarget: "",
+  replyTarget: '',
   reviewOnComment: true,
   showReadingViewIndicator: true,
   schemaHint: true,
   copyIncludeQuote: true,
-  exportNameTemplate: "{{filename}} – Comments",
-  exportScope: "all",
-  exportDestination: "source",
-  exportFolder: "",
+  exportNameTemplate: '{{filename}} – Comments',
+  exportScope: 'all',
+  exportDestination: 'source',
+  exportFolder: '',
   authorColorOverrides: {},
 };
 
@@ -91,19 +91,19 @@ export interface SettingsEffects {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function booleanSetting(value: unknown, fallback: boolean): boolean {
-  return typeof value === "boolean" ? value : fallback;
+  return typeof value === 'boolean' ? value : fallback;
 }
 
 function stringSetting(value: unknown, fallback: string): string {
-  return typeof value === "string" ? value : fallback;
+  return typeof value === 'string' ? value : fallback;
 }
 
 function enumSetting<T extends string>(value: unknown, values: readonly T[], fallback: T): T {
-  return typeof value === "string" && values.includes(value as T) ? (value as T) : fallback;
+  return typeof value === 'string' && values.includes(value as T) ? (value as T) : fallback;
 }
 
 /** Sizes outside this range leave the popover unreadable or off screen. */
@@ -113,24 +113,24 @@ export const MAX_POPOVER_SIZE = 720;
 
 /** Zero means the reader has never resized a popover, so the CSS default wins. */
 function popoverSizeSetting(value: unknown, min: number, max: number): number {
-  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return 0;
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return 0;
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
 function opacitySetting(value: unknown): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) return DEFAULT_SETTINGS.highlightOpacity;
+  if (typeof value !== 'number' || !Number.isFinite(value)) return DEFAULT_SETTINGS.highlightOpacity;
   return Math.min(80, Math.max(10, Math.round(value)));
 }
 
 export function normalizeVaultFolderPath(value: unknown): string {
-  if (typeof value !== "string") return "";
-  return value.trim().replace(/^\/+|\/+$/g, "").replace(/\/{2,}/g, "/");
+  if (typeof value !== 'string') return '';
+  return value.trim().replace(/^\/+|\/+$/g, '').replace(/\/{2,}/g, '/');
 }
 
 export function validateVaultFolderPath(value: string): string | null {
   const path = normalizeVaultFolderPath(value);
-  if (path.split("/").some((part) => part === "." || part === "..")) {
-    return "Choose a folder inside the vault.";
+  if (path.split('/').some((part) => part === '.' || part === '..')) {
+    return 'Choose a folder inside the vault.';
   }
   return null;
 }
@@ -139,36 +139,36 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
   const raw = isRecord(value) ? value : {};
   const template = stringSetting(raw.exportNameTemplate, DEFAULT_SETTINGS.exportNameTemplate)
     .trim()
-    .replace(/\.md$/i, "");
+    .replace(/\.md$/i, '');
   const resolveBehavior = enumSetting(
     raw.resolveBehavior,
-    ["keep", "remove"] as const,
+    ['keep', 'remove'] as const,
     DEFAULT_SETTINGS.resolveBehavior
   );
   const settings: CommentsSettings = {
     highlightColor:
-      typeof raw.highlightColor === "string" && /^#[0-9a-f]{6}$/i.test(raw.highlightColor)
+      typeof raw.highlightColor === 'string' && /^#[0-9a-f]{6}$/i.test(raw.highlightColor)
         ? raw.highlightColor.toLowerCase()
         : DEFAULT_SETTINGS.highlightColor,
     highlightOpacity: opacitySetting(raw.highlightOpacity),
     colorAuthorNames: booleanSetting(raw.colorAuthorNames, DEFAULT_SETTINGS.colorAuthorNames),
     showResolvedByDefault:
-      resolveBehavior === "keep" &&
+      resolveBehavior === 'keep' &&
       booleanSetting(raw.showResolvedByDefault, DEFAULT_SETTINGS.showResolvedByDefault),
     resolveBehavior,
     sidebarSortOrder: enumSetting(
       raw.sidebarSortOrder,
-      ["document", "newest", "oldest"] as const,
+      ['document', 'newest', 'oldest'] as const,
       DEFAULT_SETTINGS.sidebarSortOrder
     ),
     submitShortcut: enumSetting(
       raw.submitShortcut,
-      ["enter", "mod-enter"] as const,
+      ['enter', 'mod-enter'] as const,
       DEFAULT_SETTINGS.submitShortcut
     ),
     timestampDisplay: enumSetting(
       raw.timestampDisplay,
-      ["full", "compact", "relative", "hidden"] as const,
+      ['full', 'compact', 'relative', 'hidden'] as const,
       DEFAULT_SETTINGS.timestampDisplay
     ),
     confirmDestructiveActions: booleanSetting(
@@ -204,10 +204,10 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
     schemaHint: booleanSetting(raw.schemaHint, DEFAULT_SETTINGS.schemaHint),
     copyIncludeQuote: booleanSetting(raw.copyIncludeQuote, DEFAULT_SETTINGS.copyIncludeQuote),
     exportNameTemplate: template || DEFAULT_SETTINGS.exportNameTemplate,
-    exportScope: enumSetting(raw.exportScope, ["all", "open"] as const, DEFAULT_SETTINGS.exportScope),
+    exportScope: enumSetting(raw.exportScope, ['all', 'open'] as const, DEFAULT_SETTINGS.exportScope),
     exportDestination: enumSetting(
       raw.exportDestination,
-      ["source", "folder"] as const,
+      ['source', 'folder'] as const,
       DEFAULT_SETTINGS.exportDestination
     ),
     exportFolder:
@@ -223,8 +223,8 @@ export function parseCommentsSettings(value: unknown): ParsedCommentsSettings {
 }
 
 export function validateExportNameTemplate(value: string): string | null {
-  if (!value.trim()) return "Enter an export note name.";
-  if (/\.md\s*$/i.test(value)) return "Leave off the .md extension; Tandem Comments adds it automatically.";
+  if (!value.trim()) return 'Enter an export note name.';
+  if (/\.md\s*$/i.test(value)) return 'Leave off the .md extension; Grandemonium adds it automatically.';
   return null;
 }
 

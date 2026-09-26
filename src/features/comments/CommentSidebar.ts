@@ -1,5 +1,5 @@
 import type {
-  WorkspaceLeaf} from "obsidian";
+  WorkspaceLeaf} from 'obsidian';
 import {
   type HoverParent,
   type HoverPopover,
@@ -11,24 +11,24 @@ import {
   type PaneType,
   setIcon,
   setTooltip,
-  TFile} from "obsidian";
+  TFile} from 'obsidian';
 
-import { type AuthorColorOverrides,resolveAuthorColor } from "./authorColor";
-import type { CommentsController } from "./CommentsController";
-import { confirmAction } from "./confirmAction";
-import { formatComment, formatTs } from "./export";
-import { type InboxFileGroup, type InboxItem, readMarkKey } from "./inboxModel";
+import { type AuthorColorOverrides,resolveAuthorColor } from './authorColor';
+import type { CommentsController } from './CommentsController';
+import { confirmAction } from './confirmAction';
+import { formatComment, formatTs } from './export';
+import { type InboxFileGroup, type InboxItem, readMarkKey } from './inboxModel';
 import {
   refreshWorkingAges,
   renderExpandedHeader,
   renderFileHeader,
   renderInboxRow,
   renderStopButton,
-} from "./inboxRow";
-import { renderReplyTargets } from "./replyTarget";
-import { RepositoryPanel } from "./RepositoryPanel";
-import type { SelectionRange } from "./selectionComment";
-import { shouldSubmitComment } from "./sidebarPreferences";
+} from './inboxRow';
+import { renderReplyTargets } from './replyTarget';
+import { RepositoryPanel } from './RepositoryPanel';
+import type { SelectionRange } from './selectionComment';
+import { shouldSubmitComment } from './sidebarPreferences';
 import {
   addComment,
   addReply,
@@ -41,22 +41,22 @@ import {
   resolveAnchor,
   setStatus,
   type SuggestionFailureReason,
-} from "./store";
-import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from "./threadCollapse";
-import { renderThreadActivity, type ThreadStatusHost } from "./threadStatus";
-import { formatSidebarTimestamp } from "./timestamp";
-import type { Anchor, ResolvedComment, ThreadEntry } from "./types";
-import { UnsentInputs } from "./UnsentInputs";
+} from './store';
+import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from './threadCollapse';
+import { renderThreadActivity, type ThreadStatusHost } from './threadStatus';
+import { formatSidebarTimestamp } from './timestamp';
+import type { Anchor, ResolvedComment, ThreadEntry } from './types';
+import { UnsentInputs } from './UnsentInputs';
 
-export const VIEW_TYPE_COMMENTS = "grandemonium-comments";
+export const VIEW_TYPE_COMMENTS = 'grandemonium-comments';
 
 /** Keys the draft's boxes are kept under; there is only ever one draft. */
-const DRAFT_INPUTS = ["draft comment", "draft replacement", "draft explanation"] as const;
+const DRAFT_INPUTS = ['draft comment', 'draft replacement', 'draft explanation'] as const;
 
 interface Draft {
   filePath: string;
   anchor: Anchor;
-  kind: "comment" | "suggestion";
+  kind: 'comment' | 'suggestion';
   /**
    * Whether the next render moves focus into the comment box. Consumed on that
    * render, so later re-renders never pull focus out of the editor.
@@ -65,7 +65,7 @@ interface Draft {
 }
 
 function truncate(s: string, n: number): string {
-  return s.length <= n ? s : s.slice(0, n - 1) + "…";
+  return s.length <= n ? s : s.slice(0, n - 1) + '…';
 }
 
 /** Colors an author name span with accessible light and dark variants. */
@@ -80,14 +80,14 @@ function applyAuthorColorVars(
   overrides: AuthorColorOverrides,
   enabled: boolean
 ): void {
-  el.dataset.tcAuthor = author;
+  el.dataset.commentAuthor = author;
   if (!enabled) {
-    el.style.removeProperty("--tc-author-color-light");
-    el.style.removeProperty("--tc-author-color-dark");
+    el.style.removeProperty('--grandemonium-comment-author-color-light');
+    el.style.removeProperty('--grandemonium-comment-author-color-dark');
     return;
   }
-  el.style.setProperty("--tc-author-color-light", resolveAuthorColor(author, overrides, "light"));
-  el.style.setProperty("--tc-author-color-dark", resolveAuthorColor(author, overrides, "dark"));
+  el.style.setProperty('--grandemonium-comment-author-color-light', resolveAuthorColor(author, overrides, 'light'));
+  el.style.setProperty('--grandemonium-comment-author-color-dark', resolveAuthorColor(author, overrides, 'dark'));
 }
 
 function paintAuthor(
@@ -98,32 +98,32 @@ function paintAuthor(
 ): void {
   applyAuthorColorVars(el, author, overrides, enabled);
   if (!enabled) {
-    el.removeClass("tc-author-colored");
+    el.removeClass('grandemonium-comment-author-colored');
     return;
   }
-  el.addClass("tc-author-colored");
+  el.addClass('grandemonium-comment-author-colored');
 }
 
 export function suggestionFailureMessage(reason: SuggestionFailureReason): string {
   switch (reason) {
-    case "no-editor":
-      return "Open this file in a Markdown editor before accepting the suggestion.";
-    case "invalid-document":
-      return "The comments in this note cannot be read. Fix the comment block before accepting the suggestion.";
-    case "invalid-suggestion":
-      return "The suggestion data is invalid. Its replacement must be text.";
-    case "orphaned":
-      return "The original passage no longer exists. Re-anchor the suggestion before accepting it.";
-    case "ambiguous":
-      return "The original passage appears more than once. Re-anchor the suggestion before accepting it.";
-    case "empty-replacement":
-      return "Empty replacements are not supported yet.";
-    case "already-resolved":
-      return "This suggestion has already been resolved.";
-    case "not-suggestion":
-      return "This entry is not an edit suggestion.";
-    case "missing":
-      return "The suggestion or its editor is no longer available.";
+    case 'no-editor':
+      return 'Open this file in a Markdown editor before accepting the suggestion.';
+    case 'invalid-document':
+      return 'The comments in this note cannot be read. Fix the comment block before accepting the suggestion.';
+    case 'invalid-suggestion':
+      return 'The suggestion data is invalid. Its replacement must be text.';
+    case 'orphaned':
+      return 'The original passage no longer exists. Re-anchor the suggestion before accepting it.';
+    case 'ambiguous':
+      return 'The original passage appears more than once. Re-anchor the suggestion before accepting it.';
+    case 'empty-replacement':
+      return 'Empty replacements are not supported yet.';
+    case 'already-resolved':
+      return 'This suggestion has already been resolved.';
+    case 'not-suggestion':
+      return 'This entry is not an edit suggestion.';
+    case 'missing':
+      return 'The suggestion or its editor is no longer available.';
   }
 }
 
@@ -160,10 +160,10 @@ export class CommentSidebar extends ItemView implements HoverParent {
     return VIEW_TYPE_COMMENTS;
   }
   getDisplayText(): string {
-    return "Comments";
+    return 'Comments';
   }
   getIcon(): string {
-    return "message-square";
+    return 'message-square';
   }
 
   /** Timestamps and author colours, drawn from the current settings each time. */
@@ -189,7 +189,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
     });
     // Saved notes need no listener here: the controller redraws once the index
     // has read the change, which is what the panel draws from.
-    this.registerEvent(this.app.workspace.on("file-open", () => void this.render()));
+    this.registerEvent(this.app.workspace.on('file-open', () => void this.render()));
     // Ages of reviews in flight, updated in place: a redraw on a timer would
     // throw away a reply being typed. Costs nothing while nothing is running.
     this.registerInterval(
@@ -199,7 +199,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
     );
     this.registerInterval(
       window.setInterval(() => {
-        if (this.plugin.settings.timestampDisplay === "relative") this.refreshTimestamps();
+        if (this.plugin.settings.timestampDisplay === 'relative') this.refreshTimestamps();
       }, 60_000)
     );
     await this.render();
@@ -221,13 +221,13 @@ export class CommentSidebar extends ItemView implements HoverParent {
    */
   startDraft(file: TFile, anchor: Anchor, options: { focus?: boolean } = {}): void {
     this.forgetDraftInputs();
-    this.draft = { filePath: file.path, anchor, kind: "comment", focusInput: options.focus ?? true };
+    this.draft = { filePath: file.path, anchor, kind: 'comment', focusInput: options.focus ?? true };
     void this.render();
   }
 
   startSuggestionDraft(file: TFile, anchor: Anchor): void {
     this.forgetDraftInputs();
-    this.draft = { filePath: file.path, anchor, kind: "suggestion", focusInput: true };
+    this.draft = { filePath: file.path, anchor, kind: 'suggestion', focusInput: true };
     void this.render();
   }
 
@@ -235,7 +235,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
   draftRange(filePath: string, prose: string): SelectionRange | null {
     if (!this.draft || this.draft.filePath !== filePath) return null;
     const resolution = resolveAnchor(prose, this.draft.anchor);
-    return resolution.kind === "resolved"
+    return resolution.kind === 'resolved'
       ? { from: resolution.start, to: resolution.end }
       : null;
   }
@@ -267,9 +267,9 @@ export class CommentSidebar extends ItemView implements HoverParent {
 
   refreshAuthorColors(): void {
     for (const el of Array.from(
-      this.contentEl.querySelectorAll<HTMLElement>(".tc-entry[data-tc-author]")
+      this.contentEl.querySelectorAll<HTMLElement>('.grandemonium-comment-entry[data-comment-author]')
     )) {
-      const author = el.dataset.tcAuthor;
+      const author = el.dataset.commentAuthor;
       if (author != null) {
         applyAuthorColorVars(
           el,
@@ -279,8 +279,8 @@ export class CommentSidebar extends ItemView implements HoverParent {
         );
       }
     }
-    for (const el of Array.from(this.contentEl.querySelectorAll<HTMLElement>(".tc-author[data-tc-author]"))) {
-      const author = el.dataset.tcAuthor;
+    for (const el of Array.from(this.contentEl.querySelectorAll<HTMLElement>('.grandemonium-comment-author[data-comment-author]'))) {
+      const author = el.dataset.commentAuthor;
       if (author != null) {
         paintAuthor(
           el,
@@ -315,34 +315,34 @@ export class CommentSidebar extends ItemView implements HoverParent {
     for (const child of Array.from(container.children)) {
       if (child !== repository) child.remove();
     }
-    container.addClass("tc-sidebar");
+    container.addClass('grandemonium-comment-sidebar');
 
     const file = this.app.workspace.getActiveFile();
-    const activeMarkdown = file && file.extension === "md" ? file : null;
+    const activeMarkdown = file && file.extension === 'md' ? file : null;
     const inbox = this.plugin.inbox();
 
-    const header = container.createDiv({ cls: "tc-header" });
-    header.createSpan({ text: "Comments", cls: "tc-title" });
+    const header = container.createDiv({ cls: 'grandemonium-comment-header' });
+    header.createSpan({ text: 'Comments', cls: 'grandemonium-comment-title' });
     if (inbox.openCount) {
-      header.createSpan({ text: String(inbox.openCount), cls: "tc-title-count" });
+      header.createSpan({ text: String(inbox.openCount), cls: 'grandemonium-comment-title-count' });
     }
     if (inbox.runningCount) {
-      const pill = header.createSpan({ cls: "tc-running-pill" });
-      setIcon(pill.createSpan({ cls: "tc-running-icon" }), "loader");
+      const pill = header.createSpan({ cls: 'grandemonium-comment-running-pill' });
+      setIcon(pill.createSpan({ cls: 'grandemonium-comment-running-icon' }), 'loader');
       pill.createSpan({ text: String(inbox.runningCount) });
       setTooltip(pill, `${inbox.runningCount} note(s) with an AI still working`);
     }
-    const toggle = header.createEl("button", {
-      text: this.showResolved ? "Hide resolved" : "Show resolved",
-      cls: "tc-toggle",
-      attr: { type: "button" },
+    const toggle = header.createEl('button', {
+      text: this.showResolved ? 'Hide resolved' : 'Show resolved',
+      cls: 'grandemonium-comment-toggle',
+      attr: { type: 'button' },
     });
     toggle.onclick = () => this.toggleResolved();
     if (activeMarkdown) {
-      const exportBtn = header.createEl("button", {
-        text: "Export",
-        cls: "tc-toggle",
-        attr: { type: "button" },
+      const exportBtn = header.createEl('button', {
+        text: 'Export',
+        cls: 'grandemonium-comment-toggle',
+        attr: { type: 'button' },
       });
       exportBtn.onclick = () => void this.plugin.exportComments(activeMarkdown);
     }
@@ -362,12 +362,12 @@ export class CommentSidebar extends ItemView implements HoverParent {
 
     for (const group of inbox.files) this.renderFileGroup(container, group);
     if (this.showResolved && inbox.resolvedGroups.length) {
-      container.createDiv({ cls: "tc-section", text: "Resolved" });
+      container.createDiv({ cls: 'grandemonium-comment-section', text: 'Resolved' });
       for (const group of inbox.resolvedGroups) this.renderFileGroup(container, group);
     }
 
-    if (!container.querySelector(".tc-card, .tc-file-group:not(.tc-repo-toggle), .tc-repo-item")) {
-      container.createDiv({ text: "No comments anywhere in this vault.", cls: "tc-empty" });
+    if (!container.querySelector('.grandemonium-comment-card, .grandemonium-comment-file-group:not(.grandemonium-comment-repo-toggle), .grandemonium-comment-repo-item')) {
+      container.createDiv({ text: 'No comments anywhere in this vault.', cls: 'grandemonium-comment-empty' });
     }
     container.scrollTop = prevScroll;
   }
@@ -390,7 +390,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
       },
       selected: names.includes(this.plugin.settings.replyTarget)
         ? this.plugin.settings.replyTarget
-        : "",
+        : '',
     });
   }
 
@@ -399,7 +399,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
     // Each file owns a block so its header can stick within it: a sticky pins
     // only while its own parent is on screen, which is what hands the top of
     // the panel from one file to the next instead of stacking them up.
-    const section = container.createDiv({ cls: "tc-file" });
+    const section = container.createDiv({ cls: 'grandemonium-comment-file' });
     renderFileHeader(section, group, {
       collapsed,
       onToggle: () => {
@@ -409,7 +409,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
       },
     });
     if (collapsed) return;
-    const list = section.createDiv({ cls: "tc-file-threads" });
+    const list = section.createDiv({ cls: 'grandemonium-comment-file-threads' });
     for (const item of group.items) this.renderInboxItem(list, item);
   }
 
@@ -437,25 +437,25 @@ export class CommentSidebar extends ItemView implements HoverParent {
    */
   private async confirmStop(item: InboxItem): Promise<void> {
     const confirmed = await confirmAction(this.app, {
-      title: "Stop the review?",
+      title: 'Stop the review?',
       message:
-        "The AI is still working on this comment. Anything it has already written " +
-        "to the note stays.",
-      confirmLabel: "Stop",
+        'The AI is still working on this comment. Anything it has already written ' +
+        'to the note stays.',
+      confirmLabel: 'Stop',
     });
     if (confirmed) this.plugin.stopReviews(item.filePath, item.id);
   }
 
   /** Clears a thread from a note the reader does not have open. */
   private async resolveItem(file: TFile, item: InboxItem): Promise<void> {
-    const removes = this.plugin.settings.resolveBehavior === "remove";
+    const removes = this.plugin.settings.resolveBehavior === 'remove';
     if (
       removes &&
       this.plugin.settings.confirmDestructiveActions &&
       !(await confirmAction(this.app, {
-        title: "Resolve comment?",
-        message: "This will permanently remove the comment thread from the note.",
-        confirmLabel: "Resolve",
+        title: 'Resolve comment?',
+        message: 'This will permanently remove the comment thread from the note.',
+        confirmLabel: 'Resolve',
       }))
     ) {
       return;
@@ -463,7 +463,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
     if (this.expandedKey === readMarkKey(item.filePath, item.id)) this.expandedKey = null;
     await this.plugin.updateDoc(file, (d) => {
       if (removes) removeComment(d.comments, item.id);
-      else setStatus(d.comments, item.id, "resolved");
+      else setStatus(d.comments, item.id, 'resolved');
     });
   }
 
@@ -472,8 +472,8 @@ export class CommentSidebar extends ItemView implements HoverParent {
    * entry menus and deletion behave identically wherever the thread lives.
    */
   private renderExpandedItem(container: HTMLElement, file: TFile, item: InboxItem): void {
-    const wrapper = container.createDiv({ cls: "tc-inbox-expanded" });
-    const line = wrapper.createDiv({ cls: "tc-inbox-item" });
+    const wrapper = container.createDiv({ cls: 'grandemonium-comment-inbox-expanded' });
+    const line = wrapper.createDiv({ cls: 'grandemonium-comment-inbox-item' });
     // The same line the reader clicked, in the same place, so closing a thread
     // is the gesture that opened it rather than a separate control to find.
     renderExpandedHeader(
@@ -485,16 +485,16 @@ export class CommentSidebar extends ItemView implements HoverParent {
       },
       () => Date.now()
     );
-    const actions = line.createDiv({ cls: "tc-inbox-actions" });
+    const actions = line.createDiv({ cls: 'grandemonium-comment-inbox-actions' });
     if (item.workingSince !== null) renderStopButton(actions, () => void this.confirmStop(item));
-    const open = actions.createEl("button", {
-      cls: "tc-entry-action clickable-icon",
-      attr: { "aria-label": "Open in note", type: "button" },
+    const open = actions.createEl('button', {
+      cls: 'grandemonium-comment-entry-action clickable-icon',
+      attr: { 'aria-label': 'Open in note', type: 'button' },
     });
-    setIcon(open, "square-arrow-out-up-right");
-    setTooltip(open, "Open in note");
+    setIcon(open, 'square-arrow-out-up-right');
+    setTooltip(open, 'Open in note');
     open.onclick = () => void this.plugin.revealComment(file, item.id);
-    this.renderComment(wrapper.createDiv({ cls: "tc-inbox-expanded-body" }), file, {
+    this.renderComment(wrapper.createDiv({ cls: 'grandemonium-comment-inbox-expanded-body' }), file, {
       comment: item.comment,
       id: item.id,
       resolution: item.resolution,
@@ -513,30 +513,30 @@ export class CommentSidebar extends ItemView implements HoverParent {
   private renderDraft(container: HTMLElement, file: TFile): void {
     const draft = this.draft;
     if (!draft) return;
-    const card = container.createDiv({ cls: "tc-card tc-draft" });
-    card.createDiv({ text: `"${truncate(draft.anchor.exact, 80)}"`, cls: "tc-quote" });
-    if (draft.kind === "suggestion") {
+    const card = container.createDiv({ cls: 'grandemonium-comment-card grandemonium-comment-draft' });
+    card.createDiv({ text: `"${truncate(draft.anchor.exact, 80)}"`, cls: 'grandemonium-comment-quote' });
+    if (draft.kind === 'suggestion') {
       this.renderSuggestionDraft(card, file, draft);
       return;
     }
     this.renderReplyTargets(card);
-    const input = card.createEl("textarea", {
-      cls: "tc-input",
+    const input = card.createEl('textarea', {
+      cls: 'grandemonium-comment-input',
       attr: {
         placeholder:
-          this.plugin.settings.submitShortcut === "enter"
-            ? "Comment… (Enter = save, Esc = cancel)"
-            : "Comment… (Cmd/Ctrl+Enter = save, Esc = cancel)",
-        rows: "3",
+          this.plugin.settings.submitShortcut === 'enter'
+            ? 'Comment… (Enter = save, Esc = cancel)'
+            : 'Comment… (Cmd/Ctrl+Enter = save, Esc = cancel)',
+        rows: '3',
       },
     });
-    this.inputs.bind("draft comment", input);
+    this.inputs.bind('draft comment', input);
     if (draft.focusInput) {
       draft.focusInput = false;
       window.setTimeout(() => input.focus(), 0);
     }
     input.onkeydown = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         this.forgetDraftInputs();
         this.draft = null;
         void this.render();
@@ -546,7 +546,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
         if (!text) return;
         // Captured so the new thread can be marked as awaiting its agent; the
         // id is minted inside the mutation and is not knowable before it runs.
-        let newId = "";
+        let newId = '';
         void this.plugin
           .updateDoc(file, (d) => {
             newId = generateId(d.comments);
@@ -572,26 +572,26 @@ export class CommentSidebar extends ItemView implements HoverParent {
   }
 
   private renderSuggestionDraft(card: HTMLElement, file: TFile, draft: Draft): void {
-    card.createDiv({ text: "Suggested replacement", cls: "tc-field-label" });
-    const replacement = card.createEl("textarea", {
-      cls: "tc-input",
-      attr: { placeholder: "Replacement text…", rows: "3", "aria-label": "Suggested replacement" },
+    card.createDiv({ text: 'Suggested replacement', cls: 'grandemonium-comment-field-label' });
+    const replacement = card.createEl('textarea', {
+      cls: 'grandemonium-comment-input',
+      attr: { placeholder: 'Replacement text…', rows: '3', 'aria-label': 'Suggested replacement' },
     });
-    card.createDiv({ text: "Explanation (optional)", cls: "tc-field-label" });
-    const note = card.createEl("textarea", {
-      cls: "tc-input",
-      attr: { placeholder: "Why this change?", rows: "2", "aria-label": "Suggestion explanation" },
+    card.createDiv({ text: 'Explanation (optional)', cls: 'grandemonium-comment-field-label' });
+    const note = card.createEl('textarea', {
+      cls: 'grandemonium-comment-input',
+      attr: { placeholder: 'Why this change?', rows: '2', 'aria-label': 'Suggestion explanation' },
     });
-    this.inputs.bind("draft replacement", replacement);
-    this.inputs.bind("draft explanation", note);
-    const actions = card.createDiv({ cls: "tc-actions" });
-    const save = actions.createEl("button", { text: "Add suggestion", cls: "mod-cta" });
-    const cancel = actions.createEl("button", { text: "Cancel" });
+    this.inputs.bind('draft replacement', replacement);
+    this.inputs.bind('draft explanation', note);
+    const actions = card.createDiv({ cls: 'grandemonium-comment-actions' });
+    const save = actions.createEl('button', { text: 'Add suggestion', cls: 'mod-cta' });
+    const cancel = actions.createEl('button', { text: 'Cancel' });
 
     const submit = (): void => {
       if (save.disabled) return;
       if (replacement.value.length === 0) {
-        new Notice("Enter replacement text first.");
+        new Notice('Enter replacement text first.');
         replacement.focus();
         return;
       }
@@ -629,7 +629,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
     save.onclick = submit;
     cancel.onclick = discard;
     replacement.onkeydown = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         discard();
       } else if (this.shouldSubmit(e)) {
         e.preventDefault();
@@ -637,7 +637,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
       }
     };
     note.onkeydown = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         discard();
       } else if (this.shouldSubmit(e)) {
         e.preventDefault();
@@ -651,73 +651,73 @@ export class CommentSidebar extends ItemView implements HoverParent {
   }
 
   private renderComment(container: HTMLElement, file: TFile, r: ResolvedComment): void {
-    const cls = ["tc-card"];
-    if (r.comment.status === "resolved") cls.push("tc-resolved");
+    const cls = ['grandemonium-comment-card'];
+    if (r.comment.status === 'resolved') cls.push('grandemonium-comment-resolved');
     if (
-      r.resolution.kind === "orphaned" &&
-      !(r.comment.suggestion?.result === "accepted" && r.comment.status === "resolved")
+      r.resolution.kind === 'orphaned' &&
+      !(r.comment.suggestion?.result === 'accepted' && r.comment.status === 'resolved')
     ) {
-      cls.push("tc-orphan");
+      cls.push('grandemonium-comment-orphan');
     }
-    if (r.comment.suggestion) cls.push("tc-suggestion-card");
-    if (r.resolution.kind === "resolved" && r.resolution.ambiguous) cls.push("tc-ambiguous");
-    const card = container.createDiv({ cls: cls.join(" ") });
+    if (r.comment.suggestion) cls.push('grandemonium-comment-suggestion-card');
+    if (r.resolution.kind === 'resolved' && r.resolution.ambiguous) cls.push('grandemonium-comment-ambiguous');
+    const card = container.createDiv({ cls: cls.join(' ') });
     const copyThread = (): void => {
       void navigator.clipboard
         .writeText(formatComment(r, { includeQuote: this.plugin.settings.copyIncludeQuote, formatTs }))
-        .then(() => new Notice("Thread copied."));
+        .then(() => new Notice('Thread copied.'));
     };
     const showMenu = (trigger: HTMLElement, build: (menu: Menu) => void): void => {
       const menu = new Menu();
       build(menu);
-      trigger.setAttr("aria-expanded", "true");
-      menu.onHide(() => trigger.setAttr("aria-expanded", "false"));
+      trigger.setAttr('aria-expanded', 'true');
+      menu.onHide(() => trigger.setAttr('aria-expanded', 'false'));
       const rect = trigger.getBoundingClientRect();
       menu.showAtPosition({ x: rect.right, y: rect.bottom, left: true }, trigger.ownerDocument);
     };
     const addCopyMenuItem = (menu: Menu): void => {
-      menu.addItem((item) => item.setTitle("Copy").setIcon("copy").onClick(copyThread));
+      menu.addItem((item) => item.setTitle('Copy').setIcon('copy').onClick(copyThread));
     };
     const addResolveButton = (controls: HTMLElement): void => {
-      const resolveBtn = controls.createEl("button", {
-        cls: "tc-entry-action clickable-icon",
+      const resolveBtn = controls.createEl('button', {
+        cls: 'grandemonium-comment-entry-action clickable-icon',
         attr: {
-          "aria-label": "Resolve comment",
+          'aria-label': 'Resolve comment',
         },
       });
-      setIcon(resolveBtn, "check");
-      setTooltip(resolveBtn, "Resolve");
+      setIcon(resolveBtn, 'check');
+      setTooltip(resolveBtn, 'Resolve');
       resolveBtn.onclick = () => {
         void (async () => {
           if (
-            this.plugin.settings.resolveBehavior === "remove" &&
+            this.plugin.settings.resolveBehavior === 'remove' &&
             this.plugin.settings.confirmDestructiveActions &&
             !(await confirmAction(this.app, {
-              title: "Resolve comment?",
-              message: "This will permanently remove the comment thread from the note.",
-              confirmLabel: "Resolve",
+              title: 'Resolve comment?',
+              message: 'This will permanently remove the comment thread from the note.',
+              confirmLabel: 'Resolve',
             }))
           ) {
             return;
           }
           await this.plugin.updateDoc(file, (d) => {
-            if (this.plugin.settings.resolveBehavior === "remove") removeComment(d.comments, r.id);
-            else setStatus(d.comments, r.id, "resolved");
+            if (this.plugin.settings.resolveBehavior === 'remove') removeComment(d.comments, r.id);
+            else setStatus(d.comments, r.id, 'resolved');
           });
         })();
       };
     };
     const addReviewButton = (controls: HTMLElement): void => {
       if (!this.plugin.canRequestReview()) return;
-      const reviewBtn = controls.createEl("button", {
-        cls: "tc-entry-action clickable-icon",
+      const reviewBtn = controls.createEl('button', {
+        cls: 'grandemonium-comment-entry-action clickable-icon',
         attr: {
-          "aria-label": "Ask AI to review open comments",
-          type: "button",
+          'aria-label': 'Ask AI to review open comments',
+          type: 'button',
         },
       });
-      setIcon(reviewBtn, "sparkles");
-      setTooltip(reviewBtn, "Ask AI to review");
+      setIcon(reviewBtn, 'sparkles');
+      setTooltip(reviewBtn, 'Ask AI to review');
       reviewBtn.onclick = () => {
         void this.plugin.requestReview(file.path, null, r.id);
       };
@@ -730,15 +730,15 @@ export class CommentSidebar extends ItemView implements HoverParent {
       deleteAction: () => Promise<unknown>,
       extra?: (menu: Menu) => void
     ): void => {
-      const trigger = controls.createEl("button", {
-        cls: "tc-entry-menu-trigger clickable-icon",
+      const trigger = controls.createEl('button', {
+        cls: 'grandemonium-comment-entry-menu-trigger clickable-icon',
         attr: {
-          "aria-label": ariaLabel,
-          "aria-haspopup": "menu",
-          "aria-expanded": "false",
+          'aria-label': ariaLabel,
+          'aria-haspopup': 'menu',
+          'aria-expanded': 'false',
         },
       });
-      setIcon(trigger, "ellipsis");
+      setIcon(trigger, 'ellipsis');
       trigger.onclick = () =>
         showMenu(trigger, (menu) => {
           addCopyMenuItem(menu);
@@ -746,7 +746,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
           menu.addItem((item) =>
             item
               .setTitle(deleteTitle)
-              .setIcon("trash-2")
+              .setIcon('trash-2')
               .setWarning(true)
               .onClick(() => {
                 void (async () => {
@@ -767,92 +767,92 @@ export class CommentSidebar extends ItemView implements HoverParent {
         });
     };
     if (r.id === this.focusedId) {
-      card.addClass("tc-focused");
-      window.setTimeout(() => card.scrollIntoView({ block: "nearest" }), 0);
+      card.addClass('grandemonium-comment-focused');
+      window.setTimeout(() => card.scrollIntoView({ block: 'nearest' }), 0);
       this.focusedId = null;
     }
 
     if (r.comment.suggestion) {
       const suggestion = r.comment.suggestion;
       const replacement =
-        typeof suggestion.replacement === "string" ? suggestion.replacement : "";
+        typeof suggestion.replacement === 'string' ? suggestion.replacement : '';
       const suggestionResult =
-        suggestion.result === "accepted" || suggestion.result === "declined"
+        suggestion.result === 'accepted' || suggestion.result === 'declined'
           ? suggestion.result
           : undefined;
-      const heading = card.createDiv({ cls: "tc-suggestion-heading" });
-      heading.createSpan({ text: "Suggested edit", cls: "tc-suggestion-title" });
+      const heading = card.createDiv({ cls: 'grandemonium-comment-suggestion-heading' });
+      heading.createSpan({ text: 'Suggested edit', cls: 'grandemonium-comment-suggestion-title' });
       if (suggestionResult) {
         heading.createSpan({
-          text: suggestionResult === "accepted" ? "Accepted" : "Declined",
-          cls: `tc-suggestion-result tc-suggestion-${suggestionResult}`,
+          text: suggestionResult === 'accepted' ? 'Accepted' : 'Declined',
+          cls: `grandemonium-comment-suggestion-result grandemonium-comment-suggestion-${suggestionResult}`,
         });
       }
-      const meta = card.createDiv({ cls: "tc-meta" });
+      const meta = card.createDiv({ cls: 'grandemonium-comment-meta' });
       paintAuthor(
-        meta.createSpan({ text: suggestion.author, cls: "tc-author" }),
+        meta.createSpan({ text: suggestion.author, cls: 'grandemonium-comment-author' }),
         suggestion.author,
         this.plugin.settings.authorColorOverrides,
         this.plugin.settings.colorAuthorNames
       );
       this.addTimestamp(meta, suggestion.ts);
-      const suggestionControls = meta.createDiv({ cls: "tc-entry-controls" });
+      const suggestionControls = meta.createDiv({ cls: 'grandemonium-comment-entry-controls' });
       addMenuTrigger(
         suggestionControls,
-        "More options for suggestion",
-        "Delete Suggestion",
-        "This will permanently remove the suggestion and its discussion from the note.",
+        'More options for suggestion',
+        'Delete Suggestion',
+        'This will permanently remove the suggestion and its discussion from the note.',
         () => this.plugin.updateDoc(file, (d) => removeComment(d.comments, r.id))
       );
-      const change = card.createDiv({ cls: "tc-suggestion-change" });
-      const original = change.createDiv({ text: r.comment.anchor.exact, cls: "tc-suggestion-original" });
-      if (r.resolution.kind === "resolved") {
-        original.addClass("tc-quote-link");
+      const change = card.createDiv({ cls: 'grandemonium-comment-suggestion-change' });
+      const original = change.createDiv({ text: r.comment.anchor.exact, cls: 'grandemonium-comment-suggestion-original' });
+      if (r.resolution.kind === 'resolved') {
+        original.addClass('grandemonium-comment-quote-link');
         original.onclick = () => this.plugin.revealAnchor(file, r.comment.anchor);
       }
-      change.createDiv({ text: "↓", cls: "tc-suggestion-arrow", attr: { "aria-hidden": "true" } });
+      change.createDiv({ text: '↓', cls: 'grandemonium-comment-suggestion-arrow', attr: { 'aria-hidden': 'true' } });
       change.createDiv({
-        text: replacement || (typeof suggestion.replacement === "string" ? "" : "Invalid replacement data"),
-        cls: "tc-suggestion-replacement",
+        text: replacement || (typeof suggestion.replacement === 'string' ? '' : 'Invalid replacement data'),
+        cls: 'grandemonium-comment-suggestion-replacement',
       });
-      if (r.comment.status === "open" && r.resolution.kind === "orphaned") {
-        card.createDiv({ text: "Original passage not found.", cls: "tc-suggestion-warning" });
+      if (r.comment.status === 'open' && r.resolution.kind === 'orphaned') {
+        card.createDiv({ text: 'Original passage not found.', cls: 'grandemonium-comment-suggestion-warning' });
       } else if (
-        r.comment.status === "open" &&
-        r.resolution.kind === "resolved" &&
+        r.comment.status === 'open' &&
+        r.resolution.kind === 'resolved' &&
         r.resolution.ambiguous
       ) {
         card.createDiv({
-          text: "Original passage appears more than once. Re-anchor before accepting.",
-          cls: "tc-suggestion-warning",
+          text: 'Original passage appears more than once. Re-anchor before accepting.',
+          cls: 'grandemonium-comment-suggestion-warning',
         });
-      } else if (r.comment.status === "open" && replacement.length === 0) {
+      } else if (r.comment.status === 'open' && replacement.length === 0) {
         card.createDiv({
           text:
-            typeof suggestion.replacement === "string"
-              ? "Empty replacements are not supported yet."
-              : "Replacement must be text.",
-          cls: "tc-suggestion-warning",
+            typeof suggestion.replacement === 'string'
+              ? 'Empty replacements are not supported yet.'
+              : 'Replacement must be text.',
+          cls: 'grandemonium-comment-suggestion-warning',
         });
       }
     } else {
-      const quote = card.createDiv({ text: `"${truncate(r.comment.anchor.exact, 80)}"`, cls: "tc-quote" });
-      if (r.resolution.kind === "resolved") {
-        quote.addClass("tc-quote-link");
+      const quote = card.createDiv({ text: `"${truncate(r.comment.anchor.exact, 80)}"`, cls: 'grandemonium-comment-quote' });
+      if (r.resolution.kind === 'resolved') {
+        quote.addClass('grandemonium-comment-quote-link');
         quote.onclick = () => this.plugin.revealAnchor(file, r.comment.anchor);
       }
       if (r.comment.thread.length === 0) {
-        const fallbackMeta = card.createDiv({ cls: "tc-meta" });
-        const fallbackControls = fallbackMeta.createDiv({ cls: "tc-entry-controls" });
-        if (r.comment.status === "open") {
+        const fallbackMeta = card.createDiv({ cls: 'grandemonium-comment-meta' });
+        const fallbackControls = fallbackMeta.createDiv({ cls: 'grandemonium-comment-entry-controls' });
+        if (r.comment.status === 'open') {
           addReviewButton(fallbackControls);
           addResolveButton(fallbackControls);
         }
         addMenuTrigger(
           fallbackControls,
-          "More options for comment",
-          "Delete Comment",
-          "This will permanently remove the comment thread from the note.",
+          'More options for comment',
+          'Delete Comment',
+          'This will permanently remove the comment thread from the note.',
           () => this.plugin.updateDoc(file, (d) => removeComment(d.comments, r.id))
         );
       }
@@ -879,7 +879,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
       let beginEdit = (_resumed = false): void => undefined;
       const isAgentEntry = this.plugin.isAgentAuthor(entry.author);
       const row = card.createDiv({
-        cls: isAgentEntry ? "tc-entry tc-entry-agent" : "tc-entry",
+        cls: isAgentEntry ? 'grandemonium-comment-entry grandemonium-comment-entry-agent' : 'grandemonium-comment-entry',
       });
       applyAuthorColorVars(
         row,
@@ -887,7 +887,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
         this.plugin.settings.authorColorOverrides,
         this.plugin.settings.colorAuthorNames
       );
-      const meta = row.createDiv({ cls: "tc-meta" });
+      const meta = row.createDiv({ cls: 'grandemonium-comment-meta' });
       const heading = kept[entryIndex]
         ? meta
         : renderEntryFoldToggle(meta, entry, () => {
@@ -895,22 +895,22 @@ export class CommentSidebar extends ItemView implements HoverParent {
             void this.render();
           });
       paintAuthor(
-        heading.createSpan({ text: entry.author, cls: "tc-author" }),
+        heading.createSpan({ text: entry.author, cls: 'grandemonium-comment-author' }),
         entry.author,
         this.plugin.settings.authorColorOverrides,
         this.plugin.settings.colorAuthorNames
       );
       this.addTimestamp(heading, entry.ts);
-      const entryControls = meta.createDiv({ cls: "tc-entry-controls" });
-      if (r.comment.status === "open" && this.plugin.isAgentAuthor(entry.author)) {
-        const implementBtn = entryControls.createEl("button", {
-          cls: "tc-entry-action clickable-icon",
+      const entryControls = meta.createDiv({ cls: 'grandemonium-comment-entry-controls' });
+      if (r.comment.status === 'open' && this.plugin.isAgentAuthor(entry.author)) {
+        const implementBtn = entryControls.createEl('button', {
+          cls: 'grandemonium-comment-entry-action clickable-icon',
           attr: {
-            "aria-label": `Ask ${entry.author} to make these changes`,
-            type: "button",
+            'aria-label': `Ask ${entry.author} to make these changes`,
+            type: 'button',
           },
         });
-        setIcon(implementBtn, "wand-2");
+        setIcon(implementBtn, 'wand-2');
         setTooltip(implementBtn, `Ask ${entry.author} to implement`);
         implementBtn.onclick = () => {
           void this.plugin.requestImplementation(entry.author, {
@@ -922,32 +922,32 @@ export class CommentSidebar extends ItemView implements HoverParent {
           });
         };
       }
-      if (entryIndex === 0 && r.comment.status === "open" && !r.comment.suggestion) {
+      if (entryIndex === 0 && r.comment.status === 'open' && !r.comment.suggestion) {
         addReviewButton(entryControls);
         addResolveButton(entryControls);
       }
       addMenuTrigger(
         entryControls,
         `More options for comment by ${entry.author}`,
-        "Delete Comment",
+        'Delete Comment',
         entryIndex === 0
-          ? "This will permanently remove the comment thread from the note."
-          : "This will permanently remove this reply from the comment thread.",
+          ? 'This will permanently remove the comment thread from the note.'
+          : 'This will permanently remove this reply from the comment thread.',
         () => this.plugin.updateDoc(file, (d) => removeThreadEntry(d.comments, r.id, entryIndex)),
         (menu) =>
           menu.addItem((item) =>
             item
-              .setTitle("Edit")
-              .setIcon("pencil")
+              .setTitle('Edit')
+              .setIcon('pencil')
               .onClick(() => beginEdit())
           )
       );
 
       const textEl = row.createDiv({
-        cls: "tc-text tc-text-editable",
+        cls: 'grandemonium-comment-text grandemonium-comment-text-editable',
         attr: {
-          tabindex: "0",
-          "aria-label": `Comment by ${entry.author}. Press Enter to edit.`,
+          tabindex: '0',
+          'aria-label': `Comment by ${entry.author}. Press Enter to edit.`,
         },
       });
       // Use Obsidian's renderer and inherit its Markdown, sanitization, and
@@ -966,17 +966,17 @@ export class CommentSidebar extends ItemView implements HoverParent {
         }
         const expected = this.editing.get(entryKey) ?? { ...entry };
         this.editing.set(entryKey, expected);
-        const input = row.createEl("textarea", {
-          cls: "tc-input tc-edit-input",
-          attr: { rows: "3", "aria-label": `Edit comment by ${entry.author}` },
+        const input = row.createEl('textarea', {
+          cls: 'grandemonium-comment-input grandemonium-comment-edit-input',
+          attr: { rows: '3', 'aria-label': `Edit comment by ${entry.author}` },
         });
         editInput = input;
         input.value = expected.text;
         this.inputs.bind(editKey, input);
         textEl.replaceWith(input);
-        const editActions = row.createDiv({ cls: "tc-actions tc-edit-actions" });
-        const save = editActions.createEl("button", { text: "Save", cls: "mod-cta" });
-        const cancel = editActions.createEl("button", { text: "Cancel" });
+        const editActions = row.createDiv({ cls: 'grandemonium-comment-actions grandemonium-comment-edit-actions' });
+        const save = editActions.createEl('button', { text: 'Save', cls: 'mod-cta' });
+        const cancel = editActions.createEl('button', { text: 'Cancel' });
         const finish = (): void => {
           this.editing.delete(entryKey);
           this.inputs.forget(editKey);
@@ -987,7 +987,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
           if (save.disabled) return;
           const text = input.value.trim();
           if (!text) {
-            new Notice("Comment cannot be empty.");
+            new Notice('Comment cannot be empty.');
             input.focus();
             return;
           }
@@ -997,7 +997,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
           }
           save.disabled = true;
           cancel.disabled = true;
-          let failure: "missing" | "conflict" | null = null;
+          let failure: 'missing' | 'conflict' | null = null;
           void this.plugin
             .updateDoc(file, (d) => {
               const result = editThreadEntry(d.comments, r.id, entryIndex, expected, text);
@@ -1009,10 +1009,10 @@ export class CommentSidebar extends ItemView implements HoverParent {
                 cancel.disabled = false;
                 return;
               }
-              if (failure === "conflict") {
-                new Notice("This comment changed while you were editing it. Your edit was not saved.");
-              } else if (failure === "missing") {
-                new Notice("This comment no longer exists. Your edit was not saved.");
+              if (failure === 'conflict') {
+                new Notice('This comment changed while you were editing it. Your edit was not saved.');
+              } else if (failure === 'missing') {
+                new Notice('This comment no longer exists. Your edit was not saved.');
               }
               finish();
             });
@@ -1021,7 +1021,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
         save.onclick = submit;
         cancel.onclick = finish;
         input.onkeydown = (e) => {
-          if (e.key === "Escape") {
+          if (e.key === 'Escape') {
             e.preventDefault();
             finish();
           } else if (this.shouldSubmit(e)) {
@@ -1040,7 +1040,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
       // AI reply full of questions is there to be copied out and answered.
       textEl.onkeydown = (e) => {
         if (e.target !== textEl) return;
-        if (e.key === "Enter" || e.key === "F2") {
+        if (e.key === 'Enter' || e.key === 'F2') {
           e.preventDefault();
           beginEdit();
         }
@@ -1048,14 +1048,14 @@ export class CommentSidebar extends ItemView implements HoverParent {
     }
     renderThreadActivity(card, this.plugin.threadActivity(file.path, r.id), this.authorHost);
 
-    const actions = card.createDiv({ cls: "tc-actions" });
-    if (r.comment.status === "open" && r.comment.suggestion && !r.comment.suggestion.result) {
+    const actions = card.createDiv({ cls: 'grandemonium-comment-actions' });
+    if (r.comment.status === 'open' && r.comment.suggestion && !r.comment.suggestion.result) {
       const canAccept =
-        r.resolution.kind === "resolved" &&
+        r.resolution.kind === 'resolved' &&
         !r.resolution.ambiguous &&
-        typeof r.comment.suggestion.replacement === "string" &&
+        typeof r.comment.suggestion.replacement === 'string' &&
         r.comment.suggestion.replacement.length > 0;
-      const acceptBtn = actions.createEl("button", { text: "Accept", cls: "mod-cta" });
+      const acceptBtn = actions.createEl('button', { text: 'Accept', cls: 'mod-cta' });
       acceptBtn.disabled = !canAccept;
       acceptBtn.onclick = () => {
         const result = this.plugin.acceptEditSuggestion(file, r.id);
@@ -1065,16 +1065,16 @@ export class CommentSidebar extends ItemView implements HoverParent {
         }
         card.remove();
       };
-      const declineBtn = actions.createEl("button", { text: "Decline" });
+      const declineBtn = actions.createEl('button', { text: 'Decline' });
       declineBtn.onclick = () => {
         void (async () => {
           if (
-            this.plugin.settings.resolveBehavior === "remove" &&
+            this.plugin.settings.resolveBehavior === 'remove' &&
             this.plugin.settings.confirmDestructiveActions &&
             !(await confirmAction(this.app, {
-              title: "Decline suggestion?",
-              message: "This will permanently remove the suggestion and its discussion from the note.",
-              confirmLabel: "Decline",
+              title: 'Decline suggestion?',
+              message: 'This will permanently remove the suggestion and its discussion from the note.',
+              confirmLabel: 'Decline',
             }))
           ) {
             return;
@@ -1085,29 +1085,29 @@ export class CommentSidebar extends ItemView implements HoverParent {
           });
         })();
       };
-    } else if (r.comment.status === "resolved" && !r.comment.suggestion) {
-      const reopenBtn = actions.createEl("button", { text: "Reopen" });
-      reopenBtn.onclick = () => void this.plugin.updateDoc(file, (d) => setStatus(d.comments, r.id, "open"));
+    } else if (r.comment.status === 'resolved' && !r.comment.suggestion) {
+      const reopenBtn = actions.createEl('button', { text: 'Reopen' });
+      reopenBtn.onclick = () => void this.plugin.updateDoc(file, (d) => setStatus(d.comments, r.id, 'open'));
     }
     if (
-      r.comment.status === "open" &&
-      (r.resolution.kind === "orphaned" ||
-        (r.comment.suggestion && r.resolution.kind === "resolved" && r.resolution.ambiguous))
+      r.comment.status === 'open' &&
+      (r.resolution.kind === 'orphaned' ||
+        (r.comment.suggestion && r.resolution.kind === 'resolved' && r.resolution.ambiguous))
     ) {
-      const reBtn = actions.createEl("button", { text: "Re-anchor to selection" });
+      const reBtn = actions.createEl('button', { text: 'Re-anchor to selection' });
       reBtn.onclick = () => this.reanchorFromSelection(file, r.id);
     }
     if (!actions.hasChildNodes()) actions.remove();
-    if (r.comment.status === "open") {
+    if (r.comment.status === 'open') {
       this.renderReplyTargets(card);
-      const reply = card.createEl("textarea", {
-        cls: "tc-input",
+      const reply = card.createEl('textarea', {
+        cls: 'grandemonium-comment-input',
         attr: {
           placeholder:
-            this.plugin.settings.submitShortcut === "enter"
-              ? "Reply… (Enter = send)"
-              : "Reply… (Cmd/Ctrl+Enter = send)",
-          rows: "2",
+            this.plugin.settings.submitShortcut === 'enter'
+              ? 'Reply… (Enter = send)'
+              : 'Reply… (Cmd/Ctrl+Enter = send)',
+          rows: '2',
         },
       });
       this.inputs.bind(`reply ${readMarkKey(file.path, r.id)}`, reply);
@@ -1116,7 +1116,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
           e.preventDefault();
           const text = reply.value.trim();
           if (!text) return;
-          reply.value = "";
+          reply.value = '';
           void this.plugin
             .updateDoc(file, (d) =>
               addReply(d.comments, r.id, this.plugin.currentAuthor(), this.plugin.nowTs(), text)
@@ -1141,11 +1141,11 @@ export class CommentSidebar extends ItemView implements HoverParent {
    */
   private wireCommentLinks(textEl: HTMLElement, file: TFile): void {
     const findInternalLink = (evt: Event): HTMLAnchorElement | null => {
-      const link = (evt.target as Element | null)?.closest?.("a.internal-link");
+      const link = (evt.target as Element | null)?.closest?.('a.internal-link');
       return link && textEl.contains(link) ? (link as HTMLAnchorElement) : null;
     };
     const getLinkTarget = (link: HTMLAnchorElement): string | null =>
-      link.getAttribute("data-href") ?? link.getAttribute("href");
+      link.getAttribute('data-href') ?? link.getAttribute('href');
     const openInternalLink = (evt: MouseEvent, newLeaf: PaneType | boolean): void => {
       const link = findInternalLink(evt);
       if (!link) return;
@@ -1156,18 +1156,18 @@ export class CommentSidebar extends ItemView implements HoverParent {
       evt.stopPropagation();
       void this.app.workspace.openLinkText(target, file.path, newLeaf);
     };
-    textEl.addEventListener("click", (evt) => {
+    textEl.addEventListener('click', (evt) => {
       openInternalLink(evt, Keymap.isModEvent(evt));
     });
-    textEl.addEventListener("auxclick", (evt) => {
+    textEl.addEventListener('auxclick', (evt) => {
       if (evt.button === 1) openInternalLink(evt, true);
     });
-    textEl.addEventListener("mouseover", (evt) => {
+    textEl.addEventListener('mouseover', (evt) => {
       const link = findInternalLink(evt);
       if (!link) return;
       const target = getLinkTarget(link);
       if (!target) return;
-      this.app.workspace.trigger("hover-link", {
+      this.app.workspace.trigger('hover-link', {
         event: evt,
         source: this.plugin.manifest.id,
         hoverParent: this,
@@ -1181,18 +1181,18 @@ export class CommentSidebar extends ItemView implements HoverParent {
   private addTimestamp(container: HTMLElement, timestamp: string): void {
     const formatted = formatSidebarTimestamp(timestamp, this.plugin.settings.timestampDisplay);
     if (formatted === null) return;
-    const element = container.createSpan({ text: formatted, cls: "tc-ts" });
-    element.dataset.tcTimestamp = timestamp;
-    if (this.plugin.settings.timestampDisplay !== "full") {
+    const element = container.createSpan({ text: formatted, cls: 'grandemonium-comment-ts' });
+    element.dataset.commentTimestamp = timestamp;
+    if (this.plugin.settings.timestampDisplay !== 'full') {
       setTooltip(element, formatTs(timestamp));
     }
   }
 
   private refreshTimestamps(): void {
     for (const element of Array.from(
-      this.contentEl.querySelectorAll<HTMLElement>(".tc-ts[data-tc-timestamp]")
+      this.contentEl.querySelectorAll<HTMLElement>('.grandemonium-comment-ts[data-comment-timestamp]')
     )) {
-      const timestamp = element.dataset.tcTimestamp;
+      const timestamp = element.dataset.commentTimestamp;
       if (!timestamp) continue;
       const formatted = formatSidebarTimestamp(timestamp, this.plugin.settings.timestampDisplay);
       if (formatted !== null) element.setText(formatted);
@@ -1202,7 +1202,7 @@ export class CommentSidebar extends ItemView implements HoverParent {
   private reanchorFromSelection(file: TFile, id: string): void {
     const sel = this.plugin.getProseSelection(file);
     if (!sel) {
-      new Notice("Select the new text passage in the editor first.");
+      new Notice('Select the new text passage in the editor first.');
       return;
     }
     void this.plugin.updateDoc(file, (d) => {

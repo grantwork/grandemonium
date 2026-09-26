@@ -1,6 +1,6 @@
-import type { Editor } from "obsidian";
+import type { Editor } from 'obsidian';
 
-import type { SuggestionAcceptancePlan } from "./store";
+import type { SuggestionAcceptancePlan } from './store';
 
 type SuccessfulSuggestionAcceptancePlan = Extract<SuggestionAcceptancePlan, { ok: true }>;
 

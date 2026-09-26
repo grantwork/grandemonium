@@ -1,12 +1,12 @@
-import type { SidebarSortOrder } from "./CommentsSettings";
-import type { AnchorResolution, CommentEntry, ResolvedComment } from "./types";
+import type { SidebarSortOrder } from './CommentsSettings';
+import type { AnchorResolution, CommentEntry, ResolvedComment } from './types';
 
 /**
  * How a row reads at a glance. Every open comment is waiting on the reader,
  * because a comment dispatches an agent that answers within minutes, so the
  * kind carries the distinction that ranking by "who is waiting" cannot.
  */
-export type InboxItemKind = "comment" | "suggestion" | "rewritten";
+export type InboxItemKind = 'comment' | 'suggestion' | 'rewritten';
 
 export interface InboxItem {
   filePath: string;
@@ -98,19 +98,19 @@ export function readMarkKey(filePath: string, id: string): string {
 }
 
 export function fileNameOf(path: string): string {
-  const cut = path.lastIndexOf("/");
+  const cut = path.lastIndexOf('/');
   return cut === -1 ? path : path.slice(cut + 1);
 }
 
 export function folderOf(path: string): string {
-  const cut = path.lastIndexOf("/");
-  return cut === -1 ? "" : path.slice(0, cut);
+  const cut = path.lastIndexOf('/');
+  return cut === -1 ? '' : path.slice(0, cut);
 }
 
 /** The one folder a file sits in, which is what a narrow row has room for. */
 export function parentFolderOf(path: string): string {
   const folder = folderOf(path);
-  const cut = folder.lastIndexOf("/");
+  const cut = folder.lastIndexOf('/');
   return cut === -1 ? folder : folder.slice(cut + 1);
 }
 
@@ -121,18 +121,18 @@ export function parentFolderOf(path: string): string {
  */
 export function plainText(markdown: string): string {
   return markdown
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`([^`]*)`/g, "$1")
-    .replace(/!?\[\[[^\]|]*\|([^\]]*)\]\]/g, "$1")
-    .replace(/!?\[\[([^\]]*)\]\]/g, (_match, target: string) => target.split("/").pop() ?? target)
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/(\*\*\*|___)(.*?)\1/g, "$2")
-    .replace(/(\*\*|__)(.*?)\1/g, "$2")
-    .replace(/(?<![\w*])[*_](?=\S)(.*?)(?<=\S)[*_](?![\w*])/g, "$1")
-    .replace(/~~(.*?)~~/g, "$1")
-    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
-    .replace(/^\s{0,3}>\s?/gm, "")
-    .replace(/^\s{0,3}(?:[-*+]|\d+\.)\s+/gm, "");
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/!?\[\[[^\]|]*\|([^\]]*)\]\]/g, '$1')
+    .replace(/!?\[\[([^\]]*)\]\]/g, (_match, target: string) => target.split('/').pop() ?? target)
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/(\*\*\*|___)(.*?)\1/g, '$2')
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(?<![\w*])[*_](?=\S)(.*?)(?<=\S)[*_](?![\w*])/g, '$1')
+    .replace(/~~(.*?)~~/g, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/^\s{0,3}>\s?/gm, '')
+    .replace(/^\s{0,3}(?:[-*+]|\d+\.)\s+/gm, '');
 }
 
 function parseTs(ts: string | undefined): number {
@@ -143,15 +143,15 @@ function parseTs(ts: string | undefined): number {
 
 function suggestionOf(comment: CommentEntry): { replacement: string; decided: boolean } | null {
   const suggestion: unknown = comment.suggestion;
-  if (typeof suggestion !== "object" || suggestion === null || Array.isArray(suggestion)) return null;
+  if (typeof suggestion !== 'object' || suggestion === null || Array.isArray(suggestion)) return null;
   const record = suggestion as Record<string, unknown>;
-  const replacement = typeof record.replacement === "string" ? record.replacement : "";
+  const replacement = typeof record.replacement === 'string' ? record.replacement : '';
   return { replacement, decided: record.result !== undefined };
 }
 
 /** The most recent thing that happened, whether a reply or the proposal itself. */
 function latestActivity(comment: CommentEntry): { author: string; ts: string; at: number } {
-  let best = { author: "", ts: "", at: 0 };
+  let best = { author: '', ts: '', at: 0 };
   const last = comment.thread[comment.thread.length - 1];
   if (last) best = { author: last.author, ts: last.ts, at: parseTs(last.ts) };
   const suggestion = comment.suggestion;
@@ -163,13 +163,13 @@ function latestActivity(comment: CommentEntry): { author: string; ts: string; at
 }
 
 function condense(text: string): string {
-  const flat = plainText(text).replace(/\s+/g, " ").trim();
+  const flat = plainText(text).replace(/\s+/g, ' ').trim();
   return flat.length > BLURB_LIMIT ? `${flat.slice(0, BLURB_LIMIT - 1)}…` : flat;
 }
 
 function blurbOf(comment: CommentEntry, kind: InboxItemKind): string {
-  if (kind === "suggestion") {
-    const replacement = suggestionOf(comment)?.replacement ?? "";
+  if (kind === 'suggestion') {
+    const replacement = suggestionOf(comment)?.replacement ?? '';
     if (replacement) return `Suggests "${condense(replacement)}"`;
   }
   const last = comment.thread[comment.thread.length - 1];
@@ -181,9 +181,9 @@ function kindOf(comment: CommentEntry, resolution: AnchorResolution): InboxItemK
   // An anchor that no longer matches usually means an agent rewrote the
   // passage, which is a result to confirm rather than a fault to repair. It
   // outranks a suggestion because that suggestion can no longer be applied.
-  if (resolution.kind === "orphaned") return "rewritten";
+  if (resolution.kind === 'orphaned') return 'rewritten';
   const suggestion = suggestionOf(comment);
-  return suggestion && !suggestion.decided ? "suggestion" : "comment";
+  return suggestion && !suggestion.decided ? 'suggestion' : 'comment';
 }
 
 function toItem(
@@ -217,12 +217,12 @@ function toItem(
 
 /** Mirrors the sidebar sort setting, over the fields a row already carries. */
 function comparatorFor(order: SidebarSortOrder): (a: InboxItem, b: InboxItem) => number {
-  if (order === "document") {
+  if (order === 'document') {
     const position = (item: InboxItem) =>
-      item.resolution.kind === "resolved" ? item.resolution.start : Number.MAX_SAFE_INTEGER;
+      item.resolution.kind === 'resolved' ? item.resolution.start : Number.MAX_SAFE_INTEGER;
     return (a, b) => position(a) - position(b);
   }
-  const direction = order === "newest" ? -1 : 1;
+  const direction = order === 'newest' ? -1 : 1;
   return (a, b) => direction * (a.at - b.at);
 }
 
@@ -260,7 +260,7 @@ export function buildInbox(input: BuildInboxInput): InboxView {
     runningPaths,
     runningThreads = new Map<string, number>(),
     selfAuthor,
-    sortOrder = "document",
+    sortOrder = 'document',
   } = input;
   const openByFile = new Map<string, InboxItem[]>();
   const resolvedByFile = new Map<string, InboxItem[]>();
@@ -274,7 +274,7 @@ export function buildInbox(input: BuildInboxInput): InboxView {
   for (const file of files) {
     for (const resolved of file.comments) {
       const item = toItem(file.path, resolved, readMarks, selfAuthor, runningThreads);
-      collect(resolved.comment.status === "open" ? openByFile : resolvedByFile, item);
+      collect(resolved.comment.status === 'open' ? openByFile : resolvedByFile, item);
     }
   }
 

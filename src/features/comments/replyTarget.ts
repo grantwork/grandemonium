@@ -1,6 +1,6 @@
-import { setTooltip } from "obsidian";
+import { setTooltip } from 'obsidian';
 
-import { type AuthorColorOverrides, resolveAuthorColor } from "./authorColor";
+import { type AuthorColorOverrides, resolveAuthorColor } from './authorColor';
 
 /** Standing choice of who a reply goes to, shown wherever a reply is written. */
 export interface ReplyTargetHost {
@@ -13,7 +13,7 @@ export interface ReplyTargetHost {
   onSelect(target: string): void;
 }
 
-const EVERY = "";
+const EVERY = '';
 
 /**
  * Who the next reply is addressed to, as one row of chips under the box.
@@ -27,30 +27,30 @@ const EVERY = "";
  */
 export function renderReplyTargets(parent: HTMLElement, host: ReplyTargetHost): HTMLElement {
   const row = parent.createDiv({
-    cls: "tc-reply-targets",
-    attr: { "aria-label": "Send this reply to", role: "group" },
+    cls: 'grandemonium-comment-reply-targets',
+    attr: { 'aria-label': 'Send this reply to', role: 'group' },
   });
   const options = [EVERY, ...host.names];
   for (const name of options) {
     const chosen = name === host.selected;
-    const chip = row.createEl("button", {
-      cls: "tc-reply-chip",
-      text: name || "Every AI",
-      attr: { "aria-pressed": String(chosen), type: "button" },
+    const chip = row.createEl('button', {
+      cls: 'grandemonium-comment-reply-chip',
+      text: name || 'Every AI',
+      attr: { 'aria-pressed': String(chosen), type: 'button' },
     });
-    if (chosen) chip.addClass("tc-reply-chip-on");
+    if (chosen) chip.addClass('grandemonium-comment-reply-chip-on');
     if (name && host.colorAuthorNames) {
       chip.style.setProperty(
-        "--tc-author-color-light",
-        resolveAuthorColor(name, host.authorColorOverrides, "light")
+        '--grandemonium-comment-author-color-light',
+        resolveAuthorColor(name, host.authorColorOverrides, 'light')
       );
       chip.style.setProperty(
-        "--tc-author-color-dark",
-        resolveAuthorColor(name, host.authorColorOverrides, "dark")
+        '--grandemonium-comment-author-color-dark',
+        resolveAuthorColor(name, host.authorColorOverrides, 'dark')
       );
-      chip.addClass("tc-reply-chip-colored");
+      chip.addClass('grandemonium-comment-reply-chip-colored');
     }
-    setTooltip(chip, name ? `Send replies to ${name}` : "Send replies to every enabled AI");
+    setTooltip(chip, name ? `Send replies to ${name}` : 'Send replies to every enabled AI');
     chip.onclick = () => host.onSelect(name);
   }
   return row;
