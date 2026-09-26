@@ -161,6 +161,17 @@ describe("settings model", () => {
     const readingView = { ...DEFAULT_SETTINGS, showReadingViewIndicator: false };
     expect(settingsEffects(DEFAULT_SETTINGS, readingView).refreshReadingViewIndicator).toBe(true);
   });
+
+  it("redraws the sidebar when the reply target changes, so the chosen chip shows", () => {
+    const toClaude = { ...DEFAULT_SETTINGS, replyTarget: "claude" };
+    expect(settingsEffects(DEFAULT_SETTINGS, toClaude)).toEqual({
+      refreshHighlights: false,
+      refreshAuthorColors: false,
+      refreshSidebar: true,
+      refreshReadingViewIndicator: false,
+      resetResolvedVisibility: false,
+    });
+  });
 });
 
 describe("comment popover size", () => {

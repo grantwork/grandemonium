@@ -248,7 +248,8 @@ export function settingsEffects(previous: CommentsSettings, next: CommentsSettin
     refreshSidebar:
       resetResolvedVisibility ||
       previous.sidebarSortOrder !== next.sidebarSortOrder ||
-      previous.timestampDisplay !== next.timestampDisplay,
+      previous.timestampDisplay !== next.timestampDisplay ||
+      previous.replyTarget !== next.replyTarget,
     refreshReadingViewIndicator:
       previous.showReadingViewIndicator !== next.showReadingViewIndicator,
     resetResolvedVisibility,
