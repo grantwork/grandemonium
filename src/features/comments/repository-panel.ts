@@ -10,7 +10,7 @@ import type {
 } from "./RepositoryThreadsController";
 import type { SubmitShortcut } from "./settings-model";
 import { shouldSubmitComment } from "./sidebar-preferences";
-import { keptThreadEntries, renderCollapsedEntry } from "./thread-collapse";
+import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from "./thread-collapse";
 import { renderErrorIcon, renderTypingDots } from "./thread-status";
 
 export interface RepositoryPanelHost {
@@ -282,10 +282,16 @@ export class RepositoryPanel {
       if (error) row.addClass("tc-entry-error");
       this.host.paintAuthor(row, entry.author, true);
       const meta = row.createDiv({ cls: "tc-meta" });
-      if (error) renderErrorIcon(meta);
-      this.host.paintAuthor(meta.createSpan({ cls: "tc-author", text: entry.author }), entry.author, false);
+      const heading = kept[index]
+        ? meta
+        : renderEntryFoldToggle(meta, entry, () => {
+            this.openedEntries.delete(key);
+            this.renderList();
+          });
+      if (error) renderErrorIcon(heading);
+      this.host.paintAuthor(heading.createSpan({ cls: "tc-author", text: entry.author }), entry.author, false);
       const ts = this.host.formatTimestamp(entry.ts);
-      if (ts) meta.createSpan({ cls: "tc-ts", text: ts });
+      if (ts) heading.createSpan({ cls: "tc-ts", text: ts });
       const text = row.createDiv({ cls: "tc-text" });
       // An error is the provider's own words, not Markdown the AI wrote.
       if (error) text.setText(entry.text);

@@ -172,6 +172,37 @@
   white-space: nowrap;
 }
 
+/* An opened entry's author and time fold it back: a button that still reads
+   as the heading it stands in for. */
+.tc-meta button.tc-entry-fold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  box-shadow: none;
+  font-size: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.tc-meta button.tc-entry-fold .tc-entry-collapsed-icon {
+  margin-right: -2px;
+}
+
+.tc-meta button.tc-entry-fold:hover {
+  color: var(--text-normal);
+}
+
+.tc-meta button.tc-entry-fold:focus-visible {
+  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
+
 /* An AI's error, kept in the thread: the alert leads, the text reads as one. */
 .tc-entry-error-icon {
   display: inline-flex;

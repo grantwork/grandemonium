@@ -42,7 +42,7 @@ import {
   setStatus,
   type SuggestionFailureReason,
 } from "./store";
-import { keptThreadEntries, renderCollapsedEntry } from "./thread-collapse";
+import { keptThreadEntries, renderCollapsedEntry, renderEntryFoldToggle } from "./thread-collapse";
 import { renderThreadActivity, type ThreadStatusHost } from "./thread-status";
 import { formatSidebarTimestamp } from "./timestamp";
 import type { Anchor, ResolvedComment, ThreadEntry } from "./types";
@@ -888,13 +888,19 @@ export class CommentSidebar extends ItemView implements HoverParent {
         this.plugin.settings.colorAuthorNames
       );
       const meta = row.createDiv({ cls: "tc-meta" });
+      const heading = kept[entryIndex]
+        ? meta
+        : renderEntryFoldToggle(meta, entry, () => {
+            this.openedEntries.delete(entryKey);
+            void this.render();
+          });
       paintAuthor(
-        meta.createSpan({ text: entry.author, cls: "tc-author" }),
+        heading.createSpan({ text: entry.author, cls: "tc-author" }),
         entry.author,
         this.plugin.settings.authorColorOverrides,
         this.plugin.settings.colorAuthorNames
       );
-      this.addTimestamp(meta, entry.ts);
+      this.addTimestamp(heading, entry.ts);
       const entryControls = meta.createDiv({ cls: "tc-entry-controls" });
       if (r.comment.status === "open" && this.plugin.isAgentAuthor(entry.author)) {
         const implementBtn = entryControls.createEl("button", {

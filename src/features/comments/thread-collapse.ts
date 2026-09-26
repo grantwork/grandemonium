@@ -44,3 +44,27 @@ export function renderCollapsedEntry(
   button.onclick = onExpand;
   return button;
 }
+
+/**
+ * The author and time of an entry the reader opened from its folded line,
+ * pressed to fold it back. The caller fills it with the author and time, so it
+ * reads as the entry's ordinary heading. Only history gets one: the entries
+ * kept open are the ones the thread is read for.
+ */
+export function renderEntryFoldToggle(
+  meta: HTMLElement,
+  entry: { author: string; kind?: "error" },
+  onCollapse: () => void
+): HTMLButtonElement {
+  const button = meta.createEl("button", {
+    cls: "tc-entry-fold",
+    attr: {
+      "aria-expanded": "true",
+      "aria-label": `Hide ${entry.kind === "error" ? "error from" : "comment by"} ${entry.author}`,
+      type: "button",
+    },
+  });
+  setIcon(button.createSpan({ cls: "tc-entry-collapsed-icon" }), "chevron-down");
+  button.onclick = onCollapse;
+  return button;
+}

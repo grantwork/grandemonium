@@ -189,7 +189,8 @@ it("ends the AI session when the thread is resolved", async () => {
   expect(screen.queryByRole("button", { name: /^Go/ })).toBeNull();
 });
 
-it("folds the middle of a long thread to one line per entry and opens one on request", async () => {
+/** Three rounds between the reader and gpt, so the middle four entries fold. */
+async function buildLongThread(): Promise<void> {
   jest.spyOn(MarkdownRenderer, "render").mockImplementation(async (_app, markdown, el) => {
     (el as HTMLElement).textContent = markdown;
   });
@@ -205,6 +206,10 @@ it("folds the middle of a long thread to one line per entry and opens one on req
     sent[index + 1].finish({ kind: "completed", text: index === 0 ? "Answer two" : "Answer three" });
     await flush();
   }
+}
+
+it("folds the middle of a long thread to one line per entry and opens one on request", async () => {
+  await buildLongThread();
 
   const folded = screen.getAllByRole("button", { name: /^Show comment by / });
   expect(folded.map((button) => button.textContent)).toEqual([
@@ -220,5 +225,22 @@ it("folds the middle of a long thread to one line per entry and opens one on req
 
   expect(screen.getByText("Second ask", { selector: ".tc-text" })).toBeTruthy();
   expect(screen.getAllByRole("button", { name: /^Show comment by / })).toHaveLength(2);
+  jest.mocked(MarkdownRenderer.render).mockRestore();
+});
+
+it("folds an opened entry back when its author and time are pressed, and opens it again", async () => {
+  await buildLongThread();
+  fireEvent.click(screen.getByRole("button", { name: "Show comment by grant" }));
+
+  const heading = screen.getByRole("button", { name: "Hide comment by grant" });
+  expect(heading.getAttribute("aria-expanded")).toBe("true");
+  expect(heading.textContent).toContain("grant");
+  expect(await axe(heading.closest(".tc-entry") as HTMLElement)).toHaveNoViolations();
+  fireEvent.click(heading);
+
+  expect(screen.queryByText("Second ask", { selector: ".tc-text" })).toBeNull();
+  expect(screen.queryByRole("button", { name: /^Hide comment by / })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Show comment by grant" }));
+  expect(screen.getByText("Second ask", { selector: ".tc-text" })).toBeTruthy();
   jest.mocked(MarkdownRenderer.render).mockRestore();
 });
