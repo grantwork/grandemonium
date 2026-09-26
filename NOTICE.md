@@ -7,7 +7,7 @@ Grandemonium is a combination of two MIT-licensed Obsidian plugins, both used an
 Copyright (c) 2025 Yishen Tu
 <https://github.com/YishenTu/claudian>
 
-Provides the coding-agent chat surface: the sidebar chat, provider runtimes for Claude Code, Codex, Grok, OpenCode and Pi, inline edit, and Collab mode. This is the base the fork was cut from, so it covers most of the source tree.
+Provides the coding-agent chat surface: the sidebar chat, provider runtimes for Claude Code, Codex, Grok, OpenCode and Pi, and inline edit. This is the base the fork was cut from, so it covers most of the source tree.
 
 ## Tandem Comments
 

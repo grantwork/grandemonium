@@ -1,8 +1,4 @@
 import { GRANDEMONIUM_SETTINGS_PATH } from '../../core/bootstrap/storagePaths';
-import {
-  DEFAULT_COLLAB_PROJECTS_FOLDER,
-  parseCollabProjectsFolder,
-} from '../../core/collab/CollabProjectsFolder';
 import { normalizeLinkedContentPath } from '../../core/path/LinkedContentPath';
 import {
   normalizeHiddenCommandList,
@@ -122,23 +118,6 @@ function normalizeRestoreTabsOnStartup(value: unknown): boolean {
     : DEFAULT_GRANDEMONIUM_SETTINGS.restoreTabsOnStartup;
 }
 
-function normalizeCollabGitPath(value: unknown): string {
-  if (typeof value !== 'string') return DEFAULT_GRANDEMONIUM_SETTINGS.collabGitPath;
-  const trimmed = value.trim();
-  return trimmed.length <= 4_096
-    && !trimmed.includes('\u0000')
-    && !trimmed.includes('\r')
-    && !trimmed.includes('\n')
-    ? trimmed
-    : DEFAULT_GRANDEMONIUM_SETTINGS.collabGitPath;
-}
-
-function normalizeCollabEnabled(value: unknown): boolean {
-  return typeof value === 'boolean'
-    ? value
-    : DEFAULT_GRANDEMONIUM_SETTINGS.collabEnabled;
-}
-
 function normalizeSessionManagerOrganization(
   value: unknown,
 ): SessionManagerOrganization {
@@ -160,12 +139,6 @@ function normalizePinnedLinkedContentPaths(value: unknown): string[] {
     normalizedPaths.push(path);
   }
   return normalizedPaths;
-}
-
-function normalizeCollabProjectsFolder(value: unknown): string {
-  if (typeof value !== 'string') return DEFAULT_COLLAB_PROJECTS_FOLDER;
-  const parsed = parseCollabProjectsFolder(value);
-  return parsed.ok ? parsed.value : DEFAULT_COLLAB_PROJECTS_FOLDER;
 }
 
 function shouldPersistChatViewNormalization(
@@ -482,9 +455,6 @@ export class GrandemoniumSettingsStorage {
     const restoreTabsOnStartup = normalizeRestoreTabsOnStartup(
       stored.restoreTabsOnStartup,
     );
-    const collabEnabled = normalizeCollabEnabled(stored.collabEnabled);
-    const collabProjectsFolder = normalizeCollabProjectsFolder(stored.collabProjectsFolder);
-    const collabGitPath = normalizeCollabGitPath(stored.collabGitPath);
     const hasCanonicalPinnedPaths = Object.prototype.hasOwnProperty.call(
       stored,
       'pinnedLinkedContentPaths',
@@ -517,9 +487,6 @@ export class GrandemoniumSettingsStorage {
       enableDualPane,
       dualPaneSide,
       restoreTabsOnStartup,
-      collabEnabled,
-      collabProjectsFolder,
-      collabGitPath,
       sessionManagerOrganization,
       pinnedLinkedContentPaths,
       lastSelectedChatModel,
@@ -561,18 +528,6 @@ export class GrandemoniumSettingsStorage {
         enableDualPane,
         dualPaneSide,
         restoreTabsOnStartup,
-      )
-      || (
-        'collabEnabled' in stored
-        && stored.collabEnabled !== collabEnabled
-      )
-      || (
-        'collabProjectsFolder' in stored
-        && stored.collabProjectsFolder !== collabProjectsFolder
-      )
-      || (
-        'collabGitPath' in stored
-        && stored.collabGitPath !== collabGitPath
       )
       || (
         'sessionManagerOrganization' in stored

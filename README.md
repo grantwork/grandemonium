@@ -22,9 +22,6 @@ a person. Resolve, purge, and export threads from the comment sidebar.
 
 **Inline edit.** Rewrite a selection in place without leaving the note.
 
-**Collab mode.** Share a project with teammates over the local network, with
-Git as the transport. Nothing routes through a cloud service.
-
 **Read aloud.** Play back an assistant reply using a system voice, or OpenAI
 text-to-speech if you would rather have a better one.
 
@@ -39,7 +36,6 @@ text-to-speech if you would rather have a better one.
 - A subscription or API access for whichever CLI you use. The plugin runs your
   local CLI and inherits however it is already authenticated.
 - Obsidian 1.13.0 or newer, desktop.
-- Collab mode additionally needs [Git](https://git-scm.com/install/) 2.38+.
 
 ## Installing
 
@@ -90,13 +86,15 @@ npm run typecheck && npm run lint && npm run test && npm run build
 Architecture notes, layering rules and per-area guides are in `AGENTS.md` and
 the scoped `AGENTS.md` files beneath `src/`.
 
-## Collab mode
+## Collab mode (archived)
 
-Collab shares a project folder between invited devices on your local network.
-One device hosts, others join with a short-lived invitation. Traffic is HTTPS
-against a self-signed certificate that is pinned on first use, member
-credentials are hashed on the host, and the transport is Git over the local
-network only. Project data does not reach any cloud service.
+Collab mode was removed on 26 September 2026. Its last version is kept at the Git tag `archive/collab`. To browse it without disturbing your checkout, run:
+
+```bash
+git worktree add ../grandemonium-collab-archive archive/collab
+```
+
+It is kept for reference only. A future Collab would be rewritten rather than restored.
 
 ## Privacy
 
@@ -106,8 +104,6 @@ network only. Project data does not reach any cloud service.
   environment variables you set here.
 - **Read aloud.** The system voice runs entirely on your machine. If you switch
   to OpenAI text-to-speech, the reply text is sent to OpenAI for synthesis.
-- **Collab.** Project Git data and coordination metadata travel directly
-  between invited devices on the local network.
 - **No telemetry.** The plugin sends nothing about you or your vault anywhere.
   There are no analytics, beacons or update pings.
 

@@ -75,14 +75,14 @@ describe('Provider system instructions', () => {
       configuration: {
         ...request.configuration,
         systemInstructions: {
-          dynamicSections: ['## Collab Mode\nRuntime guidance.'],
+          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
           kind: 'provider-default',
         },
       },
     };
 
     expect(configured.configuration.systemInstructions).toEqual({
-      dynamicSections: ['## Collab Mode\nRuntime guidance.'],
+      dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
       kind: 'provider-default',
     });
   });

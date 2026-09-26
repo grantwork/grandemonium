@@ -9,8 +9,6 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const mainPath = path.join(root, 'main.js');
 const requiredArtifacts = ['main.js', 'manifest.json', 'styles.css'];
-export const preCollabReferenceMainBytes = 3_739_584;
-export const preStep11BundleHealthBaselineBytes = 4_896_000;
 export const mainBudgetBytes = 6_000_000;
 export const evaluationIndicatorMs = 50;
 export const evaluationReviewThresholdMs = 150;
@@ -19,8 +17,6 @@ const pluginArtifactNames = ['main.js', 'manifest.json'];
 export function inspectArtifactSize(mainBytes) {
   return {
     budgetExceeded: mainBytes > mainBudgetBytes,
-    healthBaselineDeltaBytes: mainBytes - preStep11BundleHealthBaselineBytes,
-    referenceDeltaBytes: mainBytes - preCollabReferenceMainBytes,
   };
 }
 
@@ -34,10 +30,6 @@ export function inspectEvaluationDuration(medianMs) {
 
 export function inspectPluginArtifactReferences(mainContents) {
   return pluginArtifactNames.filter(artifactName => mainContents.includes(artifactName));
-}
-
-function signed(value) {
-  return value >= 0 ? `+${value}` : String(value);
 }
 
 function run() {
@@ -58,9 +50,6 @@ function run() {
   }
 
   const mainContents = readFileSync(mainPath, 'utf8');
-  if (mainContents.includes('ws does not work in the browser')) {
-    throw new Error('main.js resolved the browser-only ws stub instead of the desktop runtime');
-  }
   const pluginArtifactReferences = inspectPluginArtifactReferences(mainContents);
   if (pluginArtifactReferences.length > 0) {
     throw new Error(
@@ -190,13 +179,9 @@ process.stdout.write(JSON.stringify({
   }
   samples.sort((left, right) => left - right);
   const medianMs = samples[Math.floor(samples.length / 2)];
-  const deltaMiB = artifact.referenceDeltaBytes / 1024 / 1024;
 
   console.log(
     `main.js ${(mainBytes / 1024 / 1024).toFixed(2)} MiB (${mainBytes} bytes); `
-    + `pre-Collab reference delta ${signed(artifact.referenceDeltaBytes)} bytes `
-    + `(${signed(deltaMiB.toFixed(2))} MiB); `
-    + `pre-Step-11 health baseline delta ${signed(artifact.healthBaselineDeltaBytes)} bytes; `
     + `median cold evaluation ${medianMs.toFixed(1)} ms`,
   );
   const evaluation = inspectEvaluationDuration(medianMs);

@@ -12,7 +12,6 @@ Do not assume provider parity. Check each provider's `capabilities.ts`, `registr
   - `src/app/AGENTS.md`
   - `src/core/AGENTS.md`
   - `src/features/chat/AGENTS.md`
-  - `src/features/collab/AGENTS.md`
   - `src/providers/claude/AGENTS.md`
   - `src/providers/codex/AGENTS.md`
   - `src/providers/grok/AGENTS.md`
@@ -57,7 +56,6 @@ Scoped guides define the source of truth and allowed mutators for state in their
 | Area | Responsibility |
 | --- | --- |
 | `src/main.ts` | Plugin lifecycle and concrete application composition |
-| `@claudian-collab/protocol` | Exact-version registry dependency whose standalone repository solely owns the decision-complete shared Collab wire contract, compatibility policy, tests, build, and release |
 | `src/app/` | Application conversation, settings, provider-host, and storage services |
 | `src/core/` | Provider-neutral runtime, registry, storage, tool, and type contracts |
 | `src/providers/acp/` | Shared ACP transport, interaction, and session primitives without provider policy |
@@ -81,7 +79,6 @@ providers -> ProviderHost + core contracts + shared provider and UI primitives
 ```
 
 - `core/` must not import feature code, app composition, or provider implementations.
-- `src/` consumes the standalone shared contract only through the `@claudian-collab/protocol` package root. Grandemonium must not retain package source, source aliases, compatibility policy, or copied registries; `src/core/collab/` retains only client-owned Collab contracts without re-exporting package symbols.
 - Feature code must not import provider implementations. Resolve provider behavior through core registries and contracts.
 - Provider runtime and protocol code must not import chat views, feature controllers, or other feature orchestration.
 - Existing Claude compatibility re-exports that point into `src/app/` are migration seams, not an allowed general dependency direction. Do not add new provider-to-app imports; move shared contracts into `core/` when touching those seams materially.
@@ -112,7 +109,7 @@ Provider-specific session fields belong behind typed helpers in the owning provi
 - Do not use `console.*` in production code.
 - Settings writers must merge rather than replace provider-owned configuration.
 - Put non-committed notes, handoff files, traces, and throwaway scripts in `.context/`.
-- Production bundling Brotli-compresses locale JSON and the canonical `sql.js/dist/sql-wasm.wasm` import through `scripts/compressedStaticAssets.js`. Keep those import paths or update the build round-trip test with the bundler.
+- Production bundling Brotli-compresses locale JSON through `scripts/compressedStaticAssets.js`. Keep the locale import paths or update the build round-trip test (`tests/integration/build/compressed-static-assets.test.ts`) with the bundler.
 
 ## TDD Workflow
 
@@ -130,7 +127,7 @@ Provider-specific session fields belong behind typed helpers in the owning provi
 ### Project-specific
 
 - The owner and public contracts named in the applicable scoped guides are the accepted seams for their areas.
-- Accepted Collab protocol fixtures and captured provider-native examples are independent sources of expected behavior.
+- Captured provider-native examples are independent sources of expected behavior.
 - Mock only environment, Obsidian, and provider boundaries. Keep Grandemonium-owned modules real. For shared provider contracts, prove provider-neutral behavior first, then cover each adapter's distinct native behavior.
 
 ## UI Semantics and Tests

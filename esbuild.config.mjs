@@ -15,7 +15,6 @@ import { assertRuntimeDependencyParity } from './scripts/runtimeDependencyParity
 import rendererSafeUnrefHelpers from './scripts/rendererSafeUnref.js';
 import desktopRuntimeAliasHelpers from './scripts/desktopRuntimeAliases.js';
 import terserProductionBundleHelpers from './scripts/terserProductionBundle.js';
-import pierreShikiBundleHelpers from './scripts/pierreShikiBundle.js';
 import compressedStaticAssetsHelpers from './scripts/compressedStaticAssets.js';
 
 const {
@@ -24,7 +23,6 @@ const {
 } = rendererSafeUnrefHelpers;
 const { createDesktopRuntimeAliases } = desktopRuntimeAliasHelpers;
 const { createTerserProductionBundlePlugin } = terserProductionBundleHelpers;
-const { createPierreShikiBundlePlugin } = pierreShikiBundleHelpers;
 const { createCompressedStaticAssetsPlugin } = compressedStaticAssetsHelpers;
 
 // Load .env.local if it exists
@@ -204,14 +202,12 @@ const mainContext = await esbuild.context({
   plugins: [
     patchSdkImportMeta,
     createCompressedStaticAssetsPlugin(),
-    createPierreShikiBundlePlugin(),
     ...(prod ? [createTerserProductionBundlePlugin(['main.js'])] : []),
     createPatchRendererUnsafeUnref(['main.js']),
     copyToObsidian,
   ],
   external,
   format: 'cjs',
-  loader: { '.wasm': 'binary' },
   target: 'es2022',
   charset: 'utf8',
   logLevel: 'info',

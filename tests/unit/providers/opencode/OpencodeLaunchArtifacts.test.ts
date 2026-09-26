@@ -280,13 +280,13 @@ describe('prepareOpencodeLaunchArtifacts', () => {
     const withoutAppendix = await prepareOpencodeLaunchArtifacts(baseParams);
     const withAppendix = await prepareOpencodeLaunchArtifacts({
       ...baseParams,
-      dynamicSystemPromptSections: ['## Collab Mode\nRuntime guidance.'],
+      dynamicSystemPromptSections: ['## Dynamic Section\nRuntime guidance.'],
     });
     const prompt = await fs.readFile(withAppendix.systemPromptPath, 'utf8');
 
     expect(prompt).toContain('## Runtime Context');
-    expect(prompt).toContain('## Collab Mode\nRuntime guidance.');
-    expect(prompt.match(/## Collab Mode/g)).toHaveLength(1);
+    expect(prompt).toContain('## Dynamic Section\nRuntime guidance.');
+    expect(prompt.match(/## Dynamic Section/g)).toHaveLength(1);
     expect(withAppendix.launchKey).not.toBe(withoutAppendix.launchKey);
   });
 

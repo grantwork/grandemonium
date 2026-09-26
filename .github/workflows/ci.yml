@@ -102,7 +102,7 @@ jobs:
       - name: Test
         run: npm run test
 
-  cross-platform-collab-scope:
+  cross-platform-scope:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -112,7 +112,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine whether cross-platform Collab smoke is required
+      - name: Determine whether cross-platform smoke is required
         id: scope
         shell: bash
         env:
@@ -128,11 +128,6 @@ jobs:
           run_smoke=false
           while IFS= read -r changed_path; do
             case "$changed_path" in
-              src/app/collab/* | \
-              src/core/collab/* | \
-              src/features/collab/* | \
-              src/style/features/collab-* | \
-              tests/*collab/* | \
               src/utils/windowsCmdShim.ts | \
               src/core/process/ManagedStdioProcess.ts | \
               tests/unit/utils/windowsCmdShim.test.ts | \
@@ -140,7 +135,6 @@ jobs:
               src/providers/pi/runtime/PiSubprocess.ts | \
               tests/unit/providers/pi/runtime/PiSubprocess.test.ts | \
               tests/integration/providers/pi/PiSubprocess.windows.test.ts | \
-              scripts/*collab* | \
               scripts/build* | \
               scripts/check-architecture-boundaries.test.mjs | \
               scripts/compressedStaticAssets.js | \
@@ -161,9 +155,9 @@ jobs:
           echo "run=$run_smoke" >> "$GITHUB_OUTPUT"
 
   cross-platform-smoke:
-    needs: cross-platform-collab-scope
-    if: needs.cross-platform-collab-scope.outputs.run == 'true'
-    name: Cross-platform Collab smoke (${{ matrix.os }})
+    needs: cross-platform-scope
+    if: needs.cross-platform-scope.outputs.run == 'true'
+    name: Cross-platform smoke (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -188,9 +182,6 @@ jobs:
 
       - name: Build production plugin
         run: npm run build
-
-      - name: Run OS-sensitive Collab tests
-        run: npm run test:cross-platform-collab
 
       - name: Run Windows Pi launch integration
         if: runner.os == 'Windows'

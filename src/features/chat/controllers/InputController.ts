@@ -222,14 +222,6 @@ export class InputController {
     return ProviderRegistry.getCapabilities(providerId);
   }
 
-  private async resolveMainAgentDynamicSystemPromptSections(): Promise<readonly string[]> {
-    try {
-      return await this.deps.plugin.getMainAgentDynamicSystemPromptSections?.() ?? [];
-    } catch {
-      return [];
-    }
-  }
-
   // ============================================
   // Message Sending
   // ============================================
@@ -499,8 +491,6 @@ export class InputController {
       return;
     }
 
-    const dynamicSystemPromptSections = await this.resolveMainAgentDynamicSystemPromptSections();
-
     try {
       userMsg.content = admittedTurnRequest.text;
       userMsg.linkedContentPath = admittedTurnRequest.linkedContentPath;
@@ -509,7 +499,6 @@ export class InputController {
         admittedTurnRequest,
         userMsg,
         assistantMsg,
-        dynamicSystemPromptSections,
       ));
       if (result.status === 'completed') {
         const checkpoint = result.nativeAssistantMessageId ?? result.nativeCheckpointId;
@@ -961,7 +950,6 @@ export class InputController {
     request: ChatTurnRequest,
     user?: ChatMessage,
     assistant?: ChatMessage,
-    dynamicSystemPromptSections: readonly string[] = [],
   ): ChatTurnSubmission {
     const providerId = this.getActiveProviderId();
     const settings = ProviderSettingsCoordinator.getProviderSettingsSnapshot(
@@ -991,12 +979,7 @@ export class InputController {
         ...(permissionMode ? { permissionMode } : {}),
         ...(reasoning ? { reasoning } : {}),
         ...(serviceTier ? { serviceTier } : {}),
-        systemInstructions: dynamicSystemPromptSections.length > 0
-          ? {
-              dynamicSections: [...dynamicSystemPromptSections],
-              kind: 'provider-default',
-            }
-          : { kind: 'provider-default' },
+        systemInstructions: { kind: 'provider-default' },
       },
       context: {
         ...(request.browserSelection
@@ -1248,14 +1231,7 @@ export class InputController {
     const queuedMessage = this.cloneQueuedMessage(state.queuedMessage);
     state.queuedMessage = null;
     const { displayContent, request } = this.toQueuedChatTurn(queuedMessage);
-    const dynamicSystemPromptSections = await this.resolveMainAgentDynamicSystemPromptSections();
-    const submission = this.createExecutionSubmission(
-      displayContent,
-      request,
-      undefined,
-      undefined,
-      dynamicSystemPromptSections,
-    );
+    const submission = this.createExecutionSubmission(displayContent, request);
     const pending: PendingSteerState = {
       conversationId,
       coordinator,

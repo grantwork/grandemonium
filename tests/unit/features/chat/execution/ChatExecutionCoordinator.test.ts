@@ -747,7 +747,7 @@ describe('ChatExecutionCoordinator', () => {
     const submission = createSubmission({
       configuration: {
         systemInstructions: {
-          dynamicSections: ['## Collab Mode\nRuntime guidance.'],
+          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
           kind: 'provider-default',
         },
       },

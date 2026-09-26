@@ -476,7 +476,7 @@ describe('ClaudeExecutionBackend', () => {
     await collectEvents(session.execute(createRequest({
       configuration: {
         systemInstructions: {
-          dynamicSections: ['## Collab Mode\nRuntime guidance.'],
+          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
           kind: 'provider-default',
         },
       },
@@ -489,9 +489,9 @@ describe('ClaudeExecutionBackend', () => {
       snapshot: false,
     });
     expect((systemPrompt as { prompt: string }).prompt).toContain(
-      '## Collab Mode\nRuntime guidance.',
+      '## Dynamic Section\nRuntime guidance.',
     );
-    expect((systemPrompt as { prompt: string }).prompt.match(/## Collab Mode/g))
+    expect((systemPrompt as { prompt: string }).prompt.match(/## Dynamic Section/g))
       .toHaveLength(1);
   });
 
