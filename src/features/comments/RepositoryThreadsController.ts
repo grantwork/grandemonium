@@ -9,7 +9,7 @@ import type {
   ProviderInteractionPort,
 } from "../../core/execution";
 import type { ApprovalDecision, UsageInfo } from "../../core/types";
-import { findAgentMention } from "./agent-mention";
+import { findAgentMention } from "./agentMention";
 import {
   buildRepositoryMessage,
   fallbackThreadTitle,
@@ -19,8 +19,8 @@ import {
   type RepositoryThread,
   type RepositoryThreadEntry,
   serializeRepositoryThreads,
-} from "./repository-thread";
-import type { ResolveBehavior } from "./settings-model";
+} from "./RepositoryThread";
+import type { ResolveBehavior } from "./CommentsSettings";
 
 /** One agent's side of one thread, kept for as long as the thread is open. */
 export interface RepositoryAgentSession {

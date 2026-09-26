@@ -1,6 +1,6 @@
 import type { Plugin } from 'obsidian';
 
-import type { CommentsSettings } from './settings-model';
+import type { CommentsSettings } from './CommentsSettings';
 
 /**
  * Reads and writes the comments settings inside the host plugin's shared

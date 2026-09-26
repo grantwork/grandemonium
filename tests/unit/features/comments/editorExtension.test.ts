@@ -1,0 +1,260 @@
+import { EditorState, Transaction, type TransactionSpec } from "@codemirror/state";
+import type { EditorView, ViewUpdate } from "@codemirror/view";
+
+import {
+  createEditorAnchorTracker,
+  type EditorExtensionHost,
+  resolveHighlightClick,
+} from "@/features/comments/editorExtension";
+import { isFullReplace } from "@/features/comments/reanchor";
+import {
+  makeAnchor,
+  parseDocument,
+  planSuggestionAcceptance,
+  resolveAnchor,
+  serializeDocument,
+} from "@/features/comments/store";
+import type { ParsedDoc } from "@/features/comments/types";
+
+const TS = "2026-07-23T12:00:00Z";
+
+function acceptanceDoc(): ParsedDoc {
+  const prose = "Very old quote and target";
+  const targetStart = prose.indexOf("target");
+  return {
+    prose,
+    comments: {
+      pending: {
+        anchor: makeAnchor(prose, 0, "Very old quote".length),
+        status: "open",
+        thread: [{ author: "Leon", ts: TS, text: "Keep this thread attached." }],
+      },
+      suggestion: {
+        anchor: makeAnchor(prose, targetStart, prose.length),
+        status: "open",
+        suggestion: {
+          replacement: "a substantially longer ending",
+          author: "Claude",
+          ts: TS,
+        },
+        thread: [],
+      },
+    },
+  };
+}
+
+function singleReplacement(fromText: string, toText: string): { from: number; to: number; insert: string } {
+  let from = 0;
+  while (from < fromText.length && from < toText.length && fromText[from] === toText[from]) from++;
+  let suffix = 0;
+  while (
+    suffix < fromText.length - from &&
+    suffix < toText.length - from &&
+    fromText[fromText.length - 1 - suffix] === toText[toText.length - 1 - suffix]
+  ) {
+    suffix++;
+  }
+  return {
+    from,
+    to: fromText.length - suffix,
+    insert: toText.slice(from, toText.length - suffix),
+  };
+}
+
+class ExtensionHarness {
+  state: EditorState;
+  applyingSuggestion = false;
+  readonly host: EditorExtensionHost;
+  readonly view: {
+    state: EditorState;
+    requestMeasure: ReturnType<typeof jest.fn>;
+    dispatch: (spec: TransactionSpec) => void;
+  };
+  readonly tracker: ReturnType<typeof createEditorAnchorTracker>;
+
+  constructor(raw: string) {
+    this.state = EditorState.create({ doc: raw });
+    this.host = {
+      settings: { schemaHint: true, commentPopover: false },
+      isApplyingSuggestion: () => this.applyingSuggestion,
+      isSidebarOpen: () => false,
+      openSidebar: jest.fn(),
+    };
+    this.view = {
+      state: this.state,
+      requestMeasure: jest.fn(),
+      dispatch: (spec) => {
+        this.apply(spec);
+      },
+    };
+    this.tracker = createEditorAnchorTracker(this.view as unknown as EditorView, this.host);
+  }
+
+  text(): string {
+    return this.state.doc.toString();
+  }
+
+  apply(spec: TransactionSpec) {
+    const startState = this.state;
+    const transaction = startState.update(spec);
+    this.state = transaction.state;
+    this.view.state = this.state;
+    this.tracker.update({
+      startState,
+      state: this.state,
+      transactions: [transaction],
+      changes: transaction.changes,
+      docChanged: transaction.docChanged,
+      selectionSet: false,
+      viewportChanged: false,
+    } as unknown as ViewUpdate);
+    return transaction;
+  }
+
+  applyHistoryText(text: string, event: "undo" | "redo") {
+    return this.apply({
+      changes: singleReplacement(this.text(), text),
+      annotations: Transaction.userEvent.of(event),
+    });
+  }
+
+  expectPendingAnchor(): void {
+    const doc = parseDocument(this.text());
+    const anchor = this.tracker.anchors.find(({ id }) => id === "pending");
+    expect(anchor).toBeDefined();
+    expect(doc.prose.slice(anchor!.from, anchor!.to)).toBe("Very new wording quote");
+  }
+}
+
+describe("editor-extension pending anchors across acceptance history", () => {
+  // The extension debounces through `window`; jest has no global stubbing
+  // helper, so the original window is saved and restored around each case.
+  const originalWindow = Reflect.get(globalThis, "window") as unknown;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    Reflect.set(globalThis, "window", {
+      setTimeout: globalThis.setTimeout.bind(globalThis),
+      clearTimeout: globalThis.clearTimeout.bind(globalThis),
+    });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    Reflect.set(globalThis, "window", originalWindow);
+  });
+
+  it.each([
+    ["before the debounce with removal", false, "remove"],
+    ["after the debounce with removal", true, "remove"],
+    ["before the debounce with retained history", false, "keep"],
+    ["after the debounce with retained history", true, "keep"],
+  ] as const)("preserves an unrelated pending reanchor through Undo and Redo %s", (_name, wait, behavior) => {
+    const harness = new ExtensionHarness(serializeDocument(acceptanceDoc(), true));
+    const oldStart = harness.text().indexOf("old");
+    harness.apply({
+      changes: { from: oldStart, to: oldStart + 3, insert: "new wording" },
+      userEvent: "input",
+    });
+    const editedText = harness.text();
+    harness.expectPendingAnchor();
+
+    const plan = planSuggestionAcceptance(editedText, "suggestion", behavior, true);
+    expect(plan.ok).toBe(true);
+    if (!plan.ok) return;
+    harness.applyingSuggestion = true;
+    const acceptance = harness.apply({ changes: plan.changes });
+    harness.applyingSuggestion = false;
+    let changedRanges = 0;
+    acceptance.changes.iterChangedRanges(() => changedRanges++);
+    expect(changedRanges).toBe(1);
+    expect(isFullReplace(acceptance.changes)).toBe(true);
+    harness.expectPendingAnchor();
+
+    if (wait) jest.advanceTimersByTime(800);
+    if (wait) expect(harness.tracker.dirty).toBe(false);
+    const acceptedText = harness.text();
+    const undo = harness.applyHistoryText(editedText, "undo");
+    expect(isFullReplace(undo.changes)).toBe(true);
+    harness.expectPendingAnchor();
+
+    if (wait) jest.advanceTimersByTime(800);
+    if (wait) expect(harness.tracker.dirty).toBe(false);
+    harness.applyHistoryText(acceptedText, "redo");
+    harness.expectPendingAnchor();
+
+    jest.advanceTimersByTime(800);
+    const persisted = parseDocument(harness.text()).comments.pending.anchor;
+    expect(persisted.exact).toBe("Very new wording quote");
+    expect(resolveAnchor(parseDocument(harness.text()).prose, persisted).kind).toBe("resolved");
+    harness.tracker.destroy();
+  });
+
+  it("does not preserve pending coordinates through an unrelated external full replace", () => {
+    const harness = new ExtensionHarness(serializeDocument(acceptanceDoc(), true));
+    const oldStart = harness.text().indexOf("old");
+    harness.apply({
+      changes: { from: oldStart, to: oldStart + 3, insert: "new wording" },
+      userEvent: "input",
+    });
+
+    const replacement = "Entirely unrelated external document.";
+    harness.apply({ changes: { from: 0, to: harness.text().length, insert: replacement } });
+    expect(harness.tracker.anchors).toEqual([]);
+    harness.tracker.destroy();
+  });
+});
+
+describe("resolveHighlightClick", () => {
+  const PROSE = "The quick brown fox jumps over the lazy dog.";
+  const QUOTE = "brown fox";
+  const QUOTE_FROM = PROSE.indexOf(QUOTE);
+
+  function commentedDoc(): string {
+    return serializeDocument(
+      {
+        prose: PROSE,
+        comments: {
+          c1: {
+            anchor: makeAnchor(PROSE, QUOTE_FROM, QUOTE_FROM + QUOTE.length),
+            status: "open",
+            thread: [{ author: "Grant", ts: TS, text: "Why?" }],
+          },
+        },
+      },
+      false
+    );
+  }
+
+  function host(commentPopover: boolean, sidebarOpen = false): EditorExtensionHost {
+    return {
+      settings: { schemaHint: false, commentPopover },
+      isApplyingSuggestion: () => false,
+      isSidebarOpen: () => sidebarOpen,
+      openSidebar: () => undefined,
+    };
+  }
+
+  it("pins the popover over the highlight when inline comments are on", () => {
+    expect(resolveHighlightClick(host(true), commentedDoc(), "c1")).toEqual({
+      kind: "popover",
+      target: { id: "c1", from: QUOTE_FROM, to: QUOTE_FROM + QUOTE.length },
+    });
+  });
+
+  it("expands the thread in the sidebar when the sidebar is already open", () => {
+    expect(resolveHighlightClick(host(true, true), commentedDoc(), "c1")).toEqual({
+      kind: "sidebar",
+    });
+  });
+
+  it("opens the sidebar when inline comments are off", () => {
+    expect(resolveHighlightClick(host(false), commentedDoc(), "c1")).toEqual({ kind: "sidebar" });
+  });
+
+  it("opens the sidebar when the passage can no longer be found", () => {
+    const orphaned = commentedDoc().replace(QUOTE, "grey wolf");
+
+    expect(resolveHighlightClick(host(true), orphaned, "c1")).toEqual({ kind: "sidebar" });
+  });
+});

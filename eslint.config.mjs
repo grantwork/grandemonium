@@ -56,7 +56,7 @@ export const fileNamingRule = {
     // The editor-extension suite drives a CodeMirror harness class whose
     // assertion helpers run inside it.each cases, so expectations legitimately
     // sit outside a test body and behind the parameterised debounce flag.
-    files: ['tests/unit/features/comments/editor-extension.test.ts'],
+    files: ['tests/unit/features/comments/editorExtension.test.ts'],
     rules: {
       'jest/no-standalone-expect': 'off',
       'jest/no-conditional-expect': 'off',
@@ -217,7 +217,7 @@ export default defineConfig([
     // Table highlights wrap a DOM Range with a detached span that must belong
     // to the table's own document. Obsidian's createSpan() helper appends to the
     // node it is called on, so it cannot produce the detached element this needs.
-    files: ['src/features/comments/table-highlight.ts'],
+    files: ['src/features/comments/tableHighlight.ts'],
     rules: {
       'obsidianmd/prefer-create-el': 'off',
     },
@@ -235,7 +235,7 @@ export default defineConfig([
     // assertion helpers run inside it.each cases, so expectations legitimately
     // sit outside a test body and behind the parameterised debounce flag.
     // Listed after the general test config so these two rules stay disabled.
-    files: ['tests/unit/features/comments/editor-extension.test.ts'],
+    files: ['tests/unit/features/comments/editorExtension.test.ts'],
     rules: {
       'jest/no-standalone-expect': 'off',
       'jest/no-conditional-expect': 'off',

@@ -1,4 +1,4 @@
-import type { TimestampDisplay } from "./settings-model";
+import type { TimestampDisplay } from "./CommentsSettings";
 
 export interface TimestampFormatOptions {
   now?: Date;

@@ -2,38 +2,38 @@ import type { Editor} from "obsidian";
 import { type App, MarkdownView, normalizePath, Notice, type Plugin, type PluginManifest, TFile } from "obsidian";
 
 import { ProviderRegistry } from "../../core/providers/ProviderRegistry";
-import { resolveReplyTarget } from "./agent-mention";
+import { resolveReplyTarget } from "./agentMention";
 import {
   AUTHOR_OVERRIDE_KEY,
   detectOsUsername,
   FALLBACK_AUTHOR,
   resolveAuthorName,
 } from "./author";
-import { CommentIndex } from "./comment-index";
-import type { CommentPopoverHost } from "./comment-popover";
+import { CommentIndex } from "./CommentIndex";
+import type { CommentPopoverHost } from "./commentPopover";
 import { CommentsSettingsStore } from "./CommentsSettingsStore";
-import { confirmAction } from "./confirm-action";
-import { buildEditorExtension } from "./editor-extension";
+import { confirmAction } from "./confirmAction";
+import { buildEditorExtension } from "./editorExtension";
 import {
   buildExportNote,
   formatTs,
   renderExportFileName,
   resolveExportDirectory,
 } from "./export";
-import { buildImplementMessage, type ImplementTarget } from "./implement-message";
-import { buildInbox, type InboxView, readMarkKey } from "./inbox-model";
-import { READ_MARKS_KEY, type ReadMark, ReadMarksStore } from "./read-marks";
-import { registerReadingView } from "./reading-view";
+import { buildImplementMessage, type ImplementTarget } from "./implementMessage";
+import { buildInbox, type InboxView, readMarkKey } from "./inboxModel";
+import { READ_MARKS_KEY, type ReadMark, ReadMarksStore } from "./ReadMarksStore";
+import { registerReadingView } from "./readingView";
 import { type RepositoryAgentPort, RepositoryThreadsController } from "./RepositoryThreadsController";
-import { buildReviewMessage } from "./review-message";
-import { shouldStartSelectionComment } from "./selection-comment";
+import { buildReviewMessage } from "./reviewMessage";
+import { shouldStartSelectionComment } from "./selectionComment";
 import {
   type CommentsSettings,
   DEFAULT_SETTINGS,
   parseCommentsSettings,
   settingsEffects,
-} from "./settings-model";
-import { CommentSidebar, suggestionFailureMessage, VIEW_TYPE_COMMENTS } from "./sidebar";
+} from "./CommentsSettings";
+import { CommentSidebar, suggestionFailureMessage, VIEW_TYPE_COMMENTS } from "./CommentSidebar";
 import {
   addReply,
   declineSuggestion,
@@ -47,8 +47,8 @@ import {
   setStatus,
   type SuggestionAcceptancePlan,
 } from "./store";
-import { commitSuggestionAcceptance } from "./suggestion-editor";
-import type { ThreadActivity } from "./thread-status";
+import { commitSuggestionAcceptance } from "./suggestionEditor";
+import type { ThreadActivity } from "./threadStatus";
 import { formatSidebarTimestamp } from "./timestamp";
 import type { Anchor, ParsedDoc } from "./types";
 
