@@ -88,7 +88,7 @@ export interface ProviderSettingsStorageAdapter {
 export type ProviderEnvironmentSessionPolicy = 'invalidate' | 'reload';
 
 export interface ProviderSettingsReconciler {
-  /** Defaults to `invalidate` for backward compatibility. */
+  /** Defaults to `invalidate`: an environment change discards provider sessions. */
   environmentSessionPolicy?: ProviderEnvironmentSessionPolicy;
 
   handleEnvironmentChange?(settings: Record<string, unknown>): boolean;

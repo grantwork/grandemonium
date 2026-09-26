@@ -101,21 +101,6 @@ function hasMeaningfulEnvironmentContent(envText: string): boolean {
     });
 }
 
-function getLegacyEnvironmentClassification(
-  settings: Record<string, unknown>,
-): ReturnType<typeof classifyEnvironmentVariablesByOwnership> {
-  const legacyEnvironmentVariables = settings.environmentVariables;
-  if (typeof legacyEnvironmentVariables !== 'string' || legacyEnvironmentVariables.length === 0) {
-    return {
-      shared: '',
-      providers: {},
-      reviewKeys: [],
-    };
-  }
-
-  return classifyEnvironmentVariablesByOwnership(legacyEnvironmentVariables);
-}
-
 export function classifyEnvironmentVariablesByOwnership(input: string): {
   shared: string;
   providers: Partial<Record<ProviderId, string>>;
@@ -170,11 +155,7 @@ export function classifyEnvironmentVariablesByOwnership(input: string): {
 
 export function getSharedEnvironmentVariables(settings: Record<string, unknown>): string {
   const sharedEnvironmentVariables = settings.sharedEnvironmentVariables;
-  if (typeof sharedEnvironmentVariables === 'string') {
-    return sharedEnvironmentVariables;
-  }
-
-  return getLegacyEnvironmentClassification(settings).shared;
+  return typeof sharedEnvironmentVariables === 'string' ? sharedEnvironmentVariables : '';
 }
 
 export function setSharedEnvironmentVariables(
@@ -182,7 +163,6 @@ export function setSharedEnvironmentVariables(
   envText: string,
 ): void {
   settings.sharedEnvironmentVariables = envText;
-  delete settings.environmentVariables;
 }
 
 export function getProviderEnvironmentVariables(
@@ -190,11 +170,9 @@ export function getProviderEnvironmentVariables(
   providerId: ProviderId,
 ): string {
   const providerConfig = getProviderConfig(settings, providerId);
-  if (typeof providerConfig.environmentVariables === 'string') {
-    return providerConfig.environmentVariables;
-  }
-
-  return getLegacyEnvironmentClassification(settings).providers[providerId] ?? '';
+  return typeof providerConfig.environmentVariables === 'string'
+    ? providerConfig.environmentVariables
+    : '';
 }
 
 export function setProviderEnvironmentVariables(
@@ -206,7 +184,6 @@ export function setProviderEnvironmentVariables(
     ...getProviderConfig(settings, providerId),
     environmentVariables: envText,
   });
-  delete settings.environmentVariables;
 }
 
 export function joinEnvironmentTexts(...parts: Array<string | undefined>): string {

@@ -70,7 +70,7 @@ describe('Startup optimization', () => {
     StartupProfiler.reset();
   });
 
-  it('workspace registry initializeAll resolves before Codex discovery completes', async () => {
+  it('workspace initialization resolves before Codex discovery completes', async () => {
     let discoveryResolved = false;
     const discovery: CodexModelDiscoveryServiceLike = {
       discoverModels: jest.fn(async () => {
@@ -90,7 +90,7 @@ describe('Startup optimization', () => {
     });
 
     const host = createFakeHost();
-    const initPromise = ProviderWorkspaceRegistry.initializeAll(host);
+    const initPromise = ProviderWorkspaceRegistry.ensureInitialized(host, 'codex', 'startup');
     expect(discoveryResolved).toBe(false);
 
     await initPromise;
@@ -111,7 +111,7 @@ describe('Startup optimization', () => {
     });
 
     const host = createFakeHost();
-    await ProviderWorkspaceRegistry.initializeAll(host);
+    await ProviderWorkspaceRegistry.ensureInitialized(host, 'codex', 'startup');
 
     const report = StartupProfiler.getReport();
     expect(report.spans.some((span) => span.name === 'provider-init:codex')).toBe(true);

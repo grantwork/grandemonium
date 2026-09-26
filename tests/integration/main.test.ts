@@ -1357,8 +1357,9 @@ describe('GrandemoniumPlugin', () => {
       mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
         if (path === '.grandemonium/grandemonium-settings.json') {
           return JSON.stringify({
-            environmentVariables: 'ANTHROPIC_MODEL=custom-model',
-            lastEnvHash: '',
+            providerConfigs: {
+              claude: { environmentVariables: 'ANTHROPIC_MODEL=custom-model' },
+            },
           });
         }
         return '';

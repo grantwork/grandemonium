@@ -35,7 +35,11 @@ describe('getProviderForModel', () => {
   });
 
   it('routes custom OPENAI_MODEL to codex when settings are provided', () => {
-    const settings = { environmentVariables: 'OPENAI_MODEL=my-custom-model' };
+    const settings = {
+      providerConfigs: {
+        codex: { environmentVariables: 'OPENAI_MODEL=my-custom-model' },
+      },
+    };
     expect(getProviderForModel('my-custom-model', settings)).toBe('codex');
   });
 

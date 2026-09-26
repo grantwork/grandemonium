@@ -151,7 +151,9 @@ describe('CodexChatUIConfig', () => {
 
     it('should prepend custom model from OPENAI_MODEL env var', () => {
       const options = codexChatUIConfig.getModelOptions(withDiscoveredModels({
-        environmentVariables: 'OPENAI_MODEL=my-custom-model',
+        providerConfigs: {
+          codex: { environmentVariables: 'OPENAI_MODEL=my-custom-model' },
+        },
       }));
       expect(options[0].value).toBe('openai-codex/my-custom-model');
       expect(options[0].description).toBe('Custom (env)');
@@ -579,7 +581,9 @@ describe('CodexChatUIConfig', () => {
       expect(codexChatUIConfig.normalizeModelVariant(TEST_CODEX_MODEL, withDiscoveredModels()))
         .toBe(TEST_CODEX_MODEL);
       expect(codexChatUIConfig.normalizeModelVariant('custom', {
-        environmentVariables: 'OPENAI_MODEL=custom',
+        providerConfigs: {
+          codex: { environmentVariables: 'OPENAI_MODEL=custom' },
+        },
       })).toBe('openai-codex/custom');
       expect(codexChatUIConfig.normalizeModelVariant('settings-custom', {
         providerConfigs: {
