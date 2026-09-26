@@ -2,6 +2,7 @@ import { existsSync } from 'fs';
 import * as fsPromises from 'fs/promises';
 import * as os from 'os';
 
+import { extractToolResultContent } from '@/core/tools/toolResultContent';
 import {
   collectAsyncSubagentResults,
   encodeVaultPathForSDK,
@@ -20,7 +21,6 @@ import {
   type SDKNativeMessage,
   sdkSessionExists,
 } from '@/providers/claude/history/ClaudeHistoryStore';
-import { extractToolResultContent } from '@/providers/claude/sdk/toolResultContent';
 
 // Mock fs, fs/promises, and os modules
 jest.mock('fs', () => ({

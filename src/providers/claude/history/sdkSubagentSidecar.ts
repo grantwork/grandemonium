@@ -3,9 +3,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { ProviderHistoryPathContext } from '../../../core/providers/types';
+import { extractToolResultContent } from '../../../core/tools/toolResultContent';
 import type { ToolCallInfo } from '../../../core/types';
 import { extractFinalResultFromSubagentJsonl } from '../../../utils/subagentJsonl';
-import { extractToolResultContent } from '../sdk/toolResultContent';
 import type { SDKNativeMessage } from './sdkHistoryTypes';
 import {
   encodeVaultPathForSDK,

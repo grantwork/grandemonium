@@ -2,9 +2,9 @@ import { createInterface } from 'node:readline';
 import { PassThrough, Writable } from 'node:stream';
 
 import {
-  AcpJsonRpcTransport,
   JsonRpcErrorResponse,
-} from '../../../../src/providers/acp/AcpJsonRpcTransport';
+  JsonRpcTransport,
+} from '@/core/rpc/JsonRpcTransport';
 
 interface TransportHarness {
   close: () => void;
@@ -12,7 +12,7 @@ interface TransportHarness {
   closeOutput: () => void;
   nextOutbound: () => Promise<Record<string, unknown>>;
   sendInbound: (message: unknown) => void;
-  transport: AcpJsonRpcTransport;
+  transport: JsonRpcTransport;
 }
 
 function createTransportHarness(): TransportHarness {
@@ -53,11 +53,11 @@ function createTransportHarness(): TransportHarness {
     sendInbound: (message) => {
       input.write(`${JSON.stringify(message)}\n`);
     },
-    transport: new AcpJsonRpcTransport({ input, output }),
+    transport: new JsonRpcTransport({ input, output }),
   };
 }
 
-describe('AcpJsonRpcTransport', () => {
+describe('JsonRpcTransport over line-delimited streams', () => {
   let harness: TransportHarness;
 
   beforeEach(() => {
@@ -188,7 +188,7 @@ describe('AcpJsonRpcTransport', () => {
         pendingWrite.release = callback;
       },
     });
-    const transport = new AcpJsonRpcTransport({ input, output });
+    const transport = new JsonRpcTransport({ input, output });
     transport.notify('session/cancel', { sessionId: 'session-1' });
 
     let flushed = false;

@@ -1,5 +1,6 @@
 import { extractResolvedAnswers, extractResolvedAnswersFromResultText } from '../../../core/tools/toolInput';
 import { TOOL_ASK_USER_QUESTION } from '../../../core/tools/toolNames';
+import { extractToolResultContent } from '../../../core/tools/toolResultContent';
 import type {
   ChatMessage,
   ContentBlock,
@@ -13,7 +14,6 @@ import {
   parseImageDataUri,
 } from '../../../utils/imageAttachment';
 import { isCompactionCanceledStderr, isInterruptSignalText } from '../../../utils/interrupt';
-import { extractToolResultContent } from '../sdk/toolResultContent';
 import type {
   AsyncSubagentResult,
   SDKNativeContentBlock,

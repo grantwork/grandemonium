@@ -7,7 +7,7 @@ jest.mock('cross-spawn', () => jest.fn());
 import fixture from '@test/fixtures/providers/grok/extensions/plan-mode-hook.json';
 import spawn from 'cross-spawn';
 
-import { AcpJsonRpcTransport } from '@/providers/acp';
+import { JsonRpcTransport } from '@/core/rpc/JsonRpcTransport';
 import { GrokExecutionNativeConnectionImpl } from '@/providers/grok/execution/GrokExecutionNativeConnection';
 
 function createNativeProcess() {
@@ -30,12 +30,12 @@ function createNativeProcess() {
 }
 
 describe('GrokExecutionNativeConnection', () => {
-  let native: AcpJsonRpcTransport;
+  let native: JsonRpcTransport;
   let connection: GrokExecutionNativeConnectionImpl;
 
   beforeEach(() => {
     const proc = createNativeProcess();
-    native = new AcpJsonRpcTransport({ input: proc.stdin, output: proc.stdout });
+    native = new JsonRpcTransport({ input: proc.stdin, output: proc.stdout });
     native.onRequest('initialize', () => fixture.initializeResult);
     native.start();
     connection = new GrokExecutionNativeConnectionImpl({

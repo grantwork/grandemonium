@@ -12,10 +12,10 @@ import type {
 } from '@/core/execution';
 import type { SystemPromptSettings } from '@/core/prompt/mainAgent';
 import type { ProviderHost } from '@/core/providers/ProviderHost';
+import { JsonRpcErrorResponse, JsonRpcTransport } from '@/core/rpc/JsonRpcTransport';
 import {
   AcpClientConnection,
   AcpInteractionController,
-  AcpJsonRpcTransport,
   type AcpPermissionPresentation,
   type AcpPromptRequest,
   type AcpPromptResponse,
@@ -28,7 +28,6 @@ import {
   type AcpSessionNotification,
   AcpSubprocess,
   type AcpWriteTextFileRequest,
-  JsonRpcErrorResponse,
   resolveAcpLoadSessionId,
 } from '@/providers/acp';
 import { getEnhancedPath } from '@/utils/env';
@@ -138,7 +137,7 @@ export class DefaultOpencodeAcpSessionKernel
   implements OpencodeAcpSessionKernel {
   private connection: AcpClientConnection | null = null;
   private process: AcpSubprocess | null = null;
-  private transport: AcpJsonRpcTransport | null = null;
+  private transport: JsonRpcTransport | null = null;
   private interactionController: AcpInteractionController | null = null;
   private databasePath: string | null = null;
   private profile: OpencodeExecutionProfile = 'managed';
@@ -230,7 +229,7 @@ export class DefaultOpencodeAcpSessionKernel
       subprocess.start();
       this.assertNotDisposed();
 
-      const transport = new AcpJsonRpcTransport({
+      const transport = new JsonRpcTransport({
         input: subprocess.stdout,
         onClose: (listener) => subprocess.onClose(listener),
         output: subprocess.stdin,

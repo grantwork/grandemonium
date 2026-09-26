@@ -1,7 +1,6 @@
 export * from './AcpClientConnection';
 export * from './AcpExecutionEventNormalizer';
 export * from './AcpInteractionController';
-export * from './AcpJsonRpcTransport';
 export * from './AcpPermissionAdapter';
 export * from './AcpSessionConfig';
 export * from './AcpSessionUpdateNormalizer';

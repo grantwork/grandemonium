@@ -1,33 +1,32 @@
 import { createInterface } from 'node:readline';
 import { PassThrough } from 'node:stream';
 
-import type {
-  AcpSessionNotification,
-  JsonRpcRequestOptions,
-} from '../../../../src/providers/acp';
 import {
-  AcpClientConnection,
-  AcpJsonRpcTransport,
   JsonRpcErrorResponse,
-} from '../../../../src/providers/acp';
+  type JsonRpcRequestOptions,
+  JsonRpcTransport,
+} from '@/core/rpc/JsonRpcTransport';
+
+import type { AcpSessionNotification } from '../../../../src/providers/acp';
+import { AcpClientConnection } from '../../../../src/providers/acp';
 
 interface ConnectionHarness {
   close: () => void;
   connection: AcpClientConnection;
   nextOutbound: () => Promise<Record<string, unknown>>;
   sendInbound: (message: Record<string, unknown>) => void;
-  transport: AcpJsonRpcTransport;
+  transport: JsonRpcTransport;
 }
 
 function createConnectionHarness(
-  connectionFactory: (transport: AcpJsonRpcTransport) => AcpClientConnection,
+  connectionFactory: (transport: JsonRpcTransport) => AcpClientConnection,
 ): ConnectionHarness {
   const input = new PassThrough();
   const output = new PassThrough();
   const reader = createInterface({ input: output });
   const queued: Record<string, unknown>[] = [];
   const waiters: Array<(message: Record<string, unknown>) => void> = [];
-  const transport = new AcpJsonRpcTransport({ input, output });
+  const transport = new JsonRpcTransport({ input, output });
 
   reader.on('line', (line) => {
     const message = JSON.parse(line) as Record<string, unknown>;
@@ -386,7 +385,7 @@ describe('AcpClientConnection', () => {
         return { stopReason: 'end_turn' };
       },
       signal: new AbortController().signal,
-    } as unknown as AcpJsonRpcTransport;
+    } as unknown as JsonRpcTransport;
     const connection = new AcpClientConnection({ transport });
 
     await expect(connection.prompt(promptRequest)).resolves.toEqual({

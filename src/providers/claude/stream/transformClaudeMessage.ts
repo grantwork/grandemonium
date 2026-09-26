@@ -1,5 +1,6 @@
 import type { SDKMessage, SDKResultError } from '@anthropic-ai/claude-agent-sdk';
 
+import { extractToolResultContent } from '../../../core/tools/toolResultContent';
 import type { SDKToolUseResult, StreamChunk, UsageInfo } from '../../../core/types';
 import {
   CLAUDE_MODEL_TIER_PATTERN,
@@ -8,7 +9,6 @@ import {
   isClaudeModelTier,
 } from '../modelTiers';
 import { isBlockedMessage } from '../sdk/messages';
-import { extractToolResultContent } from '../sdk/toolResultContent';
 import type { ClaudeAsyncSubagentCompletionEvent, TransformEvent } from '../sdk/types';
 import { isDefaultClaudeModel, resolveContextWindowSize } from '../types/models';
 import { createTransformStreamState, type TransformStreamState } from './toolInputStreamState';

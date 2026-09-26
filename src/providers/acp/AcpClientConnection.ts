@@ -1,5 +1,9 @@
-import type { AcpJsonRpcTransport, JsonRpcRequestOptions } from './AcpJsonRpcTransport';
-import { JsonRpcErrorResponse } from './AcpJsonRpcTransport';
+import {
+  JsonRpcErrorResponse,
+  type JsonRpcRequestOptions,
+  type JsonRpcTransport,
+} from '@/core/rpc/JsonRpcTransport';
+
 import {
   ACP_SERVER_NOTIFICATION_ALIASES,
   ACP_SERVER_REQUEST_ALIASES,
@@ -84,7 +88,7 @@ export interface AcpClientConnectionOptions {
   clientInfo?: AcpImplementation | null;
   delegate?: AcpClientConnectionDelegate;
   methodOverrides?: AcpMethodOverrides;
-  transport: AcpJsonRpcTransport;
+  transport: JsonRpcTransport;
 }
 
 export class AcpClientConnection {

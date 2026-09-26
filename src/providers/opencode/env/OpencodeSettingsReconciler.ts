@@ -4,13 +4,13 @@ import {
   hasCliPathFingerprintInputs,
 } from '../../../core/providers/cli/CliPathFingerprintInputs';
 import { getRuntimeEnvironmentText } from '../../../core/providers/providerEnvironment';
+import { ensureProviderProjectionMap } from '../../../core/providers/settings/ProviderProjectionMap';
 import { createRuntimeInputFingerprint } from '../../../core/providers/settings/RuntimeInputFingerprint';
 import type { ProviderSettingsReconciler } from '../../../core/providers/types';
 import type { Conversation } from '../../../core/types';
 import { getHostnameKey, parseEnvironmentVariables } from '../../../utils/env';
 import { clearOpencodeDiscoveryState } from '../discoveryState';
 import { sameStringList, sameStringMap } from '../internal/compareCollections';
-import { ensureProviderProjectionMap } from '../internal/providerProjection';
 import {
   decodeOpencodeModelId,
   encodeOpencodeModelId,

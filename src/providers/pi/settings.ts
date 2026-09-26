@@ -1,11 +1,11 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
+import { ensureProviderProjectionMap } from '../../core/providers/settings/ProviderProjectionMap';
 import {
   readStoredBoolean,
   readStoredString,
 } from '../../core/providers/settings/storedSettings';
 import type { HostnameCliPaths } from '../../core/types/settings';
-import { ensureProviderProjectionMap } from './internal/providerProjection';
 import {
   clampPiThinkingLevel,
   decodePiModelId,

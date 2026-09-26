@@ -1,6 +1,6 @@
+import { JsonRpcTransport } from '../../../core/rpc/JsonRpcTransport';
 import {
   AcpClientConnection,
-  AcpJsonRpcTransport,
   AcpSubprocess,
   normalizeAcpAvailableCommands,
 } from '../../acp';
@@ -46,7 +46,7 @@ implements GrokExecutionNativeConnection {
     Parameters<NonNullable<GrokExecutionNativeConnection['onModelsChanged']>>[0]
   >();
   private readonly process: AcpSubprocess;
-  private readonly transport: AcpJsonRpcTransport;
+  private readonly transport: JsonRpcTransport;
   private readonly unsubscribers: Array<() => void> = [];
 
   constructor(options: GrokExecutionNativeCreateOptions) {
@@ -57,7 +57,7 @@ implements GrokExecutionNativeConnection {
       env: options.env,
     });
     this.process.start();
-    this.transport = new AcpJsonRpcTransport({
+    this.transport = new JsonRpcTransport({
       input: this.process.stdout,
       onClose: listener => this.process.onClose(listener),
       output: this.process.stdin,

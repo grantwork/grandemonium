@@ -1,5 +1,6 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
+import { ensureProviderProjectionMap } from '../../core/providers/settings/ProviderProjectionMap';
 import {
   readStoredBoolean,
   readStoredString,
@@ -9,7 +10,6 @@ import {
   getOpencodeDiscoveryState,
   updateOpencodeDiscoveryState,
 } from './discoveryState';
-import { ensureProviderProjectionMap } from './internal/providerProjection';
 import {
   decodeOpencodeModelId,
   encodeOpencodeModelId,

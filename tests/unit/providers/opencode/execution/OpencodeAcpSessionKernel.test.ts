@@ -9,10 +9,8 @@ import {
 import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 
-import {
-  type AcpRequestPermissionRequest,
-  JsonRpcErrorResponse,
-} from '@/providers/acp';
+import { JsonRpcErrorResponse } from '@/core/rpc/JsonRpcTransport';
+import type { AcpRequestPermissionRequest } from '@/providers/acp';
 import {
   classifyOpencodeSessionLoadError,
   OpencodeSessionMissingError,

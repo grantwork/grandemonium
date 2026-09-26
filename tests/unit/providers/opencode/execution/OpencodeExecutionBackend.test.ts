@@ -23,7 +23,7 @@ const mockAcpSubprocess = jest.fn().mockImplementation(() => ({
   shutdown: mockProcessShutdown,
   start: mockProcessStart,
 }));
-const mockAcpJsonRpcTransport = jest.fn().mockImplementation(() => ({
+const mockJsonRpcTransport = jest.fn().mockImplementation(() => ({
   dispose: mockTransportDispose,
   onClose: mockTransportOnClose.mockReturnValue(jest.fn()),
   start: mockTransportStart,
@@ -38,10 +38,14 @@ jest.mock('@/providers/acp', () => {
   return {
     ...actual,
     AcpClientConnection: mockAcpClientConnection,
-    AcpJsonRpcTransport: mockAcpJsonRpcTransport,
     AcpSubprocess: mockAcpSubprocess,
   };
 });
+
+jest.mock('@/core/rpc/JsonRpcTransport', () => ({
+  ...jest.requireActual('@/core/rpc/JsonRpcTransport'),
+  JsonRpcTransport: mockJsonRpcTransport,
+}));
 
 jest.mock('@/providers/opencode/runtime/OpencodeLaunchArtifacts', () => {
   const actual = jest.requireActual(
@@ -404,7 +408,7 @@ describe('OpencodeExecutionBackend', () => {
           throw failure;
         });
       } else if (failureBoundary === 'transport-construction') {
-        mockAcpJsonRpcTransport.mockImplementationOnce(() => {
+        mockJsonRpcTransport.mockImplementationOnce(() => {
           throw failure;
         });
       } else if (failureBoundary === 'connection-construction') {
