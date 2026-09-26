@@ -2,7 +2,6 @@ import {
   isBracketInterruptText,
   isCompactionCanceledStderr,
   isInterruptSignalText,
-  stripLegacyInterruptIndicator,
 } from '@/utils/interrupt';
 
 describe('interrupt utils', () => {
@@ -69,22 +68,6 @@ describe('interrupt utils', () => {
     it('rejects regular content', () => {
       expect(isInterruptSignalText('Hello')).toBe(false);
       expect(isInterruptSignalText('<local-command-stderr>Error: Timeout.</local-command-stderr>')).toBe(false);
-    });
-  });
-
-  describe('stripLegacyInterruptIndicator', () => {
-    it('removes only the trailing Grandemonium-owned interruption marker', () => {
-      const marker =
-        '<span class="grandemonium-interrupted">Interrupted</span> <span class="grandemonium-interrupted-hint">· What should Grandemonium do instead?</span>';
-
-      expect(stripLegacyInterruptIndicator(`Partial response\n\n${marker}`)).toEqual({
-        content: 'Partial response',
-        interrupted: true,
-      });
-      expect(stripLegacyInterruptIndicator(`${marker}\n\nMore text`)).toEqual({
-        content: `${marker}\n\nMore text`,
-        interrupted: false,
-      });
     });
   });
 });

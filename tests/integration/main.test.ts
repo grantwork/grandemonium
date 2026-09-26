@@ -1,4 +1,4 @@
-import { Notice, TFile, TFolder } from 'obsidian';
+import { TFile, TFolder } from 'obsidian';
 
 import { LocalAgentRuntimeHttpServer } from '@/app/agent-runtime/LocalAgentRuntimeHttpServer';
 import { SharedStorageService } from '@/app/storage/SharedStorageService';
@@ -2068,33 +2068,6 @@ describe('GrandemoniumPlugin', () => {
   });
 
   describe('loadSettings', () => {
-    it('deletes the legacy Claude MCP configuration', async () => {
-      const files = installVaultFiles({
-        '.claude/mcp.json': JSON.stringify({
-          mcpServers: {
-            legacy: { command: 'legacy-server' },
-          },
-        }),
-      });
-
-      await plugin.loadSettings();
-
-      expect(mockApp.vault.adapter.remove).toHaveBeenCalledWith('.claude/mcp.json');
-      expect(files.has('.claude/mcp.json')).toBe(false);
-    });
-
-    it('continues loading when the legacy Claude MCP configuration cannot be deleted', async () => {
-      mockApp.vault.adapter.exists.mockImplementation(async (path: string) => (
-        path === '.claude/mcp.json'
-      ));
-      mockApp.vault.adapter.remove.mockRejectedValue(new Error('permission denied'));
-
-      await expect(plugin.loadSettings()).resolves.toBeUndefined();
-
-      expect(plugin.settings).toBeDefined();
-      expect(Notice).toHaveBeenCalledWith('Failed to remove obsolete Claude configuration');
-    });
-
     it('should merge saved data with defaults', async () => {
       // Mock grandemonium-settings.json exists with custom values (Grandemonium-specific settings)
       mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {

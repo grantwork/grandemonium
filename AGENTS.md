@@ -157,7 +157,7 @@ Reviews must enforce the dependency, ownership, provider-boundary, and state-lif
 
 ## Vault Deployment
 
-`vaults.json` is the register of local Obsidian vaults this fork deploys to. `npm run deploy` builds and copies `main.js`, `styles.css`, and `manifest.json` into `.obsidian/plugins/<manifest id>/` for every registered vault; `npm run dev` does the same on each watch rebuild. A vault whose `.obsidian` folder is missing is skipped with a warning rather than failing the run. Setting `OBSIDIAN_VAULT` overrides the register with a single vault.
+`vaults.json` registers the local Obsidian vaults the plugin is installed into. `npm run deploy` builds, then copies `main.js`, `styles.css`, and `manifest.json` into `.obsidian/plugins/<manifest id>/` of each registered vault, skipping with a warning any vault without a `.obsidian` folder; paths passed to `scripts/install-to-vault.mjs` replace the register for one run. `npm run dev` copies on each watch rebuild into every registered vault path that exists, creating the plugin folder if needed, and `OBSIDIAN_VAULT` (from the environment or `.env.local`) replaces the register with one vault for dev only.
 
 ## Comments Feature
 
@@ -200,7 +200,7 @@ style, so upstream fixes stay easy to compare. Three adaptations matter:
     twice at once. The popover covers the sidebar-closed case, and
     `commentPopover` still disables it entirely.
   - Read marks are per person and live in per-vault localStorage, never in the
-    shared comment block. They are keyed `path id`, so `vault.on("rename")`
+    shared comment block. They are keyed `path\u0000id`, so `vault.on("rename")`
     must move them or every thread in a renamed note returns as unread.
   - Obsidian's metadata cache does not record fence languages, so finding
     commented notes means reading them. `CommentIndex` sweeps once on load and

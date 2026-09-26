@@ -2,7 +2,6 @@ import { type InstallationKey, isInstallationKey } from '@/core/device/Installat
 
 export const GRANDEMONIUM_STORAGE_PATH = '.grandemonium';
 
-export const LEGACY_GRANDEMONIUM_SETTINGS_PATH = '.claude/grandemonium-settings.json';
 export const GRANDEMONIUM_SETTINGS_PATH = `${GRANDEMONIUM_STORAGE_PATH}/grandemonium-settings.json`;
 
 export const LEGACY_SESSIONS_PATH = '.claude/sessions';

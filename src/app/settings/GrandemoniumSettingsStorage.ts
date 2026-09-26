@@ -1,7 +1,4 @@
-import {
-  GRANDEMONIUM_SETTINGS_PATH,
-  LEGACY_GRANDEMONIUM_SETTINGS_PATH,
-} from '../../core/bootstrap/storagePaths';
+import { GRANDEMONIUM_SETTINGS_PATH } from '../../core/bootstrap/storagePaths';
 import {
   DEFAULT_COLLAB_PROJECTS_FOLDER,
   parseCollabProjectsFolder,
@@ -34,10 +31,7 @@ import {
 import { getHostnameKey, getLegacyDeviceSettingsKey } from '../../utils/env';
 import { DEFAULT_GRANDEMONIUM_SETTINGS } from './defaultSettings';
 
-export {
-  GRANDEMONIUM_SETTINGS_PATH,
-  LEGACY_GRANDEMONIUM_SETTINGS_PATH,
-};
+export { GRANDEMONIUM_SETTINGS_PATH };
 
 export type StoredGrandemoniumSettings = GrandemoniumSettings;
 
@@ -625,15 +619,10 @@ export class GrandemoniumSettingsStorage {
       2,
     );
     await this.adapter.write(GRANDEMONIUM_SETTINGS_PATH, content);
-    await this.deleteLegacyFileIfPresent();
   }
 
   async exists(): Promise<boolean> {
-    if (await this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH)) {
-      return true;
-    }
-
-    return this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
+    return this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH);
   }
 
   async update(updates: Partial<StoredGrandemoniumSettings>): Promise<void> {
@@ -650,16 +639,6 @@ export class GrandemoniumSettingsStorage {
       return GRANDEMONIUM_SETTINGS_PATH;
     }
 
-    if (await this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH)) {
-      return LEGACY_GRANDEMONIUM_SETTINGS_PATH;
-    }
-
     return null;
-  }
-
-  private async deleteLegacyFileIfPresent(): Promise<void> {
-    if (await this.adapter.exists(LEGACY_GRANDEMONIUM_SETTINGS_PATH)) {
-      await this.adapter.delete(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
-    }
   }
 }

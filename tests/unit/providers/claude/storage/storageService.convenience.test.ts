@@ -221,20 +221,6 @@ describe('StorageService convenience methods', () => {
       expect(settings.userName).toBe('Test');
       expect(settings.model).toBe('haiku');
     });
-
-    it('migrates legacy settings into .grandemonium during initialization', async () => {
-      const { plugin, files } = createMockPlugin({
-        initialFiles: {
-          '.claude/grandemonium-settings.json': grandemoniumSettingsJson,
-        },
-      });
-      const storage = new StorageService(plugin);
-
-      await storage.initialize();
-
-      expect(files.get('.grandemonium/grandemonium-settings.json')).toBeDefined();
-      expect(files.has('.claude/grandemonium-settings.json')).toBe(false);
-    });
   });
 
   describe('loadAllSlashCommands', () => {

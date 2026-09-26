@@ -32,7 +32,7 @@ The execution session owns the live provider snapshot. History services reconstr
 ## Storage Rules
 
 - `CCSettingsStorage.save()` must merge with existing `.claude/settings.json`; Grandemonium only owns permissions and plugin enablement.
-- Claude Code owns MCP configuration, authentication, health checks, and connection lifecycle through its native CLI and settings scopes. At application storage initialization, the composition root invokes the Claude-owned legacy cleanup to delete `.claude/mcp.json`; no other Grandemonium code may read, write, inject, or migrate that path.
+- Claude Code owns MCP configuration, authentication, health checks, and connection lifecycle through its native CLI and settings scopes. Grandemonium does not read, write, inject, or migrate MCP configuration.
 - Plugin enabled state is dual-written to `.claude/settings.json` and `PluginManager.plugins[].enabled`. Keep both in sync.
 - Native transcripts are read from `{CLAUDE_CONFIG_DIR:-~/.claude}/projects/{vault}/`; resolve the config dir through `resolveClaudeConfigDir`, never hardcode `~/.claude`.
 - Historical selected-model recovery returns a provider-qualified model only from a valid active-branch checkpoint. For multi-segment conversations, the checkpoint-bearing or latest authoritative segment must resolve; do not silently fall back to an older segment's model or make the recovery locator resumable.

@@ -119,17 +119,6 @@ it('leaves interrupted and unsuccessful output expanded', () => {
   }
 });
 
-it('copies interrupted replay text without legacy marker markup', async () => {
-  const { renderer, messagesEl } = setup();
-  const marker = '<span class="grandemonium-interrupted">Interrupted</span> <span class="grandemonium-interrupted-hint">· What should Grandemonium do instead?</span>';
-  renderer.renderStoredMessage({ id: 'legacy', role: 'assistant', timestamp: 5,
-    content: `Partial answer\n\n${marker}` });
-  fireEvent.click(within(messagesEl).getByRole('button', { name: 'Copy message' }));
-  await Promise.resolve();
-  expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Partial answer');
-  renderer.dispose();
-});
-
 it('keeps separate completed turns and refreshes timestamps in their own action rows', () => {
   const { renderer, messagesEl, settings } = setup();
   renderer.renderMessages([...messages,

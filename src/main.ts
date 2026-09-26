@@ -116,7 +116,6 @@ import { type InlineEditContext, InlineEditModal } from './features/inline-edit/
 import { GrandemoniumSettingTab } from './features/settings/GrandemoniumSettings';
 import { setLocale, t } from './i18n/i18n';
 import type { Locale } from './i18n/types';
-import { deleteLegacyMcpConfig } from './providers/claude/storage/LegacyMcpConfigCleanup';
 import { buildCursorContext } from './utils/editor';
 import { getInstallationKey } from './utils/env';
 import { revealWorkspaceLeaf } from './utils/obsidianCompat';
@@ -1214,11 +1213,6 @@ export default class GrandemoniumPlugin extends Plugin {
       this.app.workspace,
       isGrandemoniumView,
     );
-    try {
-      await deleteLegacyMcpConfig(sharedStorage.getAdapter());
-    } catch {
-      new Notice('Failed to remove obsolete Claude configuration');
-    }
     const { grandemonium } = await sharedStorage.initialize();
     this.settings = {
       ...DEFAULT_GRANDEMONIUM_SETTINGS,
@@ -2340,10 +2334,6 @@ export default class GrandemoniumPlugin extends Plugin {
     }
   }
 
-  /**
-   * Routes a comment review request to one open chat view, which owns tab and
-   * provider dispatch. Returns the agent names that accepted it.
-   */
   /**
    * Starts one background review per AI reached. Each runs in a disposable
    * session rather than in a chat tab, so no review inherits the context of

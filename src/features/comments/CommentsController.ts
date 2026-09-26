@@ -379,7 +379,7 @@ export class CommentsController {
     return this.plugin.app;
   }
 
-  /** Host plugin manifest, read by the sidebar for its block language tag. */
+  /** Host plugin manifest; its id names the hover-link source the sidebar's links report to. */
   get manifest(): PluginManifest {
     return this.plugin.manifest;
   }

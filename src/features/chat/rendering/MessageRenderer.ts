@@ -25,7 +25,6 @@ import { enhanceRenderedCodeFence } from '../../../shared/components/CopyableCod
 import { extractUserDisplayContent } from '../../../utils/context';
 import { processFileLinks, registerFileLinkHandler } from '../../../utils/fileLink';
 import { replaceImageEmbedsWithHtml } from '../../../utils/imageEmbed';
-import { stripLegacyInterruptIndicator } from '../../../utils/interrupt';
 import { escapeRawHtmlTags } from '../../../utils/markdownHtml';
 import {
   escapeMathDelimitersForStreaming,
@@ -368,8 +367,8 @@ export class MessageRenderer {
         }
       }
     } else if (msg.role === 'assistant') {
-      const hadLegacyInterruptIndicator = this.renderAssistantContent(msg, contentEl);
-      if (msg.isInterrupt || hadLegacyInterruptIndicator) {
+      this.renderAssistantContent(msg, contentEl);
+      if (msg.isInterrupt) {
         this.appendInterruptIndicator(contentEl);
       }
     }
@@ -392,10 +391,9 @@ export class MessageRenderer {
       : [{ type: 'text' as const, content: msg.content }];
     let finalStart = blocks.length;
     while (finalStart > 0 && ['text', 'citations'].includes(blocks[finalStart - 1].type)) finalStart--;
-    const finalAnswer = stripLegacyInterruptIndicator(blocks.slice(finalStart)
-      .flatMap(block => block.type === 'text' ? [block.content] : []).join('\n\n'));
-    const finalText = finalAnswer.content;
-    const canCollapse = collapse && !msg.isInterrupt && !finalAnswer.interrupted && finalText.trim().length > 0
+    const finalText = blocks.slice(finalStart)
+      .flatMap(block => block.type === 'text' ? [block.content] : []).join('\n\n');
+    const canCollapse = collapse && !msg.isInterrupt && finalText.trim().length > 0
       && !blocks.some(block => block.type === 'context_compacted');
 
     if (canCollapse) {
@@ -411,7 +409,7 @@ export class MessageRenderer {
       });
       const children = Array.from(contentEl.children) as HTMLElement[];
       const finalBlockCount = blocks.slice(finalStart).filter(block => block.type === 'citations'
-        || (block.type === 'text' && stripLegacyInterruptIndicator(block.content).content.trim())).length;
+        || (block.type === 'text' && block.content.trim())).length;
       const answerEls = new Set(children.filter(child => child.classList.contains('grandemonium-text-block')
         || child.classList.contains('grandemonium-citations')).slice(-finalBlockCount));
       // Fallback tool calls can follow the answer in the DOM without belonging to the answer.
@@ -446,9 +444,9 @@ export class MessageRenderer {
         child.querySelector('.grandemonium-text-copy-btn')?.remove();
       }
     }
-    const copyText = canCollapse ? finalText : stripLegacyInterruptIndicator(
-      blocks.filter(block => block.type === 'text').map(block => block.content).join('\n\n') || msg.content,
-    ).content;
+    const copyText = canCollapse
+      ? finalText
+      : blocks.filter(block => block.type === 'text').map(block => block.content).join('\n\n') || msg.content;
     if (copyText.trim()) this.addTextCopyButton(toolbar, copyText);
     if (copyText.trim()) this.addSpeakButton(toolbar, copyText);
     if (this.forkCallback && msg.assistantMessageId) this.addForkButton(msgEl, msg.id);
@@ -499,9 +497,7 @@ export class MessageRenderer {
   /**
    * Renders assistant message content (content blocks or fallback).
    */
-  private renderAssistantContent(msg: ChatMessage, contentEl: HTMLElement): boolean {
-    let hadLegacyInterruptIndicator = false;
-
+  private renderAssistantContent(msg: ChatMessage, contentEl: HTMLElement): void {
     if (msg.contentBlocks && msg.contentBlocks.length > 0) {
       const renderedToolIds = new Set<string>();
       for (const block of msg.contentBlocks) {
@@ -513,15 +509,13 @@ export class MessageRenderer {
             (el, md) => this.renderContent(el, md)
           );
         } else if (block.type === 'text') {
-          const normalized = stripLegacyInterruptIndicator(block.content);
-          hadLegacyInterruptIndicator ||= normalized.interrupted;
           // Skip empty or whitespace-only text blocks to avoid extra gaps
-          if (!normalized.content.trim()) {
+          if (!block.content.trim()) {
             continue;
           }
           const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
-          void this.renderContent(textEl, normalized.content);
-          this.addTextCopyButton(textEl, normalized.content);
+          void this.renderContent(textEl, block.content);
+          this.addTextCopyButton(textEl, block.content);
         } else if (block.type === 'citations') {
           this.renderCitationGroup(contentEl, block.citations);
         } else if (block.type === 'tool_use') {
@@ -558,12 +552,10 @@ export class MessageRenderer {
     } else {
       // Fallback for old conversations without contentBlocks
       if (msg.content) {
-        const normalized = stripLegacyInterruptIndicator(msg.content);
-        hadLegacyInterruptIndicator ||= normalized.interrupted;
-        if (normalized.content.trim()) {
+        if (msg.content.trim()) {
           const textEl = contentEl.createDiv({ cls: 'grandemonium-text-block' });
-          void this.renderContent(textEl, normalized.content);
-          this.addTextCopyButton(textEl, normalized.content);
+          void this.renderContent(textEl, msg.content);
+          this.addTextCopyButton(textEl, msg.content);
         }
       }
       if (msg.toolCalls) {
@@ -572,8 +564,6 @@ export class MessageRenderer {
         }
       }
     }
-
-    return hadLegacyInterruptIndicator;
   }
 
   renderCitationGroup(parentEl: HTMLElement, citations: CitationGroup): HTMLElement {

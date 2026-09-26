@@ -7,7 +7,6 @@ import { getClaudeProviderSettings } from '@/providers/claude/settings';
 import {
   GRANDEMONIUM_SETTINGS_PATH,
   GrandemoniumSettingsStorage,
-  LEGACY_GRANDEMONIUM_SETTINGS_PATH,
 } from '@/providers/claude/storage/GrandemoniumSettingsStorage';
 import { DEFAULT_SETTINGS } from '@/providers/claude/types/settings';
 import {
@@ -140,31 +139,6 @@ describe('GrandemoniumSettingsStorage', () => {
       expect(result.collabGitPath).toBe('/opt/homebrew/bin/git');
       expect(JSON.parse(mockAdapter.write.mock.calls[0][1]).collabGitPath)
         .toBe('/opt/homebrew/bin/git');
-    });
-
-    it('loads legacy .claude settings and migrates them to .grandemonium', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === LEGACY_GRANDEMONIUM_SETTINGS_PATH
-      ));
-      mockAdapter.read.mockImplementation(async (path: string) => {
-        if (path === LEGACY_GRANDEMONIUM_SETTINGS_PATH) {
-          return JSON.stringify({
-            model: 'claude-opus-4-5',
-            userName: 'MigratedUser',
-          });
-        }
-        return '{}';
-      });
-
-      const result = await storage.load();
-
-      expect(result.model).toBe('claude-opus-4-5');
-      expect(result.userName).toBe('MigratedUser');
-      expect(mockAdapter.write).toHaveBeenCalledWith(
-        GRANDEMONIUM_SETTINGS_PATH,
-        expect.any(String),
-      );
-      expect(mockAdapter.delete).toHaveBeenCalledWith(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
     });
 
     it('should parse valid JSON and merge with defaults', async () => {
@@ -1068,20 +1042,6 @@ describe('GrandemoniumSettingsStorage', () => {
       });
     });
 
-    it('deletes the legacy settings file after writing the new path', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === LEGACY_GRANDEMONIUM_SETTINGS_PATH
-      ));
-
-      await storage.save(DEFAULT_SETTINGS);
-
-      expect(mockAdapter.write).toHaveBeenCalledWith(
-        GRANDEMONIUM_SETTINGS_PATH,
-        expect.any(String),
-      );
-      expect(mockAdapter.delete).toHaveBeenCalledWith(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
-    });
-
     it('should throw on write error', async () => {
       mockAdapter.write.mockRejectedValue(new Error('Write failed'));
 
@@ -1099,18 +1059,6 @@ describe('GrandemoniumSettingsStorage', () => {
 
       expect(result).toBe(true);
       expect(mockAdapter.exists).toHaveBeenCalledWith(GRANDEMONIUM_SETTINGS_PATH);
-    });
-
-    it('should return true when only the legacy file exists', async () => {
-      mockAdapter.exists.mockImplementation(async (path: string) => (
-        path === LEGACY_GRANDEMONIUM_SETTINGS_PATH
-      ));
-
-      const result = await storage.exists();
-
-      expect(result).toBe(true);
-      expect(mockAdapter.exists).toHaveBeenCalledWith(GRANDEMONIUM_SETTINGS_PATH);
-      expect(mockAdapter.exists).toHaveBeenCalledWith(LEGACY_GRANDEMONIUM_SETTINGS_PATH);
     });
 
     it('should return false when file does not exist', async () => {

@@ -21,5 +21,5 @@ const target = join(ROOT, '.env.local');
 if (existsSync(example) && !existsSync(target)) {
   copyFileSync(example, target);
   console.log('Created .env.local from .env.local.example');
-  console.log('Edit it to set your OBSIDIAN_VAULT path for auto-copy during development.');
+  console.log('Set OBSIDIAN_VAULT there only to make npm run dev copy into one vault instead of those in vaults.json.');
 }
