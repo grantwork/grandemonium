@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
 import { ProviderExecutionLifecycleRegistry } from '@/core/execution';
+import { updateOpencodeDiscoveryState } from '@/providers/opencode/discoveryState';
 import {
   getOpencodeProviderSettings,
   OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
@@ -348,9 +349,7 @@ function createPlugin(overrides: Record<string, unknown> = {}): any {
     settings: {
       providerConfigs: {
         opencode: {
-          availableModes: [],
           cliPathsByHost: {},
-          discoveredModels: [],
           enabled: true,
           environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
           modelAliases: {},
@@ -697,9 +696,7 @@ describe('OpencodeSettingsTab', () => {
     const plugin = createPlugin({
       providerConfigs: {
         opencode: {
-          availableModes: [],
           cliPathsByHost: {},
-          discoveredModels: [],
           enabled: true,
           environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
           modelAliases: {},
@@ -710,9 +707,11 @@ describe('OpencodeSettingsTab', () => {
       },
     });
     mockMetadataLoadCatalog.mockImplementation(async () => {
-      plugin.settings.providerConfigs.opencode.discoveredModels = [
-        { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
-      ];
+      updateOpencodeDiscoveryState(plugin.settings, {
+        discoveredModels: [
+          { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
+        ],
+      });
       return true;
     });
     const context = createContext(plugin);
@@ -732,9 +731,7 @@ describe('OpencodeSettingsTab', () => {
     const plugin = createPlugin({
       providerConfigs: {
         opencode: {
-          availableModes: [],
           cliPathsByHost: {},
-          discoveredModels: [],
           enabled: true,
           environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
           modelAliases: {},
@@ -745,9 +742,11 @@ describe('OpencodeSettingsTab', () => {
       },
     });
     mockMetadataLoadCatalog.mockImplementation(async () => {
-      plugin.settings.providerConfigs.opencode.discoveredModels = [
-        { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
-      ];
+      updateOpencodeDiscoveryState(plugin.settings, {
+        discoveredModels: [
+          { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
+        ],
+      });
       return true;
     });
     const context = createContext(plugin);
@@ -764,9 +763,7 @@ describe('OpencodeSettingsTab', () => {
     const plugin = createPlugin({
       providerConfigs: {
         opencode: {
-          availableModes: [],
           cliPathsByHost: {},
-          discoveredModels: [],
           enabled: true,
           environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
           modelAliases: {},
@@ -777,9 +774,11 @@ describe('OpencodeSettingsTab', () => {
       },
     });
     mockMetadataLoadCatalog.mockImplementation(async () => {
-      plugin.settings.providerConfigs.opencode.discoveredModels = [
-        { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
-      ];
+      updateOpencodeDiscoveryState(plugin.settings, {
+        discoveredModels: [
+          { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
+        ],
+      });
       return true;
     });
     const context = createContext(plugin);
@@ -797,11 +796,7 @@ describe('OpencodeSettingsTab', () => {
     const plugin = createPlugin({
       providerConfigs: {
         opencode: {
-          availableModes: [],
           cliPathsByHost: {},
-          discoveredModels: [
-            { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
-          ],
           enabled: true,
           environmentVariables: OPENCODE_DEFAULT_ENVIRONMENT_VARIABLES,
           modelAliases: {},
@@ -810,6 +805,11 @@ describe('OpencodeSettingsTab', () => {
           visibleModels: [],
         },
       },
+    });
+    updateOpencodeDiscoveryState(plugin.settings, {
+      discoveredModels: [
+        { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
+      ],
     });
     const context = createContext(plugin);
 
@@ -837,13 +837,15 @@ describe('OpencodeSettingsTab', () => {
     const plugin = createPlugin({
       providerConfigs: {
         opencode: {
-          discoveredModels: [
-            { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
-          ],
           modelAliases: {},
           visibleModels: ['deepseek/deepseek-v4-pro'],
         },
       },
+    });
+    updateOpencodeDiscoveryState(plugin.settings, {
+      discoveredModels: [
+        { label: 'DeepSeek/DeepSeek V4 Pro', rawId: 'deepseek/deepseek-v4-pro' },
+      ],
     });
     const context = createContext(plugin);
 

@@ -1,5 +1,4 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
-import { getProviderEnvironmentVariables } from '../../core/providers/providerEnvironment';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
 import {
   readStoredBoolean,
@@ -138,8 +137,7 @@ export function getPiProviderSettings(settings: Record<string, unknown>): PiProv
     ),
     environmentVariables: readStoredString(
       config.environmentVariables,
-      getProviderEnvironmentVariables(settings, 'pi')
-        ?? DEFAULT_PI_PROVIDER_SETTINGS.environmentVariables,
+      DEFAULT_PI_PROVIDER_SETTINGS.environmentVariables,
     ),
     modelAliases: normalizePiModelAliasesForPersistableIds(
       config.modelAliases,

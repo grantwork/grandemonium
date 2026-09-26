@@ -1,5 +1,4 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
-import { getProviderEnvironmentVariables } from '../../core/providers/providerEnvironment';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
 import {
   readStoredBoolean,
@@ -8,7 +7,6 @@ import {
 import type { HostnameCliPaths } from '../../core/types/settings';
 import {
   getOpencodeDiscoveryState,
-  seedOpencodeDiscoveryStateFromLegacyConfig,
   updateOpencodeDiscoveryState,
 } from './discoveryState';
 import { ensureProviderProjectionMap } from './internal/providerProjection';
@@ -144,7 +142,6 @@ export function getOpencodeProviderSettings(
 ): OpencodeProviderSettings {
   const config = getProviderConfig(settings, 'opencode');
   const cliPathsByHost = normalizeHostnameStringMap(config.cliPathsByHost);
-  seedOpencodeDiscoveryStateFromLegacyConfig(settings, config);
   const discoveryState = getOpencodeDiscoveryState(settings);
   const availableModes = discoveryState.availableModes;
   const discoveredModels = discoveryState.discoveredModels;
@@ -169,8 +166,7 @@ export function getOpencodeProviderSettings(
     ),
     environmentVariables: readStoredString(
       config.environmentVariables,
-      getProviderEnvironmentVariables(settings, 'opencode')
-        ?? DEFAULT_OPENCODE_PROVIDER_SETTINGS.environmentVariables,
+      DEFAULT_OPENCODE_PROVIDER_SETTINGS.environmentVariables,
     ),
     modelAliases: normalizeOpencodeModelAliases(config.modelAliases, discoveredModels),
     preferredThinkingByModel: normalizeOpencodePreferredThinkingByModel(
@@ -263,11 +259,6 @@ export function updateOpencodeProviderSettings(
   });
 
   return next;
-}
-
-export function hasLegacyOpencodeDiscoveryFields(settings: Record<string, unknown>): boolean {
-  const config = getProviderConfig(settings, 'opencode');
-  return 'availableModes' in config || 'discoveredModels' in config;
 }
 
 function pruneModelAliasesToVisible(

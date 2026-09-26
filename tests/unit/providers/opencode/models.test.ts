@@ -1,3 +1,5 @@
+import { updateOpencodeDiscoveryState } from '@/providers/opencode/discoveryState';
+
 import {
   buildOpencodeBaseModels,
   combineOpencodeRawModelSelection,
@@ -117,16 +119,10 @@ describe('OpenCode base model derivation', () => {
 
 describe('opencodeChatUIConfig', () => {
   it('excludes saved variant selections when their base model is not enabled', () => {
-    const options = opencodeChatUIConfig.getModelOptions({
+    const settings: Record<string, unknown> = {
       model: 'haiku',
       providerConfigs: {
         opencode: {
-          discoveredModels: [
-            { label: 'OpenAI/GPT-5', rawId: 'openai/gpt-5' },
-            { label: 'OpenAI/GPT-5 (high)', rawId: 'openai/gpt-5/high' },
-            { label: 'Anthropic/Claude Sonnet 4', rawId: 'anthropic/claude-sonnet-4' },
-            { label: 'Anthropic/Claude Sonnet 4 (high)', rawId: 'anthropic/claude-sonnet-4/high' },
-          ],
           visibleModels: [
             'openai/gpt-5',
           ],
@@ -138,7 +134,16 @@ describe('opencodeChatUIConfig', () => {
       savedProviderModel: {
         opencode: 'opencode:anthropic/claude-sonnet-4/high',
       },
+    };
+    updateOpencodeDiscoveryState(settings, {
+      discoveredModels: [
+        { label: 'OpenAI/GPT-5', rawId: 'openai/gpt-5' },
+        { label: 'OpenAI/GPT-5 (high)', rawId: 'openai/gpt-5/high' },
+        { label: 'Anthropic/Claude Sonnet 4', rawId: 'anthropic/claude-sonnet-4' },
+        { label: 'Anthropic/Claude Sonnet 4 (high)', rawId: 'anthropic/claude-sonnet-4/high' },
+      ],
     });
+    const options = opencodeChatUIConfig.getModelOptions(settings);
 
     expect(options).toEqual([
       {
@@ -150,13 +155,9 @@ describe('opencodeChatUIConfig', () => {
   });
 
   it('returns visible model selector options in reverse order with aliases', () => {
-    const options = opencodeChatUIConfig.getModelOptions({
+    const settings: Record<string, unknown> = {
       providerConfigs: {
         opencode: {
-          discoveredModels: [
-            { label: 'Anthropic/Claude Sonnet 4', rawId: 'anthropic/claude-sonnet-4' },
-            { label: 'OpenAI/GPT-5', rawId: 'openai/gpt-5' },
-          ],
           modelAliases: {
             'anthropic/claude-sonnet-4': 'Sonnet',
           },
@@ -166,7 +167,14 @@ describe('opencodeChatUIConfig', () => {
           ],
         },
       },
+    };
+    updateOpencodeDiscoveryState(settings, {
+      discoveredModels: [
+        { label: 'Anthropic/Claude Sonnet 4', rawId: 'anthropic/claude-sonnet-4' },
+        { label: 'OpenAI/GPT-5', rawId: 'openai/gpt-5' },
+      ],
     });
+    const options = opencodeChatUIConfig.getModelOptions(settings);
 
     expect(options).toEqual([
       {

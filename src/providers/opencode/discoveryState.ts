@@ -111,25 +111,3 @@ export function clearOpencodeDiscoveryState(settings: Record<string, unknown>): 
   state.thinkingOptionsByModel = {};
   return true;
 }
-
-export function seedOpencodeDiscoveryStateFromLegacyConfig(
-  settings: Record<string, unknown>,
-  legacyConfig: Record<string, unknown>,
-): boolean {
-  const state = ensureDiscoveryState(settings);
-  const nextAvailableModes = state.availableModes.length > 0
-    ? state.availableModes
-    : normalizeOpencodeAvailableModes(legacyConfig.availableModes);
-  const nextDiscoveredModels = state.discoveredModels.length > 0
-    ? state.discoveredModels
-    : normalizeOpencodeDiscoveredModels(legacyConfig.discoveredModels);
-  const nextThinkingOptionsByModel = Object.keys(state.thinkingOptionsByModel).length > 0
-    ? state.thinkingOptionsByModel
-    : normalizeOpencodeThinkingOptionsByModel(legacyConfig.thinkingOptionsByModel, nextDiscoveredModels);
-
-  return updateOpencodeDiscoveryState(settings, {
-    availableModes: nextAvailableModes,
-    discoveredModels: nextDiscoveredModels,
-    thinkingOptionsByModel: nextThinkingOptionsByModel,
-  });
-}

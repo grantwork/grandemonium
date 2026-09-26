@@ -1,5 +1,4 @@
 import { getProviderConfig, setProviderConfig } from '../../core/providers/providerConfig';
-import { getProviderEnvironmentVariables } from '../../core/providers/providerEnvironment';
 import { STANDARD_REASONING_VALUES } from '../../core/providers/reasoning';
 import { normalizeHostnameStringMap } from '../../core/providers/settings/HostnameStringMap';
 import type { HostnameCliPaths } from '../../core/types/settings';
@@ -123,8 +122,7 @@ export function getGrokProviderSettings(
     environmentHash: readTrimmedString(config.environmentHash),
     environmentVariables: typeof config.environmentVariables === 'string'
       ? config.environmentVariables
-      : getProviderEnvironmentVariables(settings, 'grok')
-        ?? DEFAULT_GROK_PROVIDER_SETTINGS.environmentVariables,
+      : DEFAULT_GROK_PROVIDER_SETTINGS.environmentVariables,
     modelAliases: normalizeGrokModelAliases(
       config.modelAliases,
       allowedModelIds,

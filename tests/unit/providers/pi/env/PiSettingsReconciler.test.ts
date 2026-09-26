@@ -1,6 +1,5 @@
 import '@/providers';
 
-import { ProviderSettingsCoordinator } from '@/core/providers/ProviderSettingsCoordinator';
 import { isVersionedRuntimeInputFingerprint } from '@/core/providers/settings/RuntimeInputFingerprint';
 import type { Conversation } from '@/core/types';
 import { piSettingsReconciler } from '@/providers/pi/env/PiSettingsReconciler';
@@ -55,52 +54,6 @@ describe('piSettingsReconciler', () => {
     const fingerprint = (settings.providerConfigs as any).pi.environmentHash;
     expect(isVersionedRuntimeInputFingerprint(fingerprint)).toBe(true);
     expect(fingerprint).not.toContain('/new');
-  });
-
-  it('migrates a matching legacy environment fingerprint before coordinator invalidation', () => {
-    const settings: Record<string, unknown> = {
-      providerConfigs: {
-        pi: {
-          enabled: true,
-          environmentHash: 'PI_OFFLINE=1',
-          environmentVariables: 'PI_OFFLINE=1',
-        },
-      },
-    };
-    const conversation = {
-      id: 'pi-conversation',
-      messages: [],
-      providerId: 'pi',
-      providerState: {
-        leafEntryId: 'assistant-1',
-        sessionFile: '/sessions/current.jsonl',
-        sessionId: 'current-session',
-      },
-      sessionId: 'current-session',
-    } as unknown as Conversation;
-
-    expect(piSettingsReconciler.normalizeModelVariantSettings(settings)).toBe(true);
-    const result = ProviderSettingsCoordinator.reconcileProviders(
-      settings,
-      [conversation],
-      ['pi'],
-    );
-
-    expect(result).toMatchObject({
-      changed: false,
-      environmentChangedProviderIds: [],
-      invalidatedConversations: [],
-      sessionInvalidationProviderIds: [],
-    });
-    expect(conversation.sessionId).toBe('current-session');
-    expect(conversation.providerState).toMatchObject({
-      leafEntryId: 'assistant-1',
-      sessionFile: '/sessions/current.jsonl',
-      sessionId: 'current-session',
-    });
-    expect(isVersionedRuntimeInputFingerprint(
-      (settings.providerConfigs as any).pi.environmentHash,
-    )).toBe(true);
   });
 
   it('converts pending forks into replayable previous sessions idempotently', () => {
