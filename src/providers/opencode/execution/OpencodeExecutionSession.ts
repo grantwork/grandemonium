@@ -837,9 +837,7 @@ function buildKernelConfigurationKey(
   return JSON.stringify([
     resolveProfile(request),
     instructions.kind,
-    instructions.kind === 'explicit'
-      ? instructions.instructions
-      : instructions.dynamicSections ?? null,
+    instructions.kind === 'explicit' ? instructions.instructions : null,
   ]);
 }
 

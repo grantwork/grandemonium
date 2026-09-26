@@ -1548,11 +1548,7 @@ function resolveSystemPrompt(
       getPiProviderSettings(settings).agentName,
       DEFAULT_PI_PROVIDER_SETTINGS.agentName,
     ),
-  } satisfies SystemPromptSettings, {
-    dynamicSections: request.configuration.systemInstructions.dynamicSections
-      ? [...request.configuration.systemInstructions.dynamicSections]
-      : undefined,
-  });
+  } satisfies SystemPromptSettings);
 }
 
 function encodePrompt(

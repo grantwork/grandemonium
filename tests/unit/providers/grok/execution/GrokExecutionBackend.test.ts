@@ -850,7 +850,7 @@ describe('GrokExecutionBackend', () => {
     ]);
   });
 
-  it('keeps the full Grok prompt replacement when adding provider-default dynamic sections', async () => {
+  it('keeps the full Grok prompt replacement for provider-default instructions', async () => {
     const native = new FakeNativeConnection();
     const host = {
       settings: {
@@ -863,26 +863,16 @@ describe('GrokExecutionBackend', () => {
       nativeFactory: { create: () => native },
     }).createSession(sessionConfig);
     const base = executionRequest();
-    const request: ProviderExecutionRequest = {
+    await collect(session.execute({
       ...base,
-      configuration: {
-        ...base.configuration,
-        systemInstructions: {
-          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
-          kind: 'provider-default',
-        },
-      },
-    };
-
-    await collect(session.execute(request).events);
+      configuration: { ...base.configuration, systemInstructions: { kind: 'provider-default' } },
+    }).events);
 
     const systemPrompt = String(native.loadRequests[0]?._meta?.systemPromptOverride);
     expect(systemPrompt).toContain('## Runtime Context');
     expect(systemPrompt).toContain('Use `bash: date`');
     expect(systemPrompt).toContain('## Vault Media');
     expect(systemPrompt).toContain('Keep the shared instruction.');
-    expect(systemPrompt).toContain('## Dynamic Section\nRuntime guidance.');
-    expect(systemPrompt.match(/## Dynamic Section/g)).toHaveLength(1);
   });
 
   it('bootstraps canonical history only when creating a new native session', async () => {
@@ -1717,17 +1707,10 @@ describe('GrokExecutionBackend', () => {
     ).createSession(forkSessionConfig());
 
     const base = executionRequest();
-    const request: ProviderExecutionRequest = {
+    const events = await collect(session.execute({
       ...base,
-      configuration: {
-        ...base.configuration,
-        systemInstructions: {
-          dynamicSections: ['## Dynamic Section\nFork runtime guidance.'],
-          kind: 'provider-default',
-        },
-      },
-    };
-    const events = await collect(session.execute(request).events);
+      configuration: { ...base.configuration, systemInstructions: { kind: 'provider-default' } },
+    }).events);
 
     expect(native.forkCalls).toEqual([
       expect.objectContaining({
@@ -1738,9 +1721,7 @@ describe('GrokExecutionBackend', () => {
     expect(native.loadRequests).toEqual([
       expect.objectContaining({
         _meta: expect.objectContaining({
-          systemPromptOverride: expect.stringContaining(
-            '## Dynamic Section\nFork runtime guidance.',
-          ),
+          systemPromptOverride: expect.stringContaining('## Runtime Context'),
         }),
         sessionId: 'session-forked',
       }),

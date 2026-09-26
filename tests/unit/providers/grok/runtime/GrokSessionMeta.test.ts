@@ -1,8 +1,4 @@
-import { buildSystemPrompt, computeSystemPromptKey } from '@/core/prompt/mainAgent';
-import {
-  buildGrokSystemPrompt,
-  computeGrokSystemPromptKey,
-} from '@/providers/grok/prompt/GrokSystemPrompt';
+import { buildSystemPrompt } from '@/core/prompt/mainAgent';
 import { buildGrokSessionMeta } from '@/providers/grok/runtime/GrokSessionMeta';
 
 describe('Grok system prompt', () => {
@@ -14,7 +10,11 @@ describe('Grok system prompt', () => {
   };
 
   it('uses the complete shared Grandemonium system prompt', () => {
-    const prompt = buildGrokSystemPrompt(promptSettings);
+    const prompt = buildGrokSessionMeta({
+      model: '',
+      permissionMode: 'normal',
+      promptSettings,
+    }).systemPromptOverride;
 
     expect(prompt).toBe(buildSystemPrompt(promptSettings));
     expect(prompt).toContain("inside **Ada**'s Obsidian Vault");
@@ -22,12 +22,6 @@ describe('Grok system prompt', () => {
     expect(prompt).toContain('Keep my explicit instructions.');
     expect(prompt).toContain('bash: date');
     expect(prompt).toContain('## Vault Media');
-  });
-
-  it('uses the shared Grandemonium prompt key', () => {
-    expect(computeGrokSystemPromptKey(promptSettings)).toBe(
-      computeSystemPromptKey(promptSettings),
-    );
   });
 });
 
@@ -43,7 +37,7 @@ describe('buildGrokSessionMeta', () => {
       permissionMode: 'legacy-bypass',
       promptSettings,
     })).toEqual({
-      systemPromptOverride: buildGrokSystemPrompt(promptSettings),
+      systemPromptOverride: buildSystemPrompt(promptSettings),
       yoloMode: false,
     });
   });
@@ -55,7 +49,7 @@ describe('buildGrokSessionMeta', () => {
       promptSettings,
     })).toEqual({
       modelId: 'kimi-coding',
-      systemPromptOverride: buildGrokSystemPrompt(promptSettings),
+      systemPromptOverride: buildSystemPrompt(promptSettings),
       yoloMode: true,
     });
   });

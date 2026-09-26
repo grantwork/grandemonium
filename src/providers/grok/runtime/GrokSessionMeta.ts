@@ -1,8 +1,5 @@
+import { buildSystemPrompt, type SystemPromptSettings } from '../../../core/prompt/mainAgent';
 import { decodeGrokModelId } from '../models';
-import {
-  buildGrokSystemPrompt,
-  type GrokSystemPromptSettings,
-} from '../prompt/GrokSystemPrompt';
 
 export interface GrokSessionMeta {
   modelId?: string;
@@ -13,7 +10,7 @@ export interface GrokSessionMeta {
 export interface GrokSessionMetaBuildOptions {
   model: string;
   permissionMode: unknown;
-  promptSettings: GrokSystemPromptSettings;
+  promptSettings: SystemPromptSettings;
 }
 
 export function buildGrokSessionMeta(
@@ -22,7 +19,7 @@ export function buildGrokSessionMeta(
   const modelId = decodeGrokModelId(options.model);
   return {
     ...(modelId ? { modelId } : {}),
-    systemPromptOverride: buildGrokSystemPrompt(options.promptSettings),
+    systemPromptOverride: buildSystemPrompt(options.promptSettings),
     yoloMode: options.permissionMode === 'yolo',
   };
 }

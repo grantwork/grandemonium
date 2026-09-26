@@ -5,19 +5,6 @@ import {
 
 describe('systemPrompt', () => {
   describe('buildSystemPrompt', () => {
-    it('should produce identical output when dynamic sections are omitted or empty', () => {
-      const settings = {
-        mediaFolder: 'attachments',
-        customPrompt: 'Always be concise.',
-        vaultPath: '/vault',
-        userName: 'Alice',
-      };
-
-      expect(buildSystemPrompt(settings)).toBe(
-        buildSystemPrompt(settings, { dynamicSections: [] }),
-      );
-    });
-
     it('should retain the complete Grandemonium context with custom instructions', () => {
       const prompt = buildSystemPrompt(
         {
@@ -208,22 +195,6 @@ describe('systemPrompt', () => {
   });
 
   describe('computeSystemPromptKey', () => {
-    it('includes dynamic sections in the prompt key', () => {
-      const settings = {
-        mediaFolder: 'attachments',
-        customPrompt: 'Be helpful',
-        vaultPath: '/vault',
-        userName: 'Alice',
-      };
-
-      const defaultKey = computeSystemPromptKey(settings);
-      const dynamicKey = computeSystemPromptKey(settings, {
-        dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
-      });
-
-      expect(dynamicKey).not.toBe(defaultKey);
-    });
-
     it('computes key from all settings', () => {
       const settings = {
         mediaFolder: 'attachments',

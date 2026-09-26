@@ -1788,11 +1788,7 @@ export class CodexExecutionSession
   private resolveBaseInstructions(request: ProviderExecutionRequest): string {
     const base = request.configuration.systemInstructions.kind === 'explicit'
       ? request.configuration.systemInstructions.instructions
-      : buildSystemPrompt(this.getSystemPromptSettings(), {
-          dynamicSections: request.configuration.systemInstructions.dynamicSections
-            ? [...request.configuration.systemInstructions.dynamicSections]
-            : undefined,
-        });
+      : buildSystemPrompt(this.getSystemPromptSettings());
     return request.toolPolicy.kind === 'passive'
       ? `${base}\n\n${PASSIVE_INSTRUCTIONS}`
       : base;

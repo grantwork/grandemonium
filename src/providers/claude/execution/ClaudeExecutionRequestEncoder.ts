@@ -146,10 +146,6 @@ export class ClaudeExecutionRequestEncoder {
           claudeSettings.agentName,
           DEFAULT_CLAUDE_PROVIDER_SETTINGS.agentName,
         ),
-      }, {
-        dynamicSections: request.configuration.systemInstructions.dynamicSections
-          ? [...request.configuration.systemInstructions.dynamicSections]
-          : undefined,
       });
     const options: Options = {
       cwd: sessionConfig.vaultWorkingDirectory,

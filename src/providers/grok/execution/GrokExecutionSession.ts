@@ -16,6 +16,7 @@ import type {
   RewindableExecutionSession,
   SteerableExecutionSession,
 } from '../../../core/execution';
+import { buildSystemPrompt, type SystemPromptSettings } from '../../../core/prompt/mainAgent';
 import { resolveAgentName } from '../../../core/providers/agentName';
 import type { ProviderHost } from '../../../core/providers/ProviderHost';
 import type { ChatMessage, PermissionMode } from '../../../core/types';
@@ -57,10 +58,6 @@ import {
   normalizeGrokToolUseResult,
   resolveGrokRawToolName,
 } from '../normalization/grokToolNormalization';
-import {
-  buildGrokSystemPrompt,
-  type GrokSystemPromptSettings,
-} from '../prompt/GrokSystemPrompt';
 import { waitForGrokCancelDelivery } from '../runtime/GrokCancelDelivery';
 import type { GrokModelCatalogCoordinator } from '../runtime/GrokModelCatalogCoordinator';
 import { buildGrokRuntimeEnv } from '../runtime/GrokRuntimeEnvironment';
@@ -665,9 +662,7 @@ RewindableExecutionSession {
     return buildSessionMeta(
       request,
       request?.configuration.systemInstructions.kind === 'provider-default'
-        ? buildGrokSystemPrompt(this.getSystemPromptSettings(), {
-            dynamicSections: request.configuration.systemInstructions.dynamicSections,
-          })
+        ? buildSystemPrompt(this.getSystemPromptSettings())
         : undefined,
     );
   }
@@ -680,7 +675,7 @@ RewindableExecutionSession {
     });
   }
 
-  private getSystemPromptSettings(): GrokSystemPromptSettings {
+  private getSystemPromptSettings(): SystemPromptSettings {
     return {
       customPrompt: this.plugin.settings.systemPrompt,
       mediaFolder: this.plugin.settings.mediaFolder,

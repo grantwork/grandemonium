@@ -7,10 +7,6 @@ export interface SystemPromptSettings {
   agentName?: string;
 }
 
-export interface SystemPromptBuildOptions {
-  dynamicSections?: string[];
-}
-
 function getRuntimeContext(
   vaultPath: string | undefined,
   userName: string | undefined,
@@ -94,31 +90,12 @@ function getVaultMediaContext(mediaFolder: string): string {
 - Resolve embedded media through this folder and use its absolute path for file operations.`;
 }
 
-function getDynamicSections(dynamicSections?: string[]): string {
-  if (!dynamicSections || dynamicSections.length === 0) {
-    return '';
-  }
-
-  const sections = dynamicSections
-    .map((section) => section.trim())
-    .filter(Boolean);
-
-  if (sections.length === 0) {
-    return '';
-  }
-
-  return sections.join('\n\n');
-}
-
 function getCustomInstructions(customPrompt: string | undefined): string {
   const instructions = customPrompt?.trim();
   return instructions ? `## Custom Instructions\n\n${instructions}` : '';
 }
 
-export function buildSystemPrompt(
-  settings: SystemPromptSettings = {},
-  options: SystemPromptBuildOptions = {},
-): string {
+export function buildSystemPrompt(settings: SystemPromptSettings = {}): string {
   return [
     getRuntimeContext(settings.vaultPath, settings.userName, settings.agentName),
     getUserMessageContext(),
@@ -126,31 +103,16 @@ export function buildSystemPrompt(
     getFileOperations(),
     getReferenceConventions(),
     getVaultMediaContext(settings.mediaFolder || ''),
-    getDynamicSections(options.dynamicSections),
     getCustomInstructions(settings.customPrompt),
   ].filter(Boolean).join('\n\n');
 }
 
-export function computeSystemPromptKey(
-  settings: SystemPromptSettings,
-  options: SystemPromptBuildOptions = {},
-): string {
-  const dynamicSectionsKey = (options.dynamicSections || [])
-    .map((section) => section.trim())
-    .filter(Boolean)
-    .join('||');
-
-  const parts = [
+export function computeSystemPromptKey(settings: SystemPromptSettings): string {
+  return [
     settings.mediaFolder || '',
     settings.customPrompt || '',
     settings.vaultPath || '',
     (settings.userName || '').trim(),
     (settings.agentName || '').trim(),
-  ];
-
-  if (dynamicSectionsKey) {
-    parts.push(dynamicSectionsKey);
-  }
-
-  return parts.join('::');
+  ].join('::');
 }

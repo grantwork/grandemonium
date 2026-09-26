@@ -67,27 +67,6 @@ function createRequest(signal = new AbortController().signal): ProviderExecution
   };
 }
 
-describe('Provider system instructions', () => {
-  it('carries provider-default dynamic sections as execution configuration', () => {
-    const request = createRequest();
-    const configured: ProviderExecutionRequest = {
-      ...request,
-      configuration: {
-        ...request.configuration,
-        systemInstructions: {
-          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
-          kind: 'provider-default',
-        },
-      },
-    };
-
-    expect(configured.configuration.systemInstructions).toEqual({
-      dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
-      kind: 'provider-default',
-    });
-  });
-});
-
 class ContractRun implements ProviderExecutionRun {
   readonly executionId: string;
   readonly turnId: string;

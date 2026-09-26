@@ -28,7 +28,6 @@ export interface ProviderExecutionContext {
 export type ProviderSystemInstructions =
   | {
       readonly kind: 'provider-default';
-      readonly dynamicSections?: readonly string[];
     }
   | {
       readonly kind: 'explicit';

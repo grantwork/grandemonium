@@ -465,7 +465,7 @@ describe('ClaudeExecutionBackend', () => {
     expect(sdkMock.getLastOptions()?.mcpServers).toBeUndefined();
   });
 
-  it('passes provider-default dynamic sections through a non-snapshotted custom system prompt', async () => {
+  it('passes the provider-default prompt as a non-snapshotted custom system prompt', async () => {
     const { services } = createServices();
     sdkMock.setMockMessages([
       { type: 'result', subtype: 'success' },
@@ -475,24 +475,15 @@ describe('ClaudeExecutionBackend', () => {
 
     await collectEvents(session.execute(createRequest({
       configuration: {
-        systemInstructions: {
-          dynamicSections: ['## Dynamic Section\nRuntime guidance.'],
-          kind: 'provider-default',
-        },
+        systemInstructions: { kind: 'provider-default' },
       },
     })).events);
 
-    const systemPrompt = sdkMock.getLastOptions()?.systemPrompt;
-    expect(systemPrompt).toEqual({
+    expect(sdkMock.getLastOptions()?.systemPrompt).toEqual({
       type: 'custom',
       prompt: expect.stringContaining('## Runtime Context'),
       snapshot: false,
     });
-    expect((systemPrompt as { prompt: string }).prompt).toContain(
-      '## Dynamic Section\nRuntime guidance.',
-    );
-    expect((systemPrompt as { prompt: string }).prompt.match(/## Dynamic Section/g))
-      .toHaveLength(1);
   });
 
   it('encodes structured context with escaped XML paths and bodies', async () => {
