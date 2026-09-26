@@ -500,12 +500,7 @@ describe('GrandemoniumPlugin', () => {
         }
         return '';
       });
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          openTabs: [{ tabId: 'tab-1', conversationId: restoredMetadata.id }],
-          activeTabId: 'tab-1',
-        },
-      });
+      (plugin.loadData as jest.Mock).mockResolvedValue({});
       const loadSpy = jest.spyOn(SessionStorage.prototype, 'loadMetadata')
         .mockResolvedValue(restoredMetadata);
       const listSpy = jest.spyOn(SessionStorage.prototype, 'scan')
@@ -566,12 +561,7 @@ describe('GrandemoniumPlugin', () => {
         sessionId: 'deferred-session-id',
         providerState: { providerSessionId: 'deferred-provider-session-id' },
       };
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          openTabs: [{ tabId: 'tab-1', conversationId: restoredMetadata.id }],
-          activeTabId: 'tab-1',
-        },
-      });
+      (plugin.loadData as jest.Mock).mockResolvedValue({});
       const loadSpy = jest.spyOn(SessionStorage.prototype, 'loadMetadata')
         .mockResolvedValue(restoredMetadata);
       const listSpy = jest.spyOn(SessionStorage.prototype, 'scan')
@@ -2558,14 +2548,7 @@ describe('GrandemoniumPlugin', () => {
     });
 
     it('starts from the fresh runtime tab after reopening a persisted layout', async () => {
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          openTabs: [
-            { tabId: 'tab-1', conversationId: null },
-          ],
-          activeTabId: 'tab-1',
-        },
-      });
+      (plugin.loadData as jest.Mock).mockResolvedValue({});
 
       await plugin.onload();
 
@@ -2626,16 +2609,7 @@ describe('GrandemoniumPlugin', () => {
     });
 
     it('ignores the persisted runtime layout when checking new-tab availability', async () => {
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        tabManagerState: {
-          openTabs: [
-            { tabId: 'tab-1', conversationId: null },
-            { tabId: 'tab-2', conversationId: null },
-            { tabId: 'tab-3', conversationId: null },
-          ],
-          activeTabId: 'tab-3',
-        },
-      });
+      (plugin.loadData as jest.Mock).mockResolvedValue({});
 
       await plugin.onload();
 
