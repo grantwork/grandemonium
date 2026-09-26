@@ -428,11 +428,6 @@ export function getHostnameKey(): InstallationKey {
   return getInstallationKey();
 }
 
-export function getLegacyDeviceSettingsKey(): string | null {
-  const seed = getDeviceSettingsSeed();
-  return seed.startsWith('device:') ? seed : null;
-}
-
 export const MIN_CONTEXT_LIMIT = 1_000;
 export const MAX_CONTEXT_LIMIT = 10_000_000;
 

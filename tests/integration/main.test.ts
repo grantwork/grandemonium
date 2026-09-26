@@ -1460,37 +1460,6 @@ describe('GrandemoniumPlugin', () => {
       expect(JSON.parse(writeCall[1]).maxWarmAgentProcesses).toBe(5);
     });
 
-    it('should strip legacy blocklist fields when loading old settings', async () => {
-      mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.grandemonium/grandemonium-settings.json';
-      });
-      mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/grandemonium-settings.json') {
-          return JSON.stringify({
-            enableBlocklist: false,
-            blockedCommands: { unix: ['rm -rf', '  '] },
-          });
-        }
-        return '';
-      });
-
-      await plugin.loadSettings();
-
-      expect('enableBlocklist' in plugin.settings).toBe(false);
-      expect('blockedCommands' in plugin.settings).toBe(false);
-      expect(mockApp.vault.adapter.write).toHaveBeenCalledWith(
-        '.grandemonium/grandemonium-settings.json',
-        expect.any(String),
-      );
-      const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.grandemonium/grandemonium-settings.json',
-      );
-      expect(writeCall).toBeDefined();
-      const content = JSON.parse(writeCall[1]);
-      expect(content).not.toHaveProperty('enableBlocklist');
-      expect(content).not.toHaveProperty('blockedCommands');
-    });
-
     it('should use defaults when no saved data', async () => {
       // No settings file exists
       mockApp.vault.adapter.exists.mockResolvedValue(false);
@@ -1509,29 +1478,6 @@ describe('GrandemoniumPlugin', () => {
       await plugin.loadSettings();
 
       expect(plugin.settings).toEqual(DEFAULT_SETTINGS);
-    });
-
-    it('should migrate legacy openInMainTab true to main-tab placement', async () => {
-      mockApp.vault.adapter.exists.mockImplementation(async (path: string) => {
-        return path === '.grandemonium/grandemonium-settings.json';
-      });
-      mockApp.vault.adapter.read.mockImplementation(async (path: string) => {
-        if (path === '.grandemonium/grandemonium-settings.json') {
-          return JSON.stringify({ openInMainTab: true });
-        }
-        return '';
-      });
-
-      await plugin.loadSettings();
-
-      expect(plugin.settings.chatViewPlacement).toBe('main-tab');
-      const writeCall = (mockApp.vault.adapter.write as jest.Mock).mock.calls.find(
-        ([path]) => path === '.grandemonium/grandemonium-settings.json',
-      );
-      expect(writeCall).toBeDefined();
-      const content = JSON.parse(writeCall[1]);
-      expect(content.chatViewPlacement).toBe('main-tab');
-      expect(content).not.toHaveProperty('openInMainTab');
     });
 
     it('should reconcile model from environment and persist when changed', async () => {
@@ -3717,20 +3663,6 @@ describe('GrandemoniumPlugin', () => {
       expect(meta.sessionId).toBeNull();
     });
 
-    it('should ignore legacy activeConversationId when no sessions exist', async () => {
-      // No sessions exist
-      mockApp.vault.adapter.exists.mockResolvedValue(false);
-      mockApp.vault.adapter.list.mockResolvedValue({ files: [], folders: [] });
-
-      (plugin.loadData as jest.Mock).mockResolvedValue({
-        activeConversationId: 'non-existent',
-        migrationVersion: 2,
-      });
-
-      await plugin.loadSettings();
-
-      expect(plugin.getConversationList()).toHaveLength(0);
-    });
   });
 
   describe('Multi-session message loading', () => {

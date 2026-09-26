@@ -78,7 +78,6 @@ export interface ProviderModule extends ProviderRegistration {
 
 export interface ProviderSettingsStorageAdapter {
   hostScopedFields?: string[];
-  legacyTopLevelFields?: string[];
   runtimeOnlyFields?: string[];
   normalizeStored(
     target: Record<string, unknown>,

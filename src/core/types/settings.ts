@@ -72,11 +72,6 @@ export type DualPaneSide = typeof DUAL_PANE_SIDES[number];
 export type SessionManagerOrganization = 'list' | 'linked-content';
 export type SessionManagerSort = 'last-updated' | 'created';
 
-export interface LegacyLinkedContentSettingsInput {
-  sessionManagerOrganization?: SessionManagerOrganization | 'linked-note';
-  pinnedLinkedNotePaths?: unknown;
-}
-
 /** Forced provider transition invalidated a parked auxiliary continuation. */
 export interface AuxiliaryContinuityReset {
   success: false;
@@ -199,6 +194,8 @@ export interface GrandemoniumSettings {
   // Provider command visibility
   hiddenProviderCommands: HiddenProviderCommands;
 
-  // Allow provider-specific extension fields
+  // Lets provider helpers read settings as a plain record. Storage persists only
+  // the fields declared above, so a new setting needs a default in
+  // DEFAULT_GRANDEMONIUM_SETTINGS.
   [key: string]: unknown;
 }

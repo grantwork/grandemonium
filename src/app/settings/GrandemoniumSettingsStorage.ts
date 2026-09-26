@@ -1,9 +1,6 @@
 import { GRANDEMONIUM_SETTINGS_PATH } from '../../core/bootstrap/storagePaths';
 import { normalizeLinkedContentPath } from '../../core/path/LinkedContentPath';
-import {
-  normalizeHiddenCommandList,
-  normalizeHiddenProviderCommands,
-} from '../../core/providers/commands/hiddenCommands';
+import { normalizeHiddenProviderCommands } from '../../core/providers/commands/hiddenCommands';
 import {
   getSharedEnvironmentVariables,
   inferEnvironmentSnippetScope,
@@ -19,32 +16,15 @@ import {
   type EnvironmentScope,
   type EnvSnippet,
   type GrandemoniumSettings,
-  type HiddenProviderCommands,
   type ProviderConfigMap,
   type SessionManagerOrganization,
   type StoredChatModelSelection,
 } from '../../core/types/settings';
-import { getHostnameKey, getLegacyDeviceSettingsKey } from '../../utils/env';
 import { DEFAULT_GRANDEMONIUM_SETTINGS } from './defaultSettings';
 
 export { GRANDEMONIUM_SETTINGS_PATH };
 
 export type StoredGrandemoniumSettings = GrandemoniumSettings;
-
-const LEGACY_STRIPPED_SHARED_SETTING_FIELDS = [
-  'activeConversationId',
-  'show1MModel',
-  'hiddenSlashCommands',
-  'slashCommands',
-  'allowExternalAccess',
-  'allowedExportPaths',
-  'enableBlocklist',
-  'blockedCommands',
-  'openInMainTab',
-  'pinnedLinkedNotePaths',
-  'enableFilePane',
-  'persistentExternalContextPaths',
-] as const;
 
 function getProviderSettingsAdapters() {
   return ProviderRegistry.getRegisteredProviderIds().map(providerId => ({
@@ -53,19 +33,23 @@ function getProviderSettingsAdapters() {
   }));
 }
 
-function getLegacyTopLevelProviderFields(): string[] {
-  return getProviderSettingsAdapters().flatMap(({ adapter }) => adapter.legacyTopLevelFields ?? []);
+function isSettingsKey(key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(DEFAULT_GRANDEMONIUM_SETTINGS, key);
 }
 
-function stripLegacyFields(settings: Record<string, unknown>): Record<string, unknown> {
-  const cleaned = { ...settings };
-  for (const key of [
-    ...LEGACY_STRIPPED_SHARED_SETTING_FIELDS,
-    ...getLegacyTopLevelProviderFields(),
-  ]) {
-    delete cleaned[key];
-  }
-  return cleaned;
+/** Keeps only the keys `GrandemoniumSettings` declares; everything else is dropped on save. */
+function pickSettingsKeys(settings: Record<string, unknown>): Partial<StoredGrandemoniumSettings> {
+  return Object.fromEntries(
+    Object.entries(settings).filter(([key]) => isSettingsKey(key)),
+  );
+}
+
+function hasStoredValueChanged(
+  stored: Record<string, unknown>,
+  key: string,
+  normalized: unknown,
+): boolean {
+  return key in stored && JSON.stringify(stored[key]) !== JSON.stringify(normalized);
 }
 
 function isChatViewPlacement(value: unknown): value is ChatViewPlacement {
@@ -73,30 +57,10 @@ function isChatViewPlacement(value: unknown): value is ChatViewPlacement {
     && (CHAT_VIEW_PLACEMENTS as readonly string[]).includes(value);
 }
 
-function normalizeChatViewPlacement(
-  value: unknown,
-  legacyOpenInMainTab: unknown,
-): ChatViewPlacement {
-  if (isChatViewPlacement(value)) {
-    return value;
-  }
-
-  if (typeof legacyOpenInMainTab === 'boolean') {
-    return legacyOpenInMainTab ? 'main-tab' : 'right-sidebar';
-  }
-
-  return DEFAULT_GRANDEMONIUM_SETTINGS.chatViewPlacement;
-}
-
-function shouldPersistChatViewPlacementMigration(
-  stored: Record<string, unknown>,
-  normalized: ChatViewPlacement,
-): boolean {
-  return 'openInMainTab' in stored
-    || (
-      'chatViewPlacement' in stored
-      && stored.chatViewPlacement !== normalized
-    );
+function normalizeChatViewPlacement(value: unknown): ChatViewPlacement {
+  return isChatViewPlacement(value)
+    ? value
+    : DEFAULT_GRANDEMONIUM_SETTINGS.chatViewPlacement;
 }
 
 function normalizeEnableDualPane(value: unknown): boolean {
@@ -121,7 +85,6 @@ function normalizeRestoreTabsOnStartup(value: unknown): boolean {
 function normalizeSessionManagerOrganization(
   value: unknown,
 ): SessionManagerOrganization {
-  if (value === 'linked-note') return 'linked-content';
   return value === 'linked-content' || value === 'list'
     ? value
     : DEFAULT_GRANDEMONIUM_SETTINGS.sessionManagerOrganization ?? 'list';
@@ -141,24 +104,6 @@ function normalizePinnedLinkedContentPaths(value: unknown): string[] {
   return normalizedPaths;
 }
 
-function shouldPersistChatViewNormalization(
-  stored: Record<string, unknown>,
-  enableDualPane: boolean,
-  dualPaneSide: DualPaneSide,
-  restoreTabsOnStartup: boolean,
-): boolean {
-  return 'enableFilePane' in stored || (
-    'enableDualPane' in stored
-    && stored.enableDualPane !== enableDualPane
-  ) || (
-    'dualPaneSide' in stored
-    && stored.dualPaneSide !== dualPaneSide
-  ) || (
-    'restoreTabsOnStartup' in stored
-    && stored.restoreTabsOnStartup !== restoreTabsOnStartup
-  );
-}
-
 function normalizeProviderConfigs(value: unknown): ProviderConfigMap {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return {};
@@ -171,39 +116,6 @@ function normalizeProviderConfigs(value: unknown): ProviderConfigMap {
     }
   }
   return result;
-}
-
-function migrateCurrentDeviceProviderConfigKeys(
-  providerConfigs: ProviderConfigMap,
-): { changed: boolean; providerConfigs: ProviderConfigMap } {
-  const currentKey = getHostnameKey();
-  const legacyKey = getLegacyDeviceSettingsKey();
-  if (!legacyKey || legacyKey === currentKey) {
-    return { changed: false, providerConfigs };
-  }
-
-  let changed = false;
-  for (const { adapter, providerId } of getProviderSettingsAdapters()) {
-    const config = providerConfigs[providerId];
-    if (!config) continue;
-
-    for (const field of adapter.hostScopedFields ?? []) {
-      const value = config[field];
-      if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
-      const entries = value as Record<string, unknown>;
-      if (!Object.prototype.hasOwnProperty.call(entries, legacyKey)) continue;
-
-      const migrated = Object.fromEntries(Object.entries(entries));
-      if (!Object.prototype.hasOwnProperty.call(migrated, currentKey)) {
-        migrated[currentKey] = entries[legacyKey];
-      }
-      delete migrated[legacyKey];
-      config[field] = migrated;
-      changed = true;
-    }
-  }
-
-  return { changed, providerConfigs };
 }
 
 function projectPersistableProviderConfigs(value: unknown): {
@@ -345,25 +257,6 @@ function normalizeEnvSnippets(value: unknown): EnvSnippet[] {
   return snippets;
 }
 
-function hasLegacyTopLevelProviderFields(stored: Record<string, unknown>): boolean {
-  return getLegacyTopLevelProviderFields().some((key) => key in stored);
-}
-
-function mergeLegacyClaudeHiddenCommands(
-  hiddenProviderCommands: HiddenProviderCommands,
-  legacyHiddenSlashCommands: unknown,
-): HiddenProviderCommands {
-  const legacyCommands = normalizeHiddenCommandList(legacyHiddenSlashCommands);
-  if (legacyCommands.length === 0 || hiddenProviderCommands.claude) {
-    return hiddenProviderCommands;
-  }
-
-  return {
-    ...hiddenProviderCommands,
-    claude: legacyCommands,
-  };
-}
-
 function trimStoredString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -389,96 +282,44 @@ function normalizeStoredChatModelSelection(
   return { providerId, model };
 }
 
-function migrateLegacyChatModelSelection(
-  stored: Record<string, unknown>,
-): StoredChatModelSelection | null {
-  const registeredProviderIds = new Set(ProviderRegistry.getRegisteredProviderIds());
-  const storedProviderId = trimStoredString(stored.settingsProvider);
-  const providerId = registeredProviderIds.has(storedProviderId)
-    ? storedProviderId
-    : 'claude';
-  if (!registeredProviderIds.has(providerId)) {
-    return null;
-  }
-
-  const projectedModel = trimStoredString(stored.model);
-  const savedProviderModels = stored.savedProviderModel;
-  const savedModel = savedProviderModels
-    && typeof savedProviderModels === 'object'
-    && !Array.isArray(savedProviderModels)
-    ? trimStoredString((savedProviderModels as Record<string, unknown>)[providerId])
-    : '';
-  const model = projectedModel || savedModel;
-  return model ? { providerId, model } : null;
-}
-
 export class GrandemoniumSettingsStorage {
   constructor(private adapter: VaultFileAdapter) {}
 
   async load(): Promise<StoredGrandemoniumSettings> {
-    const settingsPath = await this.getLoadPath();
-    if (!settingsPath) {
+    if (!(await this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH))) {
       return this.getDefaults();
     }
 
-    const content = await this.adapter.read(settingsPath);
+    const content = await this.adapter.read(GRANDEMONIUM_SETTINGS_PATH);
     const stored = JSON.parse(content) as Record<string, unknown>;
-    const hasStoredChatModelSelection = Object.prototype.hasOwnProperty.call(
-      stored,
-      'lastSelectedChatModel',
-    );
-    const lastSelectedChatModel = hasStoredChatModelSelection
-      ? normalizeStoredChatModelSelection(stored.lastSelectedChatModel)
-      : migrateLegacyChatModelSelection(stored);
-    const didNormalizeChatModelSelection = !hasStoredChatModelSelection
-      || JSON.stringify(lastSelectedChatModel) !== JSON.stringify(stored.lastSelectedChatModel);
-    const hiddenProviderCommands = mergeLegacyClaudeHiddenCommands(
-      normalizeHiddenProviderCommands(stored.hiddenProviderCommands),
-      stored.hiddenSlashCommands,
-    );
+    const lastSelectedChatModel = normalizeStoredChatModelSelection(stored.lastSelectedChatModel);
+    const hiddenProviderCommands = normalizeHiddenProviderCommands(stored.hiddenProviderCommands);
     const envSnippets = normalizeEnvSnippets(stored.envSnippets);
     const customModelAliases = normalizeModelAliases(stored.customModelAliases);
     const {
       changed: didStripRuntimeProviderConfig,
-      providerConfigs: projectedProviderConfigs,
-    } = projectPersistableProviderConfigs(stored.providerConfigs);
-    const {
-      changed: didMigrateCurrentDeviceProviderConfigs,
       providerConfigs,
-    } = migrateCurrentDeviceProviderConfigKeys(projectedProviderConfigs);
-    const chatViewPlacement = normalizeChatViewPlacement(
-      stored.chatViewPlacement,
-      stored.openInMainTab,
-    );
+    } = projectPersistableProviderConfigs(stored.providerConfigs);
+    const chatViewPlacement = normalizeChatViewPlacement(stored.chatViewPlacement);
     const enableDualPane = normalizeEnableDualPane(stored.enableDualPane);
     const dualPaneSide = normalizeDualPaneSide(stored.dualPaneSide);
     const restoreTabsOnStartup = normalizeRestoreTabsOnStartup(
       stored.restoreTabsOnStartup,
     );
-    const hasCanonicalPinnedPaths = Object.prototype.hasOwnProperty.call(
-      stored,
-      'pinnedLinkedContentPaths',
-    );
     const pinnedLinkedContentPaths = normalizePinnedLinkedContentPaths(
-      hasCanonicalPinnedPaths
-        ? stored.pinnedLinkedContentPaths
-        : stored.pinnedLinkedNotePaths,
+      stored.pinnedLinkedContentPaths,
     );
     const sessionManagerOrganization = normalizeSessionManagerOrganization(
       stored.sessionManagerOrganization,
     );
-    const legacyProviderSettings = {
+    const storedProviderSettings = {
       ...stored,
       hiddenProviderCommands,
       providerConfigs,
     };
-    const storedWithoutLegacy = stripLegacyFields({
-      ...legacyProviderSettings,
-    });
 
-    const legacyNormalized = {
-      ...storedWithoutLegacy,
-      sharedEnvironmentVariables: getSharedEnvironmentVariables(legacyProviderSettings),
+    const normalized = {
+      sharedEnvironmentVariables: getSharedEnvironmentVariables(storedProviderSettings),
       envSnippets,
       customModelAliases,
       hiddenProviderCommands,
@@ -492,16 +333,17 @@ export class GrandemoniumSettingsStorage {
       lastSelectedChatModel,
     };
 
-    const merged = {
+    const merged: StoredGrandemoniumSettings = {
       ...this.getDefaults(),
-      ...legacyNormalized,
+      ...pickSettingsKeys(stored),
+      ...normalized,
     };
 
     let didNormalizeProviderSettings = false;
     for (const { adapter } of getProviderSettingsAdapters()) {
       didNormalizeProviderSettings = adapter.normalizeStored(
         merged,
-        legacyProviderSettings,
+        storedProviderSettings,
       ) || didNormalizeProviderSettings;
     }
     const didNormalizeHostScopedProviderConfigs = hasHostScopedProviderConfigNormalization(
@@ -510,46 +352,13 @@ export class GrandemoniumSettingsStorage {
     );
 
     if (
-      settingsPath !== GRANDEMONIUM_SETTINGS_PATH
-      || (
-      hasLegacyTopLevelProviderFields(stored)
-      || 'show1MModel' in stored
-      || 'slashCommands' in stored
-      || 'hiddenSlashCommands' in stored
-      || 'activeConversationId' in stored
-      || 'allowExternalAccess' in stored
-      || 'allowedExportPaths' in stored
-      || 'persistentExternalContextPaths' in stored
-      || 'enableBlocklist' in stored
-      || 'blockedCommands' in stored
-      || shouldPersistChatViewPlacementMigration(stored, chatViewPlacement)
-      || shouldPersistChatViewNormalization(
-        stored,
-        enableDualPane,
-        dualPaneSide,
-        restoreTabsOnStartup,
-      )
-      || (
-        'sessionManagerOrganization' in stored
-        && stored.sessionManagerOrganization !== sessionManagerOrganization
-      )
-      || 'pinnedLinkedNotePaths' in stored
-      || (
-        'pinnedLinkedContentPaths' in stored
-        && JSON.stringify(stored.pinnedLinkedContentPaths)
-          !== JSON.stringify(pinnedLinkedContentPaths)
-      )
-      || JSON.stringify(envSnippets) !== JSON.stringify(stored.envSnippets ?? [])
-      || (
-        'customModelAliases' in stored
-        && JSON.stringify(customModelAliases) !== JSON.stringify(stored.customModelAliases ?? {})
-      )
+      Object.keys(stored).some(key => !isSettingsKey(key))
+      || Object.entries(normalized).some(([key, value]) => (
+        key !== 'providerConfigs' && hasStoredValueChanged(stored, key, value)
+      ))
       || didNormalizeProviderSettings
       || didStripRuntimeProviderConfig
-      || didMigrateCurrentDeviceProviderConfigs
       || didNormalizeHostScopedProviderConfigs
-      || didNormalizeChatModelSelection
-      )
     ) {
       await this.save(merged);
     }
@@ -560,8 +369,8 @@ export class GrandemoniumSettingsStorage {
   async save(settings: StoredGrandemoniumSettings): Promise<void> {
     const { providerConfigs } = projectPersistableProviderConfigs(settings.providerConfigs);
     const content = JSON.stringify(
-      stripLegacyFields({
-        ...settings,
+      {
+        ...pickSettingsKeys(settings),
         providerConfigs,
         sessionManagerOrganization: normalizeSessionManagerOrganization(
           settings.sessionManagerOrganization,
@@ -569,7 +378,7 @@ export class GrandemoniumSettingsStorage {
         pinnedLinkedContentPaths: normalizePinnedLinkedContentPaths(
           settings.pinnedLinkedContentPaths,
         ),
-      }),
+      },
       null,
       2,
     );
@@ -587,13 +396,5 @@ export class GrandemoniumSettingsStorage {
 
   private getDefaults(): StoredGrandemoniumSettings {
     return DEFAULT_GRANDEMONIUM_SETTINGS;
-  }
-
-  private async getLoadPath(): Promise<string | null> {
-    if (await this.adapter.exists(GRANDEMONIUM_SETTINGS_PATH)) {
-      return GRANDEMONIUM_SETTINGS_PATH;
-    }
-
-    return null;
   }
 }

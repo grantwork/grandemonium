@@ -36,7 +36,6 @@ export {
   type HostnameCliPaths,
   type InstructionRefineResult,
   type KeyboardNavigationSettings,
-  type LegacyLinkedContentSettingsInput,
   type PermissionMode,
   type SessionManagerOrganization,
   type SessionManagerSort,

@@ -17,7 +17,7 @@
 | --- | --- |
 | `ConversationRepository` | The canonical in-memory Grandemonium conversation collection, device-versus-unscoped metadata ownership and explicit assignment, hydration status, pin/archive and creation-only Linked content identity, deletion transactions, per-conversation persistence queues, input-ledger coordination, historical model recovery, selected-model availability reconciliation, and execution-snapshot binding |
 | `SharedStorageService` | Plugin-data and vault persistence I/O plus construction of shared persistence adapters |
-| `GrandemoniumSettingsStorage` | Settings persistence and retryable migration of current-device provider maps from legacy device-key aliases to the filesystem-safe key |
+| `GrandemoniumSettingsStorage` | Settings persistence, normalization of stored values, and dropping stored keys that are not settings |
 | `SettingsCoordinator` | Serialization of settings mutations, rollback before failed persistence, and post-commit publication ordering |
 | `ChatModelSelectionCoordinator` | Application-wide ordering and durable settings commits for explicit future-tab model-seed intents |
 | `PinnedLinkedContentPathCoordinator` | Pinned Linked content path mutation, folder-descendant rewrite, deduplication, and deletion cleanup through ordered settings transactions |
@@ -39,6 +39,7 @@ Storage adapters own I/O mechanics, not domain decisions. Callers decide what st
 - `Conversation.modelRecoverySource` is a read-only native locator used only to recover missing historical model metadata. It must never be treated as a resumable provider binding, and a successful recovery or fresh provider session retires it.
 - `Conversation.linkedContentPath` is an optional canonical Vault-relative file or folder path. The Vault root is not a valid Linked content target. It is creation-only identity: ordinary patches, live-object mutation, saves, forks after creation, and deletion must not replace or clear it. Only the repository's explicit Vault-rename rewrite may change it, including descendants for folder renames; deletion leaves the identity durable so presentation can report Missing content.
 - `SharedStorageService.setTabManagerState()` plus legacy tab-state reads and cleanup must preserve unrelated plugin data.
+- `GrandemoniumSettingsStorage` persists only the top-level keys of `DEFAULT_GRANDEMONIUM_SETTINGS`; any other stored key is dropped on the next load. A new setting needs a default there or it is never saved. Provider configuration inside `providerConfigs` is provider-owned and passes through.
 - Settings changes must go through `SettingsCoordinator` or the application mutation APIs so persistence, rollback, provider reconciliation, and publication remain ordered.
 - Provider model-option changes reconcile affected durable conversation selections through `ConversationRepository` before views refresh. Providers and features may publish the change but must not rewrite cached conversations themselves.
 - Environment changes that can alter model options use the same provider model-option reconciliation boundary; direct model-selector refresh is not an allowed shortcut.
